@@ -1,0 +1,12 @@
+.o_form_view {
+    .o_form_sheet_bg .o_form_sheet {
+        max-width: calc(100% - 50px);
+    }
+    .o_FormRenderer_chatterContainer {
+        max-width: none;
+    }
+}
+
+.modal-lg, .modal-xl {
+    max-width: 80%;
+  }

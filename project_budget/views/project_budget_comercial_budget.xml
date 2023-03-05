@@ -1,0 +1,270 @@
+<odoo>
+    <data>
+<!-- commercial_budget specification -->
+        <record id="show_comercial_budget_spec_form" model="ir.ui.view">
+            <field name="name">project_budget.commercial_budget_spec.form</field>
+            <field name="model">project_budget.commercial_budget_spec</field>
+            <field name="arch" type="xml">
+               <sheet string="Commercial budget">
+                  <field name="budget_state" invisible="1"/>
+                   <group>
+                        <group>
+                            <field name="specification_state" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                       </group>
+                        <group>
+                            <field name="currency_id" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                       </group>
+                   </group>
+                   <group string = "Position attributes" attrs="{'readonly': [('budget_state', '=', 'fixed')]}">
+                        <group>
+                            <field name="project_office_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="project_manager_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="legal_entity_signing_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="project_type_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="technological_direction_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                       </group>
+                        <group>
+                            <field name="customer_organization_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="customer_status_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="industry_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="vat_attribute_id" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="essence_project" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="comments" colspan="2" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                       </group>
+                    </group>
+                   <group string="Position dates">
+                        <group>
+                            <field name="end_presale_project_quarter"/>
+                            <field name="end_presale_project_month" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+<!--                            options="{'datepicker':{'showType':'months'}}"/>-->
+                       </group>
+                        <group>
+                            <field name="end_sale_project_quarter"/>
+                            <field name="end_sale_project_month" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+<!--                            options="{'datepicker':{'showType':'months'}}"/>-->
+                        </group>
+                   </group>
+                   <group string="Position calculate">
+                        <group>
+                            <field name="profitability"/>
+                        </group>
+                        <group>
+                            <field name="estimated_probability" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                        </group>
+                    </group>
+                    <group>
+                      <group>
+                           <group>
+                                <field name="margin_income"
+                                       decoration-bf="1"
+                                       decoration-success="margin_income &gt; 0"
+                                       decoration-danger="margin_income &lt; 0"
+                                />
+                           </group>
+                          <group>
+                              <field name="total_amount_of_revenue"
+                                      decoration-bf="1"
+                                     decoration-success="total_amount_of_revenue &gt; 0"
+                              />
+                              <field name="revenue_from_the_sale_of_works" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                              <field name="revenue_from_the_sale_of_goods" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                          </group>
+                      </group>
+                      <group>
+                            <group>
+                                <field name="cost_price"
+                                        decoration-bf="1"
+                                       decoration-success="cost_price &gt; 0"
+                                />
+                                <field name="cost_of_goods" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="own_works_fot" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="third_party_works" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="awards_on_results_project" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="transportation_expenses" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            </group>
+                            <group>
+                                <field name="travel_expenses" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="representation_expenses" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="taxes_fot_premiums" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="warranty_service_costs" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="rko_other" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="other_expenses" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            </group>
+                      </group>
+                   </group>
+                </sheet>
+            </field>
+        </record>
+
+        <record id="show_comercial_budget_spec_tree" model="ir.ui.view">
+            <field name="name">project_budget.commercial_budget_spec.tree</field>
+            <field name="model">project_budget.commercial_budget_spec</field>
+            <field name="arch" type="xml">
+                <tree>
+                <control>
+                    <create name="add_specification_line" string="Add a line"/>
+                </control>
+                    <!--<button name="open_record" type="object" class="oe_highlight"/>-->
+                    <field name="commercial_budget_id"   optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="budget_state" invisible="1" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="specification_state"   optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="currency_id" invisible="1" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="project_office_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="project_manager_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="industry_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="customer_status_id" force_save="1" options="{'no_open': True,}"  optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="customer_organization_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="essence_project" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="end_presale_project_quarter"  optional="show"/>
+                    <field name="end_sale_project_quarter"  optional="show"/>
+                    <field name="total_amount_of_revenue" optional="show"/>
+                    <field name="cost_price" optional="show"/>
+                    <field name="margin_income" optional="show"/>
+                    <field name="profitability" optional="show"/>
+                    <field name="estimated_probability" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="vat_attribute_id" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="legal_entity_signing_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="project_type_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="comments" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="technological_direction_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                 </tree>
+            </field>
+        </record>
+
+        <record id="show_comercial_budget_spec" model="ir.actions.act_window">
+            <field name="name">comercial_budgets</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project_budget.commercial_budget_spec</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_commercial_budget_spec_search"></field>
+            <field name="context">{'search_default_group_by_provider': True}</field>
+        </record>
+
+<!--
+    <record id="child_action_window_form" model="ir.actions.act_window.view">
+           <field name="view_mode">form</field>
+           <field name="view_id" ref="show_comercial_budget_spec_form" />
+           <field name="act_window_id" ref="show_comercial_budgets_form" />
+    </record>
+-->
+<!-- end commercial_budget specification-->
+<!-- commercial_budget -->
+        <record id="show_comercial_budgets_tree" model="ir.ui.view">
+            <field name="name">project_budget.commercial_budget.tree</field>
+            <field name="model">project_budget.commercial_budget</field>
+            <field name="arch" type="xml">
+                <tree string="project_office">
+                    <field name="budget_state"/>
+                    <field name="name"/>
+                    <field name="date_actual"/>
+                    <field name="year"/>
+                    <field name="currency_id"/>
+                    <field name="descr"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="show_comercial_budgets_form" model="ir.ui.view">
+            <field name="name">project_budget.commercial_budget.form</field>
+            <field name="model">project_budget.commercial_budget</field>
+            <field name="arch" type="xml">
+               <form string="Commercial budget">
+                        <group>
+                            <group>
+                                <group>
+<!--                                    <button name="isuseradmin" string="isuseradmin" type="object"/>-->
+                                    <field name="budget_state"/>
+                                    <field name="currency_id" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                </group>
+                                <group>
+                                    <field name="name" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="descr" colspan="2" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                </group>
+                            </group>
+                            <group name="detail3">
+                                <field name="date_actual" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="year" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                           <page string="Specification" name="Specification">
+                            <field
+                                name="commercial_budget_spec_ids"
+                                widget="section_and_note_one2many"
+                                mode="tree"
+                            >
+                            <tree>
+                                <!--string="Specification" editable="bottom"-->
+
+                                <control>
+                                    <create name="add_specification_line" string="Add a line"/>
+                                </control>
+<!--                                    <button name="open_record" string="Edit" class="oe_highlight" type="object"/>-->
+                                    <field name="specification_state"   optional="show" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="budget_state" invisible="1" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="currency_id" invisible="1" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="project_office_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="project_manager_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="industry_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="customer_status_id" force_save="1" options="{'no_open': True,}"  optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="customer_organization_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="essence_project" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="end_presale_project_quarter"/>
+                                    <field name="end_sale_project_quarter"/>
+                                    <field name="total_amount_of_revenue" optional="show"/>
+                                    <field name="cost_price" optional="show"/>
+                                    <field name="margin_income" optional="show"/>
+                                    <field name="profitability" optional="show"/>
+                                    <field name="estimated_probability" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="vat_attribute_id" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="legal_entity_signing_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="project_type_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="comments" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="technological_direction_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+
+<!--
+                                    <field name="end_presale_project_month"/>
+                                    <field name="end_sale_project_month"/>
+                                    <field name="revenue_from_the_sale_of_works"/>
+                                    <field name="revenue_from_the_sale_of_goods"/>
+                                    <field name="cost_of_goods"/>
+                                    <field name="own_works_fot"/>
+                                    <field name="third_party_works"/>
+                                    <field name="awards_on_results_project"/>
+                                    <field name="transportation_expenses"/>
+                                    <field name="travel_expenses"/>
+                                    <field name="representation_expenses"/>
+                                    <field name="taxes_fot_premiums"/>
+                                    <field name="warranty_service_costs"/>
+                                    <field name="rko_other"/>
+                                    <field name="other_expenses"/>
+-->
+                              </tree>
+                            </field>
+                            </page>
+                        </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="show_comercial_budgets" model="ir.actions.act_window">
+            <field name="name">comercial_budgets</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project_budget.commercial_budget</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_group_by_provider': True}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new commercial_budget
+              </p><p>
+                each commercial_budget have specifications
+              </p>
+            </field>
+        </record>
+<!-- end commercial_budget-->
+
+    </data>
+</odoo>

@@ -1,0 +1,956 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* project_budget
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0-20230218\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-05 18:16+0000\n"
+"PO-Revision-Date: 2023-03-05 18:16+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.project_budget_access
+msgid "Access"
+msgstr "Доступы"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__currency_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__currency_id
+msgid "Account Currency"
+msgstr "Валюта"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__date_actual
+msgid "Actuality date"
+msgstr "Дата актуализации"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_manager_access_tree
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_supervisor_access_tree
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_tree
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_form
+msgid "Add a line"
+msgstr "Добавить проект"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__awards_on_results_project
+msgid "Awards based on the results of the project"
+msgstr "Премии по итогам проекта"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__budget_state
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__budget_state
+msgid "Budget State"
+msgstr "Состояние бюджета"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__year
+msgid "Budget year"
+msgstr "Год бюджета"
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.project_budget_budgets
+msgid "Budgets"
+msgstr "Бюджеты"
+
+#. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_commercial_budget_spec__specification_state__cancel
+msgid "Canceled"
+msgstr "Отменен"
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs
+msgid "Catalogs"
+msgstr "Каталоги"
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget
+msgid "Comercial budgets"
+msgstr "Коммерческие бюджеты"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_form
+msgid "Commercial budget"
+msgstr "Коммерческие бюджеты"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_comercial_budgets
+msgid "Create a new commercial_budget"
+msgstr "Создать новый коммерческий бюджет"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_customer_organization
+msgid "Create a new customer_organization"
+msgstr "Добавить нового заказчика/организацию"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_customer_status
+msgid "Create a new customer_status"
+msgstr "Добавить новый статус заказчика"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_industry
+msgid "Create a new industry"
+msgstr "Добавить новую отрасль"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_legal_entity_signing
+msgid "Create a new legal_entity_signing"
+msgstr "Добавить новое юрлицо для подписи"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_project_manager
+msgid "Create a new project_manager"
+msgstr "Добавить руководителя проекта"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_project_office
+msgid "Create a new project_office"
+msgstr "Добавить проектный офис"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_project_supervisor
+msgid "Create a new project_supervisor"
+msgstr "Добавить куратора проекта"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_project_type
+msgid "Create a new project_type"
+msgstr "Добавить тип проекта"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_technological_direction
+msgid "Create a new technological_direction"
+msgstr "Добавить технологическое направление"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_vat_attribute
+msgid "Create a new vat_attribute"
+msgstr "Добавить признак НДС"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__create_uid
+msgid "Created by"
+msgstr "Создано кем"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__create_date
+msgid "Created on"
+msgstr "Создано дата"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__end_presale_project_month
+msgid "Date of transition to the Production Budget(MONTH)"
+msgstr "Дата перехода в Производственный бюджет (МЕСЯЦ)"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__descr
+msgid "Description"
+msgstr "Описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__display_name
+msgid "Display Name"
+msgstr "Отображаемое имя"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__end_presale_project_quarter
+msgid "End date of the Presale project(quarter)"
+msgstr " Дата окончания Presale-проекта (квартал)"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__end_sale_project_quarter
+msgid "End date of the Sale project(quarter)"
+msgstr " Дата окончания Sale-проекта (квартал)"
+
+#. module: project_budget
+#: model:ir.actions.report,name:project_budget.report_project_budget_excel
+msgid "Export to EXCEL"
+msgstr "Экспорт в EXCEL"
+
+#. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_commercial_budget__budget_state__fixed
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_commercial_budget_spec__budget_state__fixed
+msgid "Fixed"
+msgstr "Зафиксировано"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.view_commercial_budget_spec_search
+msgid "Group By"
+msgstr "Группировать по"
+
+#. module: project_budget
+#: model:ir.module.category,description:project_budget.module_category_services_budget_project
+msgid "Helps you manage your budget projects ..."
+msgstr "Помогает управлять бюджетными проектами"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__id
+msgid "ID"
+msgstr ""
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute____last_update
+msgid "Last Modified on"
+msgstr "Дата последней модификации"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__write_uid
+msgid "Last Updated by"
+msgstr "Автор последнего изменения"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__write_date
+msgid "Last Updated on"
+msgstr "Дата последнего обновления"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_res_users__manager_rule
+msgid "Manager Rule"
+msgstr "Для настроки правила менеджеров"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__margin_income
+msgid "Margin income"
+msgstr "Маржинальный доход"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.report_budget_html
+msgid "Name:"
+msgstr "Имя"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+msgid "Position attributes"
+msgstr "Атрибуты позиции"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+msgid "Position calculate"
+msgstr "Расчет позиции"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+msgid "Position dates"
+msgstr "Даты позиции"
+
+#. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_commercial_budget_spec__specification_state__prepare
+msgid "Prepare"
+msgstr "Подготовка"
+
+#. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_commercial_budget_spec__specification_state__production
+msgid "Production"
+msgstr "В производстве"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__profitability
+msgid "Profitability(share of Sale margin in revenue)"
+msgstr "Рентабельность (доля Sale маржи в выручке)"
+
+#. module: project_budget
+#: model:res.groups,name:project_budget.project_budget_admin
+msgid "Project Admin"
+msgstr "Администратор бюджетов проектов"
+
+#. module: project_budget
+#: model:res.groups,name:project_budget.project_budget_user
+msgid "Project User"
+msgstr "Пользователь бюджетов проектов"
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.project_budget_menu
+msgid "Project budget"
+msgstr "Бюджет проекта"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.view_commercial_budget_spec_search
+msgid "Search contacts"
+msgstr "Поиск контактов"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_form
+msgid "Specification"
+msgstr "Перечень проектов"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__specification_state
+msgid "Specification State"
+msgstr "Статус позиции"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_res_users__supervisor_rule
+msgid "Supervisor Rule"
+msgstr "Для настроки правила кураторов"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__end_sale_project_month
+msgid "The period of shipment or provision of services to the Client(MONTH)"
+msgstr "Период отгрузки либо оказания услуг Клиенту (МЕСЯЦ)"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_res_users
+msgid "User"
+msgstr "Пользователь"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__warranty_service_costs
+msgid "Warranty service costs"
+msgstr " Расходы на гарант. обслуж."
+
+#. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_commercial_budget__budget_state__work
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_commercial_budget_spec__budget_state__work
+msgid "Working"
+msgstr "В работе"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_comercial_budget_spec
+#: model:ir.actions.act_window,name:project_budget.show_comercial_budget_spec_new
+#: model:ir.actions.act_window,name:project_budget.show_comercial_budgets
+msgid "comercial_budgets"
+msgstr "Коммерческий бюджет"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__comments
+msgid "comments project"
+msgstr "Комментарий к проекту"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__name
+msgid "commercial_budget name"
+msgstr "Наименование бюджета"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__commercial_budget_spec_ids
+msgid "commercial_budget specification"
+msgstr "Перечень проектов"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__commercial_budget_id
+msgid "commercial_budget-"
+msgstr "Коммерческий бюджет"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__cost_of_goods
+msgid "cost_of_goods"
+msgstr "Себестоимость товаров"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__cost_price
+msgid "cost_price"
+msgstr "Себестоимость"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_customer_organization
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__customer_organization_id
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_customer_organization
+#: model_terms:ir.ui.view,arch_db:project_budget.show_customer_organization_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_customer_organization_tree
+msgid "customer_organization"
+msgstr "заказчик/организация"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__code
+msgid "customer_organization code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__descr
+msgid "customer_organization description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__name
+msgid "customer_organization name"
+msgstr "Наименование"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_customer_status
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__customer_status_id
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_customer_status
+#: model_terms:ir.ui.view,arch_db:project_budget.show_customer_status_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_customer_status_tree
+msgid "customer_status"
+msgstr "Статус заказчика"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__code
+msgid "customer_status code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__descr
+msgid "customer_status description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__name
+msgid "customer_status name"
+msgstr "Наименование"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_comercial_budgets
+msgid "each commercial_budget have specifications"
+msgstr "Каждый бюджет имеет спецификацию"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_customer_organization
+msgid "each project budget have customer_organization"
+msgstr "Каждый бюджет имеет заказчика"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_customer_status
+msgid "each project budget have customer_status"
+msgstr "Каждый бюджет имеет статус заказчика"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_industry
+msgid "each project budget have industry"
+msgstr "Каждый бюджет имеет отрасль"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_legal_entity_signing
+msgid "each project budget have legal_entity_signing"
+msgstr "Каждый бюджет имеет подписывающее юрлицо"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_project_manager
+msgid "each project budget have project_manager"
+msgstr "Каждый бюджет имеет руководителя проекта"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_project_office
+msgid "each project budget have project_office"
+msgstr "Каждый бюджет имеет проектный офис"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_project_supervisor
+msgid "each project budget have project_supervisor"
+msgstr "Каждый бюджет имеет куратора проекта"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_project_type
+msgid "each project budget have project_type"
+msgstr "Каждый бюджет имеет тип проекта"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_technological_direction
+msgid "each project budget have technological_direction"
+msgstr "Каждый бюджет имеет технологическое направление"
+
+#. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.show_vat_attribute
+msgid "each project budget have vat_attribute"
+msgstr "Каждый бюджет имеет признак НДС"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.view_commercial_budget_spec_search
+msgid "essence project"
+msgstr "Суть проекта"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__essence_project
+msgid "essence_project"
+msgstr "суть проекта"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__estimated_probability
+msgid "estimated_probability of project implementation"
+msgstr "Оценочная вероятность реализации проекта, %"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_industry
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__industry_id
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_industry
+#: model_terms:ir.ui.view,arch_db:project_budget.show_industry_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_industry_tree
+msgid "industry"
+msgstr "Отрасль"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__code
+msgid "industry code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__descr
+msgid "industry description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__name
+msgid "industry name"
+msgstr "Наименование"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_form
+msgid "isuseradmin"
+msgstr ""
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_legal_entity_signing
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_legal_entity_signing
+#: model_terms:ir.ui.view,arch_db:project_budget.show_legal_entity_signing_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_legal_entity_signing_tree
+msgid "legal_entity_signing"
+msgstr "юрлицо, подписывающее договор"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__legal_entity_signing_id
+msgid "legal_entity_signing a contract from the NCC"
+msgstr "юрлицо, подписывающее договор от НКК"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__code
+msgid "legal_entity_signing code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__descr
+msgid "legal_entity_signing description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__name
+msgid "legal_entity_signing name"
+msgstr "Наименование"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__other_expenses
+msgid "other_expenses"
+msgstr "Прочие расходы"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__own_works_fot
+msgid "own_works_fot"
+msgstr "Работы собственные (ФОТ)"
+
+#. module: project_budget
+#: model:ir.module.category,name:project_budget.module_category_services_budget_project
+msgid "project budget nkk"
+msgstr "Бюджеты проектов НКК"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__descr
+msgid "project manager access description"
+msgstr "Описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__project_manager_id
+msgid "project manager id"
+msgstr "Менеджер проекта"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.view_commercial_budget_spec_search
+msgid "project office"
+msgstr "Проектный офис"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__descr
+msgid "project supervisor access description"
+msgstr "Описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__project_supervisor_id
+msgid "project supervisor id"
+msgstr "Куратор проекта"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_commercial_budget
+msgid "project_budget.commercial_budget"
+msgstr "Коммерческий бюджет"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_commercial_budget_spec
+msgid "project_budget.commercial_budget_spec"
+msgstr "Бюджеты позиции"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_customer_organization
+msgid "project_budget.customer_organization"
+msgstr "Заказчик/организация"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_customer_status
+msgid "project_budget.customer_status"
+msgstr "Статус заказчика"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_industry
+msgid "project_budget.industry"
+msgstr "Отрасль"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_legal_entity_signing
+msgid "project_budget.legal_entity_signing"
+msgstr "Юрлицо, подписывающее договор"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_project_manager
+msgid "project_budget.project_manager"
+msgstr "Менеджер проекта"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_project_manager_access
+msgid "project_budget.project_manager_access"
+msgstr "Доступ пользователей по менеджерам проектов"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_project_office
+msgid "project_budget.project_office"
+msgstr "Проектный офис"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_project_supervisor
+msgid "project_budget.project_supervisor"
+msgstr "Куратор проекта"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_project_supervisor_access
+msgid "project_budget.project_supervisor_access"
+msgstr "Доступ пользователей по кураторам проектов"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_project_type
+msgid "project_budget.project_type"
+msgstr "Тип проекта"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_technological_direction
+msgid "project_budget.technological_direction"
+msgstr "Технологическое направление"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_vat_attribute
+msgid "project_budget.vat_attribute"
+msgstr "Признак НДС"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_project_manager
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__project_manager_id
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_project_manager
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_manager_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_manager_tree
+msgid "project_manager"
+msgstr "Руководитель проекта"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__code
+msgid "project_manager code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__descr
+msgid "project_manager description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__name
+msgid "project_manager name"
+msgstr "ФИО"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_comercial_budget_spec_manager_access
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__project_manager_access_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__project_supervisor_access_ids
+#: model:ir.model.fields,field_description:project_budget.field_res_users__project_manager_access_ids
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_project_manager_access
+msgid "project_manager_access"
+msgstr "Доступ пользователей по менеджерам проектов"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_project_office
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__project_office_id
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_project_office
+#: model_terms:ir.ui.view,arch_db:project_budget.report_budget_html
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_tree
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_office_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_office_tree
+msgid "project_office"
+msgstr "Проектный офис"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__code
+msgid "project_office code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__descr
+msgid "project_office description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__name
+msgid "project_office name"
+msgstr "Наименование"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_project_supervisor
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__project_supervisor_id
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_project_supervisor
+#: model_terms:ir.ui.view,arch_db:project_budget.report_budget_html
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_supervisor_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_supervisor_tree
+msgid "project_supervisor"
+msgstr "Куратор проекта"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__code
+msgid "project_supervisor code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__descr
+msgid "project_supervisor description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__name
+msgid "project_supervisor name"
+msgstr "ФИО"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_comercial_budget_spec_supervisor_access
+#: model:ir.model.fields,field_description:project_budget.field_res_users__project_supervisor_access_ids
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_project_supervisor_access
+msgid "project_supervisor_access"
+msgstr "Доступ пользователей по кураторам проектов"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_project_type
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__project_type_id
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_project_type
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_type_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_type_tree
+msgid "project_type"
+msgstr "Тип проекта"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__code
+msgid "project_type code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__descr
+msgid "project_type description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__name
+msgid "project_type name"
+msgstr "Наименование"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_report_project_budget_report_budget_excel
+msgid "report.project_budget.report_budget_excel"
+msgstr "отчет бюджета проектов в EXCEL"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__representation_expenses
+msgid "representation_expenses"
+msgstr " Представительские расходы"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__revenue_from_the_sale_of_goods
+msgid "revenue_from the sale of goods"
+msgstr " Выручка от реализации товара"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__revenue_from_the_sale_of_works
+msgid "revenue_from_the_sale_of_works(services)"
+msgstr " Выручка от реализации работ(услуг)"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__rko_other
+msgid "rko_other"
+msgstr "РКО прочие"
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_spec
+msgid "show_comercial_budget_spec"
+msgstr "Просмотр проектов"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.view_commercial_budget_spec_search
+msgid "specification state"
+msgstr "Статус позиции"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__taxes_fot_premiums
+msgid "taxes_FOT and premiums"
+msgstr " Налоги на ФОТ и премии"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_technological_direction
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__technological_direction_id
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_technological_direction
+#: model_terms:ir.ui.view,arch_db:project_budget.show_technological_direction_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_technological_direction_tree
+msgid "technological_direction"
+msgstr "Технологическое направление"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__code
+msgid "technological_direction code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__descr
+msgid "technological_direction description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__name
+msgid "technological_direction name"
+msgstr "наименование"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__third_party_works
+msgid "third_party_works(subcontracting)"
+msgstr "Работы сторонние (субподряд)"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__total_amount_of_revenue
+msgid "total_amount_of_revenue"
+msgstr "Общая сумма выручки"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__transportation_expenses
+msgid "transportation_expenses"
+msgstr "Транспортные расходы"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__travel_expenses
+msgid "travel_expenses"
+msgstr "Командировочные расходы"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__user_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__user_id
+msgid "user id"
+msgstr "Пользователь"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.show_vat_attribute
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget_spec__vat_attribute_id
+#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_vat_attribute
+#: model_terms:ir.ui.view,arch_db:project_budget.show_vat_attribute_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_vat_attribute_tree
+msgid "vat_attribute"
+msgstr "Признак НДС"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__code
+msgid "vat_attribute code"
+msgstr "код"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__descr
+msgid "vat_attribute description"
+msgstr "описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__name
+msgid "vat_attribute name"
+msgstr "наименование"

@@ -1,0 +1,28 @@
+<odoo>
+    <data>
+        <record id="view_commercial_budget_spec_search" model="ir.ui.view">
+            <field name="name">project_budget.commercial_budget_spec.search</field>
+            <field name="model">project_budget.commercial_budget_spec</field>
+            <field name="arch" type="xml">
+            <search string="Search contacts">
+                <field name="essence_project"></field>
+                <filter string="essence project" domain="[('essence_project', '!=', '')]" name="essence_project"></filter>
+                <group expand="0" string="Group By">
+                    <filter string="specification state" name="specification_state" context="{'group_by': 'specification_state'}"></filter>
+                    <filter string="project office" name="project_office_id" context="{'group_by': 'project_office_id'}"></filter>
+                </group>
+            </search>
+            </field>
+        </record>
+
+        <record id="show_comercial_budget_spec_new" model="ir.actions.act_window">
+            <field name="name">comercial_budgets</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project_budget.commercial_budget_spec</field>
+            <field name="view_mode">form,tree</field>
+            <field name="search_view_id" ref="view_commercial_budget_spec_search"></field>
+            <field name="context">{'search_default_id': 1}</field>
+        </record>
+
+    </data>
+</odoo>
