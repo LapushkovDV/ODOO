@@ -57,10 +57,11 @@ class commercial_budget_spec(models.Model):
         return domain
 
     _name = 'project_budget.commercial_budget_spec'
-    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True, index=True, default='prepare')
-    currency_id = fields.Many2one('res.currency', string='Account Currency', tracking=True, compute='_compute_reference')
+    project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True, default="new")
+    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True, index=True, default='prepare', store=True)
+    currency_id = fields.Many2one('res.currency', string='Account Currency', tracking=True, compute='_compute_reference', store=True)
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False)
-    budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False, compute='_compute_reference')
+    budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False, compute='_compute_reference', store=True)
     project_office_id = fields.Many2one('project_budget.project_office', string='project_office', required=True,
                                         copy=True)
     project_supervisor_id = fields.Many2one('project_budget.project_supervisor', string='project_supervisor',
@@ -74,15 +75,15 @@ class commercial_budget_spec(models.Model):
                                          copy=True)
     industry_id = fields.Many2one('project_budget.industry', string='industry', required=True, copy=True)
     essence_project = fields.Text(string='essence_project', default = "")
-    end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)', compute='_compute_quarter')
+    end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)', compute='_compute_quarter', store=True)
     end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True, default=fields.datetime.now())
-    end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter')
+    end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter',store=True)
     end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)', required=True,default=fields.datetime.now())
     vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True)
-    total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals')
+    total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals', store=True)
     revenue_from_the_sale_of_works =fields.Monetary(string='revenue_from_the_sale_of_works(services)')
     revenue_from_the_sale_of_goods = fields.Monetary(string='revenue_from the sale of goods')
-    cost_price = fields.Monetary(string='cost_price', compute='_compute_spec_totals')
+    cost_price = fields.Monetary(string='cost_price', compute='_compute_spec_totals', store=True)
     cost_of_goods = fields.Monetary(string='cost_of_goods')
     own_works_fot = fields.Monetary(string='own_works_fot')
     third_party_works = fields.Monetary(string='third_party_works(subcontracting)')
@@ -94,9 +95,10 @@ class commercial_budget_spec(models.Model):
     warranty_service_costs = fields.Monetary(string='Warranty service costs')
     rko_other = fields.Monetary(string='rko_other')
     other_expenses = fields.Monetary(string='other_expenses')
-    margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals')
-    profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals')
-    estimated_probability = fields.Float(string='estimated_probability of project implementation')
+    margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
+    profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals', store=True)
+    estimated_probability = fields.Selection([('30', '30'), ('50', '50'),('75', '75'), ('100', '100')], required=True, string='estimated_probability of project implementation',
+                                         default='0.3', copy=True)
     legal_entity_signing_id = fields.Many2one('project_budget.legal_entity_signing', string='legal_entity_signing a contract from the NCC', required=True, copy=True)
     project_type_id = fields.Many2one('project_budget.project_type',
                                               string='project_type', required=True,
@@ -105,7 +107,7 @@ class commercial_budget_spec(models.Model):
     technological_direction_id = fields.Many2one('project_budget.technological_direction',
                                               string='technological_direction', required=True,copy=True)
 
-    @ api.depends("revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
+    @ api.onchange("revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
     'third_party_works', "awards_on_results_project", 'transportation_expenses', 'travel_expenses', 'representation_expenses',
     'taxes_fot_premiums', "warranty_service_costs", 'rko_other', 'other_expenses')
     def _compute_spec_totals(self):
@@ -158,6 +160,8 @@ class commercial_budget_spec(models.Model):
             else:
                 fieldquarter.end_sale_project_quarter = 'NA'
 
+    def create(self,vals):
+        vals["project_id"]=self.env['ir.sequence'].next_by_code()
 
     def open_record(self):
         self.ensure_one()

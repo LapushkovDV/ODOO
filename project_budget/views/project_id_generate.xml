@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="project_id_generate" model="ir.sequence">
+            <field name="name">Project ID</field>
+            <field name="code">project_budget.commercial_budget_spec</field>
+            <field name="number_next_actual">001</field>
+            <field name="prefix">PRJ</field>
+            <field name="padding">001</field>
+        </record>
+    </data>
+</odoo>

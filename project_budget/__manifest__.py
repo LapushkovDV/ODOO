@@ -14,6 +14,7 @@
         'security/project_budget_users_groups.xml',
         'security/project_budget_users_rules.xml',
         'security/ir.model.access.csv',
+        'views/project_id_generate.xml',
         'views/project_budget_catalogs.xml',
         'views/project_budget_comercial_budget_access.xml',
         'views/project_budget_comercial_budget_search.xml',
