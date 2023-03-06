@@ -1,6 +1,8 @@
 <odoo>
     <data>
-<!-- project_office -->
+
+
+        <!-- project_office -->
         <record id="show_project_office_tree" model="ir.ui.view">
             <field name="name">project_budget.project_office.tree</field>
             <field name="model">project_budget.project_office</field>
@@ -17,14 +19,16 @@
             <field name="name">project_budget.project_office.form</field>
             <field name="model">project_budget.project_office</field>
             <field name="arch" type="xml">
-                <form string="project_office">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="project_office">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -61,14 +65,16 @@
             <field name="name">project_budget.project_supervisor.form</field>
             <field name="model">project_budget.project_supervisor</field>
             <field name="arch" type="xml">
-                <form string="project_supervisor">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="project_supervisor">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -105,14 +111,16 @@
             <field name="name">project_budget.project_manager.form</field>
             <field name="model">project_budget.project_manager</field>
             <field name="arch" type="xml">
-                <form string="project_manager">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="project_manager">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -149,14 +157,16 @@
             <field name="name">project_budget.customer_organization.form</field>
             <field name="model">project_budget.customer_organization</field>
             <field name="arch" type="xml">
-                <form string="customer_organization">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="customer_organization">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -193,14 +203,16 @@
             <field name="name">project_budget.customer_status.form</field>
             <field name="model">project_budget.customer_status</field>
             <field name="arch" type="xml">
-                <form string="customer_status">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="customer_status">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -237,14 +249,16 @@
             <field name="name">project_budget.industry.form</field>
             <field name="model">project_budget.industry</field>
             <field name="arch" type="xml">
-                <form string="industry">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="industry">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -281,14 +295,16 @@
             <field name="name">project_budget.vat_attribute.form</field>
             <field name="model">project_budget.vat_attribute</field>
             <field name="arch" type="xml">
-                <form string="vat_attribute">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="vat_attribute">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -325,14 +341,16 @@
             <field name="name">project_budget.legal_entity_signing.form</field>
             <field name="model">project_budget.legal_entity_signing</field>
             <field name="arch" type="xml">
-                <form string="legal_entity_signing">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="legal_entity_signing">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -369,14 +387,16 @@
             <field name="name">project_budget.project_type.form</field>
             <field name="model">project_budget.project_type</field>
             <field name="arch" type="xml">
-                <form string="project_type">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="project_type">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -413,14 +433,16 @@
             <field name="name">project_budget.technological_direction.form</field>
             <field name="model">project_budget.technological_direction</field>
             <field name="arch" type="xml">
-                <form string="technological_direction">
-                        <group>
-                                <field name="name"/>
-                                <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="descr" widget="html"/>
-                        </group>
+                <form>
+                    <sheet string="technological_direction">
+                            <group>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="descr" widget="html"/>
+                            </group>
+                    </sheet>
                 </form>
             </field>
         </record>
