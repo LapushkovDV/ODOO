@@ -639,7 +639,7 @@ msgstr "Описание"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager_access__project_manager_id
 msgid "project manager id"
-msgstr "Менеджер проекта"
+msgstr "Менеджер проекта (все его проекты будут доступны пользователю)"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_commercial_budget_spec_search
@@ -654,7 +654,7 @@ msgstr "Описание"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__project_supervisor_id
 msgid "project supervisor id"
-msgstr "Куратор проекта"
+msgstr "Куратор проекта (все его проекты будут доступны пользователю)"
 
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_commercial_budget
