@@ -134,9 +134,9 @@
 
                 <tree delete="0" default_order="project_id desc"
                       decoration-muted="specification_state=='cancel'"
-                      decoration-danger="approve_state=='need_approve_manager'"
-                      decoration-warning="approve_state=='need_approve_supervisor'"
-                      decoration-success="approve_state=='approved'"
+                      decoration-danger="approve_state=='need_approve_manager' and specification_state!='cancel'"
+                      decoration-warning="approve_state=='need_approve_supervisor' and specification_state!='cancel'"
+                      decoration-success="approve_state=='approved' and specification_state!='cancel'"
                 >
 <!--colors="blue:state == 'draft';gray:state in ('cancel','done');black:state == 'open'"-->
 

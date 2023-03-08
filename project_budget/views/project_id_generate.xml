@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <data>
+    <data noupdate="1">
         <record id="project_id_generate" model="ir.sequence">
             <field name="name">Project ID</field>
             <field name="code">project_budget.commercial_budget_spec</field>

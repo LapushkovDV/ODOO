@@ -28,6 +28,10 @@ class commercial_budget(models.Model):
                 raise ValidationError(raisetext)
 
     def copy(self, default=None):
+        if self.budget_state == 'work':
+            raisetext = _("Only fixed budget can be duplicated")
+            raise ValidationError(raisetext)
+            return False
         default = dict(default or {})
         default['name'] = 'Copy_' + self.name
         return super(commercial_budget, self).copy(default)
@@ -46,7 +50,8 @@ class commercial_budget(models.Model):
         self.ensure_one()
         working_budgets = self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')])
         if len(working_budgets) > 0 :
-            raise (ValidationError("Aready exists budget in work!"))
+            raisetext = _("Already exists budget in work!")
+            raise (ValidationError(raisetext))
         else:
             if not self.user_has_groups('project_budget.project_budget_admin'):
                 raisetext =_("Only users in group project_budget.project_budget_admin can return budget to work")
@@ -92,7 +97,7 @@ class commercial_budget_spec(models.Model):
         return domain
 
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True,
-                             default=lambda self: self.env['ir.sequence'].next_by_code('project_budget.commercial_budget_spec'))
+                             default=_('ID will appear after save')) #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec'))
     specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True, index=True, default='prepare', store=True, copy=True)
     approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
                                     required=True, index=True, default='need_approve_manager', store=True, copy=False)
@@ -259,3 +264,25 @@ class commercial_budget_spec(models.Model):
             'flags': {'initial_mode': 'edit'},
             'target': 'new',
         }
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('project_id') or vals['project_id'] == _('ID will appear after save'):
+                vals['project_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec')
+        return super().create(vals_list)
+
+    def unlink(self):
+        """ dont delete.
+        Set specification_state to 'cancel'
+        """
+        for record in self:
+            if record.approve_state == 'need_approve_manager' :
+                record.write({
+                            'specification_state': "cancel"
+                        })
+            else:
+                raisetext = _("only in state 'need approve manager' project can be canceled")
+                raise ValidationError(raisetext)
+
+        return False
