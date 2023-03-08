@@ -5,50 +5,64 @@
             <field name="model">project_budget.commercial_budget_spec</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <!--The oe_highlight class gives the button a red color when it is saved.
+                        It is usually used to indicate the expected behaviour. -->
+                        <button string="approve (manager)" type="object" name="set_approve_manager" class="oe_highlight" attrs="{'invisible': ['|',('approve_state', '!=', 'need_approve_manager'),('budget_state', '=', 'fixed')]}"/>
+                        <button string="approve (supervisor)" type="object" name="set_approve_supervisor" class="oe_highlight" attrs="{'invisible': ['|',('approve_state', '!=', 'need_approve_supervisor'),('budget_state', '=', 'fixed')]}"/>
+                        <button string="cancel approve (supervisor)" type="object" name="cancel_approve" class="oe_highlight" attrs="{'invisible': ['|',('approve_state', 'not in', ('approved','need_approve_supervisor')),('budget_state', '=', 'fixed')]}"/>
+                    </header>
+
                     <sheet string="Project">
                         <field name="budget_state" invisible="1"/>
+                        <field name="approve_state" readonly="1"
+                                decoration-danger="approve_state=='need_approve_manager'"
+                                decoration-warning="approve_state=='need_approve_supervisor'"
+                                decoration-success="approve_state=='approved'"
+                                decoration-muted="specification_state=='cancel'"
+                        />
                         <group>
                             <group>
                                 <field name="project_id" readonly="1"/>
                             </group>
                             <group>
-                                <field name="commercial_budget_id" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="commercial_budget_id" options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                         </group>
                         <group>
                         <group>
-                            <field name="specification_state" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="specification_state" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                         </group>
                             <group>
-                                <field name="currency_id" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="currency_id" options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                         </group>
-                        <group string = "Position attributes" attrs="{'readonly': [('budget_state', '=', 'fixed')]}">
-                        <group>
-                            <field name="project_office_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                            <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                            <field name="project_manager_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                            <field name="legal_entity_signing_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                            <field name="project_type_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                            <field name="technological_direction_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                        </group>
+                        <group string = "Position attributes">
                             <group>
-                                <field name="customer_organization_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="customer_status_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="industry_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="vat_attribute_id" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="essence_project" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="comments" colspan="2" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="project_office_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="project_manager_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="legal_entity_signing_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="project_type_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="technological_direction_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                            </group>
+                            <group>
+                                <field name="customer_organization_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="customer_status_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="industry_id" force_save="1" options="{'no_open': True,}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="vat_attribute_id" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="essence_project" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="comments" colspan="2" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                         </group>
                         <group string="Position dates">
                             <group>
                                 <field name="end_presale_project_quarter"/>
-                                <field name="end_presale_project_month" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="end_presale_project_month" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                         <group>
                             <field name="end_sale_project_quarter"/>
-                            <field name="end_sale_project_month" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="end_sale_project_month" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                         </group>
                         </group>
                             <group string="Position calculate">
@@ -56,7 +70,7 @@
                                     <field name="profitability"/>
                                 </group>
                                 <group>
-                                    <field name="estimated_probability" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                    <field name="estimated_probability" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                 </group>
                             </group>
                         <group>
@@ -73,8 +87,8 @@
                                     decoration-bf="1"
                                     decoration-success="total_amount_of_revenue &gt; 0"
                                     />
-                                <field name="revenue_from_the_sale_of_works" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="revenue_from_the_sale_of_goods" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="revenue_from_the_sale_of_works" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="revenue_from_the_sale_of_goods" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                         </group>
                         <group>
@@ -83,19 +97,19 @@
                                     decoration-bf="1"
                                     decoration-success="cost_price &gt; 0"
                                     />
-                                <field name="cost_of_goods" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="own_works_fot" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="third_party_works" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="awards_on_results_project" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="transportation_expenses" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="cost_of_goods" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="own_works_fot" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="third_party_works" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="awards_on_results_project" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="transportation_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                             <group>
-                                <field name="travel_expenses" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="representation_expenses" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="taxes_fot_premiums" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="warranty_service_costs" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="rko_other" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                <field name="other_expenses" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="travel_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="representation_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="taxes_fot_premiums" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="warranty_service_costs" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="rko_other" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="other_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                         </group>
                         </group>
@@ -108,17 +122,39 @@
             <field name="name">project_budget.commercial_budget_spec.tree</field>
             <field name="model">project_budget.commercial_budget_spec</field>
             <field name="arch" type="xml">
-                <tree>
+<!--                      decoration-muted="specification_state=='cancel'"-->
+<!--                      decoration-danger="approve_state=='need_approve_manager'"-->
+<!--                      decoration-warning="approve_state=='need_approve_supervisor'"-->
+<!--                      decoration-success="approve_state=='approved'"-->
+<!--                     colors="red:approve_state=='need_approve_manager';-->
+<!--                            yellow:approve_state=='need_approve_supervisor';-->
+<!--                            green:approve_state=='approved';-->
+<!--                            gray:specification_state=='cancel'"-->
+
+
+                <tree delete="0" default_order="project_id desc"
+                      decoration-muted="specification_state=='cancel'"
+                      decoration-danger="approve_state=='need_approve_manager'"
+                      decoration-warning="approve_state=='need_approve_supervisor'"
+                      decoration-success="approve_state=='approved'"
+                >
+<!--colors="blue:state == 'draft';gray:state in ('cancel','done');black:state == 'open'"-->
+
                     <header>
-                        <button name="open_record" string="this is button" type="object" class="btn-primary"/>
+                        <!--The oe_highlight class gives the button a red color when it is saved.
+                        It is usually used to indicate the expected behaviour. -->
+                        <button string="approve (manager)" type="object" name="set_approve_manager" class="oe_highlight" />
+                        <button string="approve (supervisor)" type="object" name="set_approve_supervisor" class="oe_highlight"/>
+                        <button string="cancel approve (supervisor)" type="object" name="cancel_approve" class="oe_highlight"/>
                     </header>
                     <control>
                         <create name="add_specification_line" string="Add a line"/>
                     </control>
                     <!--<button name="open_record" type="object" class="oe_highlight"/>-->
                     <field name="project_id" readonly="1"/>
-                    <field name="commercial_budget_id"   optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                    <field name="budget_state" invisible="1" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="approve_state" readonly="1" optional="show"/>
+                    <field name="commercial_budget_id"   optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="budget_state" invisible="1" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="specification_state"   optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="currency_id" invisible="1" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="project_office_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
@@ -145,12 +181,13 @@
         </record>
 
         <record id="show_comercial_budget_spec" model="ir.actions.act_window">
-            <field name="name">comercial_budgets</field>
+            <field name="name">Projects</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">project_budget.commercial_budget_spec</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_commercial_budget_spec_search"></field>
-            <field name="context">{'search_default_group_by_provider': True}</field>
+<!--            <field name="context">{'search_default_group_by_provider': True}</field>-->
+            <field name="context">{"search_default_budget_state_working":True}</field>
         </record>
 
 <!-- commercial_budget -->
@@ -174,11 +211,18 @@
             <field name="model">project_budget.commercial_budget</field>
             <field name="arch" type="xml">
                <form string="Commercial budget">
+                <header>
+                    <!--The oe_highlight class gives the button a red color when it is saved.
+                    It is usually used to indicate the expected behaviour. -->
+                    <button string="Fix budget" type="object" name="set_budget_fixed" class="oe_highlight" attrs="{'invisible': [('budget_state', '=', 'fixed')]}"/>
+                    <button string="Return to work" type="object" name="set_budget_work" class="oe_highlight" attrs="{'invisible': [('budget_state', '!=', 'fixed')]}"/>
+                </header>
+
                         <group>
                             <group>
                                 <group>
 <!--                                    <button name="isuseradmin" string="isuseradmin" type="object"/>-->
-                                    <field name="budget_state"/>
+                                    <field name="budget_state" readonly="1"/>
                                     <field name="currency_id" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                                 </group>
                                 <group>
@@ -187,7 +231,7 @@
                                 </group>
                             </group>
                             <group name="detail3">
-                                <field name="date_actual" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                                <field name="date_actual" readonly="1"/>
                                 <field name="year" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                             </group>
                         </group>
@@ -198,37 +242,46 @@
                                 widget="section_and_note_one2many"
                                 mode="tree"
                             >
-                            <tree>
-                                <!--string="Specification" editable="bottom"-->
+<!--                                <tree delete="0"-->
+<!--                                      decoration-danger="approve_state=='need_approve_manager'"-->
+<!--                                      decoration-warning="approve_state=='need_approve_supervisor'"-->
+<!--                                      decoration-success="approve_state=='approved'"-->
+<!--                                      decoration-muted="specification_state=='cancel'"-->
+<!--                                      default_order="project_id desc"-->
+<!--                                >-->
 
-                                <control>
-                                    <create name="add_specification_line" string="Add a line"/>
-                                </control>
-<!--                                    <button name="open_record" string="Edit" class="oe_highlight" type="object"/>-->
-                                    <field name="specification_state"   optional="show" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="budget_state" invisible="1" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="currency_id" invisible="1" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="project_office_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="project_manager_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="industry_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="customer_status_id" force_save="1" options="{'no_open': True,}"  optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="customer_organization_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="essence_project" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="end_presale_project_quarter"/>
-                                    <field name="end_sale_project_quarter"/>
-                                    <field name="total_amount_of_revenue" optional="show"/>
-                                    <field name="cost_price" optional="show"/>
-                                    <field name="margin_income" optional="show"/>
-                                    <field name="profitability" optional="show"/>
-                                    <field name="estimated_probability" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="vat_attribute_id" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="legal_entity_signing_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="project_type_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="comments" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="technological_direction_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+<!--                                &lt;!&ndash;string="Specification" editable="bottom"&ndash;&gt;-->
 
-                              </tree>
+<!--                                <control>-->
+<!--                                    <create name="add_specification_line" string="Add a line"/>-->
+<!--                                </control>-->
+<!--&lt;!&ndash;                                    <button name="open_record" string="Edit" class="oe_highlight" type="object"/>&ndash;&gt;-->
+<!--                                    <field name="project_id" readonly="1"/>-->
+<!--                                    <field name="approve_state" readonly="1"/>-->
+<!--                                    <field name="specification_state"   optional="show" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="budget_state" invisible="1" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="currency_id" invisible="1" options="{'no_open': True}" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="project_office_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="project_manager_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="industry_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="customer_status_id" force_save="1" options="{'no_open': True,}"  optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="customer_organization_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="essence_project" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="end_presale_project_quarter"/>-->
+<!--                                    <field name="end_sale_project_quarter"/>-->
+<!--                                    <field name="total_amount_of_revenue" optional="show"/>-->
+<!--                                    <field name="cost_price" optional="show"/>-->
+<!--                                    <field name="margin_income" optional="show"/>-->
+<!--                                    <field name="profitability" optional="show"/>-->
+<!--                                    <field name="estimated_probability" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="vat_attribute_id" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="legal_entity_signing_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="project_type_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="comments" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+<!--                                    <field name="technological_direction_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
+
+<!--                              </tree>-->
                             </field>
                             </page>
                         </notebook>

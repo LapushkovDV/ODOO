@@ -7,7 +7,7 @@
             <field name="domain_force">["&amp;",('project_supervisor_id.id','in', user.supervisor_rule.ids),('project_manager_id.id','in', user.manager_rule.ids)
                 ]
             </field>
-            <field name="groups" eval="[(4, ref('project_budget.project_budget_user'))]"/>
+            <field name="groups" eval="[(4, ref('project_budget.project_budget_users'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>

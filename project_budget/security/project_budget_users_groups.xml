@@ -6,8 +6,8 @@
             <field name="sequence">3</field>
         </record>
 
-        <record id="project_budget_user" model="res.groups">
-            <field name="name">Project User</field>
+        <record id="project_budget_users" model="res.groups">
+            <field name="name">Project users</field>
             <field name="category_id" ref="project_budget.module_category_services_budget_project"/>
 <!--            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
 <!--            <field name="category_id" ref="base.module_category_services_project"/>-->
@@ -18,5 +18,6 @@
 <!--            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
 <!--            <field name="category_id" ref="base.module_category_services_project"/>-->
         </record>
+
     </data>
 </odoo>

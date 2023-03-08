@@ -11,6 +11,7 @@
                 </control>
                     <field name="user_id" force_save="1" options="{'no_open': True,}"/>
                     <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}"/>
+                    <field name="can_approve_project"/>
                     <field name="descr"/>
                  </tree>
             </field>

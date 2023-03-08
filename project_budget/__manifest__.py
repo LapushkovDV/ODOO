@@ -5,6 +5,8 @@
     'depends': ['base','mail','uom'],
     'description':"""
     """,
+    'author': 'lapus',
+    'support': 'lapushkov@yandex.ru',
     'assets': {
         'web._assets_primary_variables': [
             'web/static/src/scss/primary_variables.scss'
@@ -27,6 +29,7 @@
 
     ],
     'application':True,
+    'images': ['static/description/banner.png'],
     'installable':True,
     'auto_install': False,
     'license': 'LGPL-3',

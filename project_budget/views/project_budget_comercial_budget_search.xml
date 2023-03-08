@@ -5,11 +5,12 @@
             <field name="model">project_budget.commercial_budget_spec</field>
             <field name="arch" type="xml">
             <search string="Search contacts">
-                <field name="essence_project"></field>
-                <filter string="essence project" domain="[('essence_project', '!=', '')]" name="essence_project"></filter>
+                <field name="budget_state"></field>
+                <filter string="Working Budget" domain="[('budget_state', '=', 'work')]" name="budget_state_working"></filter>
                 <group expand="0" string="Group By">
                     <filter string="specification state" name="specification_state" context="{'group_by': 'specification_state'}"></filter>
                     <filter string="project office" name="project_office_id" context="{'group_by': 'project_office_id'}"></filter>
+                    <filter string="project supervisor" name="project_office_id" context="{'group_by': 'project_supervisor_id'}"></filter>
                 </group>
             </search>
             </field>

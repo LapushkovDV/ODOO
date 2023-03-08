@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
 
 class commercial_budget(models.Model):
@@ -6,7 +6,7 @@ class commercial_budget(models.Model):
 
     name = fields.Char(string="commercial_budget name", required=True)
     budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False)
-    date_actual = fields.Date(string="Actuality date", index=True)
+    date_actual = fields.Date(string="Actuality date", index=True, copy=False)
     year = fields.Integer(string="Budget year", required=True, index=True,default=2023)
     currency_id = fields.Many2one('res.currency', string='Account Currency', tracking=True)
     descr = fields.Text( string='Description', default="")
@@ -24,14 +24,37 @@ class commercial_budget(models.Model):
     def _check_date_end(self):
         for record in self:
             if record.year < 2022 or record.year > 2030:
-                raise ValidationError("The year must be between 2022-2030")
+                raisetext = _("The year must be between 2022-2030")
+                raise ValidationError(raisetext)
 
     def copy(self, default=None):
         default = dict(default or {})
-        default['name'] = 'Copy_'+self.name
+        default['name'] = 'Copy_' + self.name
         return super(commercial_budget, self).copy(default)
 
+    def set_budget_fixed(self):
+        if not self.user_has_groups('project_budget.project_budget_admin'):
+            raisetext=_("Only users in group project_budget.project_budget_admin can set budget to fixed")
+            raise (ValidationError(raisetext))
+        else:
+            self.ensure_one()
+            self.budget_state='fixed'
+            self.date_actual = fields.datetime.now()
+            return False
 
+    def set_budget_work(self):
+        self.ensure_one()
+        working_budgets = self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')])
+        if len(working_budgets) > 0 :
+            raise (ValidationError("Aready exists budget in work!"))
+        else:
+            if not self.user_has_groups('project_budget.project_budget_admin'):
+                raisetext =_("Only users in group project_budget.project_budget_admin can return budget to work")
+                raise (ValidationError(raisetext))
+            else:
+                self.budget_state='work'
+                self.date_actual=None
+                return False
 
 class commercial_budget_spec(models.Model):
     _name = 'project_budget.commercial_budget_spec'
@@ -57,11 +80,26 @@ class commercial_budget_spec(models.Model):
             return domain
         return domain
 
+    def _get_commercial_budget_list(self):
+        domain = [('id', 'in','-1')]
+        commercial_budget = self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')])
+        commercial_budget_list = []
+        for each in commercial_budget:
+            commercial_budget_list.append(each.id)
+        if commercial_budget_list:
+            domain = [('id', 'in', commercial_budget_list)]
+            return domain
+        return domain
+
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True,
                              default=lambda self: self.env['ir.sequence'].next_by_code('project_budget.commercial_budget_spec'))
-    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True, index=True, default='prepare', store=True)
+    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True, index=True, default='prepare', store=True, copy=True)
+    approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
+                                    required=True, index=True, default='need_approve_manager', store=True, copy=False)
     currency_id = fields.Many2one('res.currency', string='Account Currency', tracking=True, compute='_compute_reference')
-    commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False)
+    commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
+                                           ,default=lambda self: self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')], limit=1)
+                                           , domain=_get_commercial_budget_list)
     budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False, compute='_compute_reference', store=True)
     project_office_id = fields.Many2one('project_budget.project_office', string='project_office', required=True,
                                         copy=True)
@@ -162,6 +200,43 @@ class commercial_budget_spec(models.Model):
             else:
                 fieldquarter.end_sale_project_quarter = 'NA'
 
+
+    def user_is_supervisor(self,supervisor_id):
+        supervisor_access = self.env['project_budget.project_supervisor_access'].search([('user_id.id', '=', self.env.user.id)
+                                                                                        ,('project_supervisor_id.id', '=', supervisor_id)
+                                                                                        ,('can_approve_project','=',True)])
+        if not supervisor_access :
+            return False
+        else: return True
+
+    def set_approve_manager(self):
+        for rows in self:
+            if rows.approve_state=="need_approve_manager" and rows.budget_state == 'work' and rows.specification_state !='cancel':
+                rows.write({
+                    'approve_state': "need_approve_supervisor"
+                })
+                # rows.approve_state="need_approve_supervisor"
+        return False
+
+    def set_approve_supervisor(self):
+        for rows in self:
+            if rows.approve_state=="need_approve_supervisor" and rows.budget_state == 'work' and rows.specification_state !='cancel':
+                if self.user_is_supervisor(rows.project_supervisor_id.id) or self.user_has_groups('project_budget.project_budget_admin'):
+                    # rows.approve_state="approved"
+                   rows.write({
+                       'approve_state': "approved"
+                     })
+        return False
+
+    def cancel_approve(self):
+        for rows in self:
+            if (rows.approve_state=="approved" or rows.approve_state=="need_approve_supervisor") and rows.budget_state == 'work' and rows.specification_state !='cancel':
+                if self.user_is_supervisor(rows.project_supervisor_id.id) or self.user_has_groups('project_budget.project_budget_admin'):
+                    # rows.approve_state="need_approve_manager"
+                    rows.write({
+                        'approve_state': "need_approve_manager"
+                    })
+        return False
 
     def open_record(self):
         self.ensure_one()
