@@ -114,8 +114,8 @@
                 <form>
                     <sheet string="project_manager">
                             <group>
-                                    <field name="name"/>
-                                    <field name="code"/>
+                                <field name="name"/>
+                                <field name="code"/>
                             </group>
                             <group>
                                 <field name="descr" widget="html"/>

@@ -74,9 +74,13 @@ class commercial_budget_spec(models.Model):
             return domain
         return domain
 
+    def _get_manager_access(self):
+        return self.env['project_budget.project_manager_access'].search(
+            [('user_id.id', '=', self.env.user.id)])
+
     def _get_manager_list(self):
         domain = []
-        manager_access = self.env['project_budget.project_manager_access'].search([('user_id.id', '=', self.env.user.id)])
+        manager_access = self._get_manager_access()
         manager_list = []
         for each in manager_access:
             manager_list.append(each.project_manager_id.id)
@@ -96,6 +100,15 @@ class commercial_budget_spec(models.Model):
             return domain
         return domain
 
+    def _get_first_manager_from_access(self):
+        msg = self.env['project_budget.project_manager'].search([('id', '=', '-1')])
+        return msg
+        # manager_access = self._get_manager_access()
+        # if manager_access:
+        #     return self.env['project_budget.project_managerdddd'].search(
+        #             [('id333', '=', manager_access[0].project_manager_id.id)])
+        # return None
+
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True,
                              default=_('ID will appear after save')) #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec'))
     specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True, index=True, default='prepare', store=True, copy=True)
@@ -112,7 +125,7 @@ class commercial_budget_spec(models.Model):
                                             required=True, copy=True, domain=_get_supervisor_list)
 
     project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=True,
-                                         copy=True, domain=_get_manager_list)
+                                         copy=True, defaut=_get_first_manager_from_access, domain=_get_manager_list)
     customer_organization_id = fields.Many2one('project_budget.customer_organization', string='customer_organization',
                                                required=True, copy=True)
     customer_status_id = fields.Many2one('project_budget.customer_status', string='customer_status', required=True,
@@ -271,6 +284,10 @@ class commercial_budget_spec(models.Model):
             if not vals.get('project_id') or vals['project_id'] == _('ID will appear after save'):
                 vals['project_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec')
         return super().create(vals_list)
+
+    def mysave(self):
+        # система автоматом походу сохраняет все перед вызовом функции
+        return False
 
     def unlink(self):
         """ dont delete.
