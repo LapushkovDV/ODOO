@@ -2,10 +2,11 @@ from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
 
 class commercial_budget(models.Model):
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _name = 'project_budget.commercial_budget'
     _description = "project_commercial budgewt"
     name = fields.Char(string="commercial_budget name", required=True)
-    budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False)
+    budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False, tracking=True)
     date_actual = fields.Date(string="Actuality date", index=True, copy=False)
     year = fields.Integer(string="Budget year", required=True, index=True,default=2023)
     currency_id = fields.Many2one('res.currency', string='Account Currency')
@@ -64,6 +65,7 @@ class commercial_budget(models.Model):
 class commercial_budget_spec(models.Model):
     _name = 'project_budget.commercial_budget_spec'
     _description = "project_office commercial budget projects"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     def _get_supervisor_list(self):
         domain = []
         supervisor_access = self.env['project_budget.project_supervisor_access'].search([('user_id.id', '=', self.env.user.id)])
@@ -110,21 +112,23 @@ class commercial_budget_spec(models.Model):
 
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True,
                              default=_('ID will appear after save')) #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec'))
-    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True, index=True, default='prepare', store=True, copy=True)
+    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True,
+                                           index=True, default='prepare', store=True, copy=True, tracking=True)
     approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
-                                    required=True, index=True, default='need_approve_manager', store=True, copy=False)
+                                    required=True, index=True, default='need_approve_manager', store=True, copy=False, tracking=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency',  compute='_compute_reference')
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
                                            ,default=lambda self: self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')], limit=1)
                                            , domain=_get_commercial_budget_list)
-    budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False, compute='_compute_reference', store=True)
+    budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False,
+                                    compute='_compute_reference', store=True, tracking=True)
     project_office_id = fields.Many2one('project_budget.project_office', string='project_office', required=True,
                                         copy=True)
     project_supervisor_id = fields.Many2one('project_budget.project_supervisor', string='project_supervisor',
-                                            required=True, copy=True, domain=_get_supervisor_list)
+                                            required=True, copy=True, domain=_get_supervisor_list, tracking=True)
 
     project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=True,
-                                         copy=True, default=_get_first_manager_from_access, domain=_get_manager_list)
+                                         copy=True, default=_get_first_manager_from_access, domain=_get_manager_list, tracking=True)
     customer_organization_id = fields.Many2one('project_budget.customer_organization', string='customer_organization',
                                                required=True, copy=True)
     customer_status_id = fields.Many2one('project_budget.customer_status', string='customer_status', required=True,
@@ -132,14 +136,14 @@ class commercial_budget_spec(models.Model):
     industry_id = fields.Many2one('project_budget.industry', string='industry', required=True, copy=True)
     essence_project = fields.Text(string='essence_project', default = "")
     end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)', compute='_compute_quarter', store=True)
-    end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True, default=fields.datetime.now())
+    end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True, default=fields.datetime.now(), tracking=True)
     end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter', store=True)
-    end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)', required=True,default=fields.datetime.now())
+    end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)', required=True,default=fields.datetime.now(), tracking=True)
     vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True)
-    total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals', store=True)
+    total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals', store=True, tracking=True)
     revenue_from_the_sale_of_works =fields.Monetary(string='revenue_from_the_sale_of_works(services)')
     revenue_from_the_sale_of_goods = fields.Monetary(string='revenue_from the sale of goods')
-    cost_price = fields.Monetary(string='cost_price', compute='_compute_spec_totals', store=True)
+    cost_price = fields.Monetary(string='cost_price', compute='_compute_spec_totals', store=True, tracking=True)
     cost_of_goods = fields.Monetary(string='cost_of_goods')
     own_works_fot = fields.Monetary(string='own_works_fot')
     third_party_works = fields.Monetary(string='third_party_works(subcontracting)')
@@ -154,7 +158,7 @@ class commercial_budget_spec(models.Model):
     margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
     profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals', store=True)
     estimated_probability = fields.Selection([('30', '30'), ('50', '50'), ('75', '75'), ('100', '100')],required=True
-                                             ,string='estimated_probability of project implementation',default = '30', copy = True)
+                                             ,string='estimated_probability of project implementation',default = '30', copy = True, tracking=True)
 
     legal_entity_signing_id = fields.Many2one('project_budget.legal_entity_signing', string='legal_entity_signing a contract from the NCC', required=True, copy=True)
     project_type_id = fields.Many2one('project_budget.project_type',
