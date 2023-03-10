@@ -2,6 +2,7 @@ from odoo import models
 
 class report_budget_excel(models.AbstractModel):
     _name = 'report.project_budget.report_budget_excel'
+    _description = 'project_budget.report_budget_excel'
     _inherit = 'report.report_xlsx.abstract'
     def generate_xlsx_report(self, workbook, data, budgets):
         for budget in budgets:

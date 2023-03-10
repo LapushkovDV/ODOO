@@ -3,12 +3,12 @@ from odoo.exceptions import ValidationError
 
 class commercial_budget(models.Model):
     _name = 'project_budget.commercial_budget'
-
+    _description = "project_commercial budgewt"
     name = fields.Char(string="commercial_budget name", required=True)
     budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False)
     date_actual = fields.Date(string="Actuality date", index=True, copy=False)
     year = fields.Integer(string="Budget year", required=True, index=True,default=2023)
-    currency_id = fields.Many2one('res.currency', string='Account Currency', tracking=True)
+    currency_id = fields.Many2one('res.currency', string='Account Currency')
     descr = fields.Text( string='Description', default="")
     commercial_budget_spec_ids = fields.One2many(
         comodel_name='project_budget.commercial_budget_spec',
@@ -63,6 +63,7 @@ class commercial_budget(models.Model):
 
 class commercial_budget_spec(models.Model):
     _name = 'project_budget.commercial_budget_spec'
+    _description = "project_office commercial budget projects"
     def _get_supervisor_list(self):
         domain = []
         supervisor_access = self.env['project_budget.project_supervisor_access'].search([('user_id.id', '=', self.env.user.id)])
@@ -101,20 +102,18 @@ class commercial_budget_spec(models.Model):
         return domain
 
     def _get_first_manager_from_access(self):
-        msg = self.env['project_budget.project_manager'].search([('id', '=', '-1')])
-        return msg
-        # manager_access = self._get_manager_access()
-        # if manager_access:
-        #     return self.env['project_budget.project_managerdddd'].search(
-        #             [('id333', '=', manager_access[0].project_manager_id.id)])
-        # return None
+        manager_access = self._get_manager_access()
+        if manager_access:
+            return self.env['project_budget.project_manager'].search(
+                    [('id', '=', manager_access[0].project_manager_id.id)])
+        return None
 
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True,
                              default=_('ID will appear after save')) #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec'))
     specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True, index=True, default='prepare', store=True, copy=True)
     approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
                                     required=True, index=True, default='need_approve_manager', store=True, copy=False)
-    currency_id = fields.Many2one('res.currency', string='Account Currency', tracking=True, compute='_compute_reference')
+    currency_id = fields.Many2one('res.currency', string='Account Currency',  compute='_compute_reference')
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
                                            ,default=lambda self: self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')], limit=1)
                                            , domain=_get_commercial_budget_list)
@@ -125,7 +124,7 @@ class commercial_budget_spec(models.Model):
                                             required=True, copy=True, domain=_get_supervisor_list)
 
     project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=True,
-                                         copy=True, defaut=_get_first_manager_from_access, domain=_get_manager_list)
+                                         copy=True, default=_get_first_manager_from_access, domain=_get_manager_list)
     customer_organization_id = fields.Many2one('project_budget.customer_organization', string='customer_organization',
                                                required=True, copy=True)
     customer_status_id = fields.Many2one('project_budget.customer_status', string='customer_status', required=True,

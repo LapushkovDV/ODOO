@@ -34,13 +34,16 @@
                             </group>
                         </group>
                         <group col="1">
-                            <field name="commercial_budget_id" required="1" placeholder="e.g. The Pizzeria Inn"
-                                    options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
-                                />
-                        </group>
-                        <group string = "General" >
+                            <field name="commercial_budget_id" required="1"
+                                  options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
+                                  invisible="1"
+                            />
                         </group>
                         <h4>
+                            <group string = "General" >
+                            </group>
+                        </h4>
+                        <h5>
                             <group col="3">
                                 <group>
                                     <field class="text-break" name="project_office_id" placeholder="select project office" force_save="1" options="{'no_open': True,}"
@@ -60,7 +63,7 @@
                                             decoration-bf="1"/>
                                 </group>
                             </group>
-                        </h4>
+                        </h5>
                         <group col="3">
                             <group>
                                 <field name="project_type_id" force_save="1" options="{'no_open': True,}" placeholder="select project type"
@@ -77,8 +80,11 @@
                             <field name="essence_project" placeholder="type here essence of the project" colspan="1"
                                                attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                         </group>
-
-                        <group string="Customer/Organization" col="3">
+                        <h4>
+                            <group string="Customer/Organization" >
+                            </group>
+                        </h4>
+                        <group col="3">
                             <group>
                                 <field name="customer_organization_id" force_save="1" options="{'no_open': True,}" placeholder="select costomer/organization"
                                        attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
@@ -94,26 +100,32 @@
                                        attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                         </group>
+                        <h4>
                             <group string="Dates">
-                                <group col="2">
-                                    <label for="end_presale_project_quarter" string="end_presale_project_quarter" class="oe_inline"/>
-                                    <label for="end_presale_project_month" string="end_presale_project_month" class="oe_inline" />
-                                    <field name="end_presale_project_quarter" nolabel="1"  class="oe_inline"/>
-                                    <field name="end_presale_project_month" nolabel="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}" class="oe_inline"/>
-                                </group>
-                                <group col="2">
-                                    <label for="end_sale_project_quarter" string="end_sale_project_quarter"/>
-                                    <label for="end_sale_project_month" string="end_sale_project_month"/>
-                                    <field name="end_sale_project_quarter" nolabel="1"/>
-                                    <field name="end_sale_project_month" nolabel="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                </group>
                             </group>
+                        </h4>
+                        <group>
+                            <group col="2">
+                                <label for="end_presale_project_quarter" string="end_presale_project_quarter" class="oe_inline"/>
+                                <label for="end_presale_project_month" string="end_presale_project_month" class="oe_inline" />
+                                <field name="end_presale_project_quarter" nolabel="1"  class="oe_inline"/>
+                                <field name="end_presale_project_month" nolabel="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}" class="oe_inline"/>
+                            </group>
+                            <group col="2">
+                                <label for="end_sale_project_quarter" string="end_sale_project_quarter"/>
+                                <label for="end_sale_project_month" string="end_sale_project_month"/>
+                                <field name="end_sale_project_quarter" nolabel="1"/>
+                                <field name="end_sale_project_month" nolabel="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                            </group>
+                        </group>
                         <group col="1">
                             <field name="comments" placeholder="type comments for the project" colspan="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                         </group>
-                        <group string="Financial indicators">
-                        </group>
                         <h4>
+                            <group string="Financial indicators">
+                            </group>
+                        </h4>
+                        <h5>
                             <group col="3">
                                 <group>
                                     <field name="currency_id" options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
@@ -123,40 +135,37 @@
                                        attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                 </group>
                                 <group>
-                                    <field name="total_amount_of_revenue"
-                                        decoration-bf="1"
-                                        decoration-success="total_amount_of_revenue &gt; 0"
-                                    />
-                                </group>
-                            </group>
-                        </h4>>
-                        <group>
-                            <group>
-                                <group>
                                     <field name="margin_income"
                                         decoration-bf="1"
                                         decoration-success="margin_income &gt; 0"
                                         decoration-danger="margin_income &lt; 0"
                                         />
-                                    <field name="profitability"/>
                                 </group>
+                            </group>
+                        </h5>
+                        <group>
+                            <group>
                                 <group>
+                                     <field name="total_amount_of_revenue"
+                                        decoration-bf="1"
+                                        decoration-success="total_amount_of_revenue &gt; 0"
+                                    />
                                     <field name="revenue_from_the_sale_of_works" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                     <field name="revenue_from_the_sale_of_goods" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                 </group>
+                                <group>
+                                    <field name="cost_price"
+                                        decoration-bf="1"
+                                        decoration-success="cost_price &gt; 0"
+                                        />
+                                    <field name="cost_of_goods" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                    <field name="own_works_fot" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                    <field name="third_party_works" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                    <field name="awards_on_results_project" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                    <field name="transportation_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                </group>
                             </group>
                         <group>
-                            <group>
-                                <field name="cost_price"
-                                    decoration-bf="1"
-                                    decoration-success="cost_price &gt; 0"
-                                    />
-                                <field name="cost_of_goods" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="own_works_fot" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="third_party_works" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="awards_on_results_project" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="transportation_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                            </group>
                             <group>
                                 <field name="travel_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                 <field name="representation_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
@@ -164,6 +173,9 @@
                                 <field name="warranty_service_costs" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                 <field name="rko_other" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                 <field name="other_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                            </group>
+                            <group>
+                                <field name="profitability"/>
                             </group>
                         </group>
                         </group>
