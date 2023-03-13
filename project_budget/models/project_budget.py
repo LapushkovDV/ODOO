@@ -135,9 +135,9 @@ class commercial_budget_spec(models.Model):
                                          copy=True)
     industry_id = fields.Many2one('project_budget.industry', string='industry', required=True, copy=True)
     essence_project = fields.Text(string='essence_project', default = "")
-    end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)', compute='_compute_quarter', store=True)
+    end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)', compute='_compute_quarter', store=True, tracking=True)
     end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True, default=fields.datetime.now(), tracking=True)
-    end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter', store=True)
+    end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter', store=True, tracking=True)
     end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)', required=True,default=fields.datetime.now(), tracking=True)
     vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True)
     total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals', store=True, tracking=True)
@@ -156,7 +156,7 @@ class commercial_budget_spec(models.Model):
     rko_other = fields.Monetary(string='rko_other')
     other_expenses = fields.Monetary(string='other_expenses')
     margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
-    profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals', store=True)
+    profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals', store=True, tracking=True)
     estimated_probability = fields.Selection([('30', '30'), ('50', '50'), ('75', '75'), ('100', '100')],required=True
                                              ,string='estimated_probability of project implementation',default = '30', copy = True, tracking=True)
 
