@@ -6,6 +6,7 @@ class commercial_budget(models.Model):
     _name = 'project_budget.commercial_budget'
     _description = "project_commercial budgewt"
     name = fields.Char(string="commercial_budget name", required=True)
+    etalon_budget = fields.Boolean(string="etalon_budget", default = False)
     budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False, tracking=True)
     date_actual = fields.Date(string="Actuality date", index=True, copy=False)
     year = fields.Integer(string="Budget year", required=True, index=True,default=2023)
@@ -78,7 +79,7 @@ class planned_cash_flow(models.Model):
 
 class planned_acceptance_flow(models.Model):
     _name = 'project_budget.planned_acceptance_flow'
-    _description = "planned cash flow"
+    _description = "planned acceptance flow"
     _inherit = ['mail.thread', 'mail.activity.mixin']
     commercial_budget_spec_id = fields.Many2one('project_budget.commercial_budget_spec', string='commercial_budget_spec_id', index=True)
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
@@ -89,6 +90,36 @@ class planned_acceptance_flow(models.Model):
     def _compute_reference(self):
         for row in self:
             row.currency_id = row.commercial_budget_spec_id.currency_id
+
+
+class fact_cash_flow(models.Model):
+    _name = 'project_budget.fact_cash_flow'
+    _description = "fact cash flow"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    commercial_budget_spec_id = fields.Many2one('project_budget.commercial_budget_spec', string='commercial_budget_spec_id',index=True)
+    date_cash = fields.Date(string="date_cash" , required=True, copy=True)
+    currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
+    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
+    doc_cash = fields.Char(string="doc_cash", required=True, copy=True)
+    @ api.depends('commercial_budget_spec_id.currency_id')
+    def _compute_reference(self):
+        for row in self:
+            row.currency_id = row.commercial_budget_spec_id.currency_id
+
+class fact_acceptance_flow(models.Model):
+    _name = 'project_budget.fact_acceptance_flow'
+    _description = "fact acceptance flow"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    commercial_budget_spec_id = fields.Many2one('project_budget.commercial_budget_spec', string='commercial_budget_spec_id', index=True)
+    date_cash = fields.Date(string="date_cash" , required=True, copy=True)
+    currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
+    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
+    doc_cash = fields.Char(string="doc_cash", required=True, copy=True)
+    @ api.depends('commercial_budget_spec_id.currency_id')
+    def _compute_reference(self):
+        for row in self:
+            row.currency_id = row.commercial_budget_spec_id.currency_id
+
 
 
 class commercial_budget_spec(models.Model):
@@ -142,10 +173,11 @@ class commercial_budget_spec(models.Model):
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True,
                              default=_('ID will appear after save')) #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec'))
     specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True,
-                                           index=True, default='prepare', store=True, copy=True, tracking=True)
+                                           index=True, default='prepare', store=True, copy=True, tracking=True, compute="_compute_specification_state")
     approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
                                     required=True, index=True, default='need_approve_manager', store=True, copy=False, tracking=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency',  compute='_compute_reference')
+    etalon_budget = fields.Boolean(string="etalon_budget", compute='_compute_reference')
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
                                            ,default=lambda self: self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')], limit=1)
                                            , domain=_get_commercial_budget_list)
@@ -189,7 +221,7 @@ class commercial_budget_spec(models.Model):
     other_expenses = fields.Monetary(string='other_expenses')
     margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
     profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals', store=True, tracking=True)
-    estimated_probability = fields.Selection([('30', '30'), ('50', '50'), ('75', '75'), ('100', '100')],required=True
+    estimated_probability = fields.Selection([('0','0'),('30', '30'), ('50', '50'), ('75', '75'), ('100', '100')],required=True
                                              ,string='estimated_probability of project implementation',default = '30', copy = True, tracking=True)
 
     legal_entity_signing_id = fields.Many2one('project_budget.legal_entity_signing', string='legal_entity_signing a contract from the NCC', required=True, copy=True)
@@ -199,18 +231,48 @@ class commercial_budget_spec(models.Model):
     comments  = fields.Text(string='comments project', default = "")
     technological_direction_id = fields.Many2one('project_budget.technological_direction',
                                               string='technological_direction', required=True,copy=True)
-    planned_cash_flow_sum = fields.Monetary(string='planned_cash_flow_sum', compute='_compute_planned_cash_flow_sum', store=True, tracking=True)
+    planned_cash_flow_sum = fields.Monetary(string='planned_cash_flow_sum', compute='_compute_planned_cash_flow_sum',
+                                            store=True, tracking=True)
     planned_cash_flow_ids = fields.One2many(
         comodel_name='project_budget.planned_cash_flow',
         inverse_name='commercial_budget_spec_id',
         string="planned cash flow", auto_join=True, copy=True)
 
-    planned_acceptance_flow_sum = fields.Monetary(string='planned_acceptance_flow_sum', compute='_compute_planned_acceptance_flow_sum',
-                                            store=True, tracking=True)
+    step_project_number = fields.Char(string='step project number', store=True, tracking=True)
+    dogovor_number = fields.Char(string='Dogovor number', store=True, tracking=True)
+    planned_acceptance_flow_sum = fields.Monetary(string='planned_acceptance_flow_sum',
+                                                  compute='_compute_planned_acceptance_flow_sum',store=True, tracking=True)
     planned_acceptance_flow_ids = fields.One2many(
         comodel_name='project_budget.planned_acceptance_flow',
         inverse_name='commercial_budget_spec_id',
         string="planned acceptance flow", auto_join=True,copy=True)
+    fact_cash_flow_sum = fields.Monetary(string='fact_cash_flow_sum', compute='_compute_fact_cash_flow_sum', store=True
+                                         , tracking=True)
+    fact_cash_flow_ids = fields.One2many(
+        comodel_name='project_budget.fact_cash_flow',
+        inverse_name='commercial_budget_spec_id',
+        string="fact cash flow", auto_join=True, copy=True)
+    fact_acceptance_flow_sum = fields.Monetary(string='fact_acceptance_flow_sum', compute='_compute_fact_acceptance_flow_sum',
+                                               store=True, tracking=True)
+    fact_acceptance_flow_ids = fields.One2many(
+        comodel_name='project_budget.fact_acceptance_flow',
+        inverse_name='commercial_budget_spec_id',
+        string="fact acceptance flow", auto_join=True,copy=True)
+
+
+    @api.depends('estimated_probability')
+    def _compute_specification_state(self):
+        for row in self:
+            if row.estimated_probability == '0':
+                row.specification_state = 'cancel'
+            if row.estimated_probability == '30':
+                row.specification_state = 'prepare'
+            if row.estimated_probability == '50':
+                row.specification_state = 'prepare'
+            if row.estimated_probability == '75':
+                row.specification_state = 'prepare'
+            if row.estimated_probability == '100':
+                row.specification_state = 'production'
 
     @api.depends("planned_cash_flow_ids.sum_cash")
     def _compute_planned_cash_flow_sum(self):
@@ -225,6 +287,20 @@ class commercial_budget_spec(models.Model):
             row.planned_acceptance_flow_sum = 0
             for row_flow in self.planned_acceptance_flow_ids:
                 row.planned_acceptance_flow_sum = row.planned_acceptance_flow_sum + row_flow.sum_cash
+
+    @api.depends("fact_cash_flow_ids.sum_cash")
+    def _compute_fact_cash_flow_sum(self):
+        for row in self:
+            row.fact_cash_flow_sum = 0
+            for row_flow in self.fact_cash_flow_ids:
+                row.fact_cash_flow_sum = row.fact_cash_flow_sum + row_flow.sum_cash
+
+    @api.depends("fact_acceptance_flow_ids.sum_cash")
+    def _compute_fact_acceptance_flow_sum(self):
+        for row in self:
+            row.fact_acceptance_flow_sum = 0
+            for row_flow in self.fact_acceptance_flow_ids:
+                row.fact_acceptance_flow_sum = row.fact_acceptance_flow_sum + row_flow.sum_cash
 
 
     @ api.depends("revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
@@ -251,6 +327,7 @@ class commercial_budget_spec(models.Model):
     def _compute_reference(self):
         for budget_spec in self:
             budget_spec.currency_id = budget_spec.commercial_budget_id.currency_id
+            budget_spec.etalon_budget = budget_spec.commercial_budget_id.etalon_budget
             budget_spec.budget_state = budget_spec.commercial_budget_id.budget_state
 
     @api.depends('end_presale_project_month','end_sale_project_month')
@@ -296,19 +373,20 @@ class commercial_budget_spec(models.Model):
 
     def set_approve_manager(self):
         for rows in self:
-            if rows.total_amount_of_revenue_with_vat != rows.planned_acceptance_flow_sum:
-                raisetext = _("DENIED. planned_acceptance_flow_sum <> total_amount_of_revenue_with_vat")
-                raise ValidationError(raisetext)
+            if rows.estimated_probability in ('50','75','100'):
+                if rows.total_amount_of_revenue != rows.planned_acceptance_flow_sum:
+                    raisetext = _("DENIED. planned_acceptance_flow_sum <> total_amount_of_revenue")
+                    raise ValidationError(raisetext)
 
-            if rows.total_amount_of_revenue_with_vat != rows.planned_cash_flow_sum:
-                raisetext = _("DENIED. planned_cash_flow_sum <> total_amount_of_revenue_with_vat")
-                raise ValidationError(raisetext)
+                if rows.total_amount_of_revenue_with_vat != rows.planned_cash_flow_sum:
+                    raisetext = _("DENIED. planned_cash_flow_sum <> total_amount_of_revenue_with_vat")
+                    raise ValidationError(raisetext)
 
             if rows.approve_state=="need_approve_manager" and rows.budget_state == 'work' and rows.specification_state !='cancel':
                 rows.write({
                     'approve_state': "need_approve_supervisor"
                 })
-                # rows.approve_state="need_approve_supervisor"
+                    # rows.approve_state="need_approve_supervisor"
         return False
 
     def set_approve_supervisor(self):

@@ -21,9 +21,15 @@
                                 <group col="3">
                                     <group>
                                         <field name="project_id" readonly="1"/>
+                                        <field name="step_project_number"
+                                                attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
+                                        />
                                     </group>
                                     <group>
-                                        <field name="specification_state" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                        <field name="specification_state" readonly="1"/>
+                                        <field name="dogovor_number"
+                                                attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
+                                        />
                                     </group>
                                     <group>
                                         <field name="approve_state" readonly="1"
@@ -180,14 +186,6 @@
                                         </group>
                                     </group>
                                 </group>
-                                <group>
-                                    <group>
-
-                                    </group>
-                                    <group>
-
-                                    </group>
-                                </group>
                             </page>
                             <page string="Forecast">
                                 <field name="budget_state" invisible="1"/>
@@ -196,7 +194,7 @@
                                         <field name="project_id" readonly="1"/>
                                     </group>
                                     <group>
-                                        <field name="specification_state" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                        <field name="specification_state" readonly="1"/>
                                     </group>
                                     <group>
                                         <field name="approve_state" readonly="1"
@@ -223,13 +221,11 @@
                                         </group>
                                     </group>
                                 </h5>
-                                <group col="2">
+                                <h4>
+                                    <group string="planned_cash_flow">
+                                    </group>
+                                <group>
                                     <group>
-                                        <field name="planned_acceptance_flow_sum"
-                                        decoration-bf="1"
-                                        decoration-success="total_amount_of_revenue_with_vat == planned_acceptance_flow_sum"
-                                        decoration-danger="total_amount_of_revenue_with_vat != planned_acceptance_flow_sum"
-                                        />
                                     </group>
                                     <group>
                                         <field name="planned_cash_flow_sum"
@@ -239,9 +235,6 @@
                                         />
                                     </group>
                                 </group>
-                                <h4>
-                                    <group string="planned_cash_flow">
-                                    </group>
                                 </h4>
                                 <field name="planned_cash_flow_ids"
                                 widget="section_and_note_one2many"
@@ -255,6 +248,17 @@
                                 <h4>
                                     <group col="1" string="planned_acceptance_flow">
                                     </group>
+                                <group>
+                                    <group>
+                                    </group>
+                                    <group>
+                                        <field name="planned_acceptance_flow_sum"
+                                        decoration-bf="1"
+                                        decoration-success="total_amount_of_revenue == planned_acceptance_flow_sum"
+                                        decoration-danger="total_amount_of_revenue != planned_acceptance_flow_sum"
+                                        />
+                                    </group>
+                                </group>
                                 </h4>
                                 <field name="planned_acceptance_flow_ids"
                                 widget="section_and_note_one2many"
@@ -263,6 +267,89 @@
                                         <field name="date_cash" placeholder="enter planned cash flow date"/>
                                         <field name="doc_cash" placeholder="type docs description"/>
                                         <field name="sum_cash" placeholder="enter planned cash flow sum "/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Fact">
+                                <field name="budget_state" invisible="1"/>
+                                <group col="3">
+                                    <group>
+                                        <field name="project_id" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="specification_state" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="approve_state" readonly="1"
+                                        decoration-danger="approve_state=='need_approve_manager'"
+                                        decoration-warning="approve_state=='need_approve_supervisor'"
+                                        decoration-success="approve_state=='approved'"
+                                        decoration-muted="specification_state=='cancel'"
+                                        />
+                                    </group>
+                                </group>
+                                <h5>
+                                    <group>
+                                        <group>
+                                             <field name="total_amount_of_revenue"
+                                                decoration-bf="1"
+                                                decoration-success="total_amount_of_revenue &gt; 0"
+                                            />
+                                        </group>
+                                        <group>
+                                             <field name="total_amount_of_revenue_with_vat"
+                                                decoration-bf="1"
+                                                decoration-success="total_amount_of_revenue_with_vat &gt; 0"
+                                            />
+                                        </group>
+                                    </group>
+                                </h5>
+                                <h4>
+                                    <group string="fact_cash_flow">
+                                    </group>
+                                <group>
+                                    <group>
+                                    </group>
+                                    <group>
+                                        <field name="fact_cash_flow_sum"
+                                        decoration-bf="1"
+                                        decoration-success="total_amount_of_revenue_with_vat == fact_cash_flow_sum"
+                                        decoration-danger="total_amount_of_revenue_with_vat != fact_cash_flow_sum"
+                                        />
+                                    </group>
+                                </group>
+                                </h4>
+                                <field name="fact_cash_flow_ids"
+                                widget="section_and_note_one2many"
+                                mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
+                                    <tree editable="bottom">
+                                        <field name="date_cash" placeholder="enter fact cash flow date"/>
+                                        <field name="doc_cash" placeholder="type docs description"/>
+                                        <field name="sum_cash" placeholder="enter fact cash flow sum "/>
+                                    </tree>
+                                </field>
+                                <h4>
+                                    <group col="1" string="fact_acceptance_flow">
+                                    </group>
+                                <group>
+                                    <group>
+                                    </group>
+                                    <group>
+                                        <field name="fact_acceptance_flow_sum"
+                                        decoration-bf="1"
+                                        decoration-success="total_amount_of_revenue == fact_acceptance_flow_sum"
+                                        decoration-danger="total_amount_of_revenue != fact_acceptance_flow_sum"
+                                        />
+                                    </group>
+                                </group>
+                                </h4>
+                                <field name="fact_acceptance_flow_ids"
+                                widget="section_and_note_one2many"
+                                mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
+                                    <tree editable="bottom">
+                                        <field name="date_cash" placeholder="enter fact cash flow date"/>
+                                        <field name="doc_cash" placeholder="type docs description"/>
+                                        <field name="sum_cash" placeholder="enter fact cash flow sum "/>
                                     </tree>
                                 </field>
                             </page>
@@ -356,6 +443,7 @@
             <field name="model">project_budget.commercial_budget</field>
             <field name="arch" type="xml">
                 <tree string="project_office">
+                    <field name="etalon_budget"/>
                     <field name="budget_state"/>
                     <field name="name"/>
                     <field name="date_actual"/>
@@ -379,22 +467,27 @@
                 </header>
                     <sheet>
                         <group>
+                            <field name="etalon_budget" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                        </group>
+                        <group col="4">
                             <group>
-                                <group>
-<!--                                    <button name="isuseradmin" string="isuseradmin" type="object"/>-->
-                                    <field name="budget_state" readonly="1"/>
-                                    <field name="currency_id" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                </group>
-                                <group>
-                                    <field name="name" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                    <field name="descr" colspan="2" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                                </group>
+                                <field name="budget_state" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="currency_id" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                             </group>
                             <group name="detail3">
                                 <field name="date_actual" readonly="1"/>
+                            </group>
+                            <group>
                                 <field name="year" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                             </group>
                         </group>
+                        <group>
+                            <field name="name" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                            <field name="descr" colspan="2" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                        </group>
+
                         <notebook>
                            <page string="Specification" name="Specification">
                             <field
