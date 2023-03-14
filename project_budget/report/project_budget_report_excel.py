@@ -4,11 +4,10 @@ class report_budget_excel(models.AbstractModel):
     _name = 'report.project_budget.report_budget_excel'
     _description = 'project_budget.report_budget_excel'
     _inherit = 'report.report_xlsx.abstract'
-    def generate_xlsx_report(self, workbook, data, budgets):
-        for budget in budgets:
-            report_name = budget.name
+    def printworksheet(self,workbook,budget,namesheet,stateproject):
+        report_name = budget.name
             # One sheet by partner
-        sheet = workbook.add_worksheet('КБ')
+        sheet = workbook.add_worksheet(namesheet)
         bold = workbook.add_format({'bold': True})
         money_format = workbook.add_format({'num_format': '#,##0'})
         head_format = workbook.add_format({
@@ -170,10 +169,10 @@ class report_budget_excel(models.AbstractModel):
         sheet.autofilter(row, 0, row, column)
 
         for spec in budget.commercial_budget_spec_ids:
-            if spec.specification_state == 'prepare':
+            if spec.specification_state == stateproject:
                 row += 1
                 column = 0
-                sheet.write_string(row, column, spec.project_office_id.project_id, row_format)
+                sheet.write_string(row, column, spec.project_id, row_format)
                 column += 1
                 sheet.write_string(row, column, spec.project_office_id.name, row_format)
                 column += 1
@@ -245,3 +244,11 @@ class report_budget_excel(models.AbstractModel):
                 #sheet.write(row, 0, 'Total', bold, row_format)
                 #sheet.write(row, 2, '=SUM(C2:C5, row_format)', money_format, row_format)
 
+
+    def generate_xlsx_report(self, workbook, data, budgets):
+        for budget in budgets:
+            self.printworksheet(workbook, budget, 'КБ', 'prepare')
+        for budget in budgets:
+            self.printworksheet(workbook, budget, 'ПБ', 'production')
+        for budget in budgets:
+            self.printworksheet(workbook, budget, 'Отменен', 'cancel')

@@ -130,6 +130,7 @@ class legal_entity_signing(models.Model):
     _description = "project_legal entity signing"
     name = fields.Char(string="legal_entity_signing name", required=True)
     code = fields.Char(string="legal_entity_signing code", required=True)
+    percent_fot = fields.Float(string="fot_percent", required=True, default=0)
     descr = fields.Char(string="legal_entity_signing description")
 
 class project_type(models.Model):

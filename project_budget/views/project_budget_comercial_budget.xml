@@ -171,7 +171,7 @@
                                         <group>
                                             <field name="travel_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                             <field name="representation_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                            <field name="taxes_fot_premiums" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                            <field name="taxes_fot_premiums" />
                                             <field name="warranty_service_costs" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                             <field name="rko_other" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                             <field name="other_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
@@ -433,8 +433,9 @@
             <field name="res_model">project_budget.commercial_budget_spec</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_commercial_budget_spec_search"></field>
-<!--            <field name="context">{'search_default_group_by_provider': True}</field>-->
-            <field name="context">{"search_default_budget_state_working":True}</field>
+            <field name="domain">[('budget_state', '=', 'work')]</field>
+            <field name="context">{'search_default_group_by_provider': True}</field>
+<!--            <field name="context">{"search_default_budget_state_working":True}</field>-->
         </record>
 
 <!-- commercial_budget -->

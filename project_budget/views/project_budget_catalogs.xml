@@ -334,6 +334,7 @@
                 <tree string="legal_entity_signing">
                     <field name="name"/>
                     <field name="code"/>
+                    <field name="percent_fot"/>
                     <field name="descr"/>
                 </tree>
             </field>
@@ -350,6 +351,7 @@
                                     <field name="code"/>
                             </group>
                             <group>
+                                <field name="percent_fot" placeholder="enter FOT percent. e.g. 25"/>
                                 <field name="descr" widget="html"/>
                             </group>
                     </sheet>
