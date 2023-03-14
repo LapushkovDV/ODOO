@@ -286,6 +286,7 @@
                 <tree string="vat_attribute">
                     <field name="name"/>
                     <field name="code"/>
+                    <field name="percent"/>
                     <field name="descr"/>
                 </tree>
             </field>
@@ -302,6 +303,7 @@
                                     <field name="code"/>
                             </group>
                             <group>
+                                <field name="percent"/>
                                 <field name="descr" widget="html"/>
                             </group>
                     </sheet>

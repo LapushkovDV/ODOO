@@ -62,6 +62,35 @@ class commercial_budget(models.Model):
                 self.date_actual=None
                 return False
 
+class planned_cash_flow(models.Model):
+    _name = 'project_budget.planned_cash_flow'
+    _description = "planned cash flow"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    commercial_budget_spec_id = fields.Many2one('project_budget.commercial_budget_spec', string='commercial_budget_spec_id',index=True)
+    date_cash = fields.Date(string="date_cash" , required=True, copy=True)
+    currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
+    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
+    doc_cash = fields.Char(string="doc_cash", required=True, copy=True)
+    @ api.depends('commercial_budget_spec_id.currency_id')
+    def _compute_reference(self):
+        for row in self:
+            row.currency_id = row.commercial_budget_spec_id.currency_id
+
+class planned_acceptance_flow(models.Model):
+    _name = 'project_budget.planned_acceptance_flow'
+    _description = "planned cash flow"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    commercial_budget_spec_id = fields.Many2one('project_budget.commercial_budget_spec', string='commercial_budget_spec_id', index=True)
+    date_cash = fields.Date(string="date_cash" , required=True, copy=True)
+    currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
+    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
+    doc_cash = fields.Char(string="doc_cash", required=True, copy=True)
+    @ api.depends('commercial_budget_spec_id.currency_id')
+    def _compute_reference(self):
+        for row in self:
+            row.currency_id = row.commercial_budget_spec_id.currency_id
+
+
 class commercial_budget_spec(models.Model):
     _name = 'project_budget.commercial_budget_spec'
     _description = "project_office commercial budget projects"
@@ -139,8 +168,11 @@ class commercial_budget_spec(models.Model):
     end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True, default=fields.datetime.now(), tracking=True)
     end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter', store=True, tracking=True)
     end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)', required=True,default=fields.datetime.now(), tracking=True)
-    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True)
+    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True
+                                       ,default=lambda self: self.env['project_budget.vat_attribute'].search([], limit=1))
     total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals', store=True, tracking=True)
+    total_amount_of_revenue_with_vat = fields.Monetary(string='total_amount_of_revenue_with_vat', compute='_compute_spec_totals',
+                                              store=True, tracking=True)
     revenue_from_the_sale_of_works =fields.Monetary(string='revenue_from_the_sale_of_works(services)')
     revenue_from_the_sale_of_goods = fields.Monetary(string='revenue_from the sale of goods')
     cost_price = fields.Monetary(string='cost_price', compute='_compute_spec_totals', store=True, tracking=True)
@@ -167,10 +199,37 @@ class commercial_budget_spec(models.Model):
     comments  = fields.Text(string='comments project', default = "")
     technological_direction_id = fields.Many2one('project_budget.technological_direction',
                                               string='technological_direction', required=True,copy=True)
+    planned_cash_flow_sum = fields.Monetary(string='planned_cash_flow_sum', compute='_compute_planned_cash_flow_sum', store=True, tracking=True)
+    planned_cash_flow_ids = fields.One2many(
+        comodel_name='project_budget.planned_cash_flow',
+        inverse_name='commercial_budget_spec_id',
+        string="planned cash flow", auto_join=True, copy=True)
+
+    planned_acceptance_flow_sum = fields.Monetary(string='planned_acceptance_flow_sum', compute='_compute_planned_acceptance_flow_sum',
+                                            store=True, tracking=True)
+    planned_acceptance_flow_ids = fields.One2many(
+        comodel_name='project_budget.planned_acceptance_flow',
+        inverse_name='commercial_budget_spec_id',
+        string="planned acceptance flow", auto_join=True,copy=True)
+
+    @api.depends("planned_cash_flow_ids.sum_cash")
+    def _compute_planned_cash_flow_sum(self):
+        for row in self:
+            row.planned_cash_flow_sum = 0
+            for row_flow in self.planned_cash_flow_ids:
+                row.planned_cash_flow_sum = row.planned_cash_flow_sum + row_flow.sum_cash
+
+    @api.depends("planned_acceptance_flow_ids.sum_cash")
+    def _compute_planned_acceptance_flow_sum(self):
+        for row in self:
+            row.planned_acceptance_flow_sum = 0
+            for row_flow in self.planned_acceptance_flow_ids:
+                row.planned_acceptance_flow_sum = row.planned_acceptance_flow_sum + row_flow.sum_cash
+
 
     @ api.depends("revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
     'third_party_works', "awards_on_results_project", 'transportation_expenses', 'travel_expenses', 'representation_expenses',
-    'taxes_fot_premiums', "warranty_service_costs", 'rko_other', 'other_expenses')
+    'taxes_fot_premiums', "warranty_service_costs", 'rko_other', 'other_expenses','vat_attribute_id')
     def _compute_spec_totals(self):
         for budget_spec in self:
             budget_spec.total_amount_of_revenue = budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods
@@ -178,6 +237,11 @@ class commercial_budget_spec(models.Model):
             budget_spec.cost_price = budget_spec.cost_price + budget_spec.transportation_expenses+budget_spec.travel_expenses+budget_spec.representation_expenses
             budget_spec.cost_price = budget_spec.cost_price + budget_spec.taxes_fot_premiums+budget_spec.warranty_service_costs+budget_spec.rko_other+budget_spec.other_expenses
             budget_spec.margin_income = budget_spec.total_amount_of_revenue - budget_spec.cost_price
+            if budget_spec.vat_attribute_id.percent == 0:
+                budget_spec.total_amount_of_revenue_with_vat =  budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods
+            else:
+                budget_spec.total_amount_of_revenue_with_vat = (budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods)*100/(100-budget_spec.vat_attribute_id.percent)
+
             if budget_spec.total_amount_of_revenue == 0 :
                 budget_spec.profitability = 0
             else:
@@ -232,6 +296,14 @@ class commercial_budget_spec(models.Model):
 
     def set_approve_manager(self):
         for rows in self:
+            if rows.total_amount_of_revenue_with_vat != rows.planned_acceptance_flow_sum:
+                raisetext = _("DENIED. planned_acceptance_flow_sum <> total_amount_of_revenue_with_vat")
+                raise ValidationError(raisetext)
+
+            if rows.total_amount_of_revenue_with_vat != rows.planned_cash_flow_sum:
+                raisetext = _("DENIED. planned_cash_flow_sum <> total_amount_of_revenue_with_vat")
+                raise ValidationError(raisetext)
+
             if rows.approve_state=="need_approve_manager" and rows.budget_state == 'work' and rows.specification_state !='cancel':
                 rows.write({
                     'approve_state': "need_approve_supervisor"
@@ -287,10 +359,6 @@ class commercial_budget_spec(models.Model):
             if not vals.get('project_id') or vals['project_id'] == _('ID will appear after save'):
                 vals['project_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec')
         return super().create(vals_list)
-
-    def mysave(self):
-        # система автоматом походу сохраняет все перед вызовом функции
-        return False
 
     def unlink(self):
         """ dont delete.

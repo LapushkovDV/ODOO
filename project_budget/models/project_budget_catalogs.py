@@ -56,12 +56,12 @@ class users_budgets_access(models.Model):
         comodel_name='project_budget.project_manager_access',
         inverse_name='user_id',
         string="project_manager_access",
-        copy=True, auto_join=True)
+        copy=False, auto_join=True)
     project_supervisor_access_ids = fields.One2many(
         comodel_name='project_budget.project_supervisor_access',
         inverse_name='user_id',
         string="project_supervisor_access",
-        copy=True, auto_join=True)
+        copy=False, auto_join=True)
 
     supervisor_rule = fields.Many2many(compute='_get_list_supervisor_access_ids', comodel_name='project_budget.project_supervisor')
     manager_rule = fields.Many2many(compute='_get_list_manager_access_ids', comodel_name='project_budget.project_manager')
@@ -122,6 +122,7 @@ class vat_attribute(models.Model):
     _description = "project_vat attribute"
     name = fields.Char(string="vat_attribute name", required=True)
     code = fields.Char(string="vat_attribute code", required=True)
+    percent = fields.Float(string="vat_percent", required=True, default=0)
     descr = fields.Char(string="vat_attribute description")
 
 class legal_entity_signing(models.Model):
