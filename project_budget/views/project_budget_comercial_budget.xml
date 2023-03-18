@@ -56,18 +56,18 @@
                                             <field class="text-break" name="project_office_id" placeholder="select project office" force_save="1" options="{'no_open': True,}"
                                                     attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                                                     decoration-bf="1"/>
-                                            <field name="project_supervisor_id"  placeholder="select project supervisor" force_save="1" options="{'no_open': True,}"
+                                            <field name="project_supervisor_id" widget="many2one_avatar" placeholder="select project supervisor" force_save="1" options="{'no_open': True,}"
                                                     attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                                                     decoration-bf="1"/>
                                         </group>
                                         <group>
-                                            <field name="project_manager_id" force_save="1" placeholder="select project manager" options="{'no_open': True,}"
+                                            <field name="project_manager_id" widget="many2one_avatar" force_save="1" placeholder="select project manager" options="{'no_open': True,}"
                                                     attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                                                     decoration-bf="1"/>
                                         </group>
                                         <group>
-                                            <field name="estimated_probability" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
-                                                    decoration-bf="1"/>
+                                            <field name="estimated_probability_id" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
+                                                    decoration-bf="1" options="{'no_open': True,}"/>
                                         </group>
                                     </group>
                                 </h5>
@@ -355,12 +355,12 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers"/>
-                        <field name="activity_ids" widget="mail_activity"/>
-                        <field name="message_ids" widget="mail_thread"/>
-                    </div>
-
+<!--                        <div class="o_attachment_preview"/>-->
+                        <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="activity_ids" widget="mail_activity"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
                 </form>
             </field>
         </record>
@@ -399,14 +399,14 @@
                     </control>
                     <!--<button name="open_record" type="object" class="oe_highlight"/>-->
                     <field name="project_id" readonly="1"/>
-                    <field name="approve_state" readonly="1" optional="show"/>
+                    <field name="approve_state" readonly="1" optional="hide"/>
                     <field name="commercial_budget_id"   optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="budget_state" invisible="1" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                    <field name="specification_state"   optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="specification_state"   optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="currency_id" invisible="1" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="project_office_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                    <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                    <field name="project_manager_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="project_supervisor_id" force_save="1" widget="many2one_avatar" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="project_manager_id" force_save="1" widget="many2one_avatar" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="industry_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="customer_status_id" force_save="1" options="{'no_open': True,}"  optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="customer_organization_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
@@ -416,8 +416,8 @@
                     <field name="total_amount_of_revenue" optional="show"/>
                     <field name="cost_price" optional="show"/>
                     <field name="margin_income" optional="show"/>
-                    <field name="profitability" optional="show"/>
-                    <field name="estimated_probability" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="profitability" optional="hide"/>
+                    <field name="estimated_probability_id" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="vat_attribute_id" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="legal_entity_signing_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="project_type_id" force_save="1" options="{'no_open': True,}" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
@@ -434,6 +434,18 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_commercial_budget_spec_search"></field>
             <field name="domain">[('budget_state', '=', 'work')]</field>
+            <field name="context">{'search_default_group_by_provider': True}</field>
+<!--            <field name="context">{"search_default_budget_state_working":True}</field>-->
+        </record>
+
+
+
+        <record id="show_comercial_budget_spec_all" model="ir.actions.act_window">
+            <field name="name">Projects</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project_budget.commercial_budget_spec</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_commercial_budget_spec_search"></field>
             <field name="context">{'search_default_group_by_provider': True}</field>
 <!--            <field name="context">{"search_default_budget_state_working":True}</field>-->
         </record>
@@ -565,5 +577,143 @@
         </record>
 <!-- end commercial_budget-->
 
+
+
+        <record id="projects_kanban_action" model="ir.actions.act_window">
+            <field name="name">projects_kanban_action</field>
+            <field name="res_model">project_budget.commercial_budget_spec</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">kanban,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                Create a new operation type
+                </p><p>
+                The operation type system allows you to assign each stock
+                operation a specific type which will alter its views accordingly.
+                On the operation type you could e.g. specify if packing is needed by default,
+                if it should show the customer.
+                </p>
+            </field>
+        </record>
+
+<!--        <record id="stock_picking_type_kanban" model="ir.ui.view">-->
+<!--            <field name="name">project_budget.commercial_budget_spec.kanban</field>-->
+<!--            <field name="model">project_budget.commercial_budget_spec</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" create="0" group_create="false">-->
+<!--                    <field name="count_estimated_probability_0"/>-->
+<!--                    <field name="count_estimated_probability_30"/>-->
+<!--                    <field name="count_estimated_probability_50"/>-->
+<!--                    <field name="count_estimated_probability_75"/>-->
+<!--                    <field name="count_estimated_probability_100"/>-->
+<!--                    <templates>-->
+<!--                        <t t-name="kanban-box">-->
+<!--                            <div t-if="['incoming', 'outgoing', 'internal'].indexOf(record.code.raw_value) > -1" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="stock_picking">-->
+<!--                                <div t-attf-class="o_kanban_card_header">-->
+<!--                                    <div class="o_kanban_card_header_title">-->
+<!--                                        <div class="o_primary" t-if="!selection_mode">-->
+<!--                                            <a type="object" name="get_stock_picking_action_picking_type">-->
+<!--                                                <field name="name"/>-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+<!--                                        <div class="o_primary" t-if="selection_mode">-->
+<!--                                            <field name="name"/>-->
+<!--                                        </div>-->
+<!--                                        <div class="o_secondary"><field class="o_secondary"  name="warehouse_id" readonly="1" groups="stock.group_stock_multi_warehouses"/></div>-->
+<!--                                    </div>-->
+<!--                                    <div class="o_kanban_manage_button_section" t-if="!selection_mode">-->
+<!--                                        <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/></a>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="container o_kanban_card_content" t-if="!selection_mode">-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-6 o_kanban_primary_left">-->
+<!--                                            <button class="btn btn-primary" name="get_action_picking_tree_ready" type="object">-->
+<!--                                                <span t-if="record.code.raw_value == 'incoming'"><t t-esc="record.count_picking_ready.value"/> To Process</span>-->
+<!--                                                <span t-elif="record.code.raw_value == 'outgoing'"><t t-esc="record.count_picking_ready.value"/> To Process</span>-->
+<!--                                                <span t-elif="record.code.raw_value == 'internal'"><t t-esc="record.count_picking_ready.value"/> To Process</span>-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-6 o_kanban_primary_right">-->
+<!--                                            <div t-if="record.count_picking_ready.raw_value > 0" class="row">-->
+<!--                                            </div>-->
+
+<!--                                            <div t-if="record.count_picking_waiting.raw_value > 0" class="row">-->
+<!--                                                <div class="col-12">-->
+<!--                                                    <a name="get_action_picking_tree_waiting" type="object">-->
+<!--                                                        <field name="count_picking_waiting"/>-->
+<!--                                                        Waiting-->
+<!--                                                    </a>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+
+<!--                                            <div t-if="record.count_picking_late.raw_value > 0" class="row">-->
+<!--                                                <div class="col-12">-->
+<!--                                                    <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_late" type="object">-->
+<!--                                                        <field name="count_picking_late"/>-->
+<!--                                                        Late-->
+<!--                                                    </a>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+
+<!--                                            <div t-if="record.count_picking_backorders.raw_value > 0" class="row" name="picking_type_backorder_count">-->
+<!--                                                <div class="col-12">-->
+<!--                                                    <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_backorder" type="object">-->
+<!--                                                        <field name="count_picking_backorders"/>-->
+<!--                                                        Back Orders-->
+<!--                                                    </a>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu">-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-6 o_kanban_card_manage_section o_kanban_manage_view">-->
+<!--                                            <div role="menuitem" class="o_kanban_card_manage_title">-->
+<!--                                                <span t-if="record.code.raw_value == 'internal'">Transfers</span>-->
+<!--                                                <span t-else="">View</span>-->
+<!--                                            </div>-->
+<!--                                            <div role="menuitem">-->
+<!--                                                <a name="get_stock_picking_action_picking_type" type="object">All</a>-->
+<!--                                            </div>-->
+<!--                                            <div role="menuitem">-->
+<!--                                                <a name="get_action_picking_tree_ready" type="object">Ready</a>-->
+<!--                                            </div>-->
+<!--                                            <div role="menuitem">-->
+<!--                                                <a name="get_action_picking_tree_waiting" type="object">Waiting</a>-->
+<!--                                            </div>-->
+<!--                                            <div role="menuitem">-->
+<!--                                                <a name="get_action_picking_type_operations" type="object">Operations</a>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-6 o_kanban_card_manage_section o_kanban_manage_new">-->
+<!--                                            <div role="menuitem" class="o_kanban_card_manage_title">-->
+<!--                                                <span>New</span>-->
+<!--                                            </div>-->
+<!--                                            <div role="menuitem">-->
+<!--                                                <a name="%(action_picking_form)d" type="action" context="{'default_immediate_transfer': True}">Immediate Transfer</a>-->
+<!--                                            </div>-->
+<!--                                            <div role="menuitem">-->
+<!--                                                <a name="%(action_picking_form)d" type="action">Planned Transfer</a>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+
+<!--                                    <div t-if="widget.editable" class="o_kanban_card_manage_settings row">-->
+<!--                                        <div class="col-8" role="menuitem" aria-haspopup="true">-->
+<!--                                            <ul class="oe_kanban_colorpicker" data-field="color" role="menu"/>-->
+<!--                                        </div>-->
+<!--                                        <div role="menuitem" class="col-4">-->
+<!--                                            <a class="dropdown-item" role="menuitem" type="edit">Configuration</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </t>-->
+<!--                    </templates>-->
+<!--                </kanban>-->
+<!--            </field>-->
+<!--        </record>-->
     </data>
 </odoo>

@@ -9,9 +9,9 @@
                 <control>
                     <create name="add_specification_line" string="Add a line"/>
                 </control>
-                    <field name="user_id" force_save="1" options="{'no_open': True,}"/>
+                    <field name="user_id" force_save="1" options="{'no_open': True,}" widget="many2one_avatar_user"/>
                     <field name="project_supervisor_id" force_save="1" options="{'no_open': True,}"/>
-                    <field name="can_approve_project"/>
+                    <field name="can_approve_project" widget="boolean_toggle"/>
                     <field name="descr"/>
                  </tree>
             </field>
@@ -33,7 +33,7 @@
                 <control>
                     <create name="add_specification_line" string="Add a line"/>
                 </control>
-                    <field name="user_id" force_save="1" options="{'no_open': True,}"/>
+                    <field name="user_id" force_save="1" options="{'no_open': True,}" widget="many2one_avatar_user"/>
                     <field name="project_manager_id" force_save="1" options="{'no_open': True,}"/>
                     <field name="descr"/>
                  </tree>

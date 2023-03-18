@@ -232,7 +232,7 @@ class report_budget_excel(models.AbstractModel):
                 column += 1
                 sheet.write(row, column, spec.profitability, row_format_number)
                 column += 1
-                sheet.write(row, column, spec.estimated_probability, row_format_number)
+                sheet.write(row, column, spec.estimated_probability_id.name, row_format_number)
                 column += 1
                 sheet.write(row, column, spec.legal_entity_signing_id.name, row_format)
                 column += 1

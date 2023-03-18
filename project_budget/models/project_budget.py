@@ -126,6 +126,21 @@ class commercial_budget_spec(models.Model):
     _name = 'project_budget.commercial_budget_spec'
     _description = "project_office commercial budget projects"
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _rec_names_search = ['project_id', 'essence_project']
+
+    def action_canban_view_group(self):
+        data = self.env['project_budget.commercial_budget_spec'].search()
+        return {
+            'name': 'Invoices',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'project_budget.commercial_budget_spec',
+            'view_id': False,
+            'views': [data],
+            'context': "{'type':'out_invoice'}",
+            'type': 'ir.actions.act_window'
+        }
+
     def _get_supervisor_list(self):
         domain = []
         supervisor_access = self.env['project_budget.project_supervisor_access'].search([('user_id.id', '=', self.env.user.id)])
@@ -187,9 +202,11 @@ class commercial_budget_spec(models.Model):
                                         copy=True)
     project_supervisor_id = fields.Many2one('project_budget.project_supervisor', string='project_supervisor',
                                             required=True, copy=True, domain=_get_supervisor_list, tracking=True)
-
     project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=True,
                                          copy=True, default=_get_first_manager_from_access, domain=_get_manager_list, tracking=True)
+    project_supervisor_user_id = fields.Many2one('res.users', string='project_manager_user_id',compute='_get_supervisor_user_id', stored=True)
+    project_manager_user_id = fields.Many2one('res.users', string='project_manager_user_id',compute='_get_manager_user_id', stored=True)
+
     customer_organization_id = fields.Many2one('project_budget.customer_organization', string='customer_organization',
                                                required=True, copy=True)
     customer_status_id = fields.Many2one('project_budget.customer_status', string='customer_status', required=True,
@@ -221,9 +238,9 @@ class commercial_budget_spec(models.Model):
     other_expenses = fields.Monetary(string='other_expenses')
     margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
     profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals', store=True, tracking=True)
-    estimated_probability = fields.Selection([('0','0'),('30', '30'), ('50', '50'), ('75', '75'), ('100', '100')],required=True
-                                             ,string='estimated_probability of project implementation',default = '30', copy = True, tracking=True)
-
+    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',
+                                            default=lambda self: self.env['project_budget.estimated_probability'].search([('name', '=', '30')], limit=1)
+                                            , copy = True, tracking=True)
     legal_entity_signing_id = fields.Many2one('project_budget.legal_entity_signing', string='legal_entity_signing a contract from the NCC', required=True, copy=True)
     project_type_id = fields.Many2one('project_budget.project_type',
                                               string='project_type', required=True,
@@ -259,20 +276,29 @@ class commercial_budget_spec(models.Model):
         inverse_name='commercial_budget_spec_id',
         string="fact acceptance flow", auto_join=True,copy=True)
 
-
-    @api.depends('estimated_probability')
+    @api.depends('estimated_probability_id')
     def _compute_specification_state(self):
         for row in self:
-            if row.estimated_probability == '0':
+            if row.estimated_probability_id.name == '0':
                 row.specification_state = 'cancel'
-            if row.estimated_probability == '30':
+            if row.estimated_probability_id.name == '30':
                 row.specification_state = 'prepare'
-            if row.estimated_probability == '50':
+            if row.estimated_probability_id.name == '50':
                 row.specification_state = 'prepare'
-            if row.estimated_probability == '75':
+            if row.estimated_probability_id.name == '75':
                 row.specification_state = 'prepare'
-            if row.estimated_probability == '100':
+            if row.estimated_probability_id.name == '100':
                 row.specification_state = 'production'
+
+    @api.depends('project_supervisor_id.user_id')
+    def _get_supervisor_user_id(self):
+        for row in self:
+            row.project_supervisor_user_id = row.project_supervisor_id.user_id
+
+    @api.depends('project_manager_id.user_id')
+    def _get_manager_user_id(self):
+        for row in self:
+            row.project_manager_user_id = row.project_manager_id.user_id
 
     @api.depends("planned_cash_flow_ids.sum_cash")
     def _compute_planned_cash_flow_sum(self):
@@ -375,7 +401,7 @@ class commercial_budget_spec(models.Model):
 
     def set_approve_manager(self):
         for rows in self:
-            if rows.estimated_probability in ('50','75','100'):
+            if rows.estimated_probability_id.name in ('50','75','100'):
                 if rows.total_amount_of_revenue != rows.planned_acceptance_flow_sum:
                     raisetext = _("DENIED. planned_acceptance_flow_sum <> total_amount_of_revenue")
                     raise ValidationError(raisetext)

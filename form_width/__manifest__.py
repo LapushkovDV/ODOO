@@ -21,6 +21,7 @@ You can adjust the width of any form view and only these ones will be affected.
     'assets': {
         'web.assets_backend': [
             'form_width/static/src/js/set_width.js',
+            'form_width/static/src/js/set_title.js',
             'form_width/static/src/css/form_view_extra.css',
         ]
     },

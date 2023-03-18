@@ -21,13 +21,13 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet string="project_office">
-                            <group>
-                                    <field name="name"/>
-                                    <field name="code"/>
-                            </group>
-                            <group>
-                                <field name="descr" widget="html"/>
-                            </group>
+                        <group>
+                           <field name="name"/>
+                           <field name="code"/>
+                        </group>
+                        <group>
+                           <field name="descr" widget="html"/>
+                        </group>
                     </sheet>
                 </form>
             </field>
@@ -55,6 +55,7 @@
             <field name="arch" type="xml">
                 <tree string="project_supervisor">
                     <field name="name"/>
+                    <field name="user_id" widget="many2one_avatar_user"/>
                     <field name="code"/>
                     <field name="descr"/>
                 </tree>
@@ -72,8 +73,10 @@
                                     <field name="code"/>
                             </group>
                             <group>
+                                <field name="user_id" widget="many2one_avatar_user"/>
                                 <field name="descr" widget="html"/>
                             </group>
+                            <field name="avatar_128" widget="image"/>
                     </sheet>
                 </form>
             </field>
@@ -101,6 +104,7 @@
             <field name="arch" type="xml">
                 <tree string="project_manager">
                     <field name="name"/>
+                    <field name="user_id" widget="many2one_avatar_user"/>
                     <field name="code"/>
                     <field name="descr"/>
                 </tree>
@@ -118,8 +122,10 @@
                                 <field name="code"/>
                             </group>
                             <group>
+                                <field name="user_id" widget="many2one_avatar_user"/>
                                 <field name="descr" widget="html"/>
                             </group>
+                        <field name="avatar_128" widget="image"/>
                     </sheet>
                 </form>
             </field>
@@ -467,5 +473,109 @@
         </record>
 <!-- end technological_direction-->
 
+    <record id="project_budget_estimated_probability_action" model="ir.actions.act_window">
+        <field name="name">Projects Overview</field>
+        <field name="res_model">project_budget.estimated_probability</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">kanban,form</field>
+    </record>
+
+
+ <record id="project_budget_estimated_probability_kanban" model="ir.ui.view">
+        <field name="name">project_budget.estimated_probability.kanban</field>
+        <field name="model">project_budget.estimated_probability</field>
+        <field name="arch" type="xml">
+            <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" create="0" group_create="false">
+                <field name="color"/>
+                <field name="name" readonly="1"/>
+                <field name="count_approve_state_total"/>
+                <field name="sum_revenue_approve_state_total"/>
+                <field name="sum_margin_income_total"/>
+                <field name="sum_cost_price_total"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-if="['0', '30', '50','75','100'].indexOf(record.name.raw_value) > -1" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="estimated_probability">
+                            <div t-attf-class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary" t-if="!selection_mode">
+                                        <a type="object" name="get_stock_picking_action_picking_type">
+                                            probability
+                                            <field name="name"></field>
+                                        </a>
+                                    </div>
+                                    <div class="o_primary" t-if="selection_mode">
+                                            <field name="name"></field>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_manage_button_section" t-if="!selection_mode">
+                                    <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/></a>
+                                </div>
+                            </div>
+                            <div class="container o_kanban_card_content" t-if="!selection_mode">
+                                <div class="row">
+                                    <div t-if="record.name.raw_value == '0'" class="col-6 o_kanban_primary_left">
+                                        <button class="btn btn-primary" name="get_action_projects_0" type="object">
+                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                        </button>
+                                    </div>
+                                    <div t-if="record.name.raw_value == '30'" class="col-6 o_kanban_primary_left">
+                                        <button class="btn btn-primary" name="get_action_projects_30" type="object">
+                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                        </button>
+                                    </div>
+                                    <div t-if="record.name.raw_value == '50'" class="col-6 o_kanban_primary_left">
+                                        <button class="btn btn-primary" name="get_action_projects_50" type="object">
+                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                        </button>
+                                    </div>
+                                    <div t-if="record.name.raw_value == '75'" class="col-6 o_kanban_primary_left">
+                                        <button class="btn btn-primary" name="get_action_projects_75" type="object">
+                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                        </button>
+                                    </div>
+                                    <div t-if="record.name.raw_value == '100'" class="col-6 o_kanban_primary_left">
+                                        <button class="btn btn-primary" name="get_action_projects_100" type="object">
+                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                        </button>
+                                    </div>
+
+
+
+                                    <div class="col-6 o_kanban_primary_right">
+                                            <div class="col-12">
+                                                <a>
+                                                    <field name="sum_revenue_approve_state_total"/>
+                                                    revenue
+                                                </a>
+                                            </div>
+                                            <div class="col-12">
+                                                <a>
+                                                    <field name="sum_cost_price_total"/>
+                                                    cost
+                                                </a>
+                                            </div>
+                                            <div class="col-12">
+                                                <a>
+                                                    <field name="sum_margin_income_total"/>
+                                                    margin
+                                                </a>
+                                            </div>
+                                    </div>
+
+                                </div>
+                                <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                    <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                        <div class="col-8" role="menuitem" aria-haspopup="true">
+                                            <ul class="oe_kanban_colorpicker" data-field="color" role="menu"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
     </data>
 </odoo>

@@ -7,7 +7,7 @@
     """,
     'assets': {
         'web.assets_backend': [
-            'change_colors/static/src/scss/change_color.scss',
+            'change_colors/static/src/scss/change_color.css',
         ]
     },
 
