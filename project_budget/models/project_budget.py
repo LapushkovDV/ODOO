@@ -1,14 +1,17 @@
 from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
+from odoo.tools import pytz
+from datetime import timedelta
+
 
 class commercial_budget(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _name = 'project_budget.commercial_budget'
-    _description = "project_commercial budgewt"
+    _description = "project_commercial budget"
     name = fields.Char(string="commercial_budget name", required=True)
     etalon_budget = fields.Boolean(string="etalon_budget", default = False)
     budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False, tracking=True)
-    date_actual = fields.Date(string="Actuality date", index=True, copy=False)
+    date_actual = fields.Datetime(string="Actuality date", index=True, copy=False)
     year = fields.Integer(string="Budget year", required=True, index=True,default=2023)
     currency_id = fields.Many2one('res.currency', string='Account Currency')
     descr = fields.Text( string='Description', default="")
@@ -29,23 +32,35 @@ class commercial_budget(models.Model):
                 raisetext = _("The year must be between 2022-2030")
                 raise ValidationError(raisetext)
 
-    def copy(self, default=None):
-        if self.budget_state == 'work':
-            raisetext = _("Only fixed budget can be duplicated")
-            raise ValidationError(raisetext)
-            return False
-        default = dict(default or {})
-        default['name'] = 'Copy_' + self.name
-        return super(commercial_budget, self).copy(default)
+    def get_user_datetime(self):
+        fmt = "%Y-%m-%d %H:%M:%S"
+        tz = pytz.timezone(self.env.user.tz) or pytz.utc
+        now_time = fields.datetime.now(tz=tz)
+        my_dt = fields.datetime.strptime(now_time.strftime(fmt), fmt)
+        return my_dt
 
     def set_budget_fixed(self):
         if not self.user_has_groups('project_budget.project_budget_admin'):
             raisetext=_("Only users in group project_budget.project_budget_admin can set budget to fixed")
             raise (ValidationError(raisetext))
         else:
+            if self.budget_state == 'fixed':
+                raisetext = _("Only working budget can be duplicated")
             self.ensure_one()
-            self.budget_state='fixed'
-            self.date_actual = fields.datetime.now()
+            # self.budget_state='fixed'
+            # self.date_actual = fields.datetime.now()
+            cur_datetime = self.get_user_datetime()
+            print('cur_datetime=',cur_datetime)
+            self.env['project_budget.commercial_budget'].browse(self.id).copy({'budget_state':'fixed'
+                                                                              ,'date_actual': fields.datetime.now()
+                                                                                })
+
+            for spec in self.commercial_budget_spec_ids:
+                spec.approve_state = 'need_approve_manager'
+
+            # self.env['project_budget.commercial_budget_spec'].search([('project_id', '=', self.id)]).write({'approve_state': 'need_approve_manager'})
+
+
             return False
 
     def set_budget_work(self):
@@ -186,11 +201,11 @@ class commercial_budget_spec(models.Model):
         return None
 
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True,
-                             default=_('ID will appear after save')) #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec'))
+                             default='ID') #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec'))
     specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True,
                                            index=True, default='prepare', store=True, copy=True, tracking=True, compute="_compute_specification_state")
     approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
-                                    required=True, index=True, default='need_approve_manager', store=True, copy=False, tracking=True)
+                                    required=True, index=True, default='need_approve_manager', store=True, copy=True, tracking=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency',  compute='_compute_reference')
     etalon_budget = fields.Boolean(string="etalon_budget", compute='_compute_reference')
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
@@ -204,9 +219,6 @@ class commercial_budget_spec(models.Model):
                                             required=True, copy=True, domain=_get_supervisor_list, tracking=True)
     project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=True,
                                          copy=True, default=_get_first_manager_from_access, domain=_get_manager_list, tracking=True)
-    project_supervisor_user_id = fields.Many2one('res.users', string='project_manager_user_id',compute='_get_supervisor_user_id', stored=True)
-    project_manager_user_id = fields.Many2one('res.users', string='project_manager_user_id',compute='_get_manager_user_id', stored=True)
-
     customer_organization_id = fields.Many2one('project_budget.customer_organization', string='customer_organization',
                                                required=True, copy=True)
     customer_status_id = fields.Many2one('project_budget.customer_status', string='customer_status', required=True,
@@ -331,7 +343,7 @@ class commercial_budget_spec(models.Model):
 
     @ api.depends("revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
     'third_party_works', "awards_on_results_project", 'transportation_expenses', 'travel_expenses', 'representation_expenses',
-     "warranty_service_costs", 'rko_other', 'other_expenses','vat_attribute_id')
+     "warranty_service_costs", 'rko_other', 'other_expenses','vat_attribute_id','legal_entity_signing_id')
     def _compute_spec_totals(self):
         for budget_spec in self:
             budget_spec.total_amount_of_revenue = budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods
@@ -351,7 +363,7 @@ class commercial_budget_spec(models.Model):
             else:
                 budget_spec.profitability = budget_spec.margin_income / budget_spec.total_amount_of_revenue * 100
 
-    @ api.depends('commercial_budget_id.currency_id','commercial_budget_id.budget_state')
+    @ api.depends('commercial_budget_id.currency_id','commercial_budget_id.budget_state','commercial_budget_id.currency_id')
     def _compute_reference(self):
         for budget_spec in self:
             budget_spec.currency_id = budget_spec.commercial_budget_id.currency_id
@@ -462,7 +474,7 @@ class commercial_budget_spec(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if not vals.get('project_id') or vals['project_id'] == _('ID will appear after save'):
+            if not vals.get('project_id') or vals['project_id'] == 'ID':
                 vals['project_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.commercial_budget_spec')
         return super().create(vals_list)
 

@@ -85,7 +85,7 @@ class users_budgets_access(models.Model):
         for rec in self:
             rec.supervisor_rule = supervisor_list
 
-    @ api.depends("manager_rule.project_manager_access_ids.project_manager_id","manager_rule.project_manager_access_ids.user_id")
+    @ api.depends("project_manager_access_ids.project_manager_id","project_manager_access_ids.user_id")
     def _get_list_manager_access_ids(self):
         manager_access = self.env['project_budget.project_manager_access'].search([('user_id.id', '=', self.env.user.id)])
         manager_list = []

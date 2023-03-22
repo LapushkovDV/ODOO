@@ -5,7 +5,7 @@
             <field name="model">project_budget.commercial_budget_spec</field>
             <field name="arch" type="xml">
             <search string="Search projects">
-                <field name="project_id"></field>
+                <field name="project_id" filter_domain="['|', ('project_id','ilike',self), ('essence_project','ilike',self)]" string="Project"/>
                 <filter string="Вероятность проекта 0%" domain="[('estimated_probability_id', '=', '0')]" name="estimated_probability_0"></filter>
                 <filter string="Вероятность проекта 30%" domain="[('estimated_probability_id', '=', '30')]" name="estimated_probability_30"></filter>
                 <filter string="Вероятность проекта 50%" domain="[('estimated_probability_id', '=', '50')]" name="estimated_probability_50"></filter>

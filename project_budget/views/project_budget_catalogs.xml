@@ -498,7 +498,7 @@
                             <div t-attf-class="o_kanban_card_header">
                                 <div class="o_kanban_card_header_title">
                                     <div class="o_primary" t-if="!selection_mode">
-                                        <a type="object" name="get_stock_picking_action_picking_type">
+                                        <a>
                                             probability
                                             <field name="name"></field>
                                         </a>
@@ -515,32 +515,29 @@
                                 <div class="row">
                                     <div t-if="record.name.raw_value == '0'" class="col-6 o_kanban_primary_left">
                                         <button class="btn btn-primary" name="get_action_projects_0" type="object">
-                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                            <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
                                         </button>
                                     </div>
                                     <div t-if="record.name.raw_value == '30'" class="col-6 o_kanban_primary_left">
                                         <button class="btn btn-primary" name="get_action_projects_30" type="object">
-                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                            <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
                                         </button>
                                     </div>
                                     <div t-if="record.name.raw_value == '50'" class="col-6 o_kanban_primary_left">
                                         <button class="btn btn-primary" name="get_action_projects_50" type="object">
-                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                            <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
                                         </button>
                                     </div>
                                     <div t-if="record.name.raw_value == '75'" class="col-6 o_kanban_primary_left">
                                         <button class="btn btn-primary" name="get_action_projects_75" type="object">
-                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                            <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
                                         </button>
                                     </div>
                                     <div t-if="record.name.raw_value == '100'" class="col-6 o_kanban_primary_left">
                                         <button class="btn btn-primary" name="get_action_projects_100" type="object">
-                                            <span>Projects:<t t-esc="record.count_approve_state_total.value"/></span>
+                                            <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
                                         </button>
                                     </div>
-
-
-
                                     <div class="col-6 o_kanban_primary_right">
                                             <div class="col-12">
                                                 <a>
