@@ -3,7 +3,7 @@
     <data noupdate="1">
         <record id="project_id_generate" model="ir.sequence">
             <field name="name">Project ID</field>
-            <field name="code">project_budget.commercial_budget_spec</field>
+            <field name="code">project_budget.projects</field>
             <field name="prefix">PRJ-%(year)s%(month)s-</field>
             <field name="padding">5</field>
             <field name="number_next">1</field>

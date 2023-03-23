@@ -1,8 +1,8 @@
 <odoo>
     <data>
-        <record id="view_commercial_budget_spec_search" model="ir.ui.view">
-            <field name="name">project_budget.commercial_budget_spec.search</field>
-            <field name="model">project_budget.commercial_budget_spec</field>
+        <record id="view_projects_search" model="ir.ui.view">
+            <field name="name">project_budget.projects.search</field>
+            <field name="model">project_budget.projects</field>
             <field name="arch" type="xml">
             <search string="Search projects">
                 <field name="project_id" filter_domain="['|', ('project_id','ilike',self), ('essence_project','ilike',self)]" string="Project"/>
@@ -23,9 +23,9 @@
         <record id="show_comercial_budget_spec_new" model="ir.actions.act_window">
             <field name="name">comercial_budgets</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">project_budget.commercial_budget_spec</field>
+            <field name="res_model">project_budget.projects</field>
             <field name="view_mode">form,tree</field>
-            <field name="search_view_id" ref="view_commercial_budget_spec_search"></field>
+            <field name="search_view_id" ref="view_projects_search"></field>
             <field name="context">{'search_default_id': 1}</field>
         </record>
 

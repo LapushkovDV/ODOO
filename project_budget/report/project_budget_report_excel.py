@@ -168,7 +168,7 @@ class report_budget_excel(models.AbstractModel):
         sheet.set_column(column, column, 15)
         sheet.autofilter(row, 0, row, column)
 
-        for spec in budget.commercial_budget_spec_ids:
+        for spec in budget.projects_ids:
             if spec.specification_state == stateproject:
                 row += 1
                 column = 0

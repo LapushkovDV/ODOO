@@ -23,11 +23,11 @@
 
 <!--         <record id="report_project_budget_excel_from_projects" model = "ir.actions.report">-->
 <!--                 <field name="name">Export to EXCEL</field>-->
-<!--                 <field name="model">project_budget.commercial_budget_spec</field>-->
+<!--                 <field name="model">project_budget.projects</field>-->
 <!--                 <field name="report_type">xlsx</field>-->
 <!--                 <field name="report_name">project_budget.report_budget_excel</field>-->
 <!--                 <field name="report_file">project_budget.report_budget_excel</field>-->
-<!--                 <field name="binding_model_id" ref="model_project_budget_commercial_budget_spec"/>-->
+<!--                 <field name="binding_model_id" ref="model_project_budget_projects"/>-->
 <!--                 <field name="binding_type">report</field>-->
 <!--        </record>-->
 

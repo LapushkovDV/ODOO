@@ -1,8 +1,8 @@
 <odoo>
     <data>
         <record id="show_comercial_budget_spec_form" model="ir.ui.view">
-            <field name="name">project_budget.commercial_budget_spec.form</field>
-            <field name="model">project_budget.commercial_budget_spec</field>
+            <field name="name">project_budget.projects.form</field>
+            <field name="model">project_budget.projects</field>
             <field name="arch" type="xml">
                 <form create="0" delete="0">
                     <header>
@@ -16,7 +16,7 @@
                     </header>
                     <sheet string="Project">
                         <field name="budget_state" invisible="1"/>
-                        <group col="3">
+                        <group col="5">
                             <group>
                                 <field name="project_id" readonly="1"/>
                             </group>
@@ -31,8 +31,17 @@
                                         decoration-muted="specification_state=='cancel'"
                                 />
                             </group>
+                            <group>
+                                <field name="estimated_probability_id" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
+                                        decoration-bf="1" options="{'no_open': True,}"/>
+                            </group>
+                            <group>
+                                <field name="project_have_steps" widget="boolean_toggle"
+                                        attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
+                                    />
+                            </group>
                         </group>
-                        <group col="2">
+                        <group col="3">
                             <group>
                                 <field name="essence_project" placeholder="type here essence of the project" colspan="1"
                                                attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
@@ -40,33 +49,21 @@
                             <group>
                                 <field name="currency_id" options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                 <field name="vat_attribute_id" placeholder="select vat attribute"
-                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')], 'invisible': [('project_have_steps', '=', True)]}"/>
+                            </group>
+                            <group>
+                                <field name="end_presale_project_month"  attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}" />
+                                <field name="end_sale_project_month" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="General">
-                                <group>
-                                    <group>
-                                        <field name="step_project_number"
-                                                attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
-                                        />
-                                    </group>
-                                    <group>
-                                        <field name="dogovor_number"
-                                                attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
-                                        />
-                                    </group>
-                                </group>
                                 <group col="1">
                                     <field name="commercial_budget_id" required="1"
                                           options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                                           invisible="1"
                                     />
                                 </group>
-                                <h4>
-                                    <group string = "General" >
-                                    </group>
-                                </h4>
                                 <h5>
                                     <group col="3">
                                         <group>
@@ -94,8 +91,6 @@
                                             <field class="text-break" name="project_office_id" placeholder="select project office" force_save="1" options="{'no_open': True,}"
                                                     attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                                                     decoration-bf="1"/>
-                                            <field name="estimated_probability_id" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
-                                                    decoration-bf="1" options="{'no_open': True,}"/>
                                         </group>
                                         <group>
                                             <field name="project_manager_id" widget="many2one_avatar" force_save="1" placeholder="select project manager" options="{'no_open': True,}"
@@ -139,25 +134,19 @@
                                 </h4>
                                 <group>
                                     <group col="2">
-                                        <label for="end_presale_project_quarter" string="end_presale_project_quarter" class="oe_inline"/>
-                                        <label for="end_presale_project_month" string="end_presale_project_month" class="oe_inline" />
-                                        <field name="end_presale_project_quarter" nolabel="1"  class="oe_inline"/>
-                                        <field name="end_presale_project_month" nolabel="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}" class="oe_inline"/>
+                                        <field name="end_sale_project_quarter"/>
+                                        <field name="end_presale_project_quarter"/>
                                     </group>
                                     <group col="2">
-                                        <label for="end_sale_project_quarter" string="end_sale_project_quarter"/>
-                                        <label for="end_sale_project_month" string="end_sale_project_month"/>
-                                        <field name="end_sale_project_quarter" nolabel="1"/>
-                                        <field name="end_sale_project_month" nolabel="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                        <field name="comments" placeholder="type comments for the project" colspan="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                     </group>
-                                </group>
-                                <group col="1">
-                                    <field name="comments" placeholder="type comments for the project" colspan="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                 </group>
                             </page>
                             <page string="Financial indicators">
-                                 <h4>
-                                    <group string="Revenue" >
+                                <h4>
+                                    <group col="2">
+                                        <group string="Revenue" >
+                                        </group>
                                     </group>
                                 </h4>
                                 <group col="3">
@@ -235,6 +224,39 @@
                                     </group>
                                 </h5>
                             </page>
+                            <page string="project steps" attrs="{'invisible': [('project_have_steps', '=', False)]}">
+                                <group col="4">
+                                    <group/>
+                                    <group>
+                                             <field name="total_amount_of_revenue" decoration-bf="1"
+                                                decoration-success="total_amount_of_revenue &gt; 0"
+                                            />
+                                    </group>
+                                    <group>
+                                        <field name="prj_step_sum_without_vat" decoration-bf="1"
+                                                decoration-danger="total_amount_of_revenue != prj_step_sum_without_vat"
+                                                decoration-success="total_amount_of_revenue == prj_step_sum_without_vat"
+                                        />
+                                    </group>
+                                    <group>
+                                        <field name="prj_step_sum_with_vat" decoration-bf="1"
+                                                decoration-danger="total_amount_of_revenue != prj_step_sum_without_vat"
+                                                decoration-success="total_amount_of_revenue == prj_step_sum_without_vat"
+                                        />
+                                    </group>
+                                </group>
+                                <field name="project_steps_ids" widget="section_and_note_one2many"
+                                        mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
+                                    <tree editable="bottom" default_order="date_step">
+                                        <field name="date_step" />
+                                        <field name="name" placeholder="type step name e.g. products recieve"/>
+                                        <field name="project_steps_type_id" force_save="1" options="{'no_open': True,}"/>
+                                        <field name="vat_attribute_id" force_save="1" options="{'no_open': True,}"/>
+                                        <field name="sum_without_vat" />
+                                        <field name="sum_with_vat" />
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="Forecast">
                                 <h5>
                                     <group>
@@ -253,10 +275,8 @@
                                     </group>
                                 </h5>
                                 <h4>
-                                    <group string="planned_cash_flow">
-                                    </group>
                                 <group>
-                                    <group>
+                                    <group string="planned_cash_flow">
                                     </group>
                                     <group>
                                         <field name="planned_cash_flow_sum"
@@ -270,17 +290,18 @@
                                 <field name="planned_cash_flow_ids"
                                 widget="section_and_note_one2many"
                                 mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" default_order="date_cash">
+                                        <field name="project_have_steps" invisible="True"/>
                                         <field name="date_cash" placeholder="enter planned cash flow date"/>
+                                        <field name="project_steps_id" options="{'no_open': True,}" placeholder="select project steps"
+                                               attrs="{'column_invisible': [('parent.project_have_steps', '=', False)], 'required': [('parent.project_have_steps', '=', True)]}" />
                                         <field name="doc_cash" placeholder="type docs description"/>
                                         <field name="sum_cash" placeholder="enter planned cash flow sum "/>
                                     </tree>
                                 </field>
                                 <h4>
-                                    <group col="1" string="planned_acceptance_flow">
-                                    </group>
                                 <group>
-                                    <group>
+                                    <group  string="planned_acceptance_flow">
                                     </group>
                                     <group>
                                         <field name="planned_acceptance_flow_sum"
@@ -294,8 +315,11 @@
                                 <field name="planned_acceptance_flow_ids"
                                 widget="section_and_note_one2many"
                                 mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" default_order="date_cash">
+                                        <field name="project_have_steps" invisible="True"/>
                                         <field name="date_cash" placeholder="enter planned cash flow date"/>
+                                        <field name="project_steps_id" options="{'no_open': True,}" placeholder="select project steps"
+                                               attrs="{'column_invisible': [('parent.project_have_steps', '=', False)], 'required': [('parent.project_have_steps', '=', True)]}" />
                                         <field name="doc_cash" placeholder="type docs description"/>
                                         <field name="sum_cash" placeholder="enter planned cash flow sum "/>
                                     </tree>
@@ -319,10 +343,8 @@
                                     </group>
                                 </h5>
                                 <h4>
-                                    <group string="fact_cash_flow">
-                                    </group>
                                 <group>
-                                    <group>
+                                    <group string="fact_cash_flow">
                                     </group>
                                     <group>
                                         <field name="fact_cash_flow_sum"
@@ -336,17 +358,18 @@
                                 <field name="fact_cash_flow_ids"
                                 widget="section_and_note_one2many"
                                 mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" default_order="date_cash">
+                                        <field name="project_have_steps" invisible="1"/>
                                         <field name="date_cash" placeholder="enter fact cash flow date"/>
+                                        <field name="project_steps_id" options="{'no_open': True,}" placeholder="select project steps"
+                                               attrs="{'column_invisible': [('parent.project_have_steps', '=', False)], 'required': [('parent.project_have_steps', '=', True)]}" />
                                         <field name="doc_cash" placeholder="type docs description"/>
                                         <field name="sum_cash" placeholder="enter fact cash flow sum "/>
                                     </tree>
                                 </field>
                                 <h4>
-                                    <group col="1" string="fact_acceptance_flow">
-                                    </group>
                                 <group>
-                                    <group>
+                                    <group col="1" string="fact_acceptance_flow">
                                     </group>
                                     <group>
                                         <field name="fact_acceptance_flow_sum"
@@ -360,8 +383,11 @@
                                 <field name="fact_acceptance_flow_ids"
                                 widget="section_and_note_one2many"
                                 mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" default_order="date_cash">
+                                        <field name="project_have_steps" invisible="1"/>
                                         <field name="date_cash" placeholder="enter fact cash flow date"/>
+                                        <field name="project_steps_id" options="{'no_open': True,}" placeholder="select project steps"
+                                               attrs="{'column_invisible': [('parent.project_have_steps', '=', False)], 'required': [('parent.project_have_steps', '=', True)]}" />
                                         <field name="doc_cash" placeholder="type docs description"/>
                                         <field name="sum_cash" placeholder="enter fact cash flow sum "/>
                                     </tree>
@@ -380,8 +406,8 @@
         </record>
 
         <record id="show_comercial_budget_spec_tree" model="ir.ui.view">
-            <field name="name">project_budget.commercial_budget_spec.tree</field>
-            <field name="model">project_budget.commercial_budget_spec</field>
+            <field name="name">project_budget.projects.tree</field>
+            <field name="model">project_budget.projects</field>
             <field name="arch" type="xml">
 <!--                      decoration-muted="specification_state=='cancel'"-->
 <!--                      decoration-danger="approve_state=='need_approve_manager'"-->
@@ -449,9 +475,9 @@
         <record id="show_comercial_budget_spec" model="ir.actions.act_window">
             <field name="name">Projects</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">project_budget.commercial_budget_spec</field>
+            <field name="res_model">project_budget.projects</field>
             <field name="view_mode">tree,form,pivot</field>
-            <field name="search_view_id" ref="view_commercial_budget_spec_search"></field>
+            <field name="search_view_id" ref="view_projects_search"></field>
             <field name="domain">[('budget_state', '=', 'work')]</field>
             <field name="context">{'search_default_group_by_provider': True}</field>
 <!--            <field name="context">{"search_default_budget_state_working":True}</field>-->
@@ -462,9 +488,9 @@
         <record id="show_comercial_budget_spec_all" model="ir.actions.act_window">
             <field name="name">Projects ALL</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">project_budget.commercial_budget_spec</field>
+            <field name="res_model">project_budget.projects</field>
             <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_commercial_budget_spec_search"></field>
+            <field name="search_view_id" ref="view_projects_search"></field>
             <field name="context">{'search_default_group_by_provider': True}</field>
 <!--            <field name="context">{"search_default_budget_state_working":True}</field>-->
         </record>
@@ -523,7 +549,7 @@
                         <notebook>
                            <page string="Specification" name="Specification">
                             <field
-                                name="commercial_budget_spec_ids"
+                                name="projects_ids"
                                 widget="section_and_note_one2many"
                                 mode="tree"
                             >
@@ -561,14 +587,14 @@
 
         <record id="projects_kanban_action" model="ir.actions.act_window">
             <field name="name">projects_kanban_action</field>
-            <field name="res_model">project_budget.commercial_budget_spec</field>
+            <field name="res_model">project_budget.projects</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_mode">kanban,form</field>
         </record>
 
-        <record model="ir.ui.view" id="project_budget_commercial_budget_spec_pivot">
-            <field name="name">project_budget.commercial_budget_spec.pivot</field>
-            <field name="model">project_budget.commercial_budget_spec</field>
+        <record model="ir.ui.view" id="project_budget_projects_pivot">
+            <field name="name">project_budget.projects.pivot</field>
+            <field name="model">project_budget.projects</field>
             <field name="arch" type="xml">
                 <pivot string="Inventory" sample="1">
                     <field name="project_id" />
@@ -601,8 +627,8 @@
         </record>
 
 <!--        <record id="hr_work_entry_view_calendar" model="ir.ui.view">-->
-<!--            <field name="name">project_budget.commercial_budget_spec.calendar</field>-->
-<!--            <field name="model">project_budget.commercial_budget_spec</field>-->
+<!--            <field name="name">project_budget.projects.calendar</field>-->
+<!--            <field name="model">project_budget.projects</field>-->
 <!--            <field name="arch" type="xml">-->
 <!--                <calendar string="Projects"-->
 <!--                    date_start="end_presale_project_month"-->

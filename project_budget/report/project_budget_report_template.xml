@@ -13,7 +13,7 @@
                              </tr>
                          </thead>
                          <tbody>
-                            <t t-foreach="o.commercial_budget_spec_ids" t-as="ospec">
+                            <t t-foreach="o.projects_ids" t-as="ospec">
                                   <tr>
                                      <td><t t-esc="ospec.project_office_id.name"/></td>
                                      <td><t t-esc="ospec.project_supervisor_id.name"/></td>

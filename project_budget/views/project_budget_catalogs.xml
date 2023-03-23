@@ -431,29 +431,11 @@
             <field name="name">project_budget.technological_direction.tree</field>
             <field name="model">project_budget.technological_direction</field>
             <field name="arch" type="xml">
-                <tree string="technological_direction">
+                <tree string="technological_direction" editable="top">
                     <field name="name"/>
                     <field name="code"/>
                     <field name="descr"/>
                 </tree>
-            </field>
-        </record>
-
-        <record id="show_technological_direction_form" model="ir.ui.view">
-            <field name="name">project_budget.technological_direction.form</field>
-            <field name="model">project_budget.technological_direction</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet string="technological_direction">
-                            <group>
-                                    <field name="name"/>
-                                    <field name="code"/>
-                            </group>
-                            <group>
-                                <field name="descr" widget="html"/>
-                            </group>
-                    </sheet>
-                </form>
             </field>
         </record>
 
@@ -472,6 +454,33 @@
             </field>
         </record>
 <!-- end technological_direction-->
+
+<!-- project_budget.project_steps_type -->
+        <record id="show_project_steps_type_tree" model="ir.ui.view">
+            <field name="name">project_budget.project_steps_type.tree</field>
+            <field name="model">project_budget.project_steps_type</field>
+            <field name="arch" type="xml">
+                <tree string="technological_direction" editable="top">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="show_project_steps_type" model="ir.actions.act_window">
+            <field name="name">project_budget.project_steps_type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project_budget.project_steps_type</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'search_default_group_by_provider': True}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new project_steps_type
+              </p><p>
+                each project step have type
+              </p>
+            </field>
+        </record>
+<!-- end project_budget.project_steps_type-->
 
     <record id="project_budget_estimated_probability_action" model="ir.actions.act_window">
         <field name="name">Projects Overview</field>
@@ -497,15 +506,18 @@
                         <div t-if="['0', '30', '50','75','100'].indexOf(record.name.raw_value) > -1" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="estimated_probability">
                             <div t-attf-class="o_kanban_card_header">
                                 <div class="o_kanban_card_header_title">
-                                    <div class="o_primary" t-if="!selection_mode">
+                                    <div class="o_primary" t-if="['30', '50','75','100'].indexOf(record.name.raw_value) > -1">
                                         <a>
                                             probability
                                             <field name="name"></field>
                                         </a>
                                     </div>
-                                    <div class="o_primary" t-if="selection_mode">
-                                            <field name="name"></field>
+                                    <div class="o_primary" t-if="['0'].indexOf(record.name.raw_value) > -1">
+                                        <a>
+                                            Canceled
+                                        </a>
                                     </div>
+
                                 </div>
                                 <div class="o_kanban_manage_button_section" t-if="!selection_mode">
                                     <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/></a>
@@ -514,7 +526,7 @@
                             <div class="container o_kanban_card_content" t-if="!selection_mode">
                                 <div class="row">
                                     <div t-if="record.name.raw_value == '0'" class="col-6 o_kanban_primary_left">
-                                        <button class="btn btn-primary" name="get_action_projects_0" type="object">
+                                        <button class="btn btn-danger" name="get_action_projects_0" type="object">
                                             <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
                                         </button>
                                     </div>

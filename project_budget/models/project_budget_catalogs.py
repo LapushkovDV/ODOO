@@ -178,7 +178,7 @@ class estimated_probability(models.Model):
             'count_approve_state_total':[]
         }
         for field in domains:
-            data = self.env['project_budget.commercial_budget_spec']._read_group(domains[field]+
+            data = self.env['project_budget.projects']._read_group(domains[field]+
                 [('budget_state','=','work'),('estimated_probability_id', 'in', self.ids)]
                 ,['estimated_probability_id'], ['estimated_probability_id'])
             count = {
@@ -195,7 +195,7 @@ class estimated_probability(models.Model):
             'sum_revenue_approve_state_total': []
         }
         for field in domains:
-            data = self.env['project_budget.commercial_budget_spec']._read_group(domains[field]+
+            data = self.env['project_budget.projects']._read_group(domains[field]+
                 [('budget_state','=','work'),('estimated_probability_id', 'in', self.ids)]
                 ,['estimated_probability_id','sum_total:sum(total_amount_of_revenue)'], ['estimated_probability_id'])
 
@@ -213,7 +213,7 @@ class estimated_probability(models.Model):
             'sum_margin_income_total': []
         }
         for field in domains:
-            data = self.env['project_budget.commercial_budget_spec']._read_group(domains[field]+
+            data = self.env['project_budget.projects']._read_group(domains[field]+
                 [('budget_state','=','work'),('estimated_probability_id', 'in', self.ids)]
                 ,['estimated_probability_id','sum_total:sum(margin_income)'], ['estimated_probability_id'])
 
@@ -231,7 +231,7 @@ class estimated_probability(models.Model):
             'sum_cost_price_total': []
         }
         for field in domains:
-            data = self.env['project_budget.commercial_budget_spec']._read_group(domains[field] +
+            data = self.env['project_budget.projects']._read_group(domains[field] +
                 [('budget_state', '=', 'work'), ('estimated_probability_id', 'in', self.ids)]
                 , ['estimated_probability_id','sum_total:sum(cost_price)'],['estimated_probability_id'])
             sum = {
