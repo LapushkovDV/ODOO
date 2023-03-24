@@ -248,9 +248,9 @@
                                 <field name="project_steps_ids" widget="section_and_note_one2many"
                                         mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
                                     <tree editable="bottom" default_order="date_step">
-                                        <field name="date_step" />
-                                        <field name="name" placeholder="type step name e.g. products recieve"/>
                                         <field name="project_steps_type_id" force_save="1" options="{'no_open': True,}"/>
+                                        <field name="name" placeholder="type step name e.g. products recieve"/>
+                                        <field name="date_step" />
                                         <field name="vat_attribute_id" force_save="1" options="{'no_open': True,}"/>
                                         <field name="sum_without_vat" />
                                         <field name="sum_with_vat" />
