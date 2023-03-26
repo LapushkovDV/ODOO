@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-23 18:27+0000\n"
-"PO-Revision-Date: 2023-03-23 18:27+0000\n"
+"POT-Creation-Date: 2023-03-26 10:41+0000\n"
+"PO-Revision-Date: 2023-03-26 10:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -116,6 +116,11 @@ msgid "Approve State"
 msgstr "На согласовании"
 
 #. module: project_budget
+#: model:mail.activity.type,name:project_budget.mail_act_approve_project_by_supervisor
+msgid "Approve project by supervisor"
+msgstr "Утверждение проекта куратором"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__message_attachment_count
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__message_attachment_count
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__message_attachment_count
@@ -188,6 +193,11 @@ msgstr "Коммерческие бюджеты"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_form
 msgid "Commercial budget"
 msgstr "Коммерческие бюджеты"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_kanban
+msgid "Contract:"
+msgstr "Контрактование:"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
@@ -636,6 +646,16 @@ msgid "Last Updated on"
 msgstr "Дата последнего обновления"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_kanban
+msgid "Last shipment:"
+msgstr "Последняя отгрузка:"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_kanban
+msgid "Legal sign:"
+msgstr "Подписант:"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__message_main_attachment_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__message_main_attachment_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__message_main_attachment_id
@@ -698,6 +718,13 @@ msgstr "Срок моей активности"
 #: model_terms:ir.ui.view,arch_db:project_budget.report_budget_html
 msgid "Name:"
 msgstr "Имя"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget.py:0
+#, python-format
+msgid "Need send to supervisor for approval"
+msgstr "Необходимо отправить проект на утверждение куратором"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__activity_date_deadline
@@ -894,6 +921,11 @@ msgid "Revenue"
 msgstr "Выручка"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_kanban
+msgid "Revenue:"
+msgstr "Выручка:"
+
+#. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Save"
 msgstr "Сохранить"
@@ -902,6 +934,11 @@ msgstr "Сохранить"
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
 msgid "Search projects"
 msgstr "Поиск проектов"
+
+#. module: project_budget
+#: model:mail.activity.type,name:project_budget.mail_act_send_project_to_supervisor_for_approval
+msgid "Send project to supervisor for approval"
+msgstr "Отправить проект куратору на утверждение"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
@@ -958,6 +995,18 @@ msgid "Supervisor Rule"
 msgstr "Для настроки правила кураторов"
 
 #. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget.py:0
+#: code:addons/project_budget/models/project_budget.py:0
+#, python-format
+msgid ""
+"Supervisor declined project. Change nessesary values and send supervisor for"
+" approval"
+msgstr ""
+"Куратор отклонил проект. Внесите необходимые правки и отправьте куратору на "
+"утверждение"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__end_sale_project_month
 msgid "The period of shipment or provision of services to the Client(MONTH)"
 msgstr "Последняя отгрузка"
@@ -990,6 +1039,32 @@ msgstr " Расходы на гарант. обслуж."
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__budget_state__work
 msgid "Working"
 msgstr "В работе"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget.py:0
+#: code:addons/project_budget/models/project_budget.py:0
+#: model:mail.activity.type,summary:project_budget.mail_act_approve_project_by_supervisor
+#, python-format
+msgid "You have to approve or decline project"
+msgstr "Необходимо утвердить или отклонить проект"
+
+#. module: project_budget
+#: model:mail.activity.type,summary:project_budget.mail_act_send_project_to_supervisor_for_approval
+msgid ""
+"You have to change some fields if its nessesary and/or send project to "
+"supervisor for approval"
+msgstr ""
+"Внесите правки в проект, при необходимости, и отправьте на "
+"утверждениекуратору"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget.py:0
+#, python-format
+msgid "You need send to supervisor for approval"
+msgstr "При необходимости внесите изменения в проект"
+" и отправьте на отверждение куратору"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
@@ -1327,6 +1402,11 @@ msgid "legal_entity_signing name"
 msgstr "Наименование"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_kanban
+msgid "manager"
+msgstr "Руководитель"
+
+#. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_estimated_probability_kanban
 msgid "margin"
 msgstr "Маржа"
@@ -1339,12 +1419,12 @@ msgstr "Наименование"
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__approve_state__need_approve_manager
 msgid "need managers approve"
-msgstr "Менеджера"
+msgstr "Согласование менеджера"
 
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__approve_state__need_approve_supervisor
 msgid "need supervisors approve"
-msgstr "Куратора"
+msgstr "Утверждение куратора"
 
 #. module: project_budget
 #. odoo-python

@@ -1,5 +1,61 @@
 <odoo>
     <data>
+        <record id="show_comercial_budget_spec_kanban" model="ir.ui.view">
+            <field name="name">project_budget.projects.kanban</field>
+            <field name="model">project_budget.projects</field>
+            <field name="arch" type="xml">
+                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" create="0" group_create="false">
+                    <field name="project_manager_id"/>
+                    <field name="essence_project" readonly="1"/>
+                    <field name="cost_price"/>
+                    <field name="budget_state"/>
+                    <field name="specification_state"/>
+                    <field name="customer_organization_id"/>
+                    <field name="legal_entity_signing_id"/>
+                    <field name="end_sale_project_quarter"/>
+                    <field name="end_presale_project_quarter"/>
+                   <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div t-attf-class="o_kanban_card_header">
+                                    <div class="o_kanban_card_header_title">
+                                        <div class="o_primary">
+                                           <field name="approve_state" readonly="1"  widget="badge"
+                                                decoration-danger="approve_state=='need_approve_manager'"
+                                                decoration-warning="approve_state=='need_approve_supervisor'"
+                                                decoration-success="approve_state=='approved'"
+                                                decoration-muted="specification_state=='cancel'"
+                                           />
+                                        </div>
+                                        <div class="col-12">
+                                           Contract: <field name="end_sale_project_quarter"/>
+                                           Last shipment: <field name="end_presale_project_quarter"/>
+                                        </div>
+                                    </div>
+                                        <div class="o_kanban_image me-1">
+                                            <img t-att-src="kanban_image('project_budget.project_manager', 'avatar_128', record.project_manager_id.raw_value)" alt="manager" class="o_image_64_contain"/>
+                                        </div>
+                                        <div >
+                                            <a>Revenue: <field name="total_amount_of_revenue"/></a>
+                                        </div>
+                                        <div>
+                                            <field name="customer_organization_id"/>
+                                        </div>
+                                        <div>
+                                            <a>Legal sign: <field name="legal_entity_signing_id"/></a>
+                                        </div>
+                                        <div>
+                                            <field name="essence_project"/>
+                                        </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
         <record id="show_comercial_budget_spec_form" model="ir.ui.view">
             <field name="name">project_budget.projects.form</field>
             <field name="model">project_budget.projects</field>
@@ -13,6 +69,7 @@
                         <button string="Send to approve" type="object" name="set_approve_manager" class="oe_highlight" attrs="{'invisible': ['|',('approve_state', '!=', 'need_approve_manager'),('budget_state', '=', 'fixed')]}"/>
                         <button string="approve" type="object" name="set_approve_supervisor" class="oe_highlight" attrs="{'invisible': ['|',('approve_state', '!=', 'need_approve_supervisor'),('budget_state', '=', 'fixed')]}"/>
                         <button string="cancel approve" type="object" name="cancel_approve" class="oe_highlight" attrs="{'invisible': ['|',('approve_state', 'not in', ('approved','need_approve_supervisor')),('budget_state', '=', 'fixed')]}"/>
+                        <field name="approve_state" widget="statusbar" statusbar_visible="need_approve_manager,need_approve_supervisor,approved"/>
                     </header>
                     <sheet string="Project">
                         <field name="budget_state" invisible="1"/>

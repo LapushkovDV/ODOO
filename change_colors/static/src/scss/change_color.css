@@ -47,3 +47,7 @@
 .o_searchview_facet .o_facet_values{
       border-color: #0F5F8B !important;
 }
+
+.o_ChatterTopbar_buttonSendMessage {
+      background-color: #0F5F8B !important;
+}

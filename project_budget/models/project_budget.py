@@ -57,9 +57,22 @@ class commercial_budget(models.Model):
 
             for spec in self.projects_ids:
                 spec.approve_state = 'need_approve_manager'
-
+                self.env['mail.activity'].create({
+                    'display_name': _('Need send to supervisor for approval'),
+                    'summary': _('You need send to supervisor for approval'),
+                    'date_deadline': fields.datetime.now(),
+                    'user_id': spec.project_manager_id.user_id.id,
+                    'res_id': spec.id,
+                    'res_model_id': self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id,
+                    'activity_type_id': self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id
+                })
             # self.env['project_budget.projects'].search([('project_id', '=', self.id)]).write({'approve_state': 'need_approve_manager'})
-
+            # meeting_act_type = self.env['mail.activity.type'].search([('category', '=', 'meeting')], limit=1)
+            # if not meeting_act_type:
+            #     meeting_act_type = self.env['mail.activity.type'].create({
+            #         'name': 'Meeting Test',
+            #         'category': 'meeting',
+            #     })
 
             return False
 
@@ -486,6 +499,27 @@ class projects(models.Model):
                 rows.write({
                     'approve_state': "need_approve_supervisor"
                 })
+
+                # Get a reference to the mail.activity model
+                activity_model = self.env['mail.activity']
+                # Use the search method to find the activities that need to be marked as done
+                activities = activity_model.search([('res_id','=', rows.id),
+                                                    ('activity_type_id','=',self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id)
+                                                   ])
+                # Update the state of each activity to 'done'
+                for activitie in activities:
+                    activitie.action_done()
+
+                self.env['mail.activity'].create({
+                    'display_name': _('You have to approve or decline project'),
+                    'summary': _('You have to approve or decline project'),
+                    'date_deadline': fields.datetime.now(),
+                    'user_id': rows.project_supervisor_id.user_id.id,
+                    'res_id': rows.id,
+                    'res_model_id': self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id,
+                    'activity_type_id': self.env.ref('project_budget.mail_act_approve_project_by_supervisor').id
+                    })
+
                     # rows.approve_state="need_approve_supervisor"
         return False
 
@@ -497,6 +531,14 @@ class projects(models.Model):
                    rows.write({
                        'approve_state': "approved"
                      })
+                   activity_model = self.env['mail.activity']
+                   activities = activity_model.search([('res_id', '=', rows.id),
+                                                        ('activity_type_id', '=', self.env.ref(
+                                                            'project_budget.mail_act_approve_project_by_supervisor').id)
+                                                        ])
+                   # Update the state of each activity to 'done'
+                   for activitie in activities:
+                       activitie.action_done()
         return False
 
     def cancel_approve(self):
@@ -506,6 +548,23 @@ class projects(models.Model):
                     # rows.approve_state="need_approve_manager"
                     rows.write({
                         'approve_state': "need_approve_manager"
+                    })
+                    activity_model = self.env['mail.activity']
+                    activities = activity_model.search([('res_id','=', rows.id),
+                                                        ('activity_type_id','=',self.env.ref('project_budget.mail_act_approve_project_by_supervisor').id)
+                                                       ])
+                    # Update the state of each activity to 'done'
+                    for activitie in activities:
+                        activitie.action_done()
+
+                    self.env['mail.activity'].create({
+                        'display_name': _('Supervisor declined project. Change nessesary values and send supervisor for approval'),
+                        'summary': _('Supervisor declined project. Change nessesary values and send supervisor for approval'),
+                        'date_deadline': fields.datetime.now(),
+                        'user_id': rows.project_manager_id.user_id.id,
+                        'res_id': rows.id,
+                        'res_model_id': self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id,
+                        'activity_type_id': self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id
                     })
         return False
 

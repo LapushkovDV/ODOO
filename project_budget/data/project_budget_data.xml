@@ -32,6 +32,22 @@
             <field name="name">Поставка и услуги</field>
         </record>
 
+        <record id="mail_act_send_project_to_supervisor_for_approval" model="mail.activity.type">
+            <field name="name">Send project to supervisor for approval</field>
+            <field name="summary">You have to change some fields if its nessesary and/or send project to supervisor for approval</field>
+            <field name="category">default</field>
+            <field name="decoration_type">warning</field>
+            <field name="icon">fa-warning</field>
+<!--            <field name="res_model">mail.activity</field>-->
+        </record>
 
+        <record id="mail_act_approve_project_by_supervisor" model="mail.activity.type">
+            <field name="name">Approve project by supervisor</field>
+            <field name="summary">You have to approve or decline project</field>
+            <field name="category">default</field>
+            <field name="decoration_type">warning</field>
+            <field name="icon">fa-warning</field>
+<!--            <field name="res_model">mail.activity</field>-->
+        </record>
     </data>
 </odoo>
