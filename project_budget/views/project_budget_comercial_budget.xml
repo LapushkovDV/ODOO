@@ -306,6 +306,7 @@
                                         mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
                                     <tree editable="bottom" default_order="date_step">
                                         <field name="project_steps_type_id" force_save="1" options="{'no_open': True,}"/>
+                                        <field name="code" placeholder="type step code e.g. step-001"/>
                                         <field name="name" placeholder="type step name e.g. products recieve"/>
                                         <field name="date_step" />
                                         <field name="vat_attribute_id" force_save="1" options="{'no_open': True,}"/>
@@ -487,6 +488,7 @@
                     <header>
                         <!--The oe_highlight class gives the button a red color when it is saved.
                         It is usually used to indicate the expected behaviour. -->
+                        <button string="Print current budget" type="object" name="set_approve_manager" class="oe_highlight" />
                         <button string="approve (manager)" type="object" name="set_approve_manager" class="oe_highlight" />
                         <button string="approve (supervisor)" type="object" name="set_approve_supervisor" class="oe_highlight"/>
                         <button string="cancel approve (supervisor)" type="object" name="cancel_approve" class="oe_highlight"/>

@@ -170,6 +170,7 @@ class project_steps(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True)
     name = fields.Char(string="step name", required=True, copy=True)
+    code = fields.Char(string="step code", required=True, copy=True)
     date_step = fields.Date(string="step date" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
@@ -478,6 +479,12 @@ class projects(models.Model):
         if not supervisor_access :
             return False
         else: return True
+
+
+
+    def print_budget(self):
+        for rows in self:
+            print()
 
     def set_approve_manager(self):
         for rows in self:
