@@ -103,11 +103,6 @@ class report_budget_forecast_excel(models.AbstractModel):
                 if elementone.find('НY') != -1 or elementone.find('YEAR') != -1:
                     print('colbegH = column = ',column)
                     colbegH = column
-
-            # sheet.set_column(1, None, None, {'level': 1})
-            print('colbeg=',colbeg,' column=',column)
-            # sheet.set_column(colbeg, column - 1, 15)
-            # sheet.set_column(colbeg, column - 1, 15)
             sheet.merge_range(row-1, colbeg, row-1, column - 1, y[0], head_format_month)
 
         return column
@@ -164,34 +159,31 @@ class report_budget_forecast_excel(models.AbstractModel):
                 sheet.merge_range(row, column, row, column + 5, element, head_format_month)
                 sheet.merge_range(row + 1, column, row + 2, column, "План " + element.replace('итого', ''),
                                   head_format_month_itogo)
-                # sheet.set_column(column, column, 15)
                 column += 1
                 sheet.merge_range(row + 1, column, row + 1, column + 1, 'Прогноз на начало периода (эталонный)',
                                   head_format_month_detail)
                 sheet.write_string(row + 2, column, 'Обязательство', head_format_month_detail)
-                # sheet.set_column(column, column, 15)
                 column += 1
                 sheet.write_string(row + 2, column, 'Резерв', head_format_month_detail)
-                # sheet.set_column(column, column, 15)
                 column += 1
                 sheet.merge_range(row + 1, column, row + 2, column, 'Факт', head_format_month_detail_fact)
-                # sheet.set_column(column, column, 15)
                 column += 1
                 sheet.merge_range(row + 1, column, row + 1, column + 1, 'Прогноз до конца периода (на дату отчета)',
                                   head_format_month_detail)
                 sheet.write_string(row + 2, column, 'Обязательство', head_format_month_detail)
-                # sheet.set_column(column, column, 15)
                 column += 1
                 sheet.write_string(row + 2, column, 'Резерв', head_format_month_detail)
-                # sheet.set_column(column, column, 15)
                 column += 1
             sheet.merge_range(row-1, colbeg, row-1, column - 1, y[0], head_format_month)
         return column
 
+    def print_row_Values(self, workbook, sheet, row, column,  YEAR, spec, step):
+        s=1
+
     def printworksheet(self,workbook,budget,namesheet):
         report_name = budget.name
-            # One sheet by partner
         sheet = workbook.add_worksheet(namesheet)
+        sheet.set_zoom(85)
         bold = workbook.add_format({'bold': True})
         money_format = workbook.add_format({'num_format': '#,##0'})
         head_format = workbook.add_format({
@@ -215,21 +207,12 @@ class report_budget_forecast_excel(models.AbstractModel):
         row_format_date_month = workbook.add_format({
             'border': 1,
             'font_size': 10,
-            # 'num_format': 14
-            #                'text_wrap' : True,
-            #                'align': 'center',
-            #                'valign': 'vcenter',
-            #                'fg_color': '#3265a5',
         })
 
         row_format_date_month.set_num_format('mmm yyyy')
         row_format = workbook.add_format({
             'border': 1,
             'font_size': 10
-            #                'text_wrap' : True,
-            #                'align': 'center',
-            #                'valign': 'vcenter',
-            #                'fg_color': '#3265a5',
         })
         row_format_number = workbook.add_format({
             'border': 1,
@@ -244,57 +227,117 @@ class report_budget_forecast_excel(models.AbstractModel):
         column = 0
         sheet.write_string(row, column, "Прогноз",head_format)
         sheet.write_string(row+1, column, "Проектный офис", head_format_1)
-        # sheet.set_column(column, column, 21.5)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 21.5)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "КАМ", head_format_1)
-        # sheet.set_column(column, column, 19.75)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 19.75)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Заказчик", head_format_1)
-        # sheet.set_column(column, column, 25)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 25)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Наименование Проекта", head_format_1)
-        # sheet.set_column(column, column, 12.25)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 12.25)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Номер этапа проекта", head_format_1)
-        # sheet.set_column(column, column, 15)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 15)
         column += 1
         sheet.write_string(row, column, "", head_format)
-        sheet.write_string(row+1, column, "Стадияпродажи", head_format_1)
-        # sheet.set_column(column, column, 16.88)
+        sheet.write_string(row+1, column, "Стадия продажи", head_format_1)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 16.88)
         column += 1
         sheet.write_string(row, column, "", head_format)
-        sheet.write_string(row+1, column, "Суммапроекта, вруб", head_format_1)
-        # sheet.set_column(column, column, 14)
+        sheet.write_string(row+1, column, "Сумма проекта, вруб", head_format_1)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 14)
         column += 1
         sheet.write_string(row, column, "", head_format)
-        sheet.write_string(row+1, column, "Валовая прибыльэкспертно, в руб", head_format_1)
-        # sheet.set_column(column, column, 14)
+        sheet.write_string(row+1, column, "Валовая прибыль экспертно, в руб", head_format_1)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 14)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Прибыльность, экспертно, %", head_format_1)
-        # sheet.set_column(column, column, 9)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 9)
         column += 1
         sheet.write_string(row, column, "", head_format)
-        sheet.write_string(row+1, column, "Номердоговора", head_format_1)
-        # sheet.set_column(column, column, 11.88)
+        sheet.write_string(row+1, column, "Номер договора", head_format_1)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 11.88)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "НДС", head_format_1)
-        # sheet.set_column(column, column, 7)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 7)
         column += 1
         column = self.print_month_head_contract_pds(workbook, sheet, row, column,  '2023')
         column = self.print_month_head_revenue_margin(workbook, sheet, row, column,  '2023')
         print(column)
-        sheet.set_zoom(85)
-        # for spec in budget.projects_ids:
-        #     if spec.specification_state == stateproject:
-        #         row += 1
-        #         column = 0
-        #         sheet.write_string(row, column, spec.project_id, row_format)
+        row += 2
+        for spec in budget.projects_ids:
+            if spec.estimated_probability_id.name != '0':
+                row += 1
+                if spec.project_have_steps:
+                    for step in spec.project_steps_ids:
+                        column = 0
+                        sheet.write_string(row, column, spec.project_office_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.essence_project, row_format)
+                        column += 1
+                        sheet.write_string(row, column, step.code, row_format)
+                        column += 1
+                        sheet.write_string(row, column, "стадия проекта. что это?", row_format)
+                        column += 1
+                        sheet.write_number(row, column, step.sum_without_vat, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.margin_income, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.profitability, row_format)
+                        column += 1
+                        sheet.write_string(row, column, "Contract number will be here ", row_format)
+                        column += 1
+                        sheet.write_string(row, column, step.vat_attribute_id.name, row_format)
+                        row += 1
+                        print_row_Values(workbook, sheet, row, column,  '2023', spec, step)
+                    row -= 1
+                else:
+                    column = 0
+                    sheet.write_string(row, column, spec.project_office_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.essence_project, row_format)
+                    column += 1
+                    sheet.write_string(row, column, "step.code will be here", row_format)
+                    column += 1
+                    sheet.write_string(row, column, "стадия проекта. что это?", row_format)
+                    column += 1
+                    sheet.write_number(row, column, spec.total_amount_of_revenue, row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.margin_income, row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.profitability, row_format)
+                    column += 1
+                    sheet.write_string(row, column, "Contract number will be here ", row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.vat_attribute_id.name, row_format)
+                    print_row_Values(workbook, sheet, row, column, '2023', spec, None)
 
 
     def generate_xlsx_report(self, workbook, data, budgets):

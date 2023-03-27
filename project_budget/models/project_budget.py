@@ -91,17 +91,21 @@ class commercial_budget(models.Model):
                 self.date_actual=None
                 return False
 
+
 class planned_cash_flow(models.Model):
+
     _name = 'project_budget.planned_cash_flow'
     _description = "planned cash flow"
     _inherit = ['mail.thread', 'mail.activity.mixin']
     projects_id = fields.Many2one('project_budget.projects', string='projects_id',index=True)
     project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps', readonly=True)
     project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True)
+
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
     sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
     doc_cash = fields.Char(string="doc_cash", required=True, copy=True)
+
     @ api.depends('projects_id.currency_id')
     def _compute_reference(self):
         for row in self:
@@ -143,6 +147,18 @@ class fact_cash_flow(models.Model):
             row.currency_id = row.projects_id.currency_id
 
 class fact_acceptance_flow(models.Model):
+
+    def get_project_steps_list(self):
+        domain = [('id', '=', 0)]
+        project_steps = self.env['project_budget.project_steps'].search([('projects_id.id', '=', self.env.projects_id.id)])
+        project_steps_list = []
+        for each in project_steps:
+            project_steps_list.append(each.id)
+        if project_steps_list:
+            domain = [('id', 'in', project_steps_list)]
+            return domain
+        return domain
+
     _name = 'project_budget.fact_acceptance_flow'
     _description = "fact acceptance flow"
     _inherit = ['mail.thread', 'mail.activity.mixin']
@@ -176,12 +192,19 @@ class project_steps(models.Model):
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
     vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True)
     sum_without_vat = fields.Monetary(string="sum without vat", required=True, copy=True)
-    sum_with_vat = fields.Monetary(string="sum_cash", compute='_compute_sum', readonly=True)
+    sum_with_vat = fields.Monetary(string="sum_with_vat", compute='_compute_sum', readonly=True)
+    margin_income = fields.Monetary(string="margin", required=True, copy=True)
+    profitability = fields.Float(string="profitability", compute='_compute_sum', readonly=True)
 
-    @ api.depends('sum_without_vat','vat_attribute_id')
+    @ api.depends('sum_without_vat','vat_attribute_id','margin_income')
     def _compute_sum(self):
         for row in self:
             row.sum_with_vat = row.sum_without_vat * (1+row.vat_attribute_id.percent/100)
+            if row.sum_without_vat == 0 :
+                row.profitability = 0
+            else:
+                row.profitability = row.margin_income / row.sum_without_vat * 100
+
 
 
 class projects(models.Model):
