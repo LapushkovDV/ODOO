@@ -128,6 +128,7 @@ class planned_cash_flow(models.Model):
 
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
+    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True, compute='_compute_sum')
     sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
     doc_cash = fields.Char(string="doc_cash",  copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
 
@@ -135,6 +136,14 @@ class planned_cash_flow(models.Model):
     def _compute_reference(self):
         for row in self:
             row.currency_id = row.projects_id.currency_id
+
+    @api.depends("sum_cash","project_steps_id.vat_attribute_id","projects_id.vat_attribute_id")
+    def _compute_sum(self):
+        for row in self:
+            if row.project_steps_id:
+                row.sum_cash_without_vat = row.sum_cash/(1+row.project_steps_id.vat_attribute_id.percent / 100)
+            else:
+                row.sum_cash_without_vat = row.sum_cash / (1 + row.projects_id.vat_attribute_id.percent / 100)
 
 
 class planned_acceptance_flow(models.Model):
@@ -150,13 +159,21 @@ class planned_acceptance_flow(models.Model):
     project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
-    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
+    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True)
+    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True, compute='_compute_sum')
     doc_cash = fields.Char(string="doc_cash", copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
     @ api.depends('projects_id.currency_id')
     def _compute_reference(self):
         for row in self:
             row.currency_id = row.projects_id.currency_id
 
+    @api.depends("sum_cash_without_vat","project_steps_id.vat_attribute_id","projects_id.vat_attribute_id")
+    def _compute_sum(self):
+        for row in self:
+            if row.project_steps_id:
+                row.sum_cash = row.sum_cash_without_vat * (1+row.project_steps_id.vat_attribute_id.percent / 100)
+            else:
+                row.sum_cash = row.sum_cash_without_vat * (1 + row.projects_id.vat_attribute_id.percent / 100)
 
 class fact_cash_flow(models.Model):
     _name = 'project_budget.fact_cash_flow'
@@ -168,12 +185,20 @@ class fact_cash_flow(models.Model):
     project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
+    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True, compute='_compute_sum')
     sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
     doc_cash = fields.Char(string="doc_cash",  copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
     @ api.depends('projects_id.currency_id')
     def _compute_reference(self):
         for row in self:
             row.currency_id = row.projects_id.currency_id
+    @api.depends("sum_cash","project_steps_id.vat_attribute_id","projects_id.vat_attribute_id")
+    def _compute_sum(self):
+        for row in self:
+            if row.project_steps_id:
+                row.sum_cash_without_vat = row.sum_cash/(1+row.project_steps_id.vat_attribute_id.percent / 100)
+            else:
+                row.sum_cash_without_vat = row.sum_cash / (1 + row.projects_id.vat_attribute_id.percent / 100)
 
 class fact_acceptance_flow(models.Model):
 
@@ -197,12 +222,21 @@ class fact_acceptance_flow(models.Model):
     project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
-    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
+    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True)
+    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True, compute='_compute_sum')
+
     doc_cash = fields.Char(string="doc_cash", copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
     @ api.depends('projects_id.currency_id')
     def _compute_reference(self):
         for row in self:
             row.currency_id = row.projects_id.currency_id
+    @api.depends("sum_cash_without_vat","project_steps_id.vat_attribute_id","projects_id.vat_attribute_id")
+    def _compute_sum(self):
+        for row in self:
+            if row.project_steps_id:
+                row.sum_cash = row.sum_cash_without_vat * (1+row.project_steps_id.vat_attribute_id.percent / 100)
+            else:
+                row.sum_cash = row.sum_cash_without_vat * (1 + row.projects_id.vat_attribute_id.percent / 100)
 
 class project_steps_type(models.Model):
     _name = 'project_budget.project_steps_type'
@@ -230,8 +264,10 @@ class project_steps(models.Model):
 
     currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
+    # vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
+    #                                     ,default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
     vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
-                                        ,default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
+                                       ,default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
 
     profitability = fields.Float(string="profitability", compute='_compute_sum', readonly=True)
     end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)',
@@ -243,8 +279,6 @@ class project_steps(models.Model):
     end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)',
                                          required=True, default=fields.datetime.now(), tracking=True)
 
-    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
-                                       ,default=lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
     total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals',
                                               store=True, tracking=True)
     total_amount_of_revenue_with_vat = fields.Monetary(string='total_amount_of_revenue_with_vat',compute='_compute_spec_totals',
