@@ -9,7 +9,7 @@ class report_budget_excel(models.AbstractModel):
             # One sheet by partner
         sheet = workbook.add_worksheet(namesheet)
         bold = workbook.add_format({'bold': True})
-        money_format = workbook.add_format({'num_format': '#,##0'})
+        money_format = workbook.add_format({'num_format': '#,##0.00'})
         head_format = workbook.add_format({
             'bold': True,
             'border': 1,
@@ -170,77 +170,151 @@ class report_budget_excel(models.AbstractModel):
 
         for spec in budget.projects_ids:
             if spec.specification_state == stateproject:
-                row += 1
-                column = 0
-                sheet.write_string(row, column, spec.project_id, row_format)
-                column += 1
-                sheet.write_string(row, column, spec.project_office_id.name, row_format)
-                column += 1
-                sheet.write_string(row, column, spec.project_supervisor_id.name, row_format)
-                column += 1
-                sheet.write_string(row, column, spec.project_manager_id.name, row_format)
-                column += 1
-                sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
-                column += 1
-                sheet.write_string(row, column, spec.customer_status_id.name, row_format)
-                column += 1
-                sheet.write_string(row, column, spec.industry_id.name, row_format)
-                column += 1
-                sheet.write_string(row, column, spec.essence_project  or "", row_format)
-                column += 1
-                sheet.write_string(row, column, spec.end_presale_project_quarter, row_format)
-                column += 1
-                sheet.write_datetime(row, column, spec.end_presale_project_month, row_format_date_month)
-                column += 1
-                sheet.write_string(row, column, spec.end_sale_project_quarter, row_format)
-                column += 1
-                sheet.write_datetime(row, column, spec.end_sale_project_month, row_format_date_month)
-                column += 1
-                sheet.write_string(row, column, spec.vat_attribute_id.name or "", row_format)
-                column += 1
-                sheet.write_number(row, column, spec.total_amount_of_revenue, row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.revenue_from_the_sale_of_works,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.revenue_from_the_sale_of_goods,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.cost_price,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.cost_of_goods,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.own_works_fot,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.third_party_works,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.awards_on_results_project,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.transportation_expenses,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.travel_expenses,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.representation_expenses,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.taxes_fot_premiums,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.warranty_service_costs,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.rko_other,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.other_expenses,row_format_number)
-                column += 1
-                sheet.write_number(row, column, spec.margin_income,row_format_number)
-                column += 1
-                sheet.write(row, column, spec.profitability, row_format_number)
-                column += 1
-                sheet.write(row, column, spec.estimated_probability_id.name, row_format_number)
-                column += 1
-                sheet.write(row, column, spec.legal_entity_signing_id.name, row_format)
-                column += 1
-                sheet.write_string(row, column, spec.project_type_id.name, row_format)
-                column += 1
-                sheet.write_string(row, column, spec.comments or "", row_format)
-                column += 1
-                sheet.write_string(row, column, spec.technological_direction_id.name, row_format)
+                if spec.project_have_steps == False:
+                    row += 1
+                    column = 0
+                    sheet.write_string(row, column, spec.project_id, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.project_office_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.project_supervisor_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.customer_status_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.industry_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.essence_project  or "", row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.end_presale_project_quarter, row_format)
+                    column += 1
+                    sheet.write_datetime(row, column, spec.end_presale_project_month, row_format_date_month)
+                    column += 1
+                    sheet.write_string(row, column, spec.end_sale_project_quarter, row_format)
+                    column += 1
+                    sheet.write_datetime(row, column, spec.end_sale_project_month, row_format_date_month)
+                    column += 1
+                    sheet.write_string(row, column, spec.vat_attribute_id.name or "", row_format)
+                    column += 1
+                    sheet.write_number(row, column, spec.total_amount_of_revenue, row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.revenue_from_the_sale_of_works,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.revenue_from_the_sale_of_goods,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.cost_price,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.cost_of_goods,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.own_works_fot,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.third_party_works,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.awards_on_results_project,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.transportation_expenses,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.travel_expenses,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.representation_expenses,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.taxes_fot_premiums,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.warranty_service_costs,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.rko_other,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.other_expenses,row_format_number)
+                    column += 1
+                    sheet.write_number(row, column, spec.margin_income,row_format_number)
+                    column += 1
+                    sheet.write(row, column, spec.profitability, row_format_number)
+                    column += 1
+                    sheet.write(row, column, spec.estimated_probability_id.name, row_format_number)
+                    column += 1
+                    sheet.write(row, column, spec.legal_entity_signing_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.project_type_id.name, row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.comments or "", row_format)
+                    column += 1
+                    sheet.write_string(row, column, spec.technological_direction_id.name, row_format)
+                else:
+                    for step in spec.project_steps_ids:
+                        row += 1
+                        column = 0
+                        sheet.write_string(row, column, spec.project_id + ' | ' + step.step_id, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.project_office_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.project_supervisor_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.customer_status_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.industry_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, step.essence_project or "", row_format)
+                        column += 1
+                        sheet.write_string(row, column, step.end_presale_project_quarter, row_format)
+                        column += 1
+                        sheet.write_datetime(row, column, step.end_presale_project_month, row_format_date_month)
+                        column += 1
+                        sheet.write_string(row, column, step.end_sale_project_quarter, row_format)
+                        column += 1
+                        sheet.write_datetime(row, column, step.end_sale_project_month, row_format_date_month)
+                        column += 1
+                        sheet.write_string(row, column, step.vat_attribute_id.name or "", row_format)
+                        column += 1
+                        sheet.write_number(row, column, step.total_amount_of_revenue, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.revenue_from_the_sale_of_works, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.revenue_from_the_sale_of_goods, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.cost_price, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.cost_of_goods, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.own_works_fot, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.third_party_works, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.awards_on_results_project, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.transportation_expenses, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.travel_expenses, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.representation_expenses, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.taxes_fot_premiums, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.warranty_service_costs, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.rko_other, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.other_expenses, row_format_number)
+                        column += 1
+                        sheet.write_number(row, column, step.margin_income, row_format_number)
+                        column += 1
+                        sheet.write(row, column, step.profitability, row_format_number)
+                        column += 1
+                        sheet.write(row, column, spec.estimated_probability_id.name, row_format_number)
+                        column += 1
+                        sheet.write(row, column, spec.legal_entity_signing_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.project_type_id.name, row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.comments or "", row_format)
+                        column += 1
+                        sheet.write_string(row, column, spec.technological_direction_id.name, row_format)
                 #sheet.write(row, 0, 'Total', bold, row_format)
                 #sheet.write(row, 2, '=SUM(C2:C5, row_format)', money_format, row_format)
 

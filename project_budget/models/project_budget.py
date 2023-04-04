@@ -1,4 +1,6 @@
 from odoo import _, models, fields, api
+from odoo import _, models, fields, api
+from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
 from odoo.tools import pytz
 from datetime import timedelta
@@ -9,8 +11,8 @@ class commercial_budget(models.Model):
     _name = 'project_budget.commercial_budget'
     _description = "project_commercial budget"
     name = fields.Char(string="commercial_budget name", required=True)
-    etalon_budget = fields.Boolean(string="etalon_budget", default = False)
     budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False, tracking=True)
+    etalon_budget = fields.Boolean(string="etalon_budget", default = False)
     date_actual = fields.Datetime(string="Actuality date", index=True, copy=False)
     year = fields.Integer(string="Budget year", required=True, index=True,default=2023)
     currency_id = fields.Many2one('res.currency', string='Account Currency')
@@ -51,10 +53,10 @@ class commercial_budget(models.Model):
             # self.date_actual = fields.datetime.now()
             cur_datetime = self.get_user_datetime()
             print('cur_datetime=',cur_datetime)
-            self.env['project_budget.commercial_budget'].browse(self.id).copy({'budget_state':'fixed'
+            newbudget = self.env['project_budget.commercial_budget'].browse(self.id).copy({'budget_state':'fixed'
                                                                               ,'date_actual': fields.datetime.now()
                                                                                 })
-
+            print('newbudget.id=',newbudget.id)
             for spec in self.projects_ids:
                 spec.approve_state = 'need_approve_manager'
                 self.env['mail.activity'].create({
@@ -66,6 +68,26 @@ class commercial_budget(models.Model):
                     'res_model_id': self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id,
                     'activity_type_id': self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id
                 })
+                # вот далее обновляем ссылки на step в созданных проектах, хотя может просто как то модель можно изменить... я ХЗ
+            for project in newbudget.projects_ids:
+                if project.project_have_steps:
+                    for planned_cash_flow in project.planned_cash_flow_ids:
+                        current_project = self.env['project_budget.project_steps'].search(
+                            [('projects_id', '=', project.id),('step_id','=',planned_cash_flow.project_steps_id.step_id)])
+                        planned_cash_flow.project_steps_id = current_project.id
+                    for planned_acceptance_flow in project.planned_acceptance_flow_ids:
+                        current_project = self.env['project_budget.project_steps'].search(
+                            [('projects_id', '=', project.id), ('step_id', '=', planned_acceptance_flow.project_steps_id.step_id)])
+                        planned_acceptance_flow.project_steps_id = current_project.id
+                    for fact_cash_flow in project.fact_cash_flow_ids:
+                        current_project = self.env['project_budget.project_steps'].search(
+                            [('projects_id', '=', project.id), ('step_id', '=', fact_cash_flow.project_steps_id.step_id)])
+                        fact_cash_flow.project_steps_id = current_project.id
+                    for fact_acceptance_flow in project.fact_acceptance_flow_ids:
+                        current_project = self.env['project_budget.project_steps'].search(
+                            [('projects_id', '=', project.id), ('step_id', '=', fact_acceptance_flow.project_steps_id.step_id)])
+                        fact_acceptance_flow.project_steps_id = current_project.id
+
             # self.env['project_budget.projects'].search([('project_id', '=', self.id)]).write({'approve_state': 'need_approve_manager'})
             # meeting_act_type = self.env['mail.activity.type'].search([('category', '=', 'meeting')], limit=1)
             # if not meeting_act_type:
@@ -97,32 +119,39 @@ class planned_cash_flow(models.Model):
     _name = 'project_budget.planned_cash_flow'
     _description = "planned cash flow"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id',index=True)
+    projects_id = fields.Many2one('project_budget.projects', string='projects_id',index=True,ondelete='cascade')
+    etalon_budget = fields.Boolean(related='projects_id.etalon_budget', readonly=True)
+    date_actual = fields.Datetime(related='projects_id.date_actual', readonly=True)
+
     project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps', readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True)
+    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
 
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
     sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
-    doc_cash = fields.Char(string="doc_cash", required=True, copy=True)
+    doc_cash = fields.Char(string="doc_cash",  copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
 
     @ api.depends('projects_id.currency_id')
     def _compute_reference(self):
         for row in self:
             row.currency_id = row.projects_id.currency_id
 
+
 class planned_acceptance_flow(models.Model):
     _name = 'project_budget.planned_acceptance_flow'
     _description = "planned acceptance flow"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True)
+    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True, ondelete='cascade')
+    etalon_budget = fields.Boolean(related='projects_id.etalon_budget', readonly=True)
+    date_actual = fields.Datetime(related='projects_id.date_actual', readonly=True)
+
     project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps',
                                         readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True)
+    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
     sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
-    doc_cash = fields.Char(string="doc_cash", required=True, copy=True)
+    doc_cash = fields.Char(string="doc_cash", copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
     @ api.depends('projects_id.currency_id')
     def _compute_reference(self):
         for row in self:
@@ -133,14 +162,14 @@ class fact_cash_flow(models.Model):
     _name = 'project_budget.fact_cash_flow'
     _description = "fact cash flow"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id',index=True)
+    projects_id = fields.Many2one('project_budget.projects', string='projects_id',index=True,ondelete='cascade')
     project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps',
                                         readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True)
+    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
     sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
-    doc_cash = fields.Char(string="doc_cash", required=True, copy=True)
+    doc_cash = fields.Char(string="doc_cash",  copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
     @ api.depends('projects_id.currency_id')
     def _compute_reference(self):
         for row in self:
@@ -162,14 +191,14 @@ class fact_acceptance_flow(models.Model):
     _name = 'project_budget.fact_acceptance_flow'
     _description = "fact acceptance flow"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True)
+    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True,ondelete='cascade')
     project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps',
                                         readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True)
+    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
     sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
-    doc_cash = fields.Char(string="doc_cash", required=True, copy=True)
+    doc_cash = fields.Char(string="doc_cash", copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
     @ api.depends('projects_id.currency_id')
     def _compute_reference(self):
         for row in self:
@@ -184,34 +213,175 @@ class project_steps(models.Model):
     _name = 'project_budget.project_steps'
     _description = "project steps"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True)
-    name = fields.Char(string="step name", required=True, copy=True)
+    _rec_name = 'essence_project'
+    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True, ondelete='cascade')
+    etalon_budget = fields.Boolean(related='projects_id.etalon_budget', readonly=True)
+    date_actual = fields.Datetime(related='projects_id.date_actual', readonly=True, store=True)
+    budget_state = fields.Selection(related='projects_id.budget_state', readonly=True, store=True)
+    approve_state = fields.Selection(related='projects_id.approve_state', readonly=True, store=True)
+    # name = fields.Char(string="step name", required=True, copy=True)
     code = fields.Char(string="step code", required=True, copy=True)
-    date_step = fields.Date(string="step date" , required=True, copy=True)
+    essence_project = fields.Text(string='essence_project', default = "")
+    step_id = fields.Char(string="step_id", required=True, copy=True, default = '-',index=True)
+    # date_step = fields.Date(string="step date" , required=True, copy=True)
+    # sum_without_vat = fields.Monetary(string="sum without vat", required=True, copy=True)
+    # sum_with_vat = fields.Monetary(string="sum_with_vat", compute='_compute_sum', readonly=True)
+    # margin_income = fields.Monetary(string="margin", required=True, copy=True)
+
     currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
-    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True)
-    sum_without_vat = fields.Monetary(string="sum without vat", required=True, copy=True)
-    sum_with_vat = fields.Monetary(string="sum_with_vat", compute='_compute_sum', readonly=True)
-    margin_income = fields.Monetary(string="margin", required=True, copy=True)
+    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
+                                        ,default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
+
     profitability = fields.Float(string="profitability", compute='_compute_sum', readonly=True)
+    end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)',
+                                              compute='_compute_quarter', store=True, tracking=True)
+    end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True,
+                                            default=fields.datetime.now(), tracking=True)
+    end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter',
+                                           store=True, tracking=True)
+    end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)',
+                                         required=True, default=fields.datetime.now(), tracking=True)
 
-    @ api.depends('sum_without_vat','vat_attribute_id','margin_income')
-    def _compute_sum(self):
-        for row in self:
-            row.sum_with_vat = row.sum_without_vat * (1+row.vat_attribute_id.percent/100)
-            if row.sum_without_vat == 0 :
-                row.profitability = 0
+    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
+                                       ,default=lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
+    total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals',
+                                              store=True, tracking=True)
+    total_amount_of_revenue_with_vat = fields.Monetary(string='total_amount_of_revenue_with_vat',compute='_compute_spec_totals',
+                                                       store=True, tracking=True)
+    revenue_from_the_sale_of_works = fields.Monetary(string='revenue_from_the_sale_of_works(services)')
+    revenue_from_the_sale_of_goods = fields.Monetary(string='revenue_from the sale of goods')
+    cost_price = fields.Monetary(string='cost_price', compute='_compute_spec_totals', store=True, tracking=True)
+    cost_of_goods = fields.Monetary(string='cost_of_goods')
+    own_works_fot = fields.Monetary(string='own_works_fot')
+    third_party_works = fields.Monetary(string='third_party_works(subcontracting)')
+    awards_on_results_project = fields.Monetary(string='Awards based on the results of the project')
+    transportation_expenses = fields.Monetary(string='transportation_expenses')
+    travel_expenses = fields.Monetary(string='travel_expenses')
+    representation_expenses = fields.Monetary(string='representation_expenses')
+    taxes_fot_premiums = fields.Monetary(string='taxes_FOT and premiums', compute='_compute_spec_totals', store=True,
+                                         tracking=True)
+    warranty_service_costs = fields.Monetary(string='Warranty service costs')
+    rko_other = fields.Monetary(string='rko_other')
+    other_expenses = fields.Monetary(string='other_expenses')
+    margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
+    profitability = fields.Float(string='Profitability(share of Sale margin in revenue)',
+                                 compute='_compute_spec_totals', store=True, tracking=True)
+
+    @api.depends("revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
+                 'third_party_works', "awards_on_results_project", 'transportation_expenses', 'travel_expenses',
+                 'representation_expenses',"warranty_service_costs", 'rko_other', 'other_expenses', 'vat_attribute_id',
+                 'projects_id.legal_entity_signing_id')
+    def _compute_spec_totals(self):
+        for budget_spec in self:
+            budget_spec.total_amount_of_revenue = budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods
+            budget_spec.taxes_fot_premiums = (
+                                                         budget_spec.awards_on_results_project + budget_spec.own_works_fot) * budget_spec.projects_id.legal_entity_signing_id.percent_fot / 100
+            budget_spec.cost_price = budget_spec.cost_of_goods + budget_spec.own_works_fot + budget_spec.third_party_works + budget_spec.awards_on_results_project
+            budget_spec.cost_price = budget_spec.cost_price + budget_spec.transportation_expenses + budget_spec.travel_expenses + budget_spec.representation_expenses
+            budget_spec.cost_price = budget_spec.cost_price + budget_spec.warranty_service_costs + budget_spec.rko_other + budget_spec.other_expenses
+            budget_spec.cost_price = budget_spec.cost_price + (
+                        budget_spec.awards_on_results_project + budget_spec.own_works_fot) * budget_spec.projects_id.legal_entity_signing_id.percent_fot / 100
+            budget_spec.margin_income = budget_spec.total_amount_of_revenue - budget_spec.cost_price
+
+            budget_spec.total_amount_of_revenue_with_vat = (budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods) * (1 + budget_spec.vat_attribute_id.percent / 100)
+
+            if budget_spec.total_amount_of_revenue == 0:
+                budget_spec.profitability = 0
             else:
-                row.profitability = row.margin_income / row.sum_without_vat * 100
+                budget_spec.profitability = budget_spec.margin_income / budget_spec.total_amount_of_revenue * 100
 
+    @api.depends('end_presale_project_month','end_sale_project_month')
+    def _compute_quarter(self):
+        for fieldquarter in self:
+            if fieldquarter.end_presale_project_month == False:
+                continue
+            tmp_date = fieldquarter.end_presale_project_month
+            month = tmp_date.month
+            year = tmp_date.year
+            if 0 <= int(month) <= 3:
+                fieldquarter.end_presale_project_quarter = 'Q1 ' + str(year)
+            elif 4 <= int(month) <= 6:
+                fieldquarter.end_presale_project_quarter = 'Q2 ' + str(year)
+            elif 7 <= int(month) <= 9:
+                fieldquarter.end_presale_project_quarter = 'Q3 ' + str(year)
+            elif 10 <= int(month) <= 12:
+                fieldquarter.end_presale_project_quarter = 'Q4 ' + str(year)
+            else:
+                fieldquarter.end_presale_project_quarter = 'NA'
+            tmp_date = fieldquarter.end_sale_project_month
+            month = tmp_date.month
+            year = tmp_date.year
+            if 0 <= int(month) <= 3:
+                fieldquarter.end_sale_project_quarter = 'Q1 ' + str(year)
+            elif 4 <= int(month) <= 6:
+                fieldquarter.end_sale_project_quarter = 'Q2 ' + str(year)
+            elif 7 <= int(month) <= 9:
+                fieldquarter.end_sale_project_quarter = 'Q3 ' + str(year)
+            elif 10 <= int(month) <= 12:
+                fieldquarter.end_sale_project_quarter = 'Q4 ' + str(year)
+            else:
+                fieldquarter.end_sale_project_quarter = 'NA'
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('step_id') or vals['step_id'] == '-':
+                vals['step_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.project_steps')
+        return super().create(vals_list)
+
+    def unlink(self):
+        """
+        need check exists  step in etalon budget and
+
+        """
+        print('unlink ')
+        for record in self:
+            print('record = ', record)
+            print('record.step_id = ',record.step_id)
+            print('record.id = ',record.id)
+            if record.approve_state != 'need_approve_manager' :
+                raisetext = _("only in state 'need approve manager' project can be deleted")
+                raise ValidationError(raisetext)
+
+            if record.budget_state == 'fixed' :
+                raisetext = _("only in 'Working' budget project step can be deleted")
+                raise ValidationError(raisetext)
+
+            fact_cash_flow = self.env['project_budget.project_steps'].search([('step_id', '=', record.step_id),('id','!=',record.id)], limit =1)
+            if fact_cash_flow:
+                raisetext = _("step exist in another version of budget")
+                raise ValidationError(raisetext)
+
+
+            fact_cash_flow = self.env['project_budget.fact_cash_flow'].search([('project_steps_id', '=', record.id)], limit =1)
+            if fact_cash_flow:
+                raisetext = _("fact_cash_flow exist with this step")
+                raise ValidationError(raisetext)
+
+            planned_cash_flow = self.env['project_budget.planned_cash_flow'].search([('project_steps_id', '=', record.id)], limit =1)
+            if planned_cash_flow:
+                raisetext = _("planned_cash_flow exist with this step")
+                raise ValidationError(raisetext)
+
+            planned_acceptance_flow = self.env['project_budget.planned_acceptance_flow'].search([('project_steps_id', '=', record.id)], limit =1)
+            if planned_acceptance_flow:
+                raisetext = _("planned_acceptance_flow exist with this step")
+                raise ValidationError(raisetext)
+
+            fact_acceptance_flow = self.env['project_budget.fact_acceptance_flow'].search([('project_steps_id', '=', record.id)], limit =1)
+            if fact_acceptance_flow:
+                raisetext = _("fact_acceptance_flow exist with this step")
+                raise ValidationError(raisetext)
+
+        return super().unlink()
 
 
 class projects(models.Model):
     _name = 'project_budget.projects'
     _description = "project_office commercial budget projects"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _rec_names_search = ['project_id', 'essence_project']
+    # _rec_names_search = ['project_id', 'essence_project']
 
     def action_canban_view_group(self):
         data = self.env['project_budget.projects'].search()
@@ -277,7 +447,8 @@ class projects(models.Model):
     approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
                                     required=True, index=True, default='need_approve_manager', store=True, copy=True, tracking=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency',  compute='_compute_reference')
-    etalon_budget = fields.Boolean(string="etalon_budget", compute='_compute_reference')
+    etalon_budget = fields.Boolean(related='commercial_budget_id.etalon_budget', readonly=True)
+    date_actual = fields.Datetime(related='commercial_budget_id.date_actual', readonly=True, store=True)
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
                                            ,default=lambda self: self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')], limit=1)
                                            , domain=_get_commercial_budget_list)
@@ -363,10 +534,6 @@ class projects(models.Model):
         comodel_name='project_budget.project_steps',
         inverse_name='projects_id',
         string="project steps", auto_join=True,copy=True)
-    prj_step_sum_without_vat = fields.Monetary(string='project_steps_Sum without_vat', compute='_compute_project_steps_sum',
-                                               store=True, tracking=True)
-    prj_step_sum_with_vat = fields.Monetary(string='project_steps_Sum with_vat', compute='_compute_project_steps_sum',
-                                               store=True, tracking=True)
 
     @api.depends('estimated_probability_id')
     def _compute_specification_state(self):
@@ -399,15 +566,6 @@ class projects(models.Model):
             for row_flow in self.planned_cash_flow_ids:
                 row.planned_cash_flow_sum = row.planned_cash_flow_sum + row_flow.sum_cash
 
-    @api.depends("project_steps_ids.sum_without_vat")
-    def _compute_project_steps_sum(self):
-        for row in self:
-            row.prj_step_sum_with_vat = 0
-            row.prj_step_sum_without_vat = 0
-            for row_proj_step in self.project_steps_ids:
-                row.prj_step_sum_without_vat = row.prj_step_sum_without_vat + row_proj_step.sum_without_vat
-                row.prj_step_sum_with_vat = row.prj_step_sum_with_vat + row_proj_step.sum_with_vat
-
 
     @api.depends("planned_acceptance_flow_ids.sum_cash")
     def _compute_planned_acceptance_flow_sum(self):
@@ -430,36 +588,72 @@ class projects(models.Model):
             for row_flow in self.fact_acceptance_flow_ids:
                 row.fact_acceptance_flow_sum = row.fact_acceptance_flow_sum + row_flow.sum_cash
 
-
-    @ api.depends("revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
-    'third_party_works', "awards_on_results_project", 'transportation_expenses', 'travel_expenses', 'representation_expenses',
-     "warranty_service_costs", 'rko_other', 'other_expenses','vat_attribute_id','legal_entity_signing_id','project_have_steps',
-      'prj_step_sum_with_vat')
+    @api.depends("project_steps_ids.revenue_from_the_sale_of_works", 'project_steps_ids.revenue_from_the_sale_of_goods', 'project_steps_ids.cost_of_goods', 'project_steps_ids.own_works_fot',
+                 'project_steps_ids.third_party_works', "project_steps_ids.awards_on_results_project", 'project_steps_ids.transportation_expenses', 'project_steps_ids.travel_expenses',
+                 'project_steps_ids.representation_expenses',"project_steps_ids.warranty_service_costs", 'project_steps_ids.rko_other', 'project_steps_ids.other_expenses',
+                 'project_steps_ids.vat_attribute_id'
+                 ,"revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
+                 'third_party_works', "awards_on_results_project", 'transportation_expenses', 'travel_expenses', 'representation_expenses',
+                 "warranty_service_costs", 'rko_other', 'other_expenses','vat_attribute_id','legal_entity_signing_id','project_have_steps',)
     def _compute_spec_totals(self):
         for budget_spec in self:
-            budget_spec.total_amount_of_revenue = budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods
-            budget_spec.taxes_fot_premiums = (budget_spec.awards_on_results_project + budget_spec.own_works_fot)*budget_spec.legal_entity_signing_id.percent_fot/100
-            budget_spec.cost_price = budget_spec.cost_of_goods + budget_spec.own_works_fot+ budget_spec.third_party_works +budget_spec.awards_on_results_project
-            budget_spec.cost_price = budget_spec.cost_price + budget_spec.transportation_expenses+budget_spec.travel_expenses+budget_spec.representation_expenses
-            budget_spec.cost_price = budget_spec.cost_price + budget_spec.warranty_service_costs+budget_spec.rko_other+budget_spec.other_expenses
-            budget_spec.cost_price = budget_spec.cost_price + (budget_spec.awards_on_results_project + budget_spec.own_works_fot) * budget_spec.legal_entity_signing_id.percent_fot / 100
-            budget_spec.margin_income = budget_spec.total_amount_of_revenue - budget_spec.cost_price
-
-            if budget_spec.project_have_steps :
-                budget_spec.total_amount_of_revenue_with_vat = budget_spec.prj_step_sum_with_vat
-            else:
+            if budget_spec.project_have_steps == False :
+                budget_spec.total_amount_of_revenue = budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods
+                budget_spec.taxes_fot_premiums = (budget_spec.awards_on_results_project + budget_spec.own_works_fot)*budget_spec.legal_entity_signing_id.percent_fot/100
+                budget_spec.cost_price = budget_spec.cost_of_goods + budget_spec.own_works_fot+ budget_spec.third_party_works +budget_spec.awards_on_results_project
+                budget_spec.cost_price = budget_spec.cost_price + budget_spec.transportation_expenses+budget_spec.travel_expenses+budget_spec.representation_expenses
+                budget_spec.cost_price = budget_spec.cost_price + budget_spec.warranty_service_costs+budget_spec.rko_other+budget_spec.other_expenses
+                budget_spec.cost_price = budget_spec.cost_price + (budget_spec.awards_on_results_project + budget_spec.own_works_fot) * budget_spec.legal_entity_signing_id.percent_fot / 100
+                budget_spec.margin_income = budget_spec.total_amount_of_revenue - budget_spec.cost_price
                 budget_spec.total_amount_of_revenue_with_vat = (budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods)*(1+budget_spec.vat_attribute_id.percent/100)
+            else:
+                budget_spec.total_amount_of_revenue = 0
+                budget_spec.cost_price = 0
+                budget_spec.margin_income = 0
+                budget_spec.total_amount_of_revenue_with_vat = 0
+                budget_spec.taxes_fot_premiums = 0
+                budget_spec.profitability = 0
+                budget_spec.revenue_from_the_sale_of_works = 0
+                budget_spec.revenue_from_the_sale_of_goods = 0
+                budget_spec.cost_of_goods = 0
+                budget_spec.own_works_fot = 0
+                budget_spec.third_party_works = 0
+                budget_spec.awards_on_results_project = 0
+                budget_spec.transportation_expenses = 0
+                budget_spec.travel_expenses = 0
+                budget_spec.representation_expenses = 0
+                budget_spec.warranty_service_costs = 0
+                budget_spec.rko_other = 0
+                budget_spec.other_expenses = 0
+                for step in budget_spec.project_steps_ids:
+                    budget_spec.total_amount_of_revenue += step.total_amount_of_revenue
+                    budget_spec.cost_price += step.cost_price
+                    budget_spec.margin_income += step.margin_income
+                    budget_spec.total_amount_of_revenue_with_vat += step.total_amount_of_revenue_with_vat
+                    budget_spec.taxes_fot_premiums += step.taxes_fot_premiums
+                    budget_spec.revenue_from_the_sale_of_works += step.revenue_from_the_sale_of_works
+                    budget_spec.revenue_from_the_sale_of_goods += step.revenue_from_the_sale_of_goods
+                    budget_spec.cost_of_goods += step.cost_of_goods
+                    budget_spec.own_works_fot += step.own_works_fot
+                    budget_spec.third_party_works += step.third_party_works
+                    budget_spec.awards_on_results_project += step.awards_on_results_project
+                    budget_spec.transportation_expenses += step.transportation_expenses
+                    budget_spec.travel_expenses += step.travel_expenses
+                    budget_spec.representation_expenses += step.representation_expenses
+                    budget_spec.warranty_service_costs += step.warranty_service_costs
+                    budget_spec.rko_other += step.rko_other
+                    budget_spec.other_expenses += step.other_expenses
 
-            if budget_spec.total_amount_of_revenue == 0 :
+            if budget_spec.total_amount_of_revenue == 0:
                 budget_spec.profitability = 0
             else:
                 budget_spec.profitability = budget_spec.margin_income / budget_spec.total_amount_of_revenue * 100
+
 
     @ api.depends('commercial_budget_id.currency_id','commercial_budget_id.budget_state','commercial_budget_id.currency_id')
     def _compute_reference(self):
         for budget_spec in self:
             budget_spec.currency_id = budget_spec.commercial_budget_id.currency_id
-            budget_spec.etalon_budget = budget_spec.commercial_budget_id.etalon_budget
             budget_spec.budget_state = budget_spec.commercial_budget_id.budget_state
 
     @api.depends('end_presale_project_month','end_sale_project_month')
@@ -512,18 +706,13 @@ class projects(models.Model):
     def set_approve_manager(self):
         for rows in self:
             # if rows.estimated_probability_id.name in ('50','75','100'):
-            #     if rows.total_amount_of_revenue != rows.planned_acceptance_flow_sum:
-            #         raisetext = _("DENIED. planned_acceptance_flow_sum <> total_amount_of_revenue")
+            #     if rows.total_amount_of_revenue_with_vat != rows.planned_acceptance_flow_sum:
+            #         raisetext = _("DENIED. planned_acceptance_flow_sum <> total_amount_of_revenue_with_vat")
             #         raise ValidationError(raisetext)
             #
             #     if rows.total_amount_of_revenue_with_vat != rows.planned_cash_flow_sum:
             #         raisetext = _("DENIED. planned_cash_flow_sum <> total_amount_of_revenue_with_vat")
             #         raise ValidationError(raisetext)
-            if rows.project_have_steps :
-                if rows.total_amount_of_revenue != rows.prj_step_sum_without_vat:
-                    raisetext = _("DENIED. \n"+
-                                  "Projects have steps, but 'total amount of revenue' <> 'sum step prjoject without vat'")
-                    raise ValidationError(raisetext)
 
             if rows.approve_state=="need_approve_manager" and rows.budget_state == 'work' and rows.specification_state !='cancel':
                 rows.write({
