@@ -14,6 +14,7 @@
                     <field name="legal_entity_signing_id"/>
                     <field name="end_sale_project_quarter"/>
                     <field name="end_presale_project_quarter"/>
+                    <field name="was_changes"/>
                    <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card oe_kanban_global_click">
@@ -28,25 +29,30 @@
                                            />
                                         </div>
                                         <div class="col-12">
-                                           Contract: <field name="end_sale_project_quarter"/>
-                                           Last shipment: <field name="end_presale_project_quarter"/>
+                                           Contract: <field name="end_presale_project_quarter"/>
+                                        </div>
+                                        <div>
+                                           Last shipment: <field name="end_sale_project_quarter"/>
+                                        </div>
+                                        <div>
+                                           was changes: <field name="was_changes" widget="boolean_toggle"/>
                                         </div>
                                     </div>
-                                        <div class="o_kanban_image me-1">
-                                            <img t-att-src="kanban_image('project_budget.project_manager', 'avatar_128', record.project_manager_id.raw_value)" alt="manager" class="o_image_64_contain"/>
-                                        </div>
-                                        <div >
-                                            <a>Revenue: <field name="total_amount_of_revenue"/></a>
-                                        </div>
-                                        <div>
-                                            <field name="customer_organization_id"/>
-                                        </div>
-                                        <div>
-                                            <a>Legal sign: <field name="legal_entity_signing_id"/></a>
-                                        </div>
-                                        <div>
-                                            <field name="essence_project"/>
-                                        </div>
+                                    <div class="o_kanban_image me-1">
+                                        <img t-att-src="kanban_image('project_budget.project_manager', 'avatar_128', record.project_manager_id.raw_value)" alt="manager" class="o_image_64_contain"/>
+                                    </div>
+                                    <div >
+                                        <a>Revenue: <field name="total_amount_of_revenue"/></a>
+                                    </div>
+                                    <div>
+                                        <field name="customer_organization_id"/>
+                                    </div>
+                                    <div>
+                                        <a>Legal sign: <field name="legal_entity_signing_id"/></a>
+                                    </div>
+                                    <div>
+                                        <field name="essence_project"/>
+                                    </div>
                                 </div>
                             </div>
                         </t>
@@ -76,6 +82,7 @@
                         <group col="4">
                             <group>
                                 <field name="project_id" readonly="1"/>
+<!--                                <field name="was_changes" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
                             </group>
                             <group>
                                 <field name="specification_state" readonly="1"/>
@@ -91,10 +98,12 @@
                             </group>
                         </group>
                         <group col="2">
-                            <group>
-                                <field name="essence_project" placeholder="type here essence of the project" colspan="1"
-                                               attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                            </group>
+                            <h4>
+                                <group>
+                                    <field name="essence_project" placeholder="type here essence of the project" colspan="1"
+                                                   attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                </group>
+                            </h4>
                             <group>
                                 <field name="end_presale_project_month"  attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}" />
                                 <field name="end_sale_project_month" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
@@ -129,7 +138,7 @@
                                 </group>
                             </group>
                         </h5>
-                        <group col="3">
+                        <group col="4">
                             <h5>
                                 <group>
                                     <field name="profitability" decoration-success="margin_income &gt; 0" decoration-danger="margin_income &lt; 0"
@@ -140,8 +149,12 @@
                                 <field name="currency_id" options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                             </group>
                             <group>
+                                <field name="dogovor_number" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                            </group>
+                            <group>
                                 <field name="vat_attribute_id" placeholder="select vat attribute" options="{'no_open': True}"
-                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')], 'invisible': [('project_have_steps', '=', True)]}"/>
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')],
+                                              'invisible': [('project_have_steps', '=', True)],'required': [('project_have_steps', '=', False)]}"/>
                             </group>
                         </group>
 
@@ -194,6 +207,7 @@
                                     <group>
                                         <field name="legal_entity_signing_id" force_save="1" options="{'no_open': True,}" placeholder="select legal entity signing"
                                                attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                        <field name="vgo" force_save="1" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
                                     </group>
                                 </group>
                                 <h4>
@@ -427,6 +441,9 @@
                                         decoration-muted="specification_state=='cancel'"
                     />
                     <field name="date_actual" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="project_have_steps" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="was_changes" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="vgo" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="etalon_budget" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="budget_state" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="commercial_budget_id"   optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>

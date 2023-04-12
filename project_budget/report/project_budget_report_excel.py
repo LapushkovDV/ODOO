@@ -42,7 +42,7 @@ class report_budget_excel(models.AbstractModel):
         row_format_number = workbook.add_format({
             'border': 1,
             'font_size': 10,
-            'num_format': '# ##0,00'
+            'num_format': '#,##0.00'
         })
 
         date_format = workbook.add_format({'num_format': 'd mmmm yyyy'})

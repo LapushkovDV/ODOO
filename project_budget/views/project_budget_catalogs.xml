@@ -551,24 +551,24 @@
                                         </button>
                                     </div>
                                     <div class="col-6 o_kanban_primary_right">
-                                            <div class="col-12">
-                                                <a>
-                                                    <field name="sum_revenue_approve_state_total"/>
-                                                    revenue
-                                                </a>
-                                            </div>
-                                            <div class="col-12">
-                                                <a>
-                                                    <field name="sum_cost_price_total"/>
-                                                    cost
-                                                </a>
-                                            </div>
-                                            <div class="col-12">
-                                                <a>
-                                                    <field name="sum_margin_income_total"/>
-                                                    margin
-                                                </a>
-                                            </div>
+                                        <div class="col-12">
+                                            <a>
+                                                <field name="sum_revenue_approve_state_total"/>
+                                                revenue
+                                            </a>
+                                        </div>
+                                        <div class="col-12">
+                                            <a>
+                                                <field name="sum_cost_price_total"/>
+                                                cost
+                                            </a>
+                                        </div>
+                                        <div class="col-12">
+                                            <a>
+                                                <field name="sum_margin_income_total"/>
+                                                margin
+                                            </a>
+                                        </div>
                                     </div>
 
                                 </div>

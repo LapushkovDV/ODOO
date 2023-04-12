@@ -56,18 +56,20 @@ class commercial_budget(models.Model):
             newbudget = self.env['project_budget.commercial_budget'].browse(self.id).copy({'budget_state':'fixed'
                                                                               ,'date_actual': fields.datetime.now()
                                                                                 })
-            print('newbudget.id=',newbudget.id)
+
             for spec in self.projects_ids:
-                spec.approve_state = 'need_approve_manager'
-                self.env['mail.activity'].create({
-                    'display_name': _('Need send to supervisor for approval'),
-                    'summary': _('You need send to supervisor for approval'),
-                    'date_deadline': fields.datetime.now(),
-                    'user_id': spec.project_manager_id.user_id.id,
-                    'res_id': spec.id,
-                    'res_model_id': self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id,
-                    'activity_type_id': self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id
-                })
+                spec.was_changes = False
+                if spec.estimated_probability_id.name in ('30','50','75','100'):
+                    spec.approve_state = 'need_approve_manager'
+                    self.env['mail.activity'].create({
+                        'display_name': _('Need send to supervisor for approval'),
+                        'summary': _('You need send to supervisor for approval'),
+                        'date_deadline': fields.datetime.now(),
+                        'user_id': spec.project_manager_id.user_id.id,
+                        'res_id': spec.id,
+                        'res_model_id': self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id,
+                        'activity_type_id': self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id
+                    })
                 # вот далее обновляем ссылки на step в созданных проектах, хотя может просто как то модель можно изменить... я ХЗ
             for project in newbudget.projects_ids:
                 if project.project_have_steps:
@@ -171,7 +173,7 @@ class planned_acceptance_flow(models.Model):
     def _compute_sum(self):
         for row in self:
             if row.project_steps_id:
-                row.sum_cash = row.sum_cash_without_vat * (1+row.project_steps_id.vat_attribute_id.percent / 100)
+                row.sum_cash = row.sum_cash_without_vat * (1 + row.project_steps_id.vat_attribute_id.percent / 100)
             else:
                 row.sum_cash = row.sum_cash_without_vat * (1 + row.projects_id.vat_attribute_id.percent / 100)
 
@@ -248,6 +250,13 @@ class project_steps(models.Model):
     _description = "project steps"
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'essence_project'
+    def _getesimated_probability_fromProject(self):
+        for row in self:
+            project = self.env['project_budget.projects'].search(['id','=',row.projects_id])
+            print(project)
+            print(project.estimated_probability_id.id)
+            return project.estimated_probability_id
+
     projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True, ondelete='cascade')
     etalon_budget = fields.Boolean(related='projects_id.etalon_budget', readonly=True)
     date_actual = fields.Datetime(related='projects_id.date_actual', readonly=True, store=True)
@@ -261,15 +270,17 @@ class project_steps(models.Model):
     # sum_without_vat = fields.Monetary(string="sum without vat", required=True, copy=True)
     # sum_with_vat = fields.Monetary(string="sum_with_vat", compute='_compute_sum', readonly=True)
     # margin_income = fields.Monetary(string="margin", required=True, copy=True)
-
+    dogovor_number = fields.Char(string='Dogovor number', store=True, tracking=True)
+    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True
+                        ,required = True, default = _getesimated_probability_fromProject)
     currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
     # vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
     #                                     ,default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
-    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
-                                       ,default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
+    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True,)
+                                       # default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
 
-    profitability = fields.Float(string="profitability", compute='_compute_sum', readonly=True)
+    # profitability = fields.Float(string="profitability", compute='_compute_sum', readonly=True)
     end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)',
                                               compute='_compute_quarter', store=True, tracking=True)
     end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True,
@@ -486,6 +497,8 @@ class projects(models.Model):
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
                                            ,default=lambda self: self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')], limit=1)
                                            , domain=_get_commercial_budget_list)
+    was_changes = fields.Boolean(string="was_changes", copy=True, default = True)
+    vgo = fields.Selection([('-', '-'), ('vgo1', 'vgo1'),('vgo2', 'vgo2')], required=True, default='-', copy = True,)
     budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False,
                                     compute='_compute_reference', store=True, tracking=True)
     project_office_id = fields.Many2one('project_budget.project_office', string='project_office', required=True,
@@ -504,8 +517,8 @@ class projects(models.Model):
     end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True, default=fields.datetime.now(), tracking=True)
     end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter', store=True, tracking=True)
     end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)', required=True,default=fields.datetime.now(), tracking=True)
-    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
-                                       ,default=lambda self: self.env['project_budget.vat_attribute'].search([], limit=1))
+    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True,)
+                                       # default=lambda self: self.env['project_budget.vat_attribute'].search([], limit=1))
     total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals', store=True, tracking=True)
     total_amount_of_revenue_with_vat = fields.Monetary(string='total_amount_of_revenue_with_vat', compute='_compute_spec_totals',
                                               store=True, tracking=True)
@@ -525,9 +538,9 @@ class projects(models.Model):
     other_expenses = fields.Monetary(string='other_expenses')
     margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
     profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals', store=True, tracking=True)
-    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',
-                                            default=lambda self: self.env['project_budget.estimated_probability'].search([('name', '=', '30')], limit=1)
-                                            , copy = True, tracking=True)
+    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True,required = True)
+                                            # ,default=lambda self: self.env['project_budget.estimated_probability'].search([('name', '=', '30')], limit=1)
+
     legal_entity_signing_id = fields.Many2one('project_budget.legal_entity_signing', string='legal_entity_signing a contract from the NCC', required=True, copy=True)
     project_type_id = fields.Many2one('project_budget.project_type',
                                               string='project_type', required=True,
@@ -536,7 +549,7 @@ class projects(models.Model):
     technological_direction_id = fields.Many2one('project_budget.technological_direction',
                                               string='technological_direction', required=True,copy=True)
     planned_cash_flow_sum = fields.Monetary(string='planned_cash_flow_sum', compute='_compute_planned_cash_flow_sum',
-                                            store=True, tracking=True)
+                                            store=False, tracking=True)
     planned_cash_flow_ids = fields.One2many(
         comodel_name='project_budget.planned_cash_flow',
         inverse_name='projects_id',
@@ -545,19 +558,19 @@ class projects(models.Model):
     step_project_number = fields.Char(string='step project number', store=True, tracking=True)
     dogovor_number = fields.Char(string='Dogovor number', store=True, tracking=True)
     planned_acceptance_flow_sum = fields.Monetary(string='planned_acceptance_flow_sum',
-                                                  compute='_compute_planned_acceptance_flow_sum',store=True, tracking=True)
+                                                  compute='_compute_planned_acceptance_flow_sum',store=False, tracking=True)
     planned_acceptance_flow_ids = fields.One2many(
         comodel_name='project_budget.planned_acceptance_flow',
         inverse_name='projects_id',
         string="planned acceptance flow", auto_join=True,copy=True)
-    fact_cash_flow_sum = fields.Monetary(string='fact_cash_flow_sum', compute='_compute_fact_cash_flow_sum', store=True
+    fact_cash_flow_sum = fields.Monetary(string='fact_cash_flow_sum', compute='_compute_fact_cash_flow_sum', store=False
                                          , tracking=True)
     fact_cash_flow_ids = fields.One2many(
         comodel_name='project_budget.fact_cash_flow',
         inverse_name='projects_id',
         string="fact cash flow", auto_join=True, copy=True)
     fact_acceptance_flow_sum = fields.Monetary(string='fact_acceptance_flow_sum', compute='_compute_fact_acceptance_flow_sum',
-                                               store=True, tracking=True)
+                                               store=False, tracking=True)
     fact_acceptance_flow_ids = fields.One2many(
         comodel_name='project_budget.fact_acceptance_flow',
         inverse_name='projects_id',
@@ -583,6 +596,29 @@ class projects(models.Model):
             if row.estimated_probability_id.name == '100':
                 row.specification_state = 'production'
 
+    @api.onchange('project_office_id','specification_state','currency_id','project_supervisor_id','project_manager_id',
+                  'customer_status_id','industry_id','essence_project','end_presale_project_month','end_sale_project_month','vat_attribute_id','total_amount_of_revenue',
+                  'total_amount_of_revenue_with_vat','revenue_from_the_sale_of_works','revenue_from_the_sale_of_goods','cost_price','cost_of_goods','own_works_fot',
+                  'third_party_works','awards_on_results_project','transportation_expenses','travel_expenses','representation_expenses','taxes_fot_premiums','warranty_service_costs',
+                  'rko_other','other_expenses','margin_income','profitability','estimated_probability_id','legal_entity_signing_id','project_type_id','comments','technological_direction_id',
+                  'planned_cash_flow_sum','planned_cash_flow_ids','step_project_number','dogovor_number','planned_acceptance_flow_sum','planned_acceptance_flow_ids','fact_cash_flow_sum',
+                  'fact_cash_flow_ids','fact_acceptance_flow_sum','fact_acceptance_flow_ids','project_have_steps','project_steps_ids'
+                )
+    def _check_changes_project(self):
+        print('_check_changes_project')
+        for row in self:
+            print('row.was_changes = ', row.id)
+            if row.was_changes == False:
+                try:
+                    cur_idstr = str(row.id)
+                    cur_idstr = cur_idstr.replace('NewId_','')
+                    cur_id = int(cur_idstr)
+                    curprj = self.env['project_budget.projects'].search([('id', '=', cur_id)],limit=1)
+                    print(cur_id)
+                    if curprj:
+                        curprj.was_changes = True
+                except: return False
+
     @api.depends('project_supervisor_id.user_id')
     def _get_supervisor_user_id(self):
         for row in self:
@@ -597,7 +633,7 @@ class projects(models.Model):
     def _compute_planned_cash_flow_sum(self):
         for row in self:
             row.planned_cash_flow_sum = 0
-            for row_flow in self.planned_cash_flow_ids:
+            for row_flow in row.planned_cash_flow_ids:
                 row.planned_cash_flow_sum = row.planned_cash_flow_sum + row_flow.sum_cash
 
 
@@ -605,21 +641,21 @@ class projects(models.Model):
     def _compute_planned_acceptance_flow_sum(self):
         for row in self:
             row.planned_acceptance_flow_sum = 0
-            for row_flow in self.planned_acceptance_flow_ids:
+            for row_flow in row.planned_acceptance_flow_ids:
                 row.planned_acceptance_flow_sum = row.planned_acceptance_flow_sum + row_flow.sum_cash
 
     @api.depends("fact_cash_flow_ids.sum_cash")
     def _compute_fact_cash_flow_sum(self):
         for row in self:
             row.fact_cash_flow_sum = 0
-            for row_flow in self.fact_cash_flow_ids:
+            for row_flow in row.fact_cash_flow_ids:
                 row.fact_cash_flow_sum = row.fact_cash_flow_sum + row_flow.sum_cash
 
     @api.depends("fact_acceptance_flow_ids.sum_cash")
     def _compute_fact_acceptance_flow_sum(self):
         for row in self:
             row.fact_acceptance_flow_sum = 0
-            for row_flow in self.fact_acceptance_flow_ids:
+            for row_flow in row.fact_acceptance_flow_ids:
                 row.fact_acceptance_flow_sum = row.fact_acceptance_flow_sum + row_flow.sum_cash
 
     @api.depends("project_steps_ids.revenue_from_the_sale_of_works", 'project_steps_ids.revenue_from_the_sale_of_goods', 'project_steps_ids.cost_of_goods', 'project_steps_ids.own_works_fot',

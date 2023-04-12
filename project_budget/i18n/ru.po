@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-04 09:21+0000\n"
-"PO-Revision-Date: 2023-04-04 09:21+0000\n"
+"POT-Creation-Date: 2023-04-12 07:58+0000\n"
+"PO-Revision-Date: 2023-04-12 07:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -384,6 +384,7 @@ msgid "Display Name"
 msgstr "Отображаемое имя"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__dogovor_number
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__dogovor_number
 msgid "Dogovor number"
 msgstr "Номер договора"
@@ -1053,6 +1054,11 @@ msgid "Type of the exception activity on record."
 msgstr "Тип действия исключения в записи."
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__vgo
+msgid "Vgo"
+msgstr "ВГО"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__warranty_service_costs
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__warranty_service_costs
 msgid "Warranty service costs"
@@ -1317,6 +1323,7 @@ msgid "essence_project"
 msgstr "Наименование"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__estimated_probability_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__estimated_probability_id
 msgid "estimated_probability"
 msgstr "Вероятность"
@@ -2099,6 +2106,26 @@ msgstr "Наименование"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__percent
 msgid "vat_percent"
 msgstr "Процент налога"
+
+#. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__vgo__vgo1
+msgid "vgo1"
+msgstr "ВГО1"
+
+#. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__vgo__vgo2
+msgid "vgo2"
+msgstr "ВГО2"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_kanban
+msgid "was changes:"
+msgstr "Есть изменения"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__was_changes
+msgid "was_changes"
+msgstr "Есть изменения"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
