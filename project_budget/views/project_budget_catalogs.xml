@@ -153,8 +153,11 @@
             <field name="arch" type="xml">
                 <tree string="customer_organization">
                     <field name="name"/>
+                    <field name="longname"/>
+                    <field name="inn"/>
                     <field name="code"/>
                     <field name="descr"/>
+                    <field name="partner_id"/>
                 </tree>
             </field>
         </record>
@@ -165,13 +168,19 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet string="customer_organization">
+                        <field name="avatar_128" widget="image" class="oe_avatar"/>
+                        <group>
                             <group>
                                     <field name="name"/>
                                     <field name="code"/>
+                                    <field name="longname"/>
+                                    <field name="inn"/>
                             </group>
                             <group>
                                 <field name="descr" widget="html"/>
+                                <field name="partner_id" widget="res_partner_many2one" />
                             </group>
+                        </group>
                     </sheet>
                 </form>
             </field>

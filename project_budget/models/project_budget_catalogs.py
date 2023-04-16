@@ -105,7 +105,11 @@ class customer_organization(models.Model):
     _name = 'project_budget.customer_organization'
     _description = "project_customer organization"
     name = fields.Char(string="customer_organization name", required=True)
-    code = fields.Char(string="customer_organization code", required=True)
+    longname = fields.Char(string="customer_organization long name", )
+    code = fields.Char(string="customer_organization code", )
+    inn = fields.Char(related='partner_id.vat', readonly=True)
+    avatar_128 = fields.Image(related='partner_id.avatar_128', readonly=True)
+    partner_id = fields.Many2one('res.partner', string='Partner', copy=True, domain="[('is_company','=',True)]")
     descr = fields.Char(string="customer_organization description")
 
 class customer_status(models.Model):

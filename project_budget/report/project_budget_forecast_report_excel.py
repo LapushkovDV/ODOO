@@ -283,10 +283,10 @@ class report_budget_forecast_excel(models.AbstractModel):
                 step_etalon  = self.get_etalon_step(step)
                 if step_etalon:
                     if month == step_etalon.end_presale_project_month.month and YEARint == step_etalon.end_presale_project_month.year:
-                        if step_etalon.projects_id.estimated_probability_id.name == '75':
+                        if step_etalon.estimated_probability_id.name == '75':
                             sheet.write_number(row, column + 0, step_etalon.total_amount_of_revenue_with_vat, row_format_number)
                             sum75tmpetalon = step_etalon.total_amount_of_revenue_with_vat
-                        if step_etalon.projects_id.estimated_probability_id.name == '50':
+                        if step_etalon.estimated_probability_id.name == '50':
                             sheet.write_number(row, column + 1, step_etalon.total_amount_of_revenue_with_vat, row_format_number)
                             sum50tmpetalon = step_etalon.total_amount_of_revenue_with_vat
                 else:
@@ -302,13 +302,13 @@ class report_budget_forecast_excel(models.AbstractModel):
                                 sum50tmpetalon += project_etalon.total_amount_of_revenue_with_vat
 
                 if month == step.end_presale_project_month.month and YEARint == step.end_presale_project_month.year:
-                    if step.projects_id.estimated_probability_id.name == '100':
+                    if step.estimated_probability_id.name == '100':
                         sheet.write_number(row, column + 2, step.total_amount_of_revenue_with_vat, row_format_number_color_fact)
                         sum100tmp = step.total_amount_of_revenue_with_vat
-                    if step.projects_id.estimated_probability_id.name == '75':
+                    if step.estimated_probability_id.name == '75':
                         sheet.write_number(row, column + 3, step.total_amount_of_revenue_with_vat, row_format_number)
                         sum75tmp = step.total_amount_of_revenue_with_vat
-                    if step.projects_id.estimated_probability_id.name == '50':
+                    if step.estimated_probability_id.name == '50':
                         sheet.write_number(row, column + 4, step.total_amount_of_revenue_with_vat, row_format_number)
                         sum50tmp = step.total_amount_of_revenue_with_vat
 
@@ -320,11 +320,14 @@ class report_budget_forecast_excel(models.AbstractModel):
                 project_etalon = self.get_etalon_project(project)
                 step_etalon = self.get_etalon_step(step)
                 sum = self.get_sum_plan_pds_project_step_month(project_etalon, step_etalon, YEARint, month)
+                estimated_probability_id_name = project_etalon.estimated_probability_id.name
+                if step_etalon :
+                    estimated_probability_id_name = step_etalon.estimated_probability_id.name
                 if sum != 0:
-                    if project_etalon.estimated_probability_id.name in('75','100'):
+                    if estimated_probability_id_name in('75','100'):
                         sheet.write_number(row, column + 0, sum,row_format_number)
                         sum75tmpetalon += sum
-                    if project_etalon.estimated_probability_id.name == '50':
+                    if estimated_probability_id_name == '50':
                         sheet.write_number(row, column + 1, sum, row_format_number)
                         sum50tmpetalon += sum
 
@@ -342,11 +345,15 @@ class report_budget_forecast_excel(models.AbstractModel):
                     sum = sum - sum100tmp
                 print('after: sum = ', sum)
 
+                estimated_probability_id_name = project.estimated_probability_id.name
+                if step :
+                    estimated_probability_id_name = step.estimated_probability_id.name
+
                 if sum != 0:
-                    if project.estimated_probability_id.name in('75','100'):
+                    if estimated_probability_id_name in('75','100'):
                         sheet.write_number(row, column + 3, sum,row_format_number)
                         sum75tmp += sum
-                    if project.estimated_probability_id.name == '50':
+                    if estimated_probability_id_name == '50':
                         sheet.write_number(row, column + 4, sum, row_format_number)
                         sum50tmp += sum
         return sum75tmpetalon, sum50tmpetalon, sum100tmp, sum75tmp, sum50tmp
@@ -406,12 +413,16 @@ class report_budget_forecast_excel(models.AbstractModel):
             sum = 0
             sum = self.get_sum_planned_acceptance_project_step_quater(project_etalon, step_etalon, YEARint, element_name)
 
+            estimated_probability_id_name = project_etalon.estimated_probability_id.name
+            if step_etalon:
+                estimated_probability_id_name = step_etalon.estimated_probability_id.name
+
             if sum != 0:
-                if project_etalon.estimated_probability_id.name in('75','100'):
+                if estimated_probability_id_name in('75','100'):
                     sheet.write_number(row, column + 0, sum, row_format_number)
                     sheet.write_number(row, column + 0 + 42, sum*profitability/100, row_format_number)
                     sum75tmpetalon += sum
-                if project_etalon.estimated_probability_id.name == '50':
+                if estimated_probability_id_name == '50':
                     sheet.write_number(row, column + 1, sum, row_format_number)
                     sheet.write_number(row, column + 1 + 42 , sum*profitability/100, row_format_number)
                     sum50tmpetalon += sum
@@ -430,12 +441,16 @@ class report_budget_forecast_excel(models.AbstractModel):
             else:
                 sum = sum - sum100tmp
 
+            estimated_probability_id_name = project.estimated_probability_id.name
+            if step_etalon:
+                estimated_probability_id_name = step.estimated_probability_id.name
+
             if sum != 0:
-                if project.estimated_probability_id.name in('75','100'):
+                if estimated_probability_id_name in('75','100'):
                     sheet.write_number(row, column + 3, sum, row_format_number)
                     sheet.write_number(row, column + 3 + 42, sum*profitability/100, row_format_number)
                     sum75tmp += sum
-                if project.estimated_probability_id.name == '50':
+                if estimated_probability_id_name == '50':
                     sheet.write_number(row, column + 4, sum, row_format_number)
                     sheet.write_number(row, column + 4 + 42, sum*profitability/100, row_format_number)
                     sum50tmp += sum
@@ -815,7 +830,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                         column += 1
                         sheet.write_string(row, column, spec.project_id + " | "+step.step_id, row_format)
                         column += 1
-                        sheet.write_string(row, column, spec.estimated_probability_id.name, row_format)
+                        sheet.write_string(row, column, step.estimated_probability_id.name, row_format)
                         column += 1
                         sheet.write_number(row, column, step.total_amount_of_revenue_with_vat, row_format_number)
                         column += 1

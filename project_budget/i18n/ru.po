@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0\n"
+"Project-Id-Version: Odoo Server 16.0-20230302\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-12 07:58+0000\n"
-"PO-Revision-Date: 2023-04-12 07:58+0000\n"
+"POT-Creation-Date: 2023-04-13 16:05+0000\n"
+"PO-Revision-Date: 2023-04-13 16:05+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -142,6 +142,7 @@ msgid "Attachment Count"
 msgstr "Количество вложений"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__avatar_128
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__avatar_128
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__avatar_128
 msgid "Avatar 128"
@@ -845,6 +846,11 @@ msgid "Only working budget can be duplicated"
 msgstr "Только бюджет в работе может быть скопирован"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__partner_id
+msgid "Partner"
+msgstr "Организация"
+
+#. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__specification_state__prepare
 msgid "Prepare"
 msgstr "КБ"
@@ -852,7 +858,7 @@ msgstr "КБ"
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_tree
 msgid "Print current budget"
-msgstr "Бюджет (EXCEL)"
+msgstr "Печать текущего бюджета"
 
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__specification_state__production
@@ -1030,6 +1036,19 @@ msgstr ""
 "утверждение"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__inn
+msgid "Tax ID"
+msgstr "ИНН"
+
+#. module: project_budget
+#: model:ir.model.fields,help:project_budget.field_project_budget_customer_organization__inn
+msgid ""
+"The Tax Identification Number. Values here will be validated based on the "
+"country format. You can use '/' to indicate that the partner is not subject "
+"to tax."
+msgstr ""
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__end_sale_project_month
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__end_sale_project_month
 msgid "The period of shipment or provision of services to the Client(MONTH)"
@@ -1184,6 +1203,11 @@ msgstr "Код"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__descr
 msgid "customer_organization description"
 msgstr "Описание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__longname
+msgid "customer_organization long name"
+msgstr "Длинное наименование"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__name
