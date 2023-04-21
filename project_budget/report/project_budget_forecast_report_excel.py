@@ -1,6 +1,7 @@
 from odoo import models
 import datetime
 import xlsxwriter
+from xlsxwriter.utility import xl_col_to_name
 
 class report_budget_forecast_excel(models.AbstractModel):
     _name = 'report.project_budget.report_budget_forecast_excel'
@@ -224,26 +225,40 @@ class report_budget_forecast_excel(models.AbstractModel):
             colbeg = column
             for elementone in self.month_rus_name_revenue_margin:
                 element = elementone.replace('YEAR', YEAR)
+                addcolumn = 0
+                if element.find('HY2') != -1:
+                    addcolumn = 1
+
                 if elementone.find('Q') != -1:
                     sheet.set_column(column, column + 5, None, None, {'hidden': 1, 'level': 2})
-                if elementone.find('HY') != -1:
-                    sheet.set_column(column, column + 5, None, None, {'hidden': 1, 'level': 1})
 
-                sheet.merge_range(row, column, row, column + 5, element, head_format_month)
+                if elementone.find('HY') != -1:
+                    sheet.set_column(column, column + 5 + addcolumn, None, None, {'hidden': 1, 'level': 1})
+
+                sheet.merge_range(row, column, row, column + 5 + addcolumn, element, head_format_month)
+
+
                 sheet.merge_range(row + 1, column, row + 2, column, "План " + element.replace('итого', ''),
                                   head_format_month_itogo)
                 column += 1
-                sheet.merge_range(row + 1, column, row + 1, column + 1, 'Прогноз на начало периода (эталонный)',
+
+                if element.find('HY2') != -1:
+                    sheet.merge_range(row + 1, column, row + 2, column, "План HY2/"+YEAR+ " 7+5"
+                                      , head_format_month_itogo)
+                    column += 1
+
+                sheet.merge_range(row + 1, column , row + 1, column + 1 , 'Прогноз на начало периода (эталонный)',
                                   head_format_month_detail)
-                sheet.write_string(row + 2, column, 'Обязательство', head_format_month_detail)
+
+                sheet.write_string(row + 2, column , 'Обязательство', head_format_month_detail)
                 column += 1
-                sheet.write_string(row + 2, column, 'Резерв', head_format_month_detail)
+                sheet.write_string(row + 2, column , 'Резерв', head_format_month_detail)
                 column += 1
-                sheet.merge_range(row + 1, column, row + 2, column, 'Факт', head_format_month_detail_fact)
+                sheet.merge_range(row + 1, column , row + 2, column , 'Факт', head_format_month_detail_fact)
                 column += 1
-                sheet.merge_range(row + 1, column, row + 1, column + 1, 'Прогноз до конца периода (на дату отчета)',
+                sheet.merge_range(row + 1, column , row + 1, column + 1 , 'Прогноз до конца периода (на дату отчета)',
                                   head_format_month_detail)
-                sheet.write_string(row + 2, column, 'Обязательство', head_format_month_detail)
+                sheet.write_string(row + 2, column , 'Обязательство', head_format_month_detail)
                 column += 1
                 sheet.write_string(row + 2, column, 'Резерв', head_format_month_detail)
                 column += 1
@@ -336,14 +351,14 @@ class report_budget_forecast_excel(models.AbstractModel):
                     sheet.write_number(row, column + 2, sum100tmp, row_format_number_color_fact)
 
                 sum = self.get_sum_plan_pds_project_step_month(project, step, YEARint, month)
-                print('----- project.id=',project.id)
-                print('sum100tmp = ',sum100tmp)
-                print('sum = ', sum)
+                # print('----- project.id=',project.id)
+                # print('sum100tmp = ',sum100tmp)
+                # print('sum = ', sum)
                 if sum100tmp >= sum:
                     sum = 0
                 else:
                     sum = sum - sum100tmp
-                print('after: sum = ', sum)
+                # print('after: sum = ', sum)
 
                 estimated_probability_id_name = project.estimated_probability_id.name
                 if step :
@@ -410,6 +425,12 @@ class report_budget_forecast_excel(models.AbstractModel):
             else:
                 profitability = step.profitability
 
+            if step_etalon == None or step_etalon == False:
+                profitability_etalon = project_etalon.profitability
+            else:
+                profitability_etalon = step_etalon.profitability
+
+
             sum = 0
             sum = self.get_sum_planned_acceptance_project_step_quater(project_etalon, step_etalon, YEARint, element_name)
 
@@ -420,11 +441,11 @@ class report_budget_forecast_excel(models.AbstractModel):
             if sum != 0:
                 if estimated_probability_id_name in('75','100'):
                     sheet.write_number(row, column + 0, sum, row_format_number)
-                    sheet.write_number(row, column + 0 + 42, sum*profitability/100, row_format_number)
+                    sheet.write_number(row, column + 0 + 42, sum*profitability_etalon/100, row_format_number)
                     sum75tmpetalon += sum
                 if estimated_probability_id_name == '50':
                     sheet.write_number(row, column + 1, sum, row_format_number)
-                    sheet.write_number(row, column + 1 + 42 , sum*profitability/100, row_format_number)
+                    sheet.write_number(row, column + 1 + 42 , sum*profitability_etalon/100, row_format_number)
                     sum50tmpetalon += sum
 
             sum100tmp = self.get_sum_fact_acceptance_project_step_quater(project, step, YEARint, element_name)
@@ -473,6 +494,7 @@ class report_budget_forecast_excel(models.AbstractModel):
         return False
 
     def print_row_Values(self, workbook, sheet, row, column,  YEAR, project, step):
+
         row_format_number = workbook.add_format({
             'border': 1,
             'font_size': 10,
@@ -489,6 +511,20 @@ class report_budget_forecast_excel(models.AbstractModel):
             "fg_color": '#D9E1F2',
             'diag_type': 3
         })
+
+        if step:
+            if project.estimated_probability_id.name == '0':
+                row_format_number.set_font_color('red')
+                row_format_number_color_fact.set_font_color('red')
+                head_format_month_itogo.set_font_color('red')
+        else:
+            if project.estimated_probability_id.name == '0':
+                row_format_number.set_font_color('red')
+                row_format_number_color_fact.set_font_color('red')
+                head_format_month_itogo.set_font_color('red')
+
+
+
 
         YEARint = int(YEAR)
 
@@ -532,11 +568,23 @@ class report_budget_forecast_excel(models.AbstractModel):
             sumQ75 += sumQ75tmp
             sumQ50 += sumQ50tmp
             if element.find('Q') != -1: #'Q1 итого' 'Q2 итого' 'Q3 итого' 'Q4 итого'
-                if sumQ75etalon != 0 : sheet.write_number(row, column + 0, sumQ75etalon, row_format_number)
-                if sumQ50etalon != 0 : sheet.write_number(row, column + 1, sumQ50etalon, row_format_number)
-                if sumQ100 != 0 :      sheet.write_number(row, column + 2, sumQ100, row_format_number_color_fact)
-                if sumQ75 != 0 :       sheet.write_number(row, column + 3, sumQ75, row_format_number)
-                if sumQ50 != 0 :       sheet.write_number(row, column + 4, sumQ50, row_format_number)
+                # if sumQ75etalon != 0 : sheet.write_number(row, column + 0, sumQ75etalon, row_format_number)
+                # if sumQ50etalon != 0 : sheet.write_number(row, column + 1, sumQ50etalon, row_format_number)
+                # if sumQ100 != 0 :      sheet.write_number(row, column + 2, sumQ100, row_format_number_color_fact)
+                # if sumQ75 != 0 :       sheet.write_number(row, column + 3, sumQ75, row_format_number)
+                # if sumQ50 != 0 :       sheet.write_number(row, column + 4, sumQ50, row_format_number)
+
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1,xl_col_to_name(column - 16),xl_col_to_name(column - 11),xl_col_to_name(column - 6))
+                sheet.write_formula(row, column + 0,formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1,xl_col_to_name(column - 15),xl_col_to_name(column - 10),xl_col_to_name(column - 5))
+                sheet.write_formula(row, column + 1,formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1,xl_col_to_name(column - 14),xl_col_to_name(column - 9),xl_col_to_name(column - 4))
+                sheet.write_formula(row, column + 2,formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1,xl_col_to_name(column - 13),xl_col_to_name(column - 8),xl_col_to_name(column - 3))
+                sheet.write_formula(row, column + 3,formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1,xl_col_to_name(column - 12),xl_col_to_name(column - 7),xl_col_to_name(column - 2))
+                sheet.write_formula(row, column + 4,formula, row_format_number)
+
                 sumHY100etalon += sumQ100etalon
                 sumHY75etalon += sumQ75etalon
                 sumHY50etalon += sumQ50etalon
@@ -551,6 +599,18 @@ class report_budget_forecast_excel(models.AbstractModel):
                 if sumHY100 != 0:      sheet.write_number(row, column + 2, sumHY100, row_format_number_color_fact)
                 if sumHY75 != 0:       sheet.write_number(row, column + 3, sumHY75, row_format_number)
                 if sumHY50 != 0:       sheet.write_number(row, column + 4, sumHY50, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 27),xl_col_to_name(column - 6))
+                sheet.write_formula(row, column + 0, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 26),xl_col_to_name(column - 5))
+                sheet.write_formula(row, column + 1, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 25),xl_col_to_name(column - 4))
+                sheet.write_formula(row, column + 2, formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 24),xl_col_to_name(column - 3))
+                sheet.write_formula(row, column + 3, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 23),xl_col_to_name(column - 2))
+                sheet.write_formula(row, column + 4, formula, row_format_number)
+
+
                 sumYear100etalon += sumHY100etalon
                 sumYear75etalon += sumHY75etalon
                 sumYear50etalon += sumHY50etalon
@@ -565,6 +625,16 @@ class report_budget_forecast_excel(models.AbstractModel):
                 if sumYear100 != 0:      sheet.write_number(row, column + 2, sumYear100, row_format_number_color_fact)
                 if sumYear75 != 0:       sheet.write_number(row, column + 3, sumYear75, row_format_number)
                 if sumYear50 != 0:       sheet.write_number(row, column + 4, sumYear50, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 54), xl_col_to_name(column - 6))
+                sheet.write_formula(row, column + 0, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 53), xl_col_to_name(column - 5))
+                sheet.write_formula(row, column + 1, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 52), xl_col_to_name(column - 4))
+                sheet.write_formula(row, column + 2, formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 51), xl_col_to_name(column - 3))
+                sheet.write_formula(row, column + 3, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 50), xl_col_to_name(column - 2))
+                sheet.write_formula(row, column + 4, formula, row_format_number)
             column += 4
         #end печать Контрактование, с НДС
         # Поступление денежных средсв, с НДС
@@ -608,6 +678,16 @@ class report_budget_forecast_excel(models.AbstractModel):
                 sumHY75 += sumQ75
                 sumHY50 += sumQ50
                 sumQ100etalon = sumQ75etalon = sumQ50etalon = sumQ100 = sumQ75 = sumQ50 = 0
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1, xl_col_to_name(column - 16),xl_col_to_name(column - 11), xl_col_to_name(column - 6))
+                sheet.write_formula(row, column + 0, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1, xl_col_to_name(column - 15),xl_col_to_name(column - 10), xl_col_to_name(column - 5))
+                sheet.write_formula(row, column + 1, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1, xl_col_to_name(column - 14),xl_col_to_name(column - 9), xl_col_to_name(column - 4))
+                sheet.write_formula(row, column + 2, formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1, xl_col_to_name(column - 13),xl_col_to_name(column - 8), xl_col_to_name(column - 3))
+                sheet.write_formula(row, column + 3, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0},{3}{0})'.format(row + 1, xl_col_to_name(column - 12),xl_col_to_name(column - 7), xl_col_to_name(column - 2))
+                sheet.write_formula(row, column + 4, formula, row_format_number)
 
             if element.find('HY') != -1:  # 'HY1/YEAR итого' 'HY2/YEAR итого'
                 if sumHY75etalon != 0: sheet.write_number(row, column + 0, sumHY75etalon, row_format_number)
@@ -622,6 +702,16 @@ class report_budget_forecast_excel(models.AbstractModel):
                 sumYear75 += sumHY75
                 sumYear50 += sumHY50
                 sumHY100etalon = sumHY75etalon = sumHY50etalon = sumHY100 = sumHY75 = sumHY50 = 0
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 27), xl_col_to_name(column - 6))
+                sheet.write_formula(row, column + 0, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 26), xl_col_to_name(column - 5))
+                sheet.write_formula(row, column + 1, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 25), xl_col_to_name(column - 4))
+                sheet.write_formula(row, column + 2, formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 24), xl_col_to_name(column - 3))
+                sheet.write_formula(row, column + 3, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 23), xl_col_to_name(column - 2))
+                sheet.write_formula(row, column + 4, formula, row_format_number)
 
             if element == 'YEAR итого':  # 'YEAR итого'
                 if sumYear75etalon != 0: sheet.write_number(row, column + 0, sumYear75etalon, row_format_number)
@@ -629,6 +719,16 @@ class report_budget_forecast_excel(models.AbstractModel):
                 if sumYear100 != 0:      sheet.write_number(row, column + 2, sumYear100, row_format_number_color_fact)
                 if sumYear75 != 0:       sheet.write_number(row, column + 3, sumYear75, row_format_number)
                 if sumYear50 != 0:       sheet.write_number(row, column + 4, sumYear50, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 54), xl_col_to_name(column - 6))
+                sheet.write_formula(row, column + 0, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 53), xl_col_to_name(column - 5))
+                sheet.write_formula(row, column + 1, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 52), xl_col_to_name(column - 4))
+                sheet.write_formula(row, column + 2, formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 51), xl_col_to_name(column - 3))
+                sheet.write_formula(row, column + 3, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 50), xl_col_to_name(column - 2))
+                sheet.write_formula(row, column + 4, formula, row_format_number)
             column += 4
         # end Поступление денежных средсв, с НДС
 
@@ -641,21 +741,34 @@ class report_budget_forecast_excel(models.AbstractModel):
         else:
             profitability = step.profitability
 
+        project_etalon = self.get_etalon_project(project)
+        step_etalon = self.get_etalon_step(step)
+
+        if step_etalon == None or step_etalon == False:
+            profitability_etalon = project_etalon.profitability
+        else:
+            profitability_etalon = step_etalon.profitability
+
         for element in self.month_rus_name_revenue_margin:
             column += 1
             sheet.write_string(row, column, "", head_format_month_itogo)
-            sheet.write_string(row, column + 42, "", head_format_month_itogo)
+            sheet.write_string(row, column + 43, "", head_format_month_itogo)
+            if element.find('HY2') != -1:
+                addcolumn = 1
+                column += 1
+                sheet.write_string(row, column, "", head_format_month_itogo)
+                sheet.write_string(row, column + 43, "", head_format_month_itogo)
             column += 1
             sheet.write_string(row, column + 0, "", row_format_number)
             sheet.write_string(row, column + 1, "", row_format_number)
             sheet.write_string(row, column + 2, "", row_format_number_color_fact)
             sheet.write_string(row, column + 3, "", row_format_number)
             sheet.write_string(row, column + 4, "", row_format_number)
-            sheet.write_string(row, column + 0 + 42, "", row_format_number)
-            sheet.write_string(row, column + 1 + 42, "", row_format_number)
-            sheet.write_string(row, column + 2 + 42, "", row_format_number_color_fact)
-            sheet.write_string(row, column + 3 + 42, "", row_format_number)
-            sheet.write_string(row, column + 4 + 42, "", row_format_number)
+            sheet.write_string(row, column + 0 + 43, "", row_format_number)
+            sheet.write_string(row, column + 1 + 43, "", row_format_number)
+            sheet.write_string(row, column + 2 + 43, "", row_format_number_color_fact)
+            sheet.write_string(row, column + 3 + 43, "", row_format_number)
+            sheet.write_string(row, column + 4 + 43, "", row_format_number)
 
             sumQ75etalon, sumQ50etalon, sumQ100, sumQ75, sumQ50 = self.print_quater_planned_acceptance_project(sheet,row,column,YEARint,element
                                                                                                               ,project,step,row_format_number,row_format_number_color_fact)
@@ -668,21 +781,25 @@ class report_budget_forecast_excel(models.AbstractModel):
             sumHY50 += sumQ50
 
             if element.find('HY') != -1:  # 'HY1/YEAR итого' 'HY2/YEAR итого'
-                if sumHY75etalon != 0:
-                    sheet.write_number(row, column + 0, sumHY75etalon, row_format_number)
-                    sheet.write_number(row, column + 0 + 42, sumHY75etalon*profitability / 100, row_format_number)
-                if sumHY50etalon != 0:
-                    sheet.write_number(row, column + 1, sumHY50etalon, row_format_number)
-                    sheet.write_number(row, column + 1 + 42, sumHY50etalon*profitability / 100, row_format_number)
-                if sumHY100 != 0:
-                    sheet.write_number(row, column + 2, sumHY100, row_format_number_color_fact)
-                    sheet.write_number(row, column + 2 + 42, sumHY100*profitability / 100, row_format_number_color_fact)
-                if sumHY75 != 0:
-                    sheet.write_number(row, column + 3, sumHY75, row_format_number)
-                    sheet.write_number(row, column + 3 + 42, sumHY75*profitability / 100, row_format_number)
-                if sumHY50 != 0:
-                    sheet.write_number(row, column + 4, sumHY50, row_format_number)
-                    sheet.write_number(row, column + 4 + 42, sumHY50*profitability / 100, row_format_number)
+                # if sumHY75etalon != 0:
+                #     sheet.write_number(row, column + 0, sumHY75etalon, row_format_number)
+                #     sheet.write_number(row, column + 0 + 43, sumHY75etalon*profitability_etalon / 100, row_format_number)
+                # if sumHY50etalon != 0:
+                #     sheet.write_number(row, column + 1, sumHY50etalon, row_format_number)
+                #     sheet.write_number(row, column + 1 + 43, sumHY50etalon*profitability_etalon / 100, row_format_number)
+                # if sumHY100 != 0:
+                #     sheet.write_number(row, column + 2, sumHY100, row_format_number_color_fact)
+                #     sheet.write_number(row, column + 2 + 43, sumHY100*profitability / 100, row_format_number_color_fact)
+                # if sumHY75 != 0:
+                #     sheet.write_number(row, column + 3, sumHY75, row_format_number)
+                #     sheet.write_number(row, column + 3 + 43, sumHY75*profitability / 100, row_format_number)
+                # if sumHY50 != 0:
+                #     sheet.write_number(row, column + 4, sumHY50, row_format_number)
+                #     sheet.write_number(row, column + 4 + 43, sumHY50*profitability / 100, row_format_number)
+                addcolumn = 0
+                if element.find('HY2') != -1:
+                    addcolumn = 1
+
                 sumYear100etalon += sumHY100etalon
                 sumYear75etalon += sumHY75etalon
                 sumYear50etalon += sumHY50etalon
@@ -691,22 +808,68 @@ class report_budget_forecast_excel(models.AbstractModel):
                 sumYear50 += sumHY50
                 sumHY100etalon = sumHY75etalon = sumHY50etalon = sumHY100 = sumHY75 = sumHY50 = 0
 
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 12 - addcolumn), xl_col_to_name(column - 6 - addcolumn))
+                sheet.write_formula(row, column + 0, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 11 - addcolumn), xl_col_to_name(column - 5 - addcolumn))
+                sheet.write_formula(row, column + 1, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 10 - addcolumn), xl_col_to_name(column - 4 - addcolumn))
+                sheet.write_formula(row, column + 2, formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 9 - addcolumn),  xl_col_to_name(column - 3 - addcolumn))
+                sheet.write_formula(row, column + 3, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 8 - addcolumn),  xl_col_to_name(column - 2 - addcolumn))
+                sheet.write_formula(row, column + 4, formula, row_format_number)
+
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 12 + 43 - addcolumn), xl_col_to_name(column - 6 + 43 - addcolumn))
+                sheet.write_formula(row, column + 0 + 43, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 11 + 43 - addcolumn), xl_col_to_name(column - 5 + 43 - addcolumn))
+                sheet.write_formula(row, column + 1 + 43, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 10 + 43 - addcolumn), xl_col_to_name(column - 4 + 43 - addcolumn))
+                sheet.write_formula(row, column + 2 + 43, formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 9 + 43 - addcolumn),  xl_col_to_name(column - 3 + 43 - addcolumn))
+                sheet.write_formula(row, column + 3 + 43, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 8 + 43 - addcolumn),  xl_col_to_name(column - 2 + 43 - addcolumn))
+                sheet.write_formula(row, column + 4 + 43, formula, row_format_number)
+
+
+
             if element == 'YEAR':  # 'YEAR итого'
-                if sumYear75etalon != 0:
-                    sheet.write_number(row, column + 0, sumYear75etalon, row_format_number)
-                    sheet.write_number(row, column + 0 + 42, sumYear75etalon*profitability / 100, row_format_number)
-                if sumYear50etalon != 0:
-                    sheet.write_number(row, column + 1, sumYear50etalon, row_format_number)
-                    sheet.write_number(row, column + 1 + 42, sumYear50etalon*profitability / 100, row_format_number)
-                if sumYear100 != 0:
-                    sheet.write_number(row, column + 2, sumYear100, row_format_number_color_fact)
-                    sheet.write_number(row, column + 2 + 42, sumYear100*profitability / 100, row_format_number_color_fact)
-                if sumYear75 != 0:
-                    sheet.write_number(row, column + 3, sumYear75, row_format_number)
-                    sheet.write_number(row, column + 3 + 42, sumYear75*profitability / 100, row_format_number)
-                if sumYear50 != 0:
-                    sheet.write_number(row, column + 4, sumYear50, row_format_number)
-                    sheet.write_number(row, column + 4 + 42, sumYear50*profitability / 100, row_format_number)
+                # if sumYear75etalon != 0:
+                #     sheet.write_number(row, column + 0, sumYear75etalon, row_format_number)
+                #     sheet.write_number(row, column + 0 + 43, sumYear75etalon*profitability / 100, row_format_number)
+                # if sumYear50etalon != 0:
+                #     sheet.write_number(row, column + 1, sumYear50etalon, row_format_number)
+                #     sheet.write_number(row, column + 1 + 43, sumYear50etalon*profitability / 100, row_format_number)
+                # if sumYear100 != 0:
+                #     sheet.write_number(row, column + 2, sumYear100, row_format_number_color_fact)
+                #     sheet.write_number(row, column + 2 + 43, sumYear100*profitability / 100, row_format_number_color_fact)
+                # if sumYear75 != 0:
+                #     sheet.write_number(row, column + 3, sumYear75, row_format_number)
+                #     sheet.write_number(row, column + 3 + 43, sumYear75*profitability / 100, row_format_number)
+                # if sumYear50 != 0:
+                #     sheet.write_number(row, column + 4, sumYear50, row_format_number)
+                #     sheet.write_number(row, column + 4 + 43, sumYear50*profitability / 100, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 25), xl_col_to_name(column - 6))
+                sheet.write_formula(row, column + 0, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 24), xl_col_to_name(column - 5))
+                sheet.write_formula(row, column + 1, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 23), xl_col_to_name(column - 4))
+                sheet.write_formula(row, column + 2, formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 22), xl_col_to_name(column - 3))
+                sheet.write_formula(row, column + 3, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 21), xl_col_to_name(column - 2))
+                sheet.write_formula(row, column + 4, formula, row_format_number)
+
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 25 + 43), xl_col_to_name(column - 6 + 43))
+                sheet.write_formula(row, column + 0 + 43, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 24 + 43), xl_col_to_name(column - 5 + 43))
+                sheet.write_formula(row, column + 1 + 43, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 23 + 43), xl_col_to_name(column - 4 + 43))
+                sheet.write_formula(row, column + 2 + 43, formula, row_format_number_color_fact)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 22 + 43), xl_col_to_name(column - 3 + 43))
+                sheet.write_formula(row, column + 3 + 43, formula, row_format_number)
+                formula = '=sum({1}{0},{2}{0})'.format(row + 1, xl_col_to_name(column - 21 + 43), xl_col_to_name(column - 2 + 43))
+                sheet.write_formula(row, column + 4 + 43, formula, row_format_number)
+
             column += 4
         # end Валовая Выручка, без НДС
 
@@ -736,23 +899,63 @@ class report_budget_forecast_excel(models.AbstractModel):
         })
         row_format_date_month = workbook.add_format({
             'border': 1,
-            'font_size': 10,
+            'font_size': 9,
         })
 
+        row_format_manager = workbook.add_format({
+            'border': 1,
+            'font_size': 9,
+            "bold": True,
+            "fg_color": '#D9D9D9',
+        })
+        row_format_manager.set_num_format('#,##0.00')
+
+        row_format_office = workbook.add_format({
+            'border': 1,
+            'font_size': 9,
+            "bold": True,
+            "fg_color": '#8497B0',
+        })
+        row_format_office.set_num_format('#,##0.00')
+
         row_format_date_month.set_num_format('mmm yyyy')
+
         row_format = workbook.add_format({
             'border': 1,
-            'font_size': 10
+            'font_size': 9
         })
+
+        row_format_canceled_project = workbook.add_format({
+            'border': 1,
+            'font_size': 9
+        })
+        row_format_canceled_project.set_font_color('red')
+
         row_format_number = workbook.add_format({
             'border': 1,
-            'font_size': 10,
+            'font_size': 9,
         })
         row_format_number.set_num_format('#,##0.00')
 
+        row_format_number_canceled_project = workbook.add_format({
+            'border': 1,
+            'font_size': 9,
+        })
+        row_format_number_canceled_project.set_num_format('#,##0.00')
+        row_format_number_canceled_project.set_font_color('red')
+
+        row_format_number_itogo = workbook.add_format({
+            'border': 1,
+            'font_size': 9,
+            "bold": True,
+            "fg_color": '#A9D08E',
+
+        })
+        row_format_number_itogo.set_num_format('#,##0.00')
+
         date_format = workbook.add_format({'num_format': 'd mmmm yyyy'})
         row = 0
-        sheet.merge_range(row,0,row,10, budget.name, bold)
+        sheet.merge_range(row,0,row,3, budget.name, bold)
         row = 6
         column = 0
         sheet.write_string(row, column, "Прогноз",head_format)
@@ -772,102 +975,194 @@ class report_budget_forecast_excel(models.AbstractModel):
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Наименование Проекта", head_format_1)
-        sheet.write_string(row + 2, column, "", head_format_1)
+        # sheet.write_string(row + 2, column, "", head_format_1)
         sheet.set_column(column, column, 12.25)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Номер этапа проекта", head_format_1)
         sheet.write_string(row + 2, column, "", head_format_1)
-        sheet.set_column(column, column, 15)
+        # sheet.set_column(column, column, 15)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Стадия продажи", head_format_1)
         sheet.write_string(row + 2, column, "", head_format_1)
-        sheet.set_column(column, column, 16.88)
+        # sheet.set_column(column, column, 16.88)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Сумма проекта, вруб", head_format_1)
         sheet.write_string(row + 2, column, "", head_format_1)
-        sheet.set_column(column, column, 14)
+        # sheet.set_column(column, column, 14)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Валовая прибыль экспертно, в руб", head_format_1)
         sheet.write_string(row + 2, column, "", head_format_1)
-        sheet.set_column(column, column, 14)
+        # sheet.set_column(column, column, 14)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Прибыльность, экспертно, %", head_format_1)
         sheet.write_string(row + 2, column, "", head_format_1)
-        sheet.set_column(column, column, 9)
+        # sheet.set_column(column, column, 9)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "Номер договора", head_format_1)
         sheet.write_string(row + 2, column, "", head_format_1)
-        sheet.set_column(column, column, 11.88)
+        # sheet.set_column(column, column, 11.88)
         column += 1
         sheet.write_string(row, column, "", head_format)
         sheet.write_string(row+1, column, "НДС", head_format_1)
         sheet.write_string(row + 2, column, "", head_format_1)
-        sheet.set_column(column, column, 7)
+        # sheet.set_column(column, column, 7)
+        sheet.set_column(4, 10, None, None, {'hidden': 1, 'level': 1})
+        column += 1
+        sheet.write_string(row, column, "", head_format)
+        sheet.write_string(row+1, column, "", head_format_1)
+        sheet.write_string(row + 2, column, "", head_format_1)
+        sheet.set_column(column, column, 2)
+
+
         column += 1
         column = self.print_month_head_contract_pds(workbook, sheet, row, column,  '2023')
         column = self.print_month_head_revenue_margin(workbook, sheet, row, column,  '2023')
         row += 2
-        for spec in budget.projects_ids:
-            # if spec.estimated_probability_id.name != '0':
-            if spec.vgo == '-':
-                row += 1
-                if spec.project_have_steps:
-                    for step in spec.project_steps_ids:
-                        column = 0
-                        sheet.write_string(row, column, spec.project_office_id.name, row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.project_manager_id.name, row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
-                        column += 1
-                        sheet.write_string(row, column, step.essence_project, row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.project_id + " | "+step.step_id, row_format)
-                        column += 1
-                        sheet.write_string(row, column, step.estimated_probability_id.name, row_format)
-                        column += 1
-                        sheet.write_number(row, column, step.total_amount_of_revenue_with_vat, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.margin_income, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.profitability, row_format_number)
-                        column += 1
-                        sheet.write_string(row, column, "", row_format)
-                        column += 1
-                        sheet.write_string(row, column, step.vat_attribute_id.name, row_format)
-                        self.print_row_Values(workbook, sheet, row, column,  '2023', spec, step)
+
+        project_offices  = self.env['project_budget.project_office'].search([], order='name')  # для сортировки так делаем
+        project_managers = self.env['project_budget.project_manager'].search([], order='name')  # для сортировки так делаем
+
+        isFoundProjectsByOffice = False
+        isFoundProjectsByManager = False
+        begRowProjectsByManager = 0
+        formulaItogo = '=sum(0'
+        for project_office in project_offices:
+            isFoundProjectsByOffice = False
+            formulaProjectOffice = '=sum(0,'
+            for project_manager in project_managers:
+                isFoundProjectsByManager = False
+                begRowProjectsByManager = 0
+                cur_budget_projects = self.env['project_budget.projects'].search([('commercial_budget_id', '=', budget.id),('project_office_id','=',project_office.id),('project_manager_id','=',project_manager.id)])
+                column = -1
+                # row += 1
+                # sheet.write_string(row, column, project_office.name, row_format)
+                for spec in cur_budget_projects:
+                    # if spec.estimated_probability_id.name != '0':
+                    if spec.vgo == '-':
+                        isFoundProjectsByManager = True
+                        isFoundProjectsByOffice = True
                         row += 1
-                    row -= 1
-                else:
-                    column = 0
-                    sheet.write_string(row, column, spec.project_office_id.name, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.project_manager_id.name, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.essence_project, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.project_id, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.estimated_probability_id.name, row_format)
-                    column += 1
-                    sheet.write_number(row, column, spec.total_amount_of_revenue_with_vat, row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.margin_income, row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.profitability, row_format)
-                    column += 1
-                    sheet.write_string(row, column, "", row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.vat_attribute_id.name, row_format)
-                    self.print_row_Values(workbook, sheet, row, column,  '2023', spec, None)
+                        if begRowProjectsByManager == 0:
+                            begRowProjectsByManager = row
+                        if spec.project_have_steps:
+                            for step in spec.project_steps_ids:
+                                sheet.set_row(row, None, None, {'hidden': 1, 'level': 1})
+                                # print('setrow level2 row = ',row)
+                                cur_row_format = row_format
+                                cur_row_format_number = row_format_number
+                                # print('step.estimated_probability_id.name = ' + step.estimated_probability_id.name)
+                                if step.estimated_probability_id.name == '0':
+                                    # print('row_format_canceled_project')
+                                    cur_row_format = row_format_canceled_project
+                                    cur_row_format_number = row_format_number_canceled_project
+                                column = 0
+                                sheet.write_string(row, column, spec.project_office_id.name, cur_row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.project_manager_id.name, cur_row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.customer_organization_id.name, cur_row_format)
+                                column += 1
+                                sheet.write_string(row, column, step.essence_project, cur_row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.project_id + " | "+step.step_id, cur_row_format)
+                                column += 1
+                                sheet.write_string(row, column, step.estimated_probability_id.name, cur_row_format)
+                                column += 1
+                                sheet.write_number(row, column, step.total_amount_of_revenue_with_vat, cur_row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, step.margin_income, cur_row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, step.profitability, cur_row_format_number)
+                                column += 1
+                                sheet.write_string(row, column, "", cur_row_format)
+                                column += 1
+                                sheet.write_string(row, column, step.vat_attribute_id.name, cur_row_format)
+                                column += 1
+                                sheet.write_string(row, column, '', head_format_1)
+                                self.print_row_Values(workbook, sheet, row, column,  '2023', spec, step)
+                                row += 1
+                            row -= 1
+                        else:
+                            sheet.set_row(row, None, None, {'hidden': 1, 'level': 1})
+                            # print('setrow level2 row = ', row)
+                            cur_row_format = row_format
+                            cur_row_format_number = row_format_number
+                            # print('spec.estimated_probability_id.name = ' + spec.estimated_probability_id.name)
+                            if spec.estimated_probability_id.name == '0':
+                                # print('row_format_canceled_project')
+                                cur_row_format = row_format_canceled_project
+                                cur_row_format_number = row_format_number_canceled_project
+                            column = 0
+                            sheet.write_string(row, column, spec.project_office_id.name, cur_row_format)
+                            column += 1
+                            sheet.write_string(row, column, spec.project_manager_id.name, cur_row_format)
+                            column += 1
+                            sheet.write_string(row, column, spec.customer_organization_id.name, cur_row_format)
+                            column += 1
+                            sheet.write_string(row, column, spec.essence_project, cur_row_format)
+                            column += 1
+                            sheet.write_string(row, column, spec.project_id, cur_row_format)
+                            column += 1
+                            sheet.write_string(row, column, spec.estimated_probability_id.name, cur_row_format)
+                            column += 1
+                            sheet.write_number(row, column, spec.total_amount_of_revenue_with_vat, cur_row_format_number)
+                            column += 1
+                            sheet.write_number(row, column, spec.margin_income, cur_row_format_number)
+                            column += 1
+                            sheet.write_number(row, column, spec.profitability, cur_row_format_number)
+                            column += 1
+                            sheet.write_string(row, column, "", cur_row_format)
+                            column += 1
+                            sheet.write_string(row, column, spec.vat_attribute_id.name, cur_row_format)
+                            column += 1
+                            sheet.write_string(row, column, '', head_format_1)
+                            self.print_row_Values(workbook, sheet, row, column,  '2023', spec, None)
+
+                if isFoundProjectsByManager:
+                    row += 1
+                    column = 1
+                    sheet.write_string(row, column, 'ИТОГО ' + project_manager.name, row_format_manager)
+                    sheet.set_row(row, None, None, {'hidden': 1, 'level': 1})
+                    formulaProjectOffice = formulaProjectOffice + ',{0}'+str(row + 1)
+                    for colFormula in range(2, 12):
+                        sheet.write_string(row, colFormula, '', row_format_manager)
+                    for colFormula in range(12,302):
+                        formula = '=sum({2}{0}:{2}{1})'.format(begRowProjectsByManager + 1,row, xl_col_to_name(colFormula))
+                        sheet.write_formula(row, colFormula, formula, row_format_manager)
+
+            if isFoundProjectsByOffice:
+                row += 1
+                column = 0
+                # sheet.set_row(row, None, None, {'hidden': 1, 'level': 1})
+                # print('setrow level1 row = ', row)
+                sheet.write_string(row, column, 'ИТОГО ' + project_office.name, row_format_office)
+                formulaProjectOffice = formulaProjectOffice + ')'
+                formulaItogo = formulaItogo + ',{0}' + str(row + 1)
+                # print('formulaProjectOffice = ',formulaProjectOffice)
+                for colFormula in range(1, 12):
+                    sheet.write_string(row, colFormula, '', row_format_office)
+
+                for colFormula in range(12, 302):
+                    formula = formulaProjectOffice.format(xl_col_to_name(colFormula))
+                    # print('formula = ', formula)
+                    sheet.write_formula(row, colFormula, formula, row_format_office)
+
+        row += 2
+        column = 0
+        sheet.write_string(row, column, 'ИТОГО по отчету' , row_format_number_itogo)
+        formulaItogo = formulaItogo + ')'
+        for colFormula in range(1, 12):
+            sheet.write_string(row, colFormula, '', row_format_number_itogo)
+        for colFormula in range(12, 302):
+            formula = formulaItogo.format(xl_col_to_name(colFormula))
+            # print('formula = ', formula)
+            sheet.write_formula(row, colFormula, formula, row_format_number_itogo)
 
     def generate_xlsx_report(self, workbook, data, budgets):
         for budget in budgets:

@@ -89,7 +89,22 @@
                             </group>
                             <group>
                                 <field name="estimated_probability_id" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
-                                        decoration-bf="1" options="{'no_open': True,}"/>
+                                        decoration-bf="1" options="{'no_open': True,}"
+                                help="The estimated probability of project implementation is selected from the following categories:
+
+30% The Customer's need for supply/ services has been identified, the technical and commercial feasibility of their implementation has been determined, financing mechanisms are available/ identified.
+financing mechanisms are available/identified. Proactive creation of a new need in the Customer by the efforts of the seller, for which the Customer will organize or provide subsequent financing of the project.
+
+50% The Customer's requirements, financing and terms of purchase are determined in a specific financial period, there is a TAP from the Vendor / Supplier, there is Customer support
+at the same time, it is necessary to finalize the terms of interaction on the project with both the Vendor / Supplier and the Customer, and there is a clear understanding of how to do this.
+Presale financing is allowed only after the creation of a presale BP.
+
+75% Meets the formed requirements of the CD / TOR for the implementation of the project, protection from the Vendor / Supplier has been obtained,
+the preliminary budget of the project is agreed by the Director of Software or CD, the timing of procurement procedures from the Customer does not interfere with the implementation of the project.
+
+100% of the project has moved to the PB.
+"
+                                />
                             </group>
                             <group>
                                 <field name="project_have_steps" widget="boolean_toggle"

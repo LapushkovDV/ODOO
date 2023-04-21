@@ -169,7 +169,7 @@ msgstr "Год бюджета"
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets
 msgid "Budgets/Projects"
-msgstr "Бюджеты"
+msgstr "Коммерческая деятельность"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__can_approve_project
@@ -251,7 +251,7 @@ msgstr "Добавить новое юрлицо для подписи"
 #. module: project_budget
 #: model_terms:ir.actions.act_window,help:project_budget.show_project_manager
 msgid "Create a new project_manager"
-msgstr "Добавить руководителя проекта"
+msgstr "Добавить КАМ"
 
 #. module: project_budget
 #: model_terms:ir.actions.act_window,help:project_budget.show_project_office
@@ -686,7 +686,7 @@ msgstr "Основное вложение"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_res_users__manager_rule
 msgid "Manager Rule"
-msgstr "Для настроки правила менеджеров"
+msgstr "Для настроки правила КАМ"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__margin_income
@@ -884,7 +884,7 @@ msgstr "Администратор бюджетов проектов"
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_menu
 msgid "Project budget"
-msgstr "Бюджет проекта"
+msgstr "Коммерческая деятельность"
 
 #. module: project_budget
 #: model:res.groups,name:project_budget.project_budget_users
@@ -900,7 +900,7 @@ msgstr "ID проекта"
 #: model:ir.actions.act_window,name:project_budget.show_comercial_budget_spec
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_spec
 msgid "Projects"
-msgstr "Проекты. Текущий коммерческий бюджет"
+msgstr "Текущие сделки"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_comercial_budget_spec_all
@@ -910,7 +910,7 @@ msgstr "Проекты по всем бюджетам"
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.project_budget_estimated_probability_action
 msgid "Projects Overview"
-msgstr "Обзор текущих проектов"
+msgstr "Обзор текущих сделок"
 
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_spec_all
@@ -1282,7 +1282,7 @@ msgstr "Каждый бюджет имеет подписывающее юрли
 #. module: project_budget
 #: model_terms:ir.actions.act_window,help:project_budget.show_project_manager
 msgid "each project budget have project_manager"
-msgstr "Каждый бюджет имеет руководителя проекта"
+msgstr "Каждый бюджет имеет КАМ"
 
 #. module: project_budget
 #: model_terms:ir.actions.act_window,help:project_budget.show_project_office
@@ -1482,7 +1482,7 @@ msgstr "Наименование"
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_kanban
 msgid "manager"
-msgstr "Руководитель"
+msgstr "КАМ"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_estimated_probability_kanban
@@ -1668,7 +1668,7 @@ msgstr ""
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_kandan
 msgid "project_budget_estimated_probability_action"
-msgstr "Обзор текущих проектов"
+msgstr "Обзор текущих сделок"
 
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_customer_status
@@ -1714,12 +1714,12 @@ msgstr "Юрлицо, подписывающее договор"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_project_manager_tree
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
 msgid "project_manager"
-msgstr "Руководитель проекта"
+msgstr "КАМ"
 
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_project_manager_access
 msgid "project_manager access"
-msgstr "Доступ пользователей по менеджерам проектов"
+msgstr "Доступ пользователей по КАМ"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__code
@@ -1743,7 +1743,7 @@ msgstr "ФИО"
 #: model:ir.model.fields,field_description:project_budget.field_res_users__project_manager_access_ids
 #: model:ir.ui.menu,name:project_budget.project_budget_catalogs_project_manager_access
 msgid "project_manager_access"
-msgstr "Доступ пользователей по менеджерам проектов"
+msgstr "Доступ пользователей по КАМ"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_project_office
@@ -1922,7 +1922,7 @@ msgstr "Выберите юрлицо, подписывающее договор
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "select project manager"
-msgstr "Выберите руководителя проекта"
+msgstr "Выберите КАМ"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
@@ -1962,8 +1962,8 @@ msgstr "Статус проекта"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__code
-msgid "step code"
-msgstr "Код этапа"
+msgid "step code DAX"
+msgstr "Код этапа DAX"
 
 #. module: project_budget
 #. odoo-python

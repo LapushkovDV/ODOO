@@ -7,7 +7,7 @@
                 <tree>
                     <field name="step_id" readonly="1" invisible="1"/>
                     <field name="project_steps_type_id" force_save="1" options="{'no_open': True,}"/>
-                    <field name="code" placeholder="type step code e.g. 0001"/>
+                    <field name="code" placeholder="type step code DAX e.g. 0001"/>
                     <field name="essence_project" placeholder="type step name e.g. products recieve"/>
                     <field name="end_presale_project_month"/>
                     <field name="end_sale_project_month"/>
