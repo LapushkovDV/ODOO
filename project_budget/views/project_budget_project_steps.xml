@@ -5,17 +5,20 @@
             <field name="model">project_budget.project_steps</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="step_id" readonly="1" invisible="1"/>
-                    <field name="project_steps_type_id" force_save="1" options="{'no_open': True,}"/>
-                    <field name="code" placeholder="type step code DAX e.g. 0001"/>
-                    <field name="essence_project" placeholder="type step name e.g. products recieve"/>
-                    <field name="end_presale_project_month"/>
-                    <field name="end_sale_project_month"/>
-                    <field name="vat_attribute_id" force_save="1" options="{'no_open': True,}"/>
-                    <field name="total_amount_of_revenue"/>
-                    <field name="total_amount_of_revenue_with_vat"/>
-                    <field name="margin_income"/>
-                    <field name="profitability"/>
+                    <field name="step_id" readonly="1" optional="show"/>
+                    <field name="project_steps_type_id" optional="show"  force_save="1" options="{'no_open': True,}"/>
+                    <field name="code" optional="show" placeholder="type step code DAX e.g. 0001"/>
+                    <field name="dogovor_number" optional="hide" />
+                    <field name="estimated_probability_id" optional="hide" />
+                    <field name="project_steps_type_id" optional="hide" />
+                    <field name="essence_project" optional="show" placeholder="type step name e.g. products recieve"/>
+                    <field name="end_presale_project_month" optional="show" />
+                    <field name="end_sale_project_month" optional="show" />
+                    <field name="vat_attribute_id" force_save="1" options="{'no_open': True,}" optional="show" />
+                    <field name="total_amount_of_revenue" optional="show" />
+                    <field name="total_amount_of_revenue_with_vat" optional="show" />
+                    <field name="margin_income" optional="show" />
+                    <field name="profitability" optional="show" />
                 </tree>
             </field>
         </record>
@@ -76,7 +79,7 @@
                                         <field name="cost_price"
                                             decoration-bf="1"
                                             decoration-success="cost_price &gt; 0"
-                                            />
+                                        />
                                     </group>
                             </group>
                         </h5>

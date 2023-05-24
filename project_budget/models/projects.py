@@ -1,438 +1,7 @@
 from odoo import _, models, fields, api
-from odoo import _, models, fields, api
-from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
 from odoo.tools import pytz
 from datetime import timedelta
-
-
-class commercial_budget(models.Model):
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-    _name = 'project_budget.commercial_budget'
-    _description = "project_commercial budget"
-    name = fields.Char(string="commercial_budget name", required=True)
-    budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False, tracking=True)
-    etalon_budget = fields.Boolean(string="etalon_budget", default = False)
-    date_actual = fields.Datetime(string="Actuality date", index=True, copy=False)
-    year = fields.Integer(string="Budget year", required=True, index=True,default=2023)
-    currency_id = fields.Many2one('res.currency', string='Account Currency')
-    descr = fields.Text( string='Description', default="")
-    projects_ids = fields.One2many(
-        comodel_name='project_budget.projects',
-        inverse_name='commercial_budget_id',
-        string="commercial_budget specification",
-        copy=True, auto_join=True)
-
-    def isuseradmin(self):
-        self.ensure_one()
-        return self.env.ref('project_budget.project_budget_admin')
-
-    @api.constrains('year')
-    def _check_date_end(self):
-        for record in self:
-            if record.year < 2022 or record.year > 2030:
-                raisetext = _("The year must be between 2022-2030")
-                raise ValidationError(raisetext)
-
-    def get_user_datetime(self):
-        fmt = "%Y-%m-%d %H:%M:%S"
-        tz = pytz.timezone(self.env.user.tz) or pytz.utc
-        now_time = fields.datetime.now(tz=tz)
-        my_dt = fields.datetime.strptime(now_time.strftime(fmt), fmt)
-        return my_dt
-
-    def set_budget_fixed(self):
-        if not self.user_has_groups('project_budget.project_budget_admin'):
-            raisetext=_("Only users in group project_budget.project_budget_admin can set budget to fixed")
-            raise (ValidationError(raisetext))
-        else:
-            if self.budget_state == 'fixed':
-                raisetext = _("Only working budget can be duplicated")
-            self.ensure_one()
-            # self.budget_state='fixed'
-            # self.date_actual = fields.datetime.now()
-            cur_datetime = self.get_user_datetime()
-            print('cur_datetime=',cur_datetime)
-            newbudget = self.env['project_budget.commercial_budget'].browse(self.id).copy({'budget_state':'fixed'
-                                                                              ,'date_actual': fields.datetime.now()
-                                                                                })
-
-            for spec in self.projects_ids:
-                spec.was_changes = False
-                if spec.estimated_probability_id.name in ('30','50','75','100'):
-                    spec.approve_state = 'need_approve_manager'
-                    self.env['mail.activity'].create({
-                        'display_name': _('Need send to supervisor for approval'),
-                        'summary': _('You need send to supervisor for approval'),
-                        'date_deadline': fields.datetime.now(),
-                        'user_id': spec.project_manager_id.user_id.id,
-                        'res_id': spec.id,
-                        'res_model_id': self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id,
-                        'activity_type_id': self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id
-                    })
-                # вот далее обновляем ссылки на step в созданных проектах, хотя может просто как то модель можно изменить... я ХЗ
-            for project in newbudget.projects_ids:
-                if project.project_have_steps:
-                    for planned_cash_flow in project.planned_cash_flow_ids:
-                        current_project = self.env['project_budget.project_steps'].search(
-                            [('projects_id', '=', project.id),('step_id','=',planned_cash_flow.project_steps_id.step_id)])
-                        planned_cash_flow.project_steps_id = current_project.id
-                    for planned_acceptance_flow in project.planned_acceptance_flow_ids:
-                        current_project = self.env['project_budget.project_steps'].search(
-                            [('projects_id', '=', project.id), ('step_id', '=', planned_acceptance_flow.project_steps_id.step_id)])
-                        planned_acceptance_flow.project_steps_id = current_project.id
-                    for fact_cash_flow in project.fact_cash_flow_ids:
-                        current_project = self.env['project_budget.project_steps'].search(
-                            [('projects_id', '=', project.id), ('step_id', '=', fact_cash_flow.project_steps_id.step_id)])
-                        fact_cash_flow.project_steps_id = current_project.id
-                    for fact_acceptance_flow in project.fact_acceptance_flow_ids:
-                        current_project = self.env['project_budget.project_steps'].search(
-                            [('projects_id', '=', project.id), ('step_id', '=', fact_acceptance_flow.project_steps_id.step_id)])
-                        fact_acceptance_flow.project_steps_id = current_project.id
-
-            # self.env['project_budget.projects'].search([('project_id', '=', self.id)]).write({'approve_state': 'need_approve_manager'})
-            # meeting_act_type = self.env['mail.activity.type'].search([('category', '=', 'meeting')], limit=1)
-            # if not meeting_act_type:
-            #     meeting_act_type = self.env['mail.activity.type'].create({
-            #         'name': 'Meeting Test',
-            #         'category': 'meeting',
-            #     })
-
-            return False
-
-    def set_budget_work(self):
-        self.ensure_one()
-        working_budgets = self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')])
-        if len(working_budgets) > 0 :
-            raisetext = _("Already exists budget in work!")
-            raise (ValidationError(raisetext))
-        else:
-            if not self.user_has_groups('project_budget.project_budget_admin'):
-                raisetext =_("Only users in group project_budget.project_budget_admin can return budget to work")
-                raise (ValidationError(raisetext))
-            else:
-                self.budget_state='work'
-                self.date_actual=None
-                return False
-
-
-class planned_cash_flow(models.Model):
-
-    _name = 'project_budget.planned_cash_flow'
-    _description = "planned cash flow"
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id',index=True,ondelete='cascade')
-    etalon_budget = fields.Boolean(related='projects_id.etalon_budget', readonly=True)
-    date_actual = fields.Datetime(related='projects_id.date_actual', readonly=True)
-
-    project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps', readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
-
-    date_cash = fields.Date(string="date_cash" , required=True, copy=True)
-    currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
-    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True, compute='_compute_sum')
-    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
-    doc_cash = fields.Char(string="doc_cash",  copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
-
-    @ api.depends('projects_id.currency_id')
-    def _compute_reference(self):
-        for row in self:
-            row.currency_id = row.projects_id.currency_id
-
-    @api.depends("sum_cash","project_steps_id.vat_attribute_id","projects_id.vat_attribute_id")
-    def _compute_sum(self):
-        for row in self:
-            if row.project_steps_id:
-                row.sum_cash_without_vat = row.sum_cash/(1+row.project_steps_id.vat_attribute_id.percent / 100)
-            else:
-                row.sum_cash_without_vat = row.sum_cash / (1 + row.projects_id.vat_attribute_id.percent / 100)
-
-
-class planned_acceptance_flow(models.Model):
-    _name = 'project_budget.planned_acceptance_flow'
-    _description = "planned acceptance flow"
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True, ondelete='cascade')
-    etalon_budget = fields.Boolean(related='projects_id.etalon_budget', readonly=True)
-    date_actual = fields.Datetime(related='projects_id.date_actual', readonly=True)
-
-    project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps',
-                                        readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
-    date_cash = fields.Date(string="date_cash" , required=True, copy=True)
-    currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
-    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True)
-    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True, compute='_compute_sum')
-    doc_cash = fields.Char(string="doc_cash", copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
-    @ api.depends('projects_id.currency_id')
-    def _compute_reference(self):
-        for row in self:
-            row.currency_id = row.projects_id.currency_id
-
-    @api.depends("sum_cash_without_vat","project_steps_id.vat_attribute_id","projects_id.vat_attribute_id")
-    def _compute_sum(self):
-        for row in self:
-            if row.project_steps_id:
-                row.sum_cash = row.sum_cash_without_vat * (1 + row.project_steps_id.vat_attribute_id.percent / 100)
-            else:
-                row.sum_cash = row.sum_cash_without_vat * (1 + row.projects_id.vat_attribute_id.percent / 100)
-
-class fact_cash_flow(models.Model):
-    _name = 'project_budget.fact_cash_flow'
-    _description = "fact cash flow"
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id',index=True,ondelete='cascade')
-    project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps',
-                                        readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
-    date_cash = fields.Date(string="date_cash" , required=True, copy=True)
-    currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
-    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True, compute='_compute_sum')
-    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
-    doc_cash = fields.Char(string="doc_cash",  copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
-    @ api.depends('projects_id.currency_id')
-    def _compute_reference(self):
-        for row in self:
-            row.currency_id = row.projects_id.currency_id
-    @api.depends("sum_cash","project_steps_id.vat_attribute_id","projects_id.vat_attribute_id")
-    def _compute_sum(self):
-        for row in self:
-            if row.project_steps_id:
-                row.sum_cash_without_vat = row.sum_cash/(1+row.project_steps_id.vat_attribute_id.percent / 100)
-            else:
-                row.sum_cash_without_vat = row.sum_cash / (1 + row.projects_id.vat_attribute_id.percent / 100)
-
-class fact_acceptance_flow(models.Model):
-
-    def get_project_steps_list(self):
-        domain = [('id', '=', 0)]
-        project_steps = self.env['project_budget.project_steps'].search([('projects_id.id', '=', self.env.projects_id.id)])
-        project_steps_list = []
-        for each in project_steps:
-            project_steps_list.append(each.id)
-        if project_steps_list:
-            domain = [('id', 'in', project_steps_list)]
-            return domain
-        return domain
-
-    _name = 'project_budget.fact_acceptance_flow'
-    _description = "fact acceptance flow"
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True,ondelete='cascade')
-    project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps',
-                                        readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
-    date_cash = fields.Date(string="date_cash" , required=True, copy=True)
-    currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
-    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True)
-    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True, compute='_compute_sum')
-
-    doc_cash = fields.Char(string="doc_cash", copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
-    @ api.depends('projects_id.currency_id')
-    def _compute_reference(self):
-        for row in self:
-            row.currency_id = row.projects_id.currency_id
-    @api.depends("sum_cash_without_vat","project_steps_id.vat_attribute_id","projects_id.vat_attribute_id")
-    def _compute_sum(self):
-        for row in self:
-            if row.project_steps_id:
-                row.sum_cash = row.sum_cash_without_vat * (1+row.project_steps_id.vat_attribute_id.percent / 100)
-            else:
-                row.sum_cash = row.sum_cash_without_vat * (1 + row.projects_id.vat_attribute_id.percent / 100)
-
-class project_steps_type(models.Model):
-    _name = 'project_budget.project_steps_type'
-    _description = "project steps type"
-    name = fields.Char(string="name", required=True)
-
-class project_steps(models.Model):
-    _name = 'project_budget.project_steps'
-    _description = "project steps"
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-    _rec_name = 'essence_project'
-    def _getesimated_probability_fromProject(self):
-        for row in self:
-            project = self.env['project_budget.projects'].search(['id','=',row.projects_id])
-            print(project)
-            print(project.estimated_probability_id.id)
-            return project.estimated_probability_id
-
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True, ondelete='cascade')
-    etalon_budget = fields.Boolean(related='projects_id.etalon_budget', readonly=True)
-    date_actual = fields.Datetime(related='projects_id.date_actual', readonly=True, store=True)
-    budget_state = fields.Selection(related='projects_id.budget_state', readonly=True, store=True)
-    approve_state = fields.Selection(related='projects_id.approve_state', readonly=True, store=True)
-    # name = fields.Char(string="step name", required=True, copy=True)
-    code = fields.Char(string="step code", required=True, copy=True)
-    essence_project = fields.Text(string='essence_project', default = "")
-    step_id = fields.Char(string="step_id", required=True, copy=True, default = '-',index=True)
-    # date_step = fields.Date(string="step date" , required=True, copy=True)
-    # sum_without_vat = fields.Monetary(string="sum without vat", required=True, copy=True)
-    # sum_with_vat = fields.Monetary(string="sum_with_vat", compute='_compute_sum', readonly=True)
-    # margin_income = fields.Monetary(string="margin", required=True, copy=True)
-    dogovor_number = fields.Char(string='Dogovor number', store=True, tracking=True)
-    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True
-                        ,required = True, default = _getesimated_probability_fromProject)
-    currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
-    project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
-    # vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
-    #                                     ,default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
-    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True,)
-                                       # default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
-
-    # profitability = fields.Float(string="profitability", compute='_compute_sum', readonly=True)
-    end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)',
-                                              compute='_compute_quarter', store=True, tracking=True)
-    end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True,
-                                            default=fields.datetime.now(), tracking=True)
-    end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter',
-                                           store=True, tracking=True)
-    end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)',
-                                         required=True, default=fields.datetime.now(), tracking=True)
-
-    total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals',
-                                              store=True, tracking=True)
-    total_amount_of_revenue_with_vat = fields.Monetary(string='total_amount_of_revenue_with_vat',compute='_compute_spec_totals',
-                                                       store=True, tracking=True)
-    revenue_from_the_sale_of_works = fields.Monetary(string='revenue_from_the_sale_of_works(services)')
-    revenue_from_the_sale_of_goods = fields.Monetary(string='revenue_from the sale of goods')
-    cost_price = fields.Monetary(string='cost_price', compute='_compute_spec_totals', store=True, tracking=True)
-    cost_of_goods = fields.Monetary(string='cost_of_goods')
-    own_works_fot = fields.Monetary(string='own_works_fot')
-    third_party_works = fields.Monetary(string='third_party_works(subcontracting)')
-    awards_on_results_project = fields.Monetary(string='Awards based on the results of the project')
-    transportation_expenses = fields.Monetary(string='transportation_expenses')
-    travel_expenses = fields.Monetary(string='travel_expenses')
-    representation_expenses = fields.Monetary(string='representation_expenses')
-    taxes_fot_premiums = fields.Monetary(string='taxes_FOT and premiums', compute='_compute_spec_totals', store=True,
-                                         tracking=True)
-    warranty_service_costs = fields.Monetary(string='Warranty service costs')
-    rko_other = fields.Monetary(string='rko_other')
-    other_expenses = fields.Monetary(string='other_expenses')
-    margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
-    profitability = fields.Float(string='Profitability(share of Sale margin in revenue)',
-                                 compute='_compute_spec_totals', store=True, tracking=True)
-
-    @api.depends("revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
-                 'third_party_works', "awards_on_results_project", 'transportation_expenses', 'travel_expenses',
-                 'representation_expenses',"warranty_service_costs", 'rko_other', 'other_expenses', 'vat_attribute_id',
-                 'projects_id.legal_entity_signing_id')
-    def _compute_spec_totals(self):
-        for budget_spec in self:
-            budget_spec.total_amount_of_revenue = budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods
-            budget_spec.taxes_fot_premiums = (
-                                                         budget_spec.awards_on_results_project + budget_spec.own_works_fot) * budget_spec.projects_id.legal_entity_signing_id.percent_fot / 100
-            budget_spec.cost_price = budget_spec.cost_of_goods + budget_spec.own_works_fot + budget_spec.third_party_works + budget_spec.awards_on_results_project
-            budget_spec.cost_price = budget_spec.cost_price + budget_spec.transportation_expenses + budget_spec.travel_expenses + budget_spec.representation_expenses
-            budget_spec.cost_price = budget_spec.cost_price + budget_spec.warranty_service_costs + budget_spec.rko_other + budget_spec.other_expenses
-            budget_spec.cost_price = budget_spec.cost_price + (
-                        budget_spec.awards_on_results_project + budget_spec.own_works_fot) * budget_spec.projects_id.legal_entity_signing_id.percent_fot / 100
-            budget_spec.margin_income = budget_spec.total_amount_of_revenue - budget_spec.cost_price
-
-            budget_spec.total_amount_of_revenue_with_vat = (budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods) * (1 + budget_spec.vat_attribute_id.percent / 100)
-
-            if budget_spec.total_amount_of_revenue == 0:
-                budget_spec.profitability = 0
-            else:
-                budget_spec.profitability = budget_spec.margin_income / budget_spec.total_amount_of_revenue * 100
-
-    @api.depends('end_presale_project_month','end_sale_project_month')
-    def _compute_quarter(self):
-        for fieldquarter in self:
-            if fieldquarter.end_presale_project_month == False:
-                continue
-            tmp_date = fieldquarter.end_presale_project_month
-            month = tmp_date.month
-            year = tmp_date.year
-            if 0 <= int(month) <= 3:
-                fieldquarter.end_presale_project_quarter = 'Q1 ' + str(year)
-            elif 4 <= int(month) <= 6:
-                fieldquarter.end_presale_project_quarter = 'Q2 ' + str(year)
-            elif 7 <= int(month) <= 9:
-                fieldquarter.end_presale_project_quarter = 'Q3 ' + str(year)
-            elif 10 <= int(month) <= 12:
-                fieldquarter.end_presale_project_quarter = 'Q4 ' + str(year)
-            else:
-                fieldquarter.end_presale_project_quarter = 'NA'
-            tmp_date = fieldquarter.end_sale_project_month
-            month = tmp_date.month
-            year = tmp_date.year
-            if 0 <= int(month) <= 3:
-                fieldquarter.end_sale_project_quarter = 'Q1 ' + str(year)
-            elif 4 <= int(month) <= 6:
-                fieldquarter.end_sale_project_quarter = 'Q2 ' + str(year)
-            elif 7 <= int(month) <= 9:
-                fieldquarter.end_sale_project_quarter = 'Q3 ' + str(year)
-            elif 10 <= int(month) <= 12:
-                fieldquarter.end_sale_project_quarter = 'Q4 ' + str(year)
-            else:
-                fieldquarter.end_sale_project_quarter = 'NA'
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            if not vals.get('step_id') or vals['step_id'] == '-':
-                vals['step_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.project_steps')
-        return super().create(vals_list)
-
-    def unlink(self):
-        """
-        need check exists  step in etalon budget and
-
-        """
-        print('unlink ')
-        for record in self:
-            print('record = ', record)
-            print('record.step_id = ',record.step_id)
-            print('record.id = ',record.id)
-            if record.approve_state != 'need_approve_manager' :
-                raisetext = _("only in state 'need approve manager' project can be deleted")
-                raise ValidationError(raisetext)
-
-            if record.budget_state == 'fixed' :
-                raisetext = _("only in 'Working' budget project step can be deleted")
-                raise ValidationError(raisetext)
-
-            fact_cash_flow = self.env['project_budget.project_steps'].search([('step_id', '=', record.step_id),('id','!=',record.id)], limit =1)
-            if fact_cash_flow:
-                raisetext = _("step exist in another version of budget")
-                raise ValidationError(raisetext)
-
-
-            fact_cash_flow = self.env['project_budget.fact_cash_flow'].search([('project_steps_id', '=', record.id)], limit =1)
-            if fact_cash_flow:
-                raisetext = _("fact_cash_flow exist with this step")
-                raise ValidationError(raisetext)
-
-            planned_cash_flow = self.env['project_budget.planned_cash_flow'].search([('project_steps_id', '=', record.id)], limit =1)
-            if planned_cash_flow:
-                raisetext = _("planned_cash_flow exist with this step")
-                raise ValidationError(raisetext)
-
-            planned_acceptance_flow = self.env['project_budget.planned_acceptance_flow'].search([('project_steps_id', '=', record.id)], limit =1)
-            if planned_acceptance_flow:
-                raisetext = _("planned_acceptance_flow exist with this step")
-                raise ValidationError(raisetext)
-
-            fact_acceptance_flow = self.env['project_budget.fact_acceptance_flow'].search([('project_steps_id', '=', record.id)], limit =1)
-            if fact_acceptance_flow:
-                raisetext = _("fact_acceptance_flow exist with this step")
-                raise ValidationError(raisetext)
-
-        return super().unlink()
-
-    @api.model
-    def get_data_dashboard_1(self):
-        print('get_data_dashboard_1')
-        """Returns data to the tiles of dashboard"""
-        etalon_projects = self.env['project_budget.projects'].search([('etalon_budget', '=', True),('budget_state','=','fixed')])
-        current_projects = self.env['project_budget.projects'].search([('etalon_budget', '=', False), ('budget_state', '=', 'work')])
-        print('len(etalon_projects) = ', len(etalon_projects))
-        print('len(current_projects) = ', len(current_projects))
-        return {
-            'etalon_projects': len(etalon_projects),
-            'current_projects': len(current_projects),
-        }
 
 class projects(models.Model):
     _name = 'project_budget.projects'
@@ -503,7 +72,8 @@ class projects(models.Model):
                                            index=True, default='prepare', store=True, copy=True, tracking=True, compute="_compute_specification_state")
     approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
                                     required=True, index=True, default='need_approve_manager', store=True, copy=True, tracking=True)
-    currency_id = fields.Many2one('res.currency', string='Account Currency',  compute='_compute_reference')
+    currency_id = fields.Many2one('res.currency', string='Account Currency',  required = True, copy = True,
+                                  default=lambda self: self.env['res.currency'].search([('name', '=', 'RUB')], limit=1))
     etalon_budget = fields.Boolean(related='commercial_budget_id.etalon_budget', readonly=True)
     date_actual = fields.Datetime(related='commercial_budget_id.date_actual', readonly=True, store=True)
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
@@ -511,8 +81,12 @@ class projects(models.Model):
                                            , domain=_get_commercial_budget_list)
     was_changes = fields.Boolean(string="was_changes", copy=True, default = True)
     vgo = fields.Selection([('-', '-'), ('vgo1', 'vgo1'),('vgo2', 'vgo2')], required=True, default='-', copy = True,)
-    budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False,
-                                    compute='_compute_reference', store=True, tracking=True)
+
+    # budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False,
+    #                                 compute='_compute_reference', store=True, tracking=True)
+
+    budget_state = fields.Selection(related = 'commercial_budget_id.budget_state', readonly = True, index=True, store=True)
+
     project_office_id = fields.Many2one('project_budget.project_office', string='project_office', required=True,
                                         copy=True)
     project_supervisor_id = fields.Many2one('project_budget.project_supervisor', string='project_supervisor',
@@ -550,7 +124,20 @@ class projects(models.Model):
     other_expenses = fields.Monetary(string='other_expenses')
     margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
     profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals', store=True, tracking=True)
-    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True,required = True)
+    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True,required = True,
+                help = "*The estimated probability of project implementation is selected from the following categories:"
+                       "\n"
+                       "\n30% The Customer's need for supply/services has been identified, the technical and commercial feasibility of their implementation has been determined, financing mechanisms are available/identified."
+                       "\n Financing mechanisms are being/identified. Proactive creation of a new need for the Customer by the efforts of the seller, for which the Customer will organize or provide subsequent financing of the project."
+                       "\n"
+                       "\n50% of the Customer's requirements, financing and procurement deadlines are determined in a specific financial period, there is a TAP from the Vendor / Supplier, there is Customer support"
+                       "\n at the same time, it is necessary to finalize the terms of interaction according to the project, both with the Vendor / Supplier and with the Customer, there is a clear understanding of how to do this."
+                       "\n financing of the presale is allowed only after the creation of the presale"
+                       "\n 75% Meets the formed requirements of the CD/ TOR for the implementation of the project, protection from the Vendor / Supplier has been received,"
+                       "\n the project budget has been approved by the Director of the Software or CD, the timing of procurement procedures from the Customer does not interfere with the implementation of the project."
+                       "\n"
+                       "\n 100% The project has moved to the production budget."
+            )
                                             # ,default=lambda self: self.env['project_budget.estimated_probability'].search([('name', '=', '30')], limit=1)
 
     legal_entity_signing_id = fields.Many2one('project_budget.legal_entity_signing', string='legal_entity_signing a contract from the NCC', required=True, copy=True)
@@ -589,6 +176,7 @@ class projects(models.Model):
         string="fact acceptance flow", auto_join=True,copy=True)
 
     project_have_steps = fields.Boolean(string="project have steps", default=False, copy=True)
+    is_framework = fields.Boolean(string="project is framework", default=False, copy=True)
     project_steps_ids = fields.One2many(
         comodel_name='project_budget.project_steps',
         inverse_name='projects_id',
@@ -732,11 +320,6 @@ class projects(models.Model):
                 budget_spec.profitability = budget_spec.margin_income / budget_spec.total_amount_of_revenue * 100
 
 
-    @ api.depends('commercial_budget_id.currency_id','commercial_budget_id.budget_state','commercial_budget_id.currency_id')
-    def _compute_reference(self):
-        for budget_spec in self:
-            budget_spec.currency_id = budget_spec.commercial_budget_id.currency_id
-            budget_spec.budget_state = budget_spec.commercial_budget_id.budget_state
 
     @api.depends('end_presale_project_month','end_sale_project_month')
     def _compute_quarter(self):
@@ -800,6 +383,7 @@ class projects(models.Model):
                 rows.write({
                     'approve_state': "need_approve_supervisor"
                 })
+                print('rows.id = ', rows.id)
 
                 # Get a reference to the mail.activity model
                 activity_model = self.env['mail.activity']
@@ -807,17 +391,26 @@ class projects(models.Model):
                 activities = activity_model.search([('res_id','=', rows.id),
                                                     ('activity_type_id','=',self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id)
                                                    ])
+                print('activities = ', activities)
                 # Update the state of each activity to 'done'
                 for activitie in activities:
                     activitie.action_done()
 
+                user_id = rows.project_supervisor_id.user_id.id
+                print('user_id = ',user_id)
+                if rows.project_office_id.receive_tasks_for_approve_project: # не куратору посылать, а руководителю проектного офиса надо
+                    if rows.project_office_id.user_id: # вдруг просто галочка стоит, а пользователь не выбран
+                        user_id = rows.project_office_id.user_id.id
+                print('user_id (after project_office_id) = ', user_id)
+                res_model_id_project_budget = self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id
+                print('res_model_id_project_budget = ', res_model_id_project_budget)
                 self.env['mail.activity'].create({
                     'display_name': _('You have to approve or decline project'),
                     'summary': _('You have to approve or decline project'),
                     'date_deadline': fields.datetime.now(),
-                    'user_id': rows.project_supervisor_id.user_id.id,
+                    'user_id': user_id,
                     'res_id': rows.id,
-                    'res_model_id': self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id,
+                    'res_model_id': res_model_id_project_budget,
                     'activity_type_id': self.env.ref('project_budget.mail_act_approve_project_by_supervisor').id
                     })
 
@@ -827,7 +420,13 @@ class projects(models.Model):
     def set_approve_supervisor(self):
         for rows in self:
             if rows.approve_state=="need_approve_supervisor" and rows.budget_state == 'work' and rows.specification_state !='cancel':
-                if self.user_is_supervisor(rows.project_supervisor_id.id) or self.user_has_groups('project_budget.project_budget_admin'):
+
+                user_id = False
+                if rows.project_office_id.receive_tasks_for_approve_project: # не только куратор может утвекрждать, но и руководитель проектного офиса надо
+                    if rows.project_office_id.user_id: # вдруг просто галочка стоит, а пользователь не выбран
+                        user_id = rows.project_office_id.user_id.id
+
+                if self.user_is_supervisor(rows.project_supervisor_id.id) or self.user_has_groups('project_budget.project_budget_admin') or self.env.user.id == user_id :
                     # rows.approve_state="approved"
                    rows.write({
                        'approve_state': "approved"
@@ -845,7 +444,12 @@ class projects(models.Model):
     def cancel_approve(self):
         for rows in self:
             if (rows.approve_state=="approved" or rows.approve_state=="need_approve_supervisor") and rows.budget_state == 'work' and rows.specification_state !='cancel':
-                if self.user_is_supervisor(rows.project_supervisor_id.id) or self.user_has_groups('project_budget.project_budget_admin'):
+                user_id = False
+                if rows.project_office_id.receive_tasks_for_approve_project: # не только куратор может утвекрждать, но и руководитель проектного офиса надо
+                    if rows.project_office_id.user_id: # вдруг просто галочка стоит, а пользователь не выбран
+                        user_id = rows.project_office_id.user_id.id
+
+                if self.user_is_supervisor(rows.project_supervisor_id.id) or self.user_has_groups('project_budget.project_budget_admin') or self.env.user.id == user_id :
                     # rows.approve_state="need_approve_manager"
                     rows.write({
                         'approve_state': "need_approve_manager"

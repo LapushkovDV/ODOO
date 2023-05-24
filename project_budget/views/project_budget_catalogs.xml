@@ -11,6 +11,8 @@
                     <field name="name"/>
                     <field name="code"/>
                     <field name="descr"/>
+                    <field name="user_id" widget="many2one_avatar_user"/>
+                    <field name="receive_tasks_for_approve_project" widget="boolean_toggle"/>
                 </tree>
             </field>
         </record>
@@ -22,11 +24,13 @@
                 <form>
                     <sheet string="project_office">
                         <group>
-                           <field name="name"/>
-                           <field name="code"/>
+                            <field name="name"/>
+                            <field name="code"/>
                         </group>
                         <group>
-                           <field name="descr" widget="html"/>
+                            <field name="descr" widget="html"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="receive_tasks_for_approve_project" widget="boolean_toggle"/>
                         </group>
                     </sheet>
                 </form>
@@ -497,7 +501,6 @@
         <field name="type">ir.actions.act_window</field>
         <field name="view_mode">kanban,form</field>
     </record>
-
 
  <record id="project_budget_estimated_probability_kanban" model="ir.ui.view">
         <field name="name">project_budget.estimated_probability.kanban</field>

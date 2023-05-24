@@ -21,12 +21,22 @@
                  <field name="binding_type">report</field>
         </record>
 
-         <record id="report_project_forecast_excel" model = "ir.actions.report">
-                 <field name="name">Generate forecast (EXCEL)</field>
+        <record id="report_project_forecast_excel" model = "ir.actions.report">
+            <field name="name">Generate forecast (EXCEL)</field>
+            <field name="model">project_budget.commercial_budget</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_name">project_budget.report_budget_forecast_excel</field>
+            <field name="report_file">project_budget.report_budget_forecast_excel</field>
+            <field name="binding_model_id" ref="model_project_budget_commercial_budget"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <record id="report_project_svod_excel" model = "ir.actions.report">
+                 <field name="name">Generate svod (EXCEL)</field>
                  <field name="model">project_budget.commercial_budget</field>
                  <field name="report_type">xlsx</field>
-                 <field name="report_name">project_budget.report_budget_forecast_excel</field>
-                 <field name="report_file">project_budget.report_budget_forecast_excel</field>
+                 <field name="report_name">project_budget.report_budget_svod_excel</field>
+                 <field name="report_file">project_budget.report_budget_svod_excel</field>
                  <field name="binding_model_id" ref="model_project_budget_commercial_budget"/>
                  <field name="binding_type">report</field>
         </record>

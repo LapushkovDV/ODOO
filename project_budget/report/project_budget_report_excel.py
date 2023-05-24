@@ -1,9 +1,18 @@
 from odoo import models
 
+
 class report_budget_excel(models.AbstractModel):
     _name = 'report.project_budget.report_budget_excel'
     _description = 'project_budget.report_budget_excel'
     _inherit = 'report.report_xlsx.abstract'
+
+    strYEAR = '2023'
+    YEARint = int(strYEAR)
+
+    probabitily_list_KB = ['30','50','75']
+    probabitily_list_PB = ['100']
+    probabitily_list_Otmena = ['0']
+
     def printworksheet(self,workbook,budget,namesheet,stateproject):
         report_name = budget.name
             # One sheet by partner
@@ -167,10 +176,18 @@ class report_budget_excel(models.AbstractModel):
         sheet.write_string(row, column, "Технологическое направление",head_format)
         sheet.set_column(column, column, 15)
         sheet.autofilter(row, 0, row, column)
+        probabitily_list = ['']
+        if stateproject == 'prepare':
+            probabitily_list = self.probabitily_list_KB
+        if stateproject == 'production':
+            probabitily_list = self.probabitily_list_PB
+        if stateproject == 'cancel':
+            probabitily_list = self.probabitily_list_Otmena
 
         for spec in budget.projects_ids:
-            if spec.specification_state == stateproject:
-                if spec.project_have_steps == False:
+            if spec.project_have_steps == False or spec.is_framework == True: # рамку всегда выгружать
+                if (spec.estimated_probability_id.name in probabitily_list) and (
+                            spec.end_presale_project_month.year >= self.YEARint or spec.end_sale_project_month.year >= self.YEARint):
                     row += 1
                     column = 0
                     sheet.write_string(row, column, spec.project_id, row_format)
@@ -242,8 +259,10 @@ class report_budget_excel(models.AbstractModel):
                     sheet.write_string(row, column, spec.comments or "", row_format)
                     column += 1
                     sheet.write_string(row, column, spec.technological_direction_id.name, row_format)
-                else:
-                    for step in spec.project_steps_ids:
+            if spec.project_have_steps == True:
+                for step in spec.project_steps_ids:
+                    if (step.estimated_probability_id.name in probabitily_list) and (
+                            step.end_presale_project_month.year >= self.YEARint or step.end_sale_project_month.year >= self.YEARint):
                         row += 1
                         column = 0
                         sheet.write_string(row, column, spec.project_id + ' | ' + step.step_id, row_format)
@@ -310,7 +329,7 @@ class report_budget_excel(models.AbstractModel):
                         column += 1
                         sheet.write(row, column, spec.legal_entity_signing_id.name, row_format)
                         column += 1
-                        sheet.write_string(row, column, spec.project_type_id.name, row_format)
+                        sheet.write_string(row, column, step.project_steps_type_id.name, row_format)
                         column += 1
                         sheet.write_string(row, column, spec.comments or "", row_format)
                         column += 1

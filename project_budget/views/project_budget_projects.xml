@@ -79,7 +79,7 @@
                     </header>
                     <sheet string="Project">
                         <field name="budget_state" invisible="1"/>
-                        <group col="4">
+                        <group col="5">
                             <group>
                                 <field name="project_id" readonly="1"/>
 <!--                                <field name="was_changes" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
@@ -90,26 +90,16 @@
                             <group>
                                 <field name="estimated_probability_id" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                                         decoration-bf="1" options="{'no_open': True,}"
-                                help="The estimated probability of project implementation is selected from the following categories:
-
-30% The Customer's need for supply/ services has been identified, the technical and commercial feasibility of their implementation has been determined, financing mechanisms are available/ identified.
-financing mechanisms are available/identified. Proactive creation of a new need in the Customer by the efforts of the seller, for which the Customer will organize or provide subsequent financing of the project.
-
-50% The Customer's requirements, financing and terms of purchase are determined in a specific financial period, there is a TAP from the Vendor / Supplier, there is Customer support
-at the same time, it is necessary to finalize the terms of interaction on the project with both the Vendor / Supplier and the Customer, and there is a clear understanding of how to do this.
-Presale financing is allowed only after the creation of a presale BP.
-
-75% Meets the formed requirements of the CD / TOR for the implementation of the project, protection from the Vendor / Supplier has been obtained,
-the preliminary budget of the project is agreed by the Director of Software or CD, the timing of procurement procedures from the Customer does not interfere with the implementation of the project.
-
-100% of the project has moved to the PB.
-"
                                 />
                             </group>
                             <group>
                                 <field name="project_have_steps" widget="boolean_toggle"
                                         attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                                     />
+                            </group>
+                            <group>
+                                <field name="is_framework" widget="boolean_toggle"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}" />
                             </group>
                         </group>
                         <group col="2">
@@ -184,6 +174,9 @@ the preliminary budget of the project is agreed by the Director of Software or C
                                 <h5>
                                     <group col="3">
                                         <group>
+                                            <field class="text-break" name="step_project_number" placeholder="enter project code from AXAPTA"
+                                                    attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
+                                                    decoration-bf="1"/>
                                             <field class="text-break" name="project_office_id" placeholder="select project office" force_save="1" options="{'no_open': True,}"
                                                     attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                                                     decoration-bf="1"/>
@@ -439,7 +432,7 @@ the preliminary budget of the project is agreed by the Director of Software or C
                     <header>
                         <!--The oe_highlight class gives the button a red color when it is saved.
                         It is usually used to indicate the expected behaviour. -->
-                        <button string="Print current budget" type="object" name="set_approve_manager" class="oe_highlight" />
+<!--                        <button string="Print current budget" type="object" name="set_approve_manager" class="oe_highlight" />-->
                         <button string="approve (manager)" type="object" name="set_approve_manager" class="oe_highlight" />
                         <button string="approve (supervisor)" type="object" name="set_approve_supervisor" class="oe_highlight"/>
                         <button string="cancel approve (supervisor)" type="object" name="cancel_approve" class="oe_highlight"/>
@@ -457,6 +450,7 @@ the preliminary budget of the project is agreed by the Director of Software or C
                     />
                     <field name="date_actual" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="project_have_steps" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="is_framework" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="was_changes" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="vgo" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="etalon_budget" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
@@ -487,11 +481,24 @@ the preliminary budget of the project is agreed by the Director of Software or C
             </field>
         </record>
 
+        <record id="show_project_budget_projects_graph" model ="ir.ui.view">
+            <field name="name">project_budget.projects.graph</field>
+            <field name="model">project_budget.projects</field>
+            <field name="arch" type="xml">
+                <graph string="Project list estimated probability">
+                    <field name="project_supervisor_id" type ="row"/>
+                    <field name="estimated_probability_id" type="row"/>
+<!--                    <field name="end_presale_project_month" interval="month" type="col"/>-->
+                    <field name="project_id" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
         <record id="show_comercial_budget_spec" model="ir.actions.act_window">
             <field name="name">Projects</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">project_budget.projects</field>
-            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
             <field name="search_view_id" ref="view_projects_search"></field>
             <field name="domain">[('budget_state', '=', 'work')]</field>
             <field name="context">{'search_default_group_by_provider': True}</field>
