@@ -7,6 +7,7 @@ class projects(models.Model):
     _name = 'project_budget.projects'
     _description = "project_office commercial budget projects"
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _rec_name = 'name_to_show'
     # _rec_names_search = ['project_id', 'essence_project']
 
     def action_canban_view_group(self):
@@ -181,6 +182,13 @@ class projects(models.Model):
         comodel_name='project_budget.project_steps',
         inverse_name='projects_id',
         string="project steps", auto_join=True,copy=True)
+
+    name_to_show = fields.Char(string='name_to_show', compute='_get_name_to_show')
+
+    @api.depends('project_id','step_project_number')
+    def _get_name_to_show(self):
+        for prj in self:
+            prj.name_to_show = prj.project_id + '|'+ (prj.step_project_number or '') + '|' + (prj.essence_project[:30] or '')+'...'
 
     @api.depends('estimated_probability_id')
     def _compute_specification_state(self):
