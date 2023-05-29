@@ -26,7 +26,7 @@
             <form string="Task">
                 <header>
                     <button string="Assign to user" type="object" name="action_assign_to_user" class="oe_highlight"
-                            attrs="{'invisible': ['|', ('state', '!=', 'new'), ('state', '!=', 'cancel')]}"/>
+                            attrs="{'invisible': [('state', '!=', 'new'), ('state', '!=', 'cancel')]}"/>
                     <button string="In Progress" type="object" name="action_in_progress" class="oe_highlight"
                             attrs="{'invisible': [('state', '!=', 'assigned')]}"/>
                     <button string="Done" type="object" name="action_done" class="oe_highlight"

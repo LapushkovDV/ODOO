@@ -46,7 +46,7 @@ class Task(models.Model):
         for user in self.user_ids:
             self.env['mail.activity'].create({
                 'display_name': _('You have new task'),
-                'summary': _('You have new task by project %s' % (self.project_id.get_name())),
+                'summary': _('You have new task by project %s' % (self.project_id)),
                 'date_deadline': self.date_deadline,
                 'user_id': user.id,
                 'res_id': self.id,
