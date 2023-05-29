@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="task_view_search" model="ir.ui.view">
+        <field name="name">task.task.search</field>
+        <field name="model">task.task</field>
+        <field name="arch" type="xml">
+            <search string="Tasks">
+                <field name="name" string="Task" filter_domain="['|', ('name', 'ilike', self), ('id', 'ilike', self)]"/>
+                <field name="user_ids"
+                       filter_domain="[('user_ids.name', 'ilike', self), ('user_ids.active', 'in', [True, False])]"/>
+                <field name="project_id"/>
+                <field name="state"/>
+                <field name="description"/>
+                <filter string="My Tasks" name="my_tasks" domain="[('user_ids', 'in', uid)]"/>
+                <filter string="Unassigned" name="unassigned" domain="[('user_ids', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+    
     <record id="task_action_sub_task" model="ir.actions.act_window">
         <field name="name">Sub-tasks</field>
         <field name="res_model">task.task</field>
@@ -61,6 +78,8 @@
                     </div>
                     <group>
                         <group>
+                            <field name="create_uid"
+                                   readonly="1"/>
                             <field name="project_id"
                                    attrs="{'readonly': [('state', '!=', 'new')]}"/>
                             <field name="user_ids"
@@ -171,23 +190,6 @@
                     </t>
                 </templates>
             </kanban>
-        </field>
-    </record>
-
-    <record id="task_view_search" model="ir.ui.view">
-        <field name="name">task.task.search</field>
-        <field name="model">task.task</field>
-        <field name="arch" type="xml">
-            <search string="Tasks">
-                <field name="name" string="Task" filter_domain="['|', ('name', 'ilike', self), ('id', 'ilike', self)]"/>
-                <field name="user_ids"
-                       filter_domain="[('user_ids.name', 'ilike', self), ('user_ids.active', 'in', [True, False])]"/>
-                <field name="project_id"/>
-                <field name="state"/>
-                <field name="description"/>
-                <filter string="My Tasks" name="my_tasks" domain="[('user_ids', 'in', uid)]"/>
-                <filter string="Unassigned" name="unassigned" domain="[('user_ids', '=', False)]"/>
-            </search>
         </field>
     </record>
 
