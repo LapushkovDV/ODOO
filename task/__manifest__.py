@@ -1,0 +1,31 @@
+{
+    'name': 'Task Management',
+    'version': '1.0.0',
+    'category': '',
+    'depends': ['base', 'mail', 'uom', 'project_budget'],
+    'description': """
+    """,
+    'author': '',
+    'support': '',
+    'application': True,
+    'installable': True,
+    'auto_install': False,
+    'images': ['static/description/icon.png'],
+    'assets': {
+        'web.assets_backend': [
+            'project/static/src/js/widgets/*',
+            'project/static/src/components/**/*'
+        ],
+        'project.webclient': [
+            'project/static/src/components/task_task_name_with_subtask_count_char_field/*'
+        ],
+    },
+    'data': [
+        'security/ir.model.access.csv',
+        'views/task_views.xml',
+        'views/project_budget_views.xml',
+    ],
+    'demo': [
+    ],
+    'license': 'LGPL-3',
+}
