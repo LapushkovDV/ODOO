@@ -33,6 +33,52 @@ class report_budget_svod_excel(models.AbstractModel):
 
     array_itogi_last_plan_office = [5, 10, 15, 22, 27, 32, 59,64,69,96,101,106,133,138,143] # колонки где надо  формулы итоговые по офису - послледний эталонный план
 
+    def isStepinYear(self, project, step):
+        if project:
+            if step:
+                if step.end_presale_project_month.year == self.YEARint or step.end_sale_project_month.year == self.YEARint:
+                    return True
+                for pds in project.planned_cash_flow_ids:
+                    if pds.project_steps_id.id == step.id:
+                        if pds.date_cash.year == self.YEARint:
+                            return True
+                for pds in project.fact_cash_flow_ids:
+                    if pds.project_steps_id.id == step.id:
+                        if pds.date_cash.year == self.YEARint:
+                            return True
+                for act in project.planned_acceptance_flow_ids:
+                    if act.project_steps_id.id == step.id:
+                        if act.date_cash.year == self.YEARint:
+                            return True
+                for act in project.fact_acceptance_flow_ids:
+                    if act.project_steps_id.id == step.id:
+                        if act.date_cash.year == self.YEARint:
+                            return True
+        return False
+
+    def isProjectinYear(self, project):
+        if project:
+            if project.project_have_steps == False:
+                if project.end_presale_project_month.year == self.YEARint or project.end_sale_project_month.year == self.YEARint:
+                    return True
+                for pds in project.planned_cash_flow_ids:
+                    if pds.date_cash.year == self.YEARint:
+                        return True
+                for pds in project.fact_cash_flow_ids:
+                    if pds.date_cash.year == self.YEARint:
+                        return True
+                for act in project.planned_acceptance_flow_ids:
+                    if act.date_cash.year == self.YEARint:
+                        return True
+                for act in project.fact_acceptance_flow_ids:
+                    if act.date_cash.year == self.YEARint:
+                        return True
+            else:
+                for step in project.project_steps_ids:
+                    if self.isStepinYear(project, step):
+                        return True
+        return False
+
     def get_etalon_budget(self):
         etalon_budget = self.env['project_budget.commercial_budget'].search(
             [('etalon_budget', '=', True), ('budget_state', '=', 'fixed'),('name','!=','ФИНАНСЫ эталон Q2')], limit=1,
@@ -475,7 +521,7 @@ class report_budget_svod_excel(models.AbstractModel):
                                 if act.date_cash.month in (10, 11, 12):
                                     sum_q4 += act.sum_cash_without_vat
             else:
-                for act in project.planned_acceptance_flow_ids:
+                for act in project.fact_acceptance_flow_ids:
                     if act.date_cash.year == self.YEARint:
                         sum_year += act.sum_cash_without_vat
                         if act.date_cash.month in (1, 2, 3):
@@ -575,7 +621,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0','30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -584,7 +630,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -593,7 +639,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -602,7 +648,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -611,7 +657,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -657,7 +703,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -666,7 +712,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -675,7 +721,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -684,7 +730,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -693,7 +739,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -734,7 +780,7 @@ class report_budget_svod_excel(models.AbstractModel):
         #  end валовая выручка факт
         # валовая выручка остаток
         colFormula = column + 14
-        formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+        formula = '=-1*if({1}{0}+{2}{0} = 0, 0, {1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -743,7 +789,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -752,7 +798,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -761,7 +807,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -770,7 +816,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*({1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
+            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
                                                              xl_col_to_name(colFormula - 2),
                                                              xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
@@ -1082,6 +1128,7 @@ class report_budget_svod_excel(models.AbstractModel):
                         )
                     for spec in cur_budget_projects:
                         if spec.is_framework == True and spec.project_have_steps == False: continue # рамка без этапов - пропускаем
+                        if self.isProjectinYear(spec) == False : continue
                         if (spec.vgo == '-'):
                             if isFoundProjectsByOffice == False:  # первый вход
                                 row += 1
@@ -1100,6 +1147,7 @@ class report_budget_svod_excel(models.AbstractModel):
                                 begRowProjectsByManager = row
                             if spec.project_have_steps:
                                 for step in spec.project_steps_ids:
+                                    if self.isStepinYear(spec, step) == False: continue
                                     sheet.set_row(row, None, None, {'hidden': 1, 'level': 2})
                                     # print('setrow level2 row = ',row)
                                     cur_row_format = row_format
