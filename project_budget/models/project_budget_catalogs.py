@@ -29,7 +29,7 @@ class project_supervisor(models.Model):
     project_supervisor_access_ids = fields.One2many(
             comodel_name='project_budget.project_supervisor_access',
             inverse_name='project_supervisor_id',
-            string="project_manager_access",
+            string="project_supervisor_access",
             copy=True, auto_join=True)
 
 class project_supervisor_access(models.Model):
@@ -60,6 +60,29 @@ class project_manager_access(models.Model):
     project_manager_id = fields.Many2one('project_budget.project_manager', string='project manager id', required=True,)
     user_id = fields.Many2one('res.users', string='user id', required=True,)
     descr = fields.Char(string="project manager access description", translate=True)
+
+class rukovoditel_project(models.Model):
+    _name = 'project_budget.rukovoditel_project'
+    _description = "rukovoditel_project"
+    name = fields.Char(string="rukovoditel_project name", required=True, translate=True)
+    code = fields.Char(string="rukovoditel_project code", required=True)
+    descr = fields.Char(string="rukovoditel_project description", translate=True)
+    user_id = fields.Many2one('res.users', string='user id', required=True,)
+    avatar_128 = fields.Image(related='user_id.avatar_128', readonly=True)
+    rukovoditel_project_access_ids = fields.One2many(
+        comodel_name='project_budget.rukovoditel_project_access',
+        inverse_name='rukovoditel_project_id',
+        string="rukovoditel_project_access",
+        copy=True, auto_join=True)
+
+class rukovoditel_project_access(models.Model):
+    _name = 'project_budget.rukovoditel_project_access'
+    _description = "rukovoditel_project access"
+    rukovoditel_project_id = fields.Many2one('project_budget.rukovoditel_project', string='rukovoditel_project id', required=True,)
+    user_id = fields.Many2one('res.users', string='user id', required=True,)
+    descr = fields.Char(string="rukovoditel_project access description", translate=True)
+
+
 
 class customer_organization(models.Model):
     _name = 'project_budget.customer_organization'
