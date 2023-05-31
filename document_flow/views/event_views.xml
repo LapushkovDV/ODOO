@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_view_all_event" model="ir.actions.act_window">
+        <field name="name">Events</field>
+        <field name="res_model">document_flow.event</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No events found. Let's create one!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="document_flow_menu" name="Document Flow" sequence="10"/>
+    <menuitem id="document_flow_menu_event" parent = "document_flow_menu" name = "Events" action="action_view_all_event"/>
+
+    <record id="event_view_tree" model="ir.ui.view">
+        <field name="name">document_flow.event.tree</field>
+        <field name="model">document_flow.event</field>
+        <field name="arch" type="xml">
+            <tree string="Events" multi_edit="1" sample="1">
+                <field name="name" optional="show" readonly="1"/>
+                <field name="date_start" optional="show" readonly="1"/>
+                <field name="member_ids" optional="show" widget="many2many_avatar_user" options='{"no_quick_create": True}'/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="event_view_form" model="ir.ui.view">
+        <field name="name">document_flow.event.form</field>
+        <field name="model">document_flow.event</field>
+        <field name="arch" type="xml">
+            <form string="Event">
+                <header>
+                    <button string="Send for review" type="object" name="action_send_for_execution" class="oe_highlight"/>
+                    <button string="Send for execution" type="object" name="action_send_for_execution" class="oe_highlight"/>
+                </header>
+                <sheet string="Event">
+                    <div class="oe_title pe-0">
+                        <h1 class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex w-100">
+                                <field name="name" class="o_event_name text-truncate w-100 w-md-75 pe-2"
+                                       placeholder="Event Title..."/>
+                            </div>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="venue"/>
+                            <field name="organizer_id"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                        <group>
+                            <field name="member_ids"
+                                   options="{'no_open': True, 'no_quick_create': True}"
+                                   widget="many2many_avatar_user"
+                                   domain="[('share', '=', False)]"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="description_page" string="Description">
+                            <field name="description" type="html" options="{'collaborative': true, 'resizable': false}"
+                                   placeholder="Event description..."/>
+                        </page>
+                        <page name="question_page" string="Questions">
+                            <field name="question_ids">
+                                <tree editable="bottom">
+                                    <field name="time_start" widget="float_time" width="10%"/>
+                                    <field name="time_end" widget="float_time" width="5%"/>
+                                    <field name="name" optional="show"/>
+                                    <field name="speaker_ids" optional="show" widget="many2many_avatar_user" options='{"no_quick_create": True}'/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="decisions_page" string="Decisions">
+                            <field name="decision_ids">
+                                <tree editable="bottom">
+                                    <field name="name" optional="show"/>
+                                    <field name="executor_ids" optional="show" widget="many2many_avatar_user" options='{"no_quick_create": True}'/>
+                                    <field name="date_deadline" optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+<!--                <div class="oe_chatter">-->
+<!--                    <field name="message_follower_ids" widget="mail_followers"/>-->
+<!--                    <field name="activity_ids" widget="mail_activity"/>-->
+<!--                    <field name="message_ids" widget="mail_thread"/>-->
+<!--                </div>-->
+            </form>
+        </field>
+    </record>
+
+<!--    <record id="task_view_calendar" model="ir.ui.view">-->
+<!--        <field name="name">document_flow.event.calendar</field>-->
+<!--        <field name="model">document_flow.event</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <calendar date_start="date_deadline" string="Tasks" mode="month"-->
+<!--                      event_limit="5" hide_time="true"-->
+<!--                      event_open_popup="true" quick_add="false"-->
+<!--                      scales="month,year">-->
+<!--                <field name="project_id"/>-->
+<!--                <field name="user_ids" widget="many2many_avatar_user"/>-->
+<!--                <field name="date_deadline"/>-->
+<!--                <field name="state"/>-->
+<!--            </calendar>-->
+<!--        </field>-->
+<!--    </record>-->
+</odoo>
