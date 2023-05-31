@@ -293,6 +293,14 @@ class report_budget_svod_excel(models.AbstractModel):
                 10, 11, 12) and sum_contract_etalon_q4 == 0:  # в эталоне в кваратале было 0
                     sum_q4 += project.total_amount_of_revenue_with_vat
 
+        sum_year_fact, sum_q1_fact, sum_q2_fact, sum_q3_fact, sum_q4_fact = self.get_sum_contract_fact(project)
+        # 20230530 Алина Козленко сказала, что если эталон 0, а факт есть, то новое = факт и это на все действует
+        if sum_contract_etalon_year == 0 : sum_year = sum_year_fact
+        if sum_contract_etalon_q1 == 0 : sum_q1 = sum_q1_fact
+        if sum_contract_etalon_q2 == 0 : sum_q2 = sum_q2_fact
+        if sum_contract_etalon_q3 == 0 : sum_q3 = sum_q3_fact
+        if sum_contract_etalon_q4 == 0 : sum_q4 = sum_q4_fact
+
         return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
 
     def get_sum_contract_fact(self, project):
@@ -390,6 +398,14 @@ class report_budget_svod_excel(models.AbstractModel):
         if sum_etalon_q2 != 0 : sum_q2 = 0
         if sum_etalon_q3 != 0 : sum_q3 = 0
         if sum_etalon_q4 != 0 : sum_q4 = 0
+
+        sum_year_fact, sum_q1_fact, sum_q2_fact, sum_q3_fact, sum_q4_fact = self.get_sum_pds_fact(project, project_step)
+        # 20230530 Алина Козленко сказала, что если в эталоне 0, а факт есть, то новое = факт и это на все действует
+        if sum_etalon_year == 0 : sum_year = sum_year_fact
+        if sum_etalon_q1 == 0 : sum_q1 = sum_q1_fact
+        if sum_etalon_q2 == 0 : sum_q2 = sum_q2_fact
+        if sum_etalon_q3 == 0 : sum_q3 = sum_q3_fact
+        if sum_etalon_q4 == 0 : sum_q4 = sum_q4_fact
         return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
 
     def get_sum_pds_fact(self, project, project_step):
@@ -497,6 +513,14 @@ class report_budget_svod_excel(models.AbstractModel):
         if sum_etalon_q2 != 0 : sum_q2 = 0
         if sum_etalon_q3 != 0 : sum_q3 = 0
         if sum_etalon_q4 != 0 : sum_q4 = 0
+
+        sum_year_fact, sum_q1_fact, sum_q2_fact, sum_q3_fact, sum_q4_fact = self.get_sum_acceptance_fact(project, project_step)
+        # 20230530 Алина Козленко сказала, что если в эталоне 0, а факт есть, то новое = факт и это на все действует
+        if sum_etalon_year == 0: sum_year = sum_year_fact
+        if sum_etalon_q1 == 0: sum_q1 = sum_q1_fact
+        if sum_etalon_q2 == 0: sum_q2 = sum_q2_fact
+        if sum_etalon_q3 == 0: sum_q3 = sum_q3_fact
+        if sum_etalon_q4 == 0: sum_q4 = sum_q4_fact
         return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
 
     def get_sum_acceptance_fact(self, project, project_step):
