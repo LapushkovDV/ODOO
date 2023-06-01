@@ -13,6 +13,8 @@
                     <field name="descr"/>
                     <field name="user_id" widget="many2one_avatar_user"/>
                     <field name="receive_tasks_for_approve_project" widget="boolean_toggle"/>
+                    <field name="isRukovoditel_required_in_project" widget="boolean_toggle"/>
+                    <field name="print_rukovoditel_in_kb" widget="boolean_toggle"/>
                 </tree>
             </field>
         </record>
@@ -26,11 +28,11 @@
                         <group>
                             <field name="name"/>
                             <field name="code"/>
-                        </group>
-                        <group>
                             <field name="descr" widget="html"/>
                             <field name="user_id" widget="many2one_avatar_user"/>
                             <field name="receive_tasks_for_approve_project" widget="boolean_toggle"/>
+                            <field name="isRukovoditel_required_in_project" widget="boolean_toggle"/>
+                            <field name="print_rukovoditel_in_kb" widget="boolean_toggle"/>
                         </group>
                     </sheet>
                 </form>

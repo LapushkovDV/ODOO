@@ -77,6 +77,7 @@ class projects(models.Model):
                                   default=lambda self: self.env['res.currency'].search([('name', '=', 'RUB')], limit=1))
     etalon_budget = fields.Boolean(related='commercial_budget_id.etalon_budget', readonly=True)
     date_actual = fields.Datetime(related='commercial_budget_id.date_actual', readonly=True, store=True)
+    isRukovoditel_required_in_project = fields.Boolean(related='project_office_id.isRukovoditel_required_in_project', readonly=True, store=True)
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
                                            ,default=lambda self: self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')], limit=1)
                                            , domain=_get_commercial_budget_list)

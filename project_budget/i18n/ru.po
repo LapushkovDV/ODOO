@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-30 09:43+0000\n"
-"PO-Revision-Date: 2023-05-30 09:43+0000\n"
+"POT-Creation-Date: 2023-06-01 12:43+0000\n"
+"PO-Revision-Date: 2023-06-01 12:43+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -964,6 +964,11 @@ msgid "Prepare"
 msgstr "КБ"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__print_rukovoditel_in_kb
+msgid "Print rukovoditel instead KAM in KB form"
+msgstr "В отчет КБ выводить руководителя проекта вместо КАМ"
+
+#. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__specification_state__production
 msgid "Production"
 msgstr "ПБ"
@@ -1615,6 +1620,12 @@ msgstr "КАМ"
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_estimated_probability_kanban
 msgid "margin"
 msgstr "Маржа"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__isRukovoditel_required_in_project
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__isRukovoditel_required_in_project
+msgid "mark rukovoditel required in prject"
+msgstr "Сделать руководителя проекта обязательным к заполнению"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__name

@@ -196,7 +196,10 @@ class report_budget_excel(models.AbstractModel):
                     column += 1
                     sheet.write_string(row, column, spec.project_supervisor_id.name, row_format)
                     column += 1
-                    sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                    if spec.project_office_id.print_rukovoditel_in_kb == False:
+                        sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                    else:
+                        sheet.write_string(row, column, spec.rukovoditel_project_id.name or '', row_format)
                     column += 1
                     sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
                     column += 1
@@ -271,7 +274,10 @@ class report_budget_excel(models.AbstractModel):
                         column += 1
                         sheet.write_string(row, column, spec.project_supervisor_id.name, row_format)
                         column += 1
-                        sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                        if spec.project_office_id.print_rukovoditel_in_kb == False:
+                            sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                        else:
+                            sheet.write_string(row, column, spec.rukovoditel_project_id.name or '', row_format)
                         column += 1
                         sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
                         column += 1

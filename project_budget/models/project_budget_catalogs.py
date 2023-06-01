@@ -17,6 +17,9 @@ class project_office(models.Model):
     user_id = fields.Many2one('res.users', string='Office manager', )
     avatar_128 = fields.Image(related='user_id.avatar_128', readonly=True)
     receive_tasks_for_approve_project = fields.Boolean(string="Recieve tasks for approve project as supervisor", default = False)
+    isRukovoditel_required_in_project = fields.Boolean(string="mark rukovoditel required in prject", default=False)
+    print_rukovoditel_in_kb = fields.Boolean(string="Print rukovoditel instead KAM in KB form",
+                                                       default=False)
 
 class project_supervisor(models.Model):
     _name = 'project_budget.project_supervisor'
