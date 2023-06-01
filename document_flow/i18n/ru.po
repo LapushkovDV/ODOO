@@ -1,0 +1,427 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* document_flow
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-06-01 14:21+0000\n"
+"PO-Revision-Date: 2023-06-01 14:21+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_ids
+msgid "Activities"
+msgstr "Активности"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Оформление исключения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_state
+msgid "Activity State"
+msgstr "Состояние активности"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Иконка типа активности"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_attachment_count
+msgid "Attachment Count"
+msgstr "Количество вложений"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__create_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__create_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__create_uid
+msgid "Created by"
+msgstr "Автор"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__create_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__create_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__create_date
+msgid "Created on"
+msgstr "Дата создания"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__date_deadline
+msgid "Deadline"
+msgstr "Срок исполнения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__name
+msgid "Decided"
+msgstr "Решили"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__decision_ids
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+msgid "Decisions"
+msgstr "Решения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__description
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+msgid "Description"
+msgstr "Описание"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__display_name
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__display_name
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__display_name
+msgid "Display Name"
+msgstr "Наименование"
+
+#. module: document_flow
+#: model:ir.ui.menu,name:document_flow.document_flow_menu
+msgid "Document Flow"
+msgstr "Документооборот"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__email_cc
+msgid "Email cc"
+msgstr "Копия"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__date_end
+msgid "End Date"
+msgstr "Дата окончания"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#: model:ir.model,name:document_flow.model_document_flow_event
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__event_id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__event_id
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+#, python-format
+msgid "Event"
+msgstr "Мероприятие"
+
+#. module: document_flow
+#: model:ir.model,name:document_flow.model_document_flow_event_decision
+msgid "Event Decision"
+msgstr "Решение"
+
+#. module: document_flow
+#: model:ir.model,name:document_flow.model_document_flow_event_question
+msgid "Event Question"
+msgstr "Вопрос"
+
+#. module: document_flow
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+msgid "Event Title..."
+msgstr "Заголовок мероприятия..."
+
+#. module: document_flow
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+msgid "Event description..."
+msgstr "Описание мероприятия..."
+
+#. module: document_flow
+#: model:ir.actions.act_window,name:document_flow.action_view_all_event
+#: model:ir.ui.menu,name:document_flow.document_flow_menu_event
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_calendar
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_tree
+msgid "Events"
+msgstr "Мероприятия"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__executor_ids
+msgid "Executors"
+msgstr "Исполнители"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_follower_ids
+msgid "Followers"
+msgstr "Подписчики"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Подписчики (Партнеры)"
+
+#. module: document_flow
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Шрифт для иконок"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__time_start
+msgid "From"
+msgstr "С"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__has_message
+msgid "Has Message"
+msgstr "Есть сообщения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__id
+msgid "ID"
+msgstr ""
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_exception_icon
+msgid "Icon"
+msgstr "Иконка"
+
+#. module: document_flow
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Иконка для индикации исключения"
+
+#. module: document_flow
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Если отмечено, то сообщения требуют Вашего внимания"
+
+#. module: document_flow
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__message_has_error
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Если отмечено, то есть ошибки доставки"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_is_follower
+msgid "Is Follower"
+msgstr "Подписчик"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event____last_update
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision____last_update
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question____last_update
+msgid "Last Modified on"
+msgstr "Дата последнего изменения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__write_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__write_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__write_uid
+msgid "Last Updated by"
+msgstr "Автор последнего изменения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__write_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__write_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__write_date
+msgid "Last Updated on"
+msgstr "Дата последнего изменения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "Основное вложение"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__member_ids
+msgid "Members"
+msgstr "Участники"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_has_error
+msgid "Message Delivery error"
+msgstr "Ошибка доставки сообщения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_ids
+msgid "Messages"
+msgstr "Сообщения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Срок исполнения моей активности"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__name
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__name
+msgid "Name"
+msgstr "Содержание"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: document_flow
+#: model_terms:ir.actions.act_window,help:document_flow.action_view_all_event
+msgid "No events found. Let's create one!"
+msgstr "Не найдено ни одного мероприятия. Давайте создадим одно!"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Номер действия"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_has_error_counter
+msgid "Number of errors"
+msgstr "Количество ошибок"
+
+#. module: document_flow
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: document_flow
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__organizer_id
+msgid "Organizer"
+msgstr "Организатор"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__question_ids
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+msgid "Questions"
+msgstr "Повестка"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_user_id
+msgid "Responsible User"
+msgstr "Ответственный пользователь"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: document_flow
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+msgid "Send for execution"
+msgstr "Отправить на исполнение"
+
+#. module: document_flow
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+msgid "Send for review"
+msgstr "Отправить на ознакомление"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__speaker_ids
+msgid "Speakers"
+msgstr "Докладчики"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__date_start
+msgid "Start Date"
+msgstr "Дата начала"
+
+#. module: document_flow
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Статус, основанный на действиях\n"
+"Просрочено: срок оплаты уже прошел\n"
+"Сегодня: Дата активности - сегодня\n"
+"Запланировано: будущие мероприятия"
+
+#. module: document_flow
+#: model:ir.model,name:document_flow.model_task_task
+msgid "Task"
+msgstr "Задача"
+
+#. module: document_flow
+#: model_terms:ir.actions.act_window,help:document_flow.action_view_task_id
+msgid ""
+"Task management allows you to manage the pipeline of your tasks efficiently. You can track\n"
+"                progress, discuss on tasks, attach documents, etc."
+msgstr ""
+"Управление задачами позволяет Вам эффективно управлять потоком ваших задач. Вы можете отслеживать\n"
+"                состояние, обсуждения в задачах, вложения и т.д."
+
+#. module: document_flow
+#: model:ir.actions.act_window,name:document_flow.action_view_task_id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__task_count
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+msgid "Tasks"
+msgstr "Задачи"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Tasks for review were created for the following user(s): %s"
+msgstr "Задачи на ознакомление созданы для участников: %s"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__time_end
+msgid "To"
+msgstr "По"
+
+#. module: document_flow
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__venue
+msgid "Venue"
+msgstr "Место"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: document_flow
+#: model:ir.model.fields,help:document_flow.field_document_flow_event__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "You have new task"
+msgstr "Вам назначена новая задача"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#: code:addons/document_flow/models/event.py:0
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "You have new task on review by event %s"
+msgstr ""
+"Вам назначена новая задача на ознакомление с результатами мероприятия %s"

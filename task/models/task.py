@@ -1,6 +1,13 @@
 from odoo import _, models, fields, api
 
 
+class TaskType(models.Model):
+    _name = 'task.task.type'
+    _description = 'Task Type'
+
+    name = fields.Char(string='Name', required=True)
+
+
 class Task(models.Model):
     _name = "task.task"
     _description = "Task"
@@ -9,22 +16,44 @@ class Task(models.Model):
     name = fields.Char(string='Title', tracking=True, required=True, index='trigram')
     description = fields.Html(string='Description')
 
+    # type_id = fields.Many2one('task.task.type', index=True, required=True, copy=False, tracking=True)
+
+    type = fields.Selection([
+        ('review', 'Review'),
+        ('execution', 'Execution')
+    ], required=True, index=True, string='Type')
+
     user_ids = fields.Many2many('res.users', relation='task_task_user_rel', column1='task_id', column2='user_id',
                                 string='Assignees', context={'active_test': False}, tracking=True)
     state = fields.Selection([
-        ('new', 'New'),
+        ('to_do', 'To Do'),
         ('assigned', 'Assigned'),
         ('in_progress', 'In Progress'),
         ('done', 'Done'),
         ('cancel', 'Canceled')
-    ], required=True, index=True, string='Status', default='new', readonly=True)
+    ], required=True, index=True, string='Status', default='to_do', readonly=True)
+
+    parent_ref = fields.Reference(string='Parent', selection="_selection_parent_model")
+    parent_ref_id = fields.Integer(string="Parent Id", index=True, copy=False)
+    parent_ref_type = fields.Char(string="Parent Type", index=True, copy=False)
 
     date_deadline = fields.Date(string='Deadline', index=True, copy=False, tracking=True)
-    project_id = fields.Many2one('project_budget.projects', string='Project', copy=True, tracking=True)
     parent_id = fields.Many2one('task.task', string='Parent Task', copy=True, tracking=True)
     child_ids = fields.One2many('task.task', 'parent_id', string="Sub-tasks")
     subtask_count = fields.Integer("Sub-task Count", compute='_compute_subtask_count')
     child_text = fields.Char(compute="_compute_child_text")
+
+    @api.model
+    def _selection_parent_model(self):
+        return [('project_budget.projects', _('Project'))]
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('parent_ref'):
+                vals['parent_ref_type'] = vals['parent_ref'].split(",")[0]
+                vals['parent_ref_id'] = int(vals['parent_ref'].split(",")[1])
+        return super().create(vals_list)
 
     @api.depends('child_ids')
     def _compute_subtask_count(self):
@@ -46,13 +75,19 @@ class Task(models.Model):
         for user in self.user_ids:
             self.env['mail.activity'].create({
                 'display_name': _('You have new task'),
-                'summary': _('You have new task by project %s' % (self.project_id)),
+                'summary': _('You have new task by project %s' % self.project_id),
                 'date_deadline': self.date_deadline,
                 'user_id': user.id,
                 'res_id': self.id,
                 'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
                 'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
             })
+
+    def action_review(self):
+        self.write({'state': 'done'})
+
+    def action_to_do(self):
+        self.write({'state': 'to_do'})
 
     def action_in_progress(self):
         self.write({'state': 'in_process'})
@@ -89,8 +124,8 @@ class ProjectBudgetTask(models.Model):
     task_count = fields.Integer(compute='_compute_task_count', string='Tasks')
 
     def _compute_task_count(self):
-        tasks = self.env['task.task']
-        self.task_count = tasks.search_count([
+        self.task_count = self.env['task.task'].search_count([
             ('parent_id', '=', False),
-            ('project_id', 'in', [pr.id for pr in self])
+            ('parent_ref_type', '=', self._name),
+            ('parent_ref_id', 'in', [pr.id for pr in self])
         ])
