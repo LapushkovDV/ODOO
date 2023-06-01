@@ -15,6 +15,7 @@
     },
     'data': [
         'security/ir.model.access.csv',
+        'views/event_task_views.xml',
         'views/event_views.xml',
     ],
     'demo': [

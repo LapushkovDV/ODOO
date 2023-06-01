@@ -3,10 +3,24 @@
     <record id="action_view_all_event" model="ir.actions.act_window">
         <field name="name">Events</field>
         <field name="res_model">document_flow.event</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,calendar</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No events found. Let's create one!
+            </p>
+        </field>
+    </record>
+
+    <record id="action_view_task_id" model="ir.actions.act_window">
+        <field name="name">Tasks</field>
+        <field name="res_model">task.task</field>
+        <field name="view_mode">tree,calendar,form</field>
+        <field name="domain">[('parent_ref_id', '=', active_id), ('parent_id', '=', False)]</field>
+        <field name="context">{'search_default_parent_ref_type': 'document_flow.event', 'default_parent_ref_id': active_id}</field>
+        <field name="help" type="html">
+            <p>
+                Task management allows you to manage the pipeline of your tasks efficiently. You can track
+                progress, discuss on tasks, attach documents, etc.
             </p>
         </field>
     </record>
@@ -32,10 +46,16 @@
         <field name="arch" type="xml">
             <form string="Event">
                 <header>
-                    <button string="Send for review" type="object" name="action_send_for_execution" class="oe_highlight"/>
+                    <button string="Send for review" type="object" name="action_send_for_review" class="oe_highlight"/>
                     <button string="Send for execution" type="object" name="action_send_for_execution" class="oe_highlight"/>
                 </header>
                 <sheet string="Event">
+                    <div name="button_box" position="inside">
+                        <button class="oe_stat_button" type="action" name="%(action_view_task_id)d"
+                                icon="fa-tasks">
+                            <field string="Tasks" name="task_count" widget="statinfo"/>
+                        </button>
+                    </div>
                     <div class="oe_title pe-0">
                         <h1 class="d-flex justify-content-between align-items-center">
                             <div class="d-flex w-100">
@@ -95,19 +115,20 @@
         </field>
     </record>
 
-<!--    <record id="task_view_calendar" model="ir.ui.view">-->
-<!--        <field name="name">document_flow.event.calendar</field>-->
-<!--        <field name="model">document_flow.event</field>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <calendar date_start="date_deadline" string="Tasks" mode="month"-->
-<!--                      event_limit="5" hide_time="true"-->
-<!--                      event_open_popup="true" quick_add="false"-->
-<!--                      scales="month,year">-->
-<!--                <field name="project_id"/>-->
-<!--                <field name="user_ids" widget="many2many_avatar_user"/>-->
-<!--                <field name="date_deadline"/>-->
-<!--                <field name="state"/>-->
-<!--            </calendar>-->
-<!--        </field>-->
-<!--    </record>-->
+    <record id="event_view_calendar" model="ir.ui.view">
+        <field name="name">document_flow.event.calendar</field>
+        <field name="model">document_flow.event</field>
+        <field name="arch" type="xml">
+            <calendar date_start="date_start" date_stop="date_end" string="Events" mode="month"
+                      event_limit="5" hide_time="true"
+                      event_open_popup="true" quick_add="false"
+                      delete="0" create="0"
+                      scales="month,year">
+                <field name="name"/>
+                <field name="member_ids" widget="many2many_avatar_user"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+            </calendar>
+        </field>
+    </record>
 </odoo>
