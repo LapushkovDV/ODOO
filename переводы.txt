@@ -1,0 +1,15 @@
+--select * from search_columns('382');
+
+select * from public.ir_model_fields 
+where field_description->>'ru_RU' like '%Этап%'
+
+
+
+delete from public.ir_model_fields where model like '%project_budget%'
+
+
+SELECT id, relation_field_id, model_id, related_field_id, size, create_uid, write_uid, name, complete_name, model, relation, relation_field, ttype, related, state, on_delete, domain, relation_table, column1, column2, depends, field_description, help, compute, copied, required, readonly, index, translate, group_expand, selectable, store, create_date, write_date, tracking
+	FROM public.ir_model_fields
+	where model like '%project_budget%'
+	and field_description->>'ru_RU' like '%менедж%'
+	;
