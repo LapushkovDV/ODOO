@@ -246,17 +246,17 @@ class projects(models.Model):
                 except: return False
             if row.project_have_steps == False:
                 if row.project_type_id.is_revenue_from_the_sale_of_works == False: row.revenue_from_the_sale_of_works = 0
-                if row.project_type_id.is_revenue_from_the_sale_of_goods == False: row.is_revenue_from_the_sale_of_goods = 0
-                if row.project_type_id.is_cost_of_goods == False: row.is_cost_of_goods = 0
-                if row.project_type_id.is_own_works_fot == False: row.is_own_works_fot = 0
-                if row.project_type_id.is_third_party_works == False: row.is_third_party_works = 0
-                if row.project_type_id.is_awards_on_results_project == False: row.is_awards_on_results_project = 0
-                if row.project_type_id.is_transportation_expenses == False: row.is_transportation_expenses = 0
-                if row.project_type_id.is_travel_expenses== False: row.is_travel_expenses = 0
-                if row.project_type_id.is_representation_expenses== False: row.is_representation_expenses = 0
-                if row.project_type_id.is_warranty_service_costs == False: row.is_warranty_service_costs = 0
-                if row.project_type_id.is_rko_other == False: row.is_rko_other = 0
-                if row.project_type_id.is_other_expenses== False: row.is_other_expenses = 0
+                if row.project_type_id.is_revenue_from_the_sale_of_goods == False: row.revenue_from_the_sale_of_goods = 0
+                if row.project_type_id.is_cost_of_goods == False: row.cost_of_goods = 0
+                if row.project_type_id.is_own_works_fot == False: row.own_works_fot = 0
+                if row.project_type_id.is_third_party_works == False: row.third_party_works = 0
+                if row.project_type_id.is_awards_on_results_project == False: row.awards_on_results_project = 0
+                if row.project_type_id.is_transportation_expenses == False: row.transportation_expenses = 0
+                if row.project_type_id.is_travel_expenses== False: row.travel_expenses = 0
+                if row.project_type_id.is_representation_expenses== False: row.representation_expenses = 0
+                if row.project_type_id.is_warranty_service_costs == False: row.warranty_service_costs = 0
+                if row.project_type_id.is_rko_other == False: row.rko_other = 0
+                if row.project_type_id.is_other_expenses== False: row.other_expenses = 0
 
 
     @api.depends('project_supervisor_id.user_id')
