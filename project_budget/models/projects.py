@@ -74,7 +74,7 @@ class projects(models.Model):
     approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
                                     required=True, index=True, default='need_approve_manager', store=True, copy=True, tracking=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency',  required = True, copy = True,
-                                  default=lambda self: self.env['res.currency'].search([('name', '=', 'RUB')], limit=1))
+                                  default=lambda self: self.env['res.currency'].search([('name', '=', 'RUB')], limit=1),tracking=True)
     etalon_budget = fields.Boolean(related='commercial_budget_id.etalon_budget', readonly=True)
     date_actual = fields.Datetime(related='commercial_budget_id.date_actual', readonly=True, store=True)
     isRukovoditel_required_in_project = fields.Boolean(related='project_office_id.isRukovoditel_required_in_project', readonly=True, store=True)
@@ -82,7 +82,7 @@ class projects(models.Model):
                                            ,default=lambda self: self.env['project_budget.commercial_budget'].search([('budget_state', '=', 'work')], limit=1)
                                            , domain=_get_commercial_budget_list)
     was_changes = fields.Boolean(string="was_changes", copy=True, default = True)
-    vgo = fields.Selection([('-', '-'), ('vgo1', 'vgo1'),('vgo2', 'vgo2')], required=True, default='-', copy = True,)
+    vgo = fields.Selection([('-', '-'), ('vgo1', 'vgo1'),('vgo2', 'vgo2')], required=True, default='-', copy = True,tracking=True)
 
     # budget_state = fields.Selection([('work', 'Working'), ('fixed', 'Fixed')], required=True, index=True, default='work', copy = False,
     #                                 compute='_compute_reference', store=True, tracking=True)
@@ -90,7 +90,7 @@ class projects(models.Model):
     budget_state = fields.Selection(related = 'commercial_budget_id.budget_state', readonly = True, index=True, store=True)
 
     project_office_id = fields.Many2one('project_budget.project_office', string='project_office', required=True,
-                                        copy=True)
+                                        copy=True,tracking=True)
     project_supervisor_id = fields.Many2one('project_budget.project_supervisor', string='project_supervisor',
                                             required=True, copy=True, domain=_get_supervisor_list, tracking=True)
     project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=True,
@@ -100,34 +100,34 @@ class projects(models.Model):
                                          copy=True,  tracking=True)
 
     customer_organization_id = fields.Many2one('project_budget.customer_organization', string='customer_organization',
-                                               required=True, copy=True)
+                                               required=True, copy=True,tracking=True)
     customer_status_id = fields.Many2one('project_budget.customer_status', string='customer_status', required=True,
-                                         copy=True)
-    industry_id = fields.Many2one('project_budget.industry', string='industry', required=True, copy=True)
-    essence_project = fields.Text(string='essence_project', default = "")
+                                         copy=True,tracking=True)
+    industry_id = fields.Many2one('project_budget.industry', string='industry', required=True, copy=True,tracking=True)
+    essence_project = fields.Text(string='essence_project', default = "",tracking=True)
     end_presale_project_quarter = fields.Char(string='End date of the Presale project(quarter)', compute='_compute_quarter', store=True, tracking=True)
     end_presale_project_month = fields.Date(string='Date of transition to the Production Budget(MONTH)', required=True, default=fields.datetime.now(), tracking=True)
     end_sale_project_quarter = fields.Char(string='End date of the Sale project(quarter)', compute='_compute_quarter', store=True, tracking=True)
     end_sale_project_month = fields.Date(string='The period of shipment or provision of services to the Client(MONTH)', required=True,default=fields.datetime.now(), tracking=True)
-    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True,)
+    vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True,tracking=True)
                                        # default=lambda self: self.env['project_budget.vat_attribute'].search([], limit=1))
     total_amount_of_revenue = fields.Monetary(string='total_amount_of_revenue', compute='_compute_spec_totals', store=True, tracking=True)
     total_amount_of_revenue_with_vat = fields.Monetary(string='total_amount_of_revenue_with_vat', compute='_compute_spec_totals',
                                               store=True, tracking=True)
-    revenue_from_the_sale_of_works =fields.Monetary(string='revenue_from_the_sale_of_works(services)')
-    revenue_from_the_sale_of_goods = fields.Monetary(string='revenue_from the sale of goods')
+    revenue_from_the_sale_of_works =fields.Monetary(string='revenue_from_the_sale_of_works(services)',tracking=True)
+    revenue_from_the_sale_of_goods = fields.Monetary(string='revenue_from the sale of goods',tracking=True)
     cost_price = fields.Monetary(string='cost_price', compute='_compute_spec_totals', store=True, tracking=True)
-    cost_of_goods = fields.Monetary(string='cost_of_goods')
-    own_works_fot = fields.Monetary(string='own_works_fot')
-    third_party_works = fields.Monetary(string='third_party_works(subcontracting)')
-    awards_on_results_project = fields.Monetary(string='Awards based on the results of the project')
-    transportation_expenses = fields.Monetary(string='transportation_expenses')
-    travel_expenses = fields.Monetary(string='travel_expenses')
-    representation_expenses = fields.Monetary(string='representation_expenses')
+    cost_of_goods = fields.Monetary(string='cost_of_goods',tracking=True)
+    own_works_fot = fields.Monetary(string='own_works_fot',tracking=True)
+    third_party_works = fields.Monetary(string='third_party_works(subcontracting)',tracking=True)
+    awards_on_results_project = fields.Monetary(string='Awards based on the results of the project',tracking=True)
+    transportation_expenses = fields.Monetary(string='transportation_expenses',tracking=True)
+    travel_expenses = fields.Monetary(string='travel_expenses',tracking=True)
+    representation_expenses = fields.Monetary(string='representation_expenses',tracking=True)
     taxes_fot_premiums = fields.Monetary(string='taxes_FOT and premiums', compute='_compute_spec_totals', store=True, tracking=True)
-    warranty_service_costs = fields.Monetary(string='Warranty service costs')
-    rko_other = fields.Monetary(string='rko_other')
-    other_expenses = fields.Monetary(string='other_expenses')
+    warranty_service_costs = fields.Monetary(string='Warranty service costs',tracking=True)
+    rko_other = fields.Monetary(string='rko_other',tracking=True)
+    other_expenses = fields.Monetary(string='other_expenses',tracking=True)
     margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
     profitability = fields.Float(string='Profitability(share of Sale margin in revenue)', compute='_compute_spec_totals', store=True, tracking=True)
     estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True,required = True,
@@ -146,13 +146,25 @@ class projects(models.Model):
             )
                                             # ,default=lambda self: self.env['project_budget.estimated_probability'].search([('name', '=', '30')], limit=1)
 
-    legal_entity_signing_id = fields.Many2one('project_budget.legal_entity_signing', string='legal_entity_signing a contract from the NCC', required=True, copy=True)
-    project_type_id = fields.Many2one('project_budget.project_type',
-                                              string='project_type', required=True,
-                                              copy=True)
+    legal_entity_signing_id = fields.Many2one('project_budget.legal_entity_signing', string='legal_entity_signing a contract from the NCC', required=True, copy=True,tracking=True)
+    project_type_id = fields.Many2one('project_budget.project_type',string='project_type', required=True,copy=True,tracking=True)
+
+    is_revenue_from_the_sale_of_works =fields.Boolean(related='project_type_id.is_revenue_from_the_sale_of_works', readonly=True)
+    is_revenue_from_the_sale_of_goods = fields.Boolean(related='project_type_id.is_revenue_from_the_sale_of_goods', readonly=True)
+    is_cost_of_goods = fields.Boolean(related='project_type_id.is_cost_of_goods', readonly=True)
+    is_own_works_fot = fields.Boolean(related='project_type_id.is_own_works_fot', readonly=True)
+    is_third_party_works = fields.Boolean(related='project_type_id.is_third_party_works', readonly=True)
+    is_awards_on_results_project = fields.Boolean(related='project_type_id.is_awards_on_results_project', readonly=True)
+    is_transportation_expenses = fields.Boolean(related='project_type_id.is_transportation_expenses', readonly=True)
+    is_travel_expenses = fields.Boolean(related='project_type_id.is_travel_expenses', readonly=True)
+    is_representation_expenses = fields.Boolean(related='project_type_id.is_representation_expenses', readonly=True)
+    is_warranty_service_costs = fields.Boolean(related='project_type_id.is_warranty_service_costs', readonly=True)
+    is_rko_other = fields.Boolean(related='project_type_id.is_rko_other', readonly=True)
+    is_other_expenses = fields.Boolean(related='project_type_id.is_other_expenses', readonly=True)
+
     comments  = fields.Text(string='comments project', default = "")
     technological_direction_id = fields.Many2one('project_budget.technological_direction',
-                                              string='technological_direction', required=True,copy=True)
+                                              string='technological_direction', required=True,copy=True,tracking=True)
     planned_cash_flow_sum = fields.Monetary(string='planned_cash_flow_sum', compute='_compute_planned_cash_flow_sum',
                                             store=False, tracking=True)
     planned_cash_flow_ids = fields.One2many(
@@ -181,8 +193,8 @@ class projects(models.Model):
         inverse_name='projects_id',
         string="fact acceptance flow", auto_join=True,copy=True)
 
-    project_have_steps = fields.Boolean(string="project have steps", default=False, copy=True)
-    is_framework = fields.Boolean(string="project is framework", default=False, copy=True)
+    project_have_steps = fields.Boolean(string="project have steps", default=False, copy=True,tracking=True)
+    is_framework = fields.Boolean(string="project is framework", default=False, copy=True,tracking=True)
     project_steps_ids = fields.One2many(
         comodel_name='project_budget.project_steps',
         inverse_name='projects_id',
@@ -209,6 +221,7 @@ class projects(models.Model):
             if row.estimated_probability_id.name == '100':
                 row.specification_state = 'production'
 
+
     @api.onchange('project_office_id','specification_state','currency_id','project_supervisor_id','project_manager_id',
                   'customer_status_id','industry_id','essence_project','end_presale_project_month','end_sale_project_month','vat_attribute_id','total_amount_of_revenue',
                   'total_amount_of_revenue_with_vat','revenue_from_the_sale_of_works','revenue_from_the_sale_of_goods','cost_price','cost_of_goods','own_works_fot',
@@ -231,6 +244,20 @@ class projects(models.Model):
                     if curprj:
                         curprj.was_changes = True
                 except: return False
+            if row.project_have_steps == False:
+                if row.project_type_id.is_revenue_from_the_sale_of_works == False: row.revenue_from_the_sale_of_works = 0
+                if row.project_type_id.is_revenue_from_the_sale_of_goods == False: row.is_revenue_from_the_sale_of_goods = 0
+                if row.project_type_id.is_cost_of_goods == False: row.is_cost_of_goods = 0
+                if row.project_type_id.is_own_works_fot == False: row.is_own_works_fot = 0
+                if row.project_type_id.is_third_party_works == False: row.is_third_party_works = 0
+                if row.project_type_id.is_awards_on_results_project == False: row.is_awards_on_results_project = 0
+                if row.project_type_id.is_transportation_expenses == False: row.is_transportation_expenses = 0
+                if row.project_type_id.is_travel_expenses== False: row.is_travel_expenses = 0
+                if row.project_type_id.is_representation_expenses== False: row.is_representation_expenses = 0
+                if row.project_type_id.is_warranty_service_costs == False: row.is_warranty_service_costs = 0
+                if row.project_type_id.is_rko_other == False: row.is_rko_other = 0
+                if row.project_type_id.is_other_expenses== False: row.is_other_expenses = 0
+
 
     @api.depends('project_supervisor_id.user_id')
     def _get_supervisor_user_id(self):

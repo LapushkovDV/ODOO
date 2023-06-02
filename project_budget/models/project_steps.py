@@ -33,6 +33,19 @@ class project_steps(models.Model):
                         ,required = True, default = _getesimated_probability_fromProject)
     currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
+    is_revenue_from_the_sale_of_works =fields.Boolean(related='project_steps_type_id.is_revenue_from_the_sale_of_works', readonly=True)
+    is_revenue_from_the_sale_of_goods = fields.Boolean(related='project_steps_type_id.is_revenue_from_the_sale_of_goods', readonly=True)
+    is_cost_of_goods = fields.Boolean(related='project_steps_type_id.is_cost_of_goods', readonly=True)
+    is_own_works_fot = fields.Boolean(related='project_steps_type_id.is_own_works_fot', readonly=True)
+    is_third_party_works = fields.Boolean(related='project_steps_type_id.is_third_party_works', readonly=True)
+    is_awards_on_results_project = fields.Boolean(related='project_steps_type_id.is_awards_on_results_project', readonly=True)
+    is_transportation_expenses = fields.Boolean(related='project_steps_type_id.is_transportation_expenses', readonly=True)
+    is_travel_expenses = fields.Boolean(related='project_steps_type_id.is_travel_expenses', readonly=True)
+    is_representation_expenses = fields.Boolean(related='project_steps_type_id.is_representation_expenses', readonly=True)
+    is_warranty_service_costs = fields.Boolean(related='project_steps_type_id.is_warranty_service_costs', readonly=True)
+    is_rko_other = fields.Boolean(related='project_steps_type_id.is_rko_other', readonly=True)
+    is_other_expenses = fields.Boolean(related='project_steps_type_id.is_other_expenses', readonly=True)
+
     # vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True
     #                                     ,default = lambda self: self.env['project_budget.vat_attribute'].search([],limit=1))
     vat_attribute_id = fields.Many2one('project_budget.vat_attribute', string='vat_attribute', copy=True, required=True,)
@@ -70,6 +83,31 @@ class project_steps(models.Model):
     margin_income = fields.Monetary(string='Margin income', compute='_compute_spec_totals', store=True)
     profitability = fields.Float(string='Profitability(share of Sale margin in revenue)',
                                  compute='_compute_spec_totals', store=True, tracking=True)
+
+    was_changes = fields.Boolean(string="was_changes", copy=True, default=True)
+
+    @api.onchange('currency_id','essence_project','end_presale_project_month','end_sale_project_month','vat_attribute_id','total_amount_of_revenue',
+                  'total_amount_of_revenue_with_vat','revenue_from_the_sale_of_works','revenue_from_the_sale_of_goods','cost_price','cost_of_goods','own_works_fot',
+                  'third_party_works','awards_on_results_project','transportation_expenses','travel_expenses','representation_expenses','taxes_fot_premiums','warranty_service_costs',
+                  'rko_other','other_expenses','margin_income','profitability','estimated_probability_id','legal_entity_signing_id','project_steps_type_id','comments','technological_direction_id',
+                  'planned_cash_flow_sum','planned_cash_flow_ids','code','dogovor_number'
+                )
+    def _check_changes_step(self):
+        print('_check_changes_step')
+        for row in self:
+            print('_check_changes_step = ', row.id)
+            if row.project_steps_type_id.is_revenue_from_the_sale_of_works == False: row.revenue_from_the_sale_of_works = 0
+            if row.project_steps_type_id.is_revenue_from_the_sale_of_goods == False: row.is_revenue_from_the_sale_of_goods = 0
+            if row.project_steps_type_id.is_cost_of_goods == False: row.is_cost_of_goods = 0
+            if row.project_steps_type_id.is_own_works_fot == False: row.is_own_works_fot = 0
+            if row.project_steps_type_id.is_third_party_works == False: row.is_third_party_works = 0
+            if row.project_steps_type_id.is_awards_on_results_project == False: row.is_awards_on_results_project = 0
+            if row.project_steps_type_id.is_transportation_expenses == False: row.is_transportation_expenses = 0
+            if row.project_steps_type_id.is_travel_expenses== False: row.is_travel_expenses = 0
+            if row.project_steps_type_id.is_representation_expenses== False: row.is_representation_expenses = 0
+            if row.project_steps_type_id.is_warranty_service_costs == False: row.is_warranty_service_costs = 0
+            if row.project_steps_type_id.is_rko_other == False: row.is_rko_other = 0
+            if row.project_steps_type_id.is_other_expenses== False: row.is_other_expenses = 0
 
     @api.depends('essence_project','step_id')
     def _get_name_to_show(self):

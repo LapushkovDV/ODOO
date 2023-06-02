@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-01 12:43+0000\n"
-"PO-Revision-Date: 2023-06-01 12:43+0000\n"
+"POT-Creation-Date: 2023-06-02 12:16+0000\n"
+"PO-Revision-Date: 2023-06-02 12:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1201,10 +1201,20 @@ msgid "Vgo"
 msgstr "ВГО"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_type_form
+msgid "Visible fields in project"
+msgstr "Видимость полей в проекте (если есть этапы, то все поля видимые)"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_steps_type_form
+msgid "Visible fields in step"
+msgstr "Видимость полей в этапе"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__warranty_service_costs
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__warranty_service_costs
 msgid "Warranty service costs"
-msgstr " Расходы на гарант. обслуж."
+msgstr "Расходы на гарант. обслуж."
 
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_commercial_budget__budget_state__work
@@ -1582,6 +1592,102 @@ msgstr "Описание"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_industry__name
 msgid "industry name"
 msgstr "Наименование"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_awards_on_results_project
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_awards_on_results_project
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_awards_on_results_project
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_awards_on_results_project
+msgid "is_Awards based on the results of the project"
+msgstr "Премии по итогам проекта"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_warranty_service_costs
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_warranty_service_costs
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_warranty_service_costs
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_warranty_service_costs
+msgid "is_Warranty service costs"
+msgstr "Расходы на гарант. обслуж."
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_cost_of_goods
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_cost_of_goods
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_cost_of_goods
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_cost_of_goods
+msgid "is_cost_of_goods"
+msgstr "Себестоимость товаров"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_other_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_other_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_other_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_other_expenses
+msgid "is_other_expenses"
+msgstr "Прочие расходы"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_own_works_fot
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_own_works_fot
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_own_works_fot
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_own_works_fot
+msgid "is_own_works_fot"
+msgstr "Работы собственные (ФОТ)"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_representation_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_representation_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_representation_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_representation_expenses
+msgid "is_representation_expenses"
+msgstr "Представительские расходы"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_revenue_from_the_sale_of_goods
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_revenue_from_the_sale_of_goods
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_revenue_from_the_sale_of_goods
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_revenue_from_the_sale_of_goods
+msgid "is_revenue_from the sale of goods"
+msgstr "Выручка от реализации товара"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_revenue_from_the_sale_of_works
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_revenue_from_the_sale_of_works
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_revenue_from_the_sale_of_works
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_revenue_from_the_sale_of_works
+msgid "is_revenue_from_the_sale_of_works(services)"
+msgstr "Выручка от реализации работ(услуг)"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_rko_other
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_rko_other
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_rko_other
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_rko_other
+msgid "is_rko_other"
+msgstr "РКО прочие"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_third_party_works
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_third_party_works
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_third_party_works
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_third_party_works
+msgid "is_third_party_works(subcontracting)"
+msgstr "Работы сторонние (субподряд)"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_transportation_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_transportation_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_transportation_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_transportation_expenses
+msgid "is_transportation_expenses"
+msgstr "Транспортные расходы"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_travel_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_travel_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_travel_expenses
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__is_travel_expenses
+msgid "is_travel_expenses"
+msgstr "Командировочные расходы"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_legal_entity_signing
@@ -1985,6 +2091,7 @@ msgstr "Технологическое направление"
 #: model:ir.model,name:project_budget.model_project_budget_project_type
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__project_type_id
 #: model:ir.ui.menu,name:project_budget.project_budget_catalogs_project_type
+#: model_terms:ir.ui.view,arch_db:project_budget.show_project_steps_type_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_project_type_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_project_type_tree
 msgid "project_type"
@@ -2028,7 +2135,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__representation_expenses
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__representation_expenses
 msgid "representation_expenses"
-msgstr " Представительские расходы"
+msgstr "Представительские расходы"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_estimated_probability_kanban
@@ -2045,7 +2152,7 @@ msgstr " Выручка от реализации товара"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__revenue_from_the_sale_of_works
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__revenue_from_the_sale_of_works
 msgid "revenue_from_the_sale_of_works(services)"
-msgstr " Выручка от реализации работ(услуг)"
+msgstr "Выручка от реализации работ(услуг)"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__rko_other
@@ -2360,6 +2467,7 @@ msgid "was changes:"
 msgstr "Есть изменения"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__was_changes
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__was_changes
 msgid "was_changes"
 msgstr "Есть изменения"
