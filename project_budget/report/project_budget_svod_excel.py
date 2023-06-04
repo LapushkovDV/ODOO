@@ -204,7 +204,7 @@ class report_budget_svod_excel(models.AbstractModel):
         sum_q3 = 0
         sum_q4 = 0
         if project:
-            if project.estimated_probability_id.name in ('50', '75','100'): # смотрим сумму контрактования в эталоне и с учетом 100
+            if project.estimated_probability_id.name in ('30','50', '75','100'): # смотрим сумму контрактования в эталоне и с учетом 100
                 if project.end_presale_project_month.year == self.YEARint:
                     sum_year = project.total_amount_of_revenue_with_vat
                     if project.end_presale_project_month.month in (1, 2, 3):
@@ -295,11 +295,11 @@ class report_budget_svod_excel(models.AbstractModel):
 
         sum_year_fact, sum_q1_fact, sum_q2_fact, sum_q3_fact, sum_q4_fact = self.get_sum_contract_fact(project)
         # 20230530 Алина Козленко сказала, что если эталон 0, а факт есть, то новое = факт и это на все действует
-        if sum_contract_etalon_year == 0 : sum_year = sum_year_fact
-        if sum_contract_etalon_q1 == 0 : sum_q1 = sum_q1_fact
-        if sum_contract_etalon_q2 == 0 : sum_q2 = sum_q2_fact
-        if sum_contract_etalon_q3 == 0 : sum_q3 = sum_q3_fact
-        if sum_contract_etalon_q4 == 0 : sum_q4 = sum_q4_fact
+        if sum_contract_etalon_year == 0 and sum_year_fact != 0 : sum_year = sum_year_fact
+        if sum_contract_etalon_q1 == 0 and sum_q1_fact != 0 : sum_q1 = sum_q1_fact
+        if sum_contract_etalon_q2 == 0 and sum_q2_fact != 0: sum_q2 = sum_q2_fact
+        if sum_contract_etalon_q3 == 0 and sum_q3_fact != 0 : sum_q3 = sum_q3_fact
+        if sum_contract_etalon_q4 == 0 and sum_q4_fact != 0: sum_q4 = sum_q4_fact
 
         return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
 
@@ -330,7 +330,7 @@ class report_budget_svod_excel(models.AbstractModel):
 
         return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
 
-    def get_sum_pds(self, project_cur, project, project_step):
+    def get_sum_pds(self, project_cur, step_cur, project, project_step):
         sum_year = 0
         sum_q1 = 0
         sum_q2 = 0
@@ -339,7 +339,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if project:
             if project_cur.project_have_steps == True: #  если есть этапы сейчас
                 if project_step: # существует этап для суммирования
-                    if project_step.estimated_probability_id.name in ('50', '75', '100'):
+                    if step_cur.estimated_probability_id.name in ('50', '75', '100'): # текущую вероятность сомтрим
                         for pds in project.planned_cash_flow_ids:
                             if pds.project_steps_id.id == project_step.id :
                                 if pds.date_cash.year == self.YEARint:
@@ -353,7 +353,7 @@ class report_budget_svod_excel(models.AbstractModel):
                                     if pds.date_cash.month in (10, 11, 12):
                                         sum_q4 += pds.sum_cash
             else:
-                if project.estimated_probability_id.name in ('50', '75', '100'):
+                if project_cur.estimated_probability_id.name in ('50', '75', '100'): # вероятность по текущему проекту смотрим
                     for pds in project.planned_cash_flow_ids:
                         if pds.date_cash.year == self.YEARint:
                             sum_year += pds.sum_cash
@@ -378,8 +378,8 @@ class report_budget_svod_excel(models.AbstractModel):
             if project.estimated_probability_id.name in ('50', '75', '100'):
                 calcsum = True
         if calcsum == True:
-            sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_pds(project, project_etalon, project_step_etalon) # перенос сразу равен эталону
-            sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_pds(project, project, project_step)
+            sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_pds(project, project_step, project_etalon, project_step_etalon) # перенос сразу равен эталону
+            sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_pds(project,project_step, project, project_step)
             # а если сейчас не 0, то перенос = 0
             if sum_year != 0: sum_etalon_year = 0
             if sum_q1 != 0: sum_etalon_q1 = 0
@@ -390,8 +390,8 @@ class report_budget_svod_excel(models.AbstractModel):
         return sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4
 
     def get_sum_pds_new(self, project, project_step, project_etalon, project_step_etalon):
-        sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_pds(project, project_etalon, project_step_etalon)
-        sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_pds(project, project, project_step) # сумму нового сразу присваиваем текущему
+        sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_pds(project,project_step, project_etalon, project_step_etalon)
+        sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_pds(project,project_step, project, project_step) # сумму нового сразу присваиваем текущему
         # а если в эталоне не 0 , то новый = 0
         if sum_etalon_year != 0 : sum_year = 0
         if sum_etalon_q1 != 0 : sum_q1 = 0
@@ -401,11 +401,11 @@ class report_budget_svod_excel(models.AbstractModel):
 
         sum_year_fact, sum_q1_fact, sum_q2_fact, sum_q3_fact, sum_q4_fact = self.get_sum_pds_fact(project, project_step)
         # 20230530 Алина Козленко сказала, что если в эталоне 0, а факт есть, то новое = факт и это на все действует
-        if sum_etalon_year == 0 : sum_year = sum_year_fact
-        if sum_etalon_q1 == 0 : sum_q1 = sum_q1_fact
-        if sum_etalon_q2 == 0 : sum_q2 = sum_q2_fact
-        if sum_etalon_q3 == 0 : sum_q3 = sum_q3_fact
-        if sum_etalon_q4 == 0 : sum_q4 = sum_q4_fact
+        if sum_etalon_year == 0 and sum_year_fact != 0: sum_year = sum_year_fact
+        if sum_etalon_q1 == 0 and sum_q1_fact != 0 : sum_q1 = sum_q1_fact
+        if sum_etalon_q2 == 0 and sum_q2_fact != 0 : sum_q2 = sum_q2_fact
+        if sum_etalon_q3 == 0 and sum_q3_fact != 0 : sum_q3 = sum_q3_fact
+        if sum_etalon_q4 == 0 and sum_q4_fact != 0: sum_q4 = sum_q4_fact
         return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
 
     def get_sum_pds_fact(self, project, project_step):
@@ -444,7 +444,7 @@ class report_budget_svod_excel(models.AbstractModel):
         return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
 
 
-    def get_sum_acceptance(self, project_cur, project, project_step):
+    def get_sum_acceptance(self, project_cur, step_cur, project, project_step):
         sum_year = 0
         sum_q1 = 0
         sum_q2 = 0
@@ -453,7 +453,7 @@ class report_budget_svod_excel(models.AbstractModel):
         if project:
             if project_cur.project_have_steps == True:  # если есть этапы сейчас
                 if project_step:  # существует этап для суммирования
-                    if project_step.estimated_probability_id.name in ('50', '75', '100'):
+                    if step_cur.estimated_probability_id.name in ('50', '75', '100'): # по текущему смотрим
                         for act in project.planned_acceptance_flow_ids:
                             if act.project_steps_id.id == project_step.id:
                                 if act.date_cash.year == self.YEARint:
@@ -467,7 +467,7 @@ class report_budget_svod_excel(models.AbstractModel):
                                     if act.date_cash.month in (10, 11, 12):
                                         sum_q4 += act.sum_cash_without_vat
             else:
-                if project.estimated_probability_id.name in ('50', '75', '100'):
+                if project_cur.estimated_probability_id.name in ('50', '75', '100'): # вероятность по текущему проекту смотрим
                     for act in project.planned_acceptance_flow_ids:
                         if act.date_cash.year == self.YEARint:
                             sum_year += act.sum_cash_without_vat
@@ -494,8 +494,8 @@ class report_budget_svod_excel(models.AbstractModel):
             if project.estimated_probability_id.name in ('50', '75', '100'):
                 calcsum = True
         if calcsum == True:
-            sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_acceptance(project, project_etalon,project_step_etalon) # перенос сразу равен эталону
-            sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_acceptance(project, project, project_step)
+            sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_acceptance(project, project_step, project_etalon,project_step_etalon) # перенос сразу равен эталону
+            sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_acceptance(project, project_step, project, project_step)
             # а если сейчас не 0, то перенос = 0
             if sum_year != 0: sum_etalon_year = 0
             if sum_q1 != 0: sum_etalon_q1 = 0
@@ -505,8 +505,8 @@ class report_budget_svod_excel(models.AbstractModel):
         return sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4
 
     def get_sum_acceptance_new(self, project, project_step, project_etalon, project_step_etalon):
-        sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_acceptance(project, project_etalon, project_step_etalon)
-        sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_acceptance(project, project, project_step) # новый сразу = текущему
+        sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_acceptance(project, project_step, project_etalon, project_step_etalon)
+        sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_acceptance(project, project_step, project, project_step) # новый сразу = текущему
         # а если в эталоне не 0 но новый сразу в 0
         if sum_etalon_year != 0: sum_year = 0
         if sum_etalon_q1 != 0 : sum_q1 = 0
@@ -516,11 +516,11 @@ class report_budget_svod_excel(models.AbstractModel):
 
         sum_year_fact, sum_q1_fact, sum_q2_fact, sum_q3_fact, sum_q4_fact = self.get_sum_acceptance_fact(project, project_step)
         # 20230530 Алина Козленко сказала, что если в эталоне 0, а факт есть, то новое = факт и это на все действует
-        if sum_etalon_year == 0: sum_year = sum_year_fact
-        if sum_etalon_q1 == 0: sum_q1 = sum_q1_fact
-        if sum_etalon_q2 == 0: sum_q2 = sum_q2_fact
-        if sum_etalon_q3 == 0: sum_q3 = sum_q3_fact
-        if sum_etalon_q4 == 0: sum_q4 = sum_q4_fact
+        if sum_etalon_year == 0 and sum_year_fact != 0 : sum_year = sum_year_fact
+        if sum_etalon_q1 == 0 and sum_q1_fact != 0 : sum_q1 = sum_q1_fact
+        if sum_etalon_q2 == 0 and sum_q2_fact != 0 : sum_q2 = sum_q2_fact
+        if sum_etalon_q3 == 0 and sum_q3_fact != 0 : sum_q3 = sum_q3_fact
+        if sum_etalon_q4 == 0 and sum_q4_fact != 0 : sum_q4 = sum_q4_fact
         return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
 
     def get_sum_acceptance_fact(self, project, project_step):
@@ -689,7 +689,7 @@ class report_budget_svod_excel(models.AbstractModel):
         # end контрактование остаток
 
         # ПДС эталон
-        sum_year,sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_pds(project, etalon_project, etalon_step )
+        sum_year,sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_pds(project, step, etalon_project, etalon_step )
         sheet.write_number(row, column + 5, sum_year, row_format_number)
         sheet.write_number(row, column + 22, sum_q1, row_format_number)
         sheet.write_number(row, column + 59, sum_q2, row_format_number)
@@ -771,7 +771,7 @@ class report_budget_svod_excel(models.AbstractModel):
         # end ПДС остаток
 
         # валовая выручка эталон
-        sum_year,sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_acceptance(project, etalon_project,etalon_step)
+        sum_year,sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_acceptance(project, step, etalon_project,etalon_step)
         sheet.write_number(row, column + 10, sum_year, row_format_number)
         sheet.write_number(row, column + 27, sum_q1, row_format_number)
         sheet.write_number(row, column + 64, sum_q2, row_format_number)
