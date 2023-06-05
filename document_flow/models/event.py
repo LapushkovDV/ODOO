@@ -155,6 +155,33 @@ class Event(models.Model):
                 """ % _("Add attachments for this event")
         }
 
+    def action_open_tasks(self):
+        self.ensure_one()
+        task_ids = []
+        task_ids.append(self.env['task.task'].search([
+            ('parent_id', '=', False),
+            ('parent_ref_type', '=', self._name),
+            ('parent_ref_id', 'in', [ev.id for ev in self])
+        ]).id)
+        for decision in self.decision_ids:
+            task_ids.append(self.env['task.task'].search([
+                ('parent_id', '=', False),
+                ('parent_ref_type', '=', type(decision).__name__),
+                ('parent_ref_id', 'in', [d.id for d in decision])
+            ]).id)
+        return {
+            'name': _('Tasks'),
+            'domain': [
+                ('id', 'in', task_ids),
+                # ('parent_ref_type', 'in', ('document_flow.event', 'document_flow.event.decision')),
+                # ('parent_ref_id', 'in', task_ids),
+                # ('parent_id', '=', False)
+            ],
+            'res_model': 'task.task',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree,form'
+        }
+
 
 class EventQuestion(models.Model):
     _name = 'document_flow.event.question'
