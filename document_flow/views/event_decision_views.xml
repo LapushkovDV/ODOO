@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="event_decision_view_form" model="ir.ui.view">
+        <field name="name">document_flow.event.decision.form</field>
+        <field name="model">document_flow.event.decision</field>
+        <field name="arch" type="xml">
+            <form string="Decision">
+                <sheet string="Decision">
+                    <group>
+                        <field name="event_id" readonly="1"/>
+                    </group>
+                    <field name="name" type="html" class="text_high" options="{'collaborative': true, 'resizable': false}"
+                           placeholder="Decided..."/>
+                    <group>
+                        <group>
+                            <field name="executor_ids" optional="show" widget="many2many_avatar_user" options='{"no_quick_create": True}'/>
+                        </group>
+                        <group>
+                            <field name="date_deadline"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -31,7 +31,7 @@ class Task(models.Model):
         ('in_progress', 'In Progress'),
         ('done', 'Done'),
         ('cancel', 'Canceled')
-    ], required=True, index=True, string='Status', default='to_do', readonly=True)
+    ], required=True, index=True, string='Status', default='to_do', readonly=True, tracking=True)
 
     parent_ref = fields.Reference(string='Parent', selection="_selection_parent_model")
     parent_ref_id = fields.Integer(string="Parent Id", index=True, copy=False)
@@ -42,6 +42,7 @@ class Task(models.Model):
     child_ids = fields.One2many('task.task', 'parent_id', string="Sub-tasks")
     subtask_count = fields.Integer("Sub-task Count", compute='_compute_subtask_count')
     child_text = fields.Char(compute="_compute_child_text")
+    is_closed = fields.Boolean(string="Closed", index=True)
 
     @api.model
     def _selection_parent_model(self):
@@ -70,6 +71,20 @@ class Task(models.Model):
             else:
                 task.child_text = _("(+ %(child_count)s tasks)", child_count=task.subtask_count)
 
+    # @api.onchange('user_ids')
+    # def _onchange_user_ids(self):
+    #     for task in self:
+    #         if len(task.user_ids) == 1:
+    #             self.env['mail.activity'].create({
+    #                 'display_name': _('You have new task'),
+    #                 'summary': _('You have been assigned new task "%s"', task.name),
+    #                 'date_deadline': task.date_deadline,
+    #                 'user_id': [(4, task.user_ids[0])],
+    #                 'res_id': task.id,
+    #                 'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
+    #                 'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
+    #             })
+
     def action_assign_to_user(self):
         self.write({'state': 'assigned'})
         for user in self.user_ids:
@@ -83,20 +98,24 @@ class Task(models.Model):
                 'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
             })
 
-    def action_review(self):
-        self.write({'state': 'done'})
-
     def action_to_do(self):
-        self.write({'state': 'to_do'})
+        self.write({'state': 'to_do', 'is_closed': False})
 
     def action_in_progress(self):
-        self.write({'state': 'in_process'})
+        self.write({'state': 'in_progress'})
 
     def action_done(self):
-        self.write({'state': 'done'})
+        activities = self.env['mail.activity'].search([
+            ('res_id', '=', self.id),
+            ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
+            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_email').id)
+        ])
+        for activity in activities:
+            activity.action_done()
+        self.write({'state': 'done', 'is_closed': True})
 
     def action_cancel(self):
-        self.write({'state': 'cancel'})
+        self.write({'state': 'cancel', 'is_closed': True})
 
     def action_open_task(self):
         return {

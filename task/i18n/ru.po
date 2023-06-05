@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-01 14:16+0000\n"
-"PO-Revision-Date: 2023-06-01 14:16+0000\n"
+"POT-Creation-Date: 2023-06-04 17:30+0000\n"
+"PO-Revision-Date: 2023-06-04 17:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -96,6 +96,11 @@ msgid "Created by"
 msgstr "Автор"
 
 #. module: task
+#: model_terms:ir.ui.view,arch_db:task.task_view_search
+msgid "Created by me"
+msgstr "Созданные мной"
+
+#. module: task
 #: model:ir.model.fields,field_description:task.field_task_task__create_date
 #: model:ir.model.fields,field_description:task.field_task_task_type__create_date
 msgid "Created on"
@@ -123,11 +128,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:task.task_view_form
 msgid "Done"
 msgstr "Выполнено"
-
-#. module: task
-#: model_terms:ir.ui.view,arch_db:task.task_view_kanban
-msgid "Dropdown menu"
-msgstr "Выпадающее меню"
 
 #. module: task
 #: model:ir.model.fields,field_description:task.field_task_task__email_cc
@@ -247,7 +247,6 @@ msgid "My Activity Deadline"
 msgstr "Срок исполнения моей активности"
 
 #. module: task
-#: model:ir.actions.act_window,name:task.action_view_all_task
 #: model:ir.ui.menu,name:task.menu_task_management
 #: model_terms:ir.ui.view,arch_db:task.task_view_search
 msgid "My Tasks"
@@ -423,6 +422,7 @@ msgstr ""
 "                состояние, обсуждения в задачах, вложения и т.д."
 
 #. module: task
+#: model:ir.actions.act_window,name:task.action_view_all_task
 #: model:ir.actions.act_window,name:task.action_view_task_id
 #: model:ir.model.fields,field_description:task.field_project_budget_projects__task_count
 #: model_terms:ir.ui.view,arch_db:task.project_budget_task_view_inherit_form
