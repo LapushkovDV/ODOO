@@ -175,7 +175,7 @@ class EventDecision(models.Model):
     @api.depends('decision_state')
     def _compute_decision_state(self):
         for decision in self:
-            self.decision_state = self.env['task.task'].search([
+            decision.decision_state = self.env['task.task'].search([
                 ('parent_id', '=', False),
                 ('parent_ref_type', '=', self._name),
                 ('parent_ref_id', '=', decision.id)
