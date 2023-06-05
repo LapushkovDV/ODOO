@@ -6,16 +6,21 @@
         <field name="arch" type="xml">
             <form string="Question">
                 <sheet string="Question">
-                    <field name="name" type="html" class="text_high" options="{'collaborative': true, 'resizable': false}"
-                           placeholder="Question..."/>
-                    <group>
+                    <group col="3">
                         <group>
                             <field name="time_start" widget="float_time"/>
+                        </group>
+                        <group>
                             <field name="time_end" widget="float_time"/>
                         </group>
                         <group>
                             <field name="speaker_ids" optional="show" widget="many2many_avatar_user" options='{"no_quick_create": True}'/>
                         </group>
+                    </group>
+                    <group>
+                        <field name="name" string="Description" type="html" class="text_high"
+                               options="{'collaborative': true, 'resizable': false}"
+                               placeholder="Question..."/>
                     </group>
                 </sheet>
             </form>

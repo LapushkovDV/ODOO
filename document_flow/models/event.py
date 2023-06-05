@@ -31,11 +31,18 @@ class Event(models.Model):
 
     def _compute_task_count(self):
         for task in self:
-            task.task_count = self.env['task.task'].search_count([
+            task_count = self.env['task.task'].search_count([
                 ('parent_id', '=', False),
                 ('parent_ref_type', '=', self._name),
                 ('parent_ref_id', 'in', [ev.id for ev in self])
             ])
+            for decision in task.decision_ids:
+                task_count = task_count + self.env['task.task'].search_count([
+                    ('parent_id', '=', False),
+                    ('parent_ref_type', '=', type(decision).__name__),
+                    ('parent_ref_id', 'in', [d.id for d in decision])
+                ])
+            task.task_count = task_count
 
     def action_send_invite(self):
         pass
