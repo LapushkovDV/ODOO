@@ -50,7 +50,7 @@
                     <button string="In Progress" type="object" name="action_in_progress" class="oe_highlight"
                             attrs="{'invisible': ['|', ('type', '=', 'review'), ('state', '!=', 'to_do')]}"/>
                     <button string="Done" type="object" name="action_done" class="oe_highlight"
-                            attrs="{'invisible': ['|', ('type', '=', 'execution'), ('state', 'in', ('to_do', 'done', 'cancel'))]}"/>
+                            attrs="{'invisible': ['|', '&amp;', ('type', '=', 'execution'), ('state', '=', 'to_do'), ('state', 'in', ('done', 'cancel'))]}"/>
                     <button string="Cancel" type="object" name="action_cancel" class="oe_highlight"
                             attrs="{'invisible': ['|', ('type', '=', 'review'), ('state', 'in', ('done', 'cancel'))]}"/>
                     <field name="state" widget="statusbar" options="{'clickable': False, 'fold_field': 'fold'}"
