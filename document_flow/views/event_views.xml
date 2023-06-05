@@ -15,7 +15,7 @@
         <field name="name">Tasks</field>
         <field name="res_model">task.task</field>
         <field name="view_mode">tree,calendar,form</field>
-        <field name="domain">[('parent_ref_type', '=', 'document_flow.event'), ('parent_ref_id', '=', active_id), ('parent_id', '=', False)]</field>
+        <field name="domain">[('parent_ref_type', 'in', ('document_flow.event', 'document_flow.event.decision')), ('parent_ref_id', '=', active_id), ('parent_id', '=', False)]</field>
         <field name="context">{'search_default_parent_ref_type': 'document_flow.event', 'default_parent_ref_id': active_id}</field>
         <field name="help" type="html">
             <p>
