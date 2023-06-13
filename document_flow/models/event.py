@@ -71,7 +71,7 @@ class Event(models.Model):
                     'parent_ref': '%s,%s' % (self._name, self.id),
                     'parent_ref_type': self._name,
                     'parent_ref_id': self.id,
-                    'date_deadline': self.date_end + timedelta(1),
+                    'date_deadline': self.date_start + timedelta(1),
                     'user_ids': [(4, member.id)]
                 })
                 activity = self.env['mail.activity'].create({

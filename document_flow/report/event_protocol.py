@@ -45,7 +45,7 @@ class EventProtocol(models.AbstractModel):
                 doc.add_paragraph('%s. %s' % (counter, decision.name.striptags())).paragraph_format.space_before = Mm(
                     3)
                 if decision.responsible_id:
-                    doc.add_paragraph(_('Responsible: %s') % decision.responsible_id.name)
+                    doc.add_paragraph(_('Ответственный: %s') % decision.responsible_id.name)
                 if decision.date_deadline:
-                    doc.add_paragraph(_('Due date: %s') % decision.date_deadline)
+                    doc.add_paragraph(_('Срок исполнения: %s') % decision.date_deadline)
                 counter += 1
