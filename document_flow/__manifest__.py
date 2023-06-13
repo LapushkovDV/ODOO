@@ -22,6 +22,7 @@
         'views/event_views.xml',
         'views/event_question_views.xml',
         'views/event_decision_views.xml',
+        'report/report.xml'
     ],
     'demo': [
     ],

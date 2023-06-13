@@ -10,7 +10,7 @@ class Event(models.Model):
     name = fields.Char(string='Name', required=True, tracking=True)
     description = fields.Html(string='Description')
     date_start = fields.Datetime(string='Start Date', required=True, index=True, copy=False)
-    date_end = fields.Datetime(string='End Date', required=True, index=True, copy=False)
+    date_end = fields.Datetime(string='End Date', index=True, copy=False)
     location = fields.Char(string='Location', index=False, copy=False)
 
     organizer_id = fields.Many2one('res.users', string='Organizer')
@@ -31,13 +31,13 @@ class Event(models.Model):
 
     def _compute_task_count(self):
         for task in self:
-            task_count = self.env['task.task'].search_count([
+            task_count = self.env['task.task'].sudo().search_count([
                 ('parent_id', '=', False),
                 ('parent_ref_type', '=', self._name),
                 ('parent_ref_id', 'in', [ev.id for ev in self])
             ])
             for decision in task.decision_ids:
-                task_count = task_count + self.env['task.task'].search_count([
+                task_count = task_count + self.env['task.task'].sudo().search_count([
                     ('parent_id', '=', False),
                     ('parent_ref_type', '=', type(decision).__name__),
                     ('parent_ref_id', 'in', [d.id for d in decision])
@@ -96,22 +96,55 @@ class Event(models.Model):
 
     def action_send_for_execution(self):
         for decision in self.decision_ids:
-            if decision.executor_ids:
+            task = False
+            if decision.responsible_id:
                 task = self.env['task.task'].search([
                     ('type', '=', 'execution'), ('parent_ref_type', '=', type(decision).__name__),
-                    ('parent_ref_id', '=', decision.id), ('user_ids', 'in', [user.id for user in decision.executor_ids])
+                    ('parent_ref_id', '=', decision.id), ('parent_id', '=', False),
+                    ('user_ids', '=', decision.responsible_id.id)
                 ])
                 if not task:
                     task = self.env['task.task'].create({
                         'name': _('To run an errand by event "%s"', self.name),
                         'type': 'execution',
-                        'description': self.description,
+                        'description': decision.name,
+                        'parent_ref': '%s,%s' % (type(decision).__name__, decision.id),
+                        'date_deadline': decision.date_deadline,
+                        'user_ids': decision.responsible_id
+                    })
+                    activity = self.env['mail.activity'].create({
+                        'display_name': _('You have new task'),
+                        'summary': _('To run an errand by event "%s"', self.name),
+                        'date_deadline': task.date_deadline,
+                        'user_id': decision.responsible_id.id,
+                        'res_id': task.id,
+                        'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
+                        'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
+                    })
+            if decision.executor_ids:
+                if not task:
+                    task = self.env['task.task'].search([
+                        ('type', '=', 'execution'), ('parent_ref_type', '=', type(decision).__name__),
+                        ('parent_ref_id', '=', decision.id), ('parent_id', '=', False),
+                        ('user_ids', '=', decision.executor_ids.ids)
+                    ])
+                if not task:
+                    task = self.env['task.task'].create({
+                        'name': _('To run an errand by event "%s"', self.name),
+                        'type': 'execution',
+                        'description': decision.name,
                         'parent_ref': '%s,%s' % (type(decision).__name__, decision.id),
                         'date_deadline': decision.date_deadline,
                         'user_ids': decision.executor_ids
                     })
-                    if task and len(decision.executor_ids) > 1:
-                        for executor in decision.executor_ids:
+                if task and (decision.responsible_id or len(decision.executor_ids) > 1):
+                    for executor in decision.executor_ids:
+                        sub_task = self.env['task.task'].search([
+                            ('type', '=', 'execution'), ('parent_ref_type', '=', type(decision).__name__),
+                            ('parent_ref_id', '=', decision.id), ('parent_id', '=', task.id),
+                            ('user_ids', '=', executor.id)
+                        ])
+                        if not sub_task:
                             sub_task = self.env['task.task'].create({
                                 'name': task.name,
                                 'type': task.type,
@@ -157,25 +190,20 @@ class Event(models.Model):
 
     def action_open_tasks(self):
         self.ensure_one()
-        task_ids = []
-        task_ids.append(self.env['task.task'].search([
+        task_ids = self.env['task.task'].sudo().search([
             ('parent_id', '=', False),
             ('parent_ref_type', '=', self._name),
-            ('parent_ref_id', 'in', [ev.id for ev in self])
-        ]).id)
-        for decision in self.decision_ids:
-            task_ids.append(self.env['task.task'].search([
-                ('parent_id', '=', False),
-                ('parent_ref_type', '=', type(decision).__name__),
-                ('parent_ref_id', 'in', [d.id for d in decision])
-            ]).id)
+            ('parent_ref_id', 'in', self.ids)
+        ]).ids
+        task_ids.extend(self.env['task.task'].sudo().search([
+            ('parent_id', '=', False),
+            ('parent_ref_type', '=', 'document_flow.event.decision'),
+            ('parent_ref_id', 'in', self.decision_ids.ids)
+        ]).ids)
         return {
             'name': _('Tasks'),
             'domain': [
-                ('id', 'in', task_ids),
-                # ('parent_ref_type', 'in', ('document_flow.event', 'document_flow.event.decision')),
-                # ('parent_ref_id', 'in', task_ids),
-                # ('parent_id', '=', False)
+                ('id', 'in', task_ids)
             ],
             'res_model': 'task.task',
             'type': 'ir.actions.act_window',
@@ -192,7 +220,7 @@ class EventQuestion(models.Model):
     time_end = fields.Float(string="To")
     event_id = fields.Many2one('document_flow.event', string='Event', copy=False)
     speaker_ids = fields.Many2many('res.users', relation='event_question_user_rel', column1='question_id',
-                                   column2='speaker_id', string='Speakers', tracking=True)
+                                   column2='speaker_id', string='Speakers')
 
 
 class EventDecision(models.Model):
@@ -201,19 +229,26 @@ class EventDecision(models.Model):
 
     name = fields.Html(string='Decided', required=True)
     event_id = fields.Many2one('document_flow.event', string='Event', copy=False)
+    responsible_id = fields.Many2one('res.users', string='Responsible')
     executor_ids = fields.Many2many('res.users', relation='event_decision_user_rel', column1='decision_id',
-                                    column2='executor_id', string='Executors', tracking=True)
+                                    column2='executor_id', string='Executors')
     date_deadline = fields.Date(string='Deadline', index=True)
     decision_state = fields.Char("Decision State", compute='_compute_decision_state')
 
     @api.depends('decision_state')
     def _compute_decision_state(self):
         for decision in self:
-            decision.decision_state = self.env['task.task'].search([
+            decision.decision_state = self.env['task.task'].sudo().search([
                 ('parent_id', '=', False),
                 ('parent_ref_type', '=', self._name),
                 ('parent_ref_id', '=', decision.id)
             ]).state
+
+    def name_get(self):
+        decisions = []
+        for decision in self:
+            decisions.append((decision.id, decision.name.striptags()))
+        return decisions
 
 
 class EventTask(models.Model):
