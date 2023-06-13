@@ -1,5 +1,5 @@
 from odoo import _, models, fields, api
-
+from odoo.exceptions import ValidationError
 
 class TaskType(models.Model):
     _name = 'task.task.type'
@@ -21,10 +21,10 @@ class Task(models.Model):
     type = fields.Selection([
         ('review', 'Review'),
         ('execution', 'Execution')
-    ], required=True, index=True, string='Type')
+    ], required=True, default='review', index=True, string='Type')
 
     user_ids = fields.Many2many('res.users', relation='task_task_user_rel', column1='task_id', column2='user_id',
-                                string='Assignees', context={'active_test': False}, tracking=True)
+                                string='Assignees', tracking=True)
     state = fields.Selection([
         ('to_do', 'To Do'),
         ('assigned', 'Assigned'),
@@ -33,16 +33,17 @@ class Task(models.Model):
         ('cancel', 'Canceled')
     ], required=True, index=True, string='Status', default='to_do', readonly=True, tracking=True)
 
-    parent_ref = fields.Reference(string='Parent', selection="_selection_parent_model")
+    parent_ref = fields.Reference(string='Parent', selection="_selection_parent_model", compute="_compute_parent_ref")
     parent_ref_id = fields.Integer(string="Parent Id", index=True, copy=False)
     parent_ref_type = fields.Char(string="Parent Type", index=True, copy=False)
 
-    date_deadline = fields.Date(string='Deadline', index=True, copy=False, tracking=True)
+    date_deadline = fields.Date(string='Deadline', required="True", index=True, copy=False, tracking=True)
     parent_id = fields.Many2one('task.task', string='Parent Task', copy=True, tracking=True)
     child_ids = fields.One2many('task.task', 'parent_id', string="Sub-tasks")
     subtask_count = fields.Integer("Sub-task Count", compute='_compute_subtask_count')
     child_text = fields.Char(compute="_compute_child_text")
     is_closed = fields.Boolean(string="Closed", index=True)
+    implementation_report = fields.Html(string='Report')
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Documents')
 
     def _compute_attachment_count(self):
@@ -55,6 +56,14 @@ class Task(models.Model):
     @api.model
     def _selection_parent_model(self):
         return [('project_budget.projects', _('Project'))]
+
+    @api.depends('parent_ref_type', 'parent_ref_id')
+    def _compute_parent_ref(self):
+        for task in self:
+            if task.parent_ref_type and task.parent_ref_type in self.env:
+                task.parent_ref = '%s,%s' % (task.parent_ref_type, task.parent_ref_id or 0)
+            else:
+                task.parent_ref = None
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -113,6 +122,9 @@ class Task(models.Model):
         self.write({'state': 'in_progress'})
 
     def action_done(self):
+        if self.type == 'execution':
+            if not self.implementation_report:
+                raise ValidationError(_('Report on the implementation should be filled'))
         activities = self.env['mail.activity'].search([
             ('res_id', '=', self.id),
             ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),

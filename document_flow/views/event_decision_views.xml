@@ -9,7 +9,10 @@
                     <group>
                         <field name="event_id" readonly="1"/>
                     </group>
-                    <group>
+                    <group col="3">
+                        <group>
+                            <field name="responsible_id" optional="show" options='{"no_quick_create": True}'/>
+                        </group>
                         <group>
                             <field name="executor_ids" optional="show" widget="many2many_avatar_user" options='{"no_quick_create": True}'/>
                         </group>
