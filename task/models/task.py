@@ -1,5 +1,7 @@
 from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
+from datetime import datetime, date
+
 
 class TaskType(models.Model):
     _name = 'task.task.type'
@@ -20,6 +22,7 @@ class Task(models.Model):
 
     type = fields.Selection([
         ('review', 'Review'),
+        ('approving', 'Approving'),
         ('execution', 'Execution')
     ], required=True, default='review', index=True, string='Type')
 
@@ -33,7 +36,8 @@ class Task(models.Model):
         ('cancel', 'Canceled')
     ], required=True, index=True, string='Status', default='to_do', readonly=True, tracking=True)
 
-    parent_ref = fields.Reference(string='Parent', selection="_selection_parent_model", compute="_compute_parent_ref")
+    parent_ref = fields.Reference(string='Parent', selection="_selection_parent_model", compute="_compute_parent_ref",
+                                  store=True)
     parent_ref_id = fields.Integer(string="Parent Id", index=True, copy=False)
     parent_ref_type = fields.Char(string="Parent Type", index=True, copy=False)
 
@@ -43,6 +47,7 @@ class Task(models.Model):
     subtask_count = fields.Integer("Sub-task Count", compute='_compute_subtask_count')
     child_text = fields.Char(compute="_compute_child_text")
     is_closed = fields.Boolean(string="Closed", index=True)
+    date_closed = fields.Date(string='Date Closed', index=True, copy=False)
     implementation_report = fields.Html(string='Report')
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Documents')
 
@@ -116,7 +121,7 @@ class Task(models.Model):
             })
 
     def action_to_do(self):
-        self.write({'state': 'to_do', 'is_closed': False})
+        self.write({'state': 'to_do', 'is_closed': False, 'implementation_report': False})
 
     def action_in_progress(self):
         self.write({'state': 'in_progress'})
@@ -125,6 +130,13 @@ class Task(models.Model):
         if self.type == 'execution':
             if not self.implementation_report:
                 raise ValidationError(_('Report on the implementation should be filled'))
+        elif self.type == 'approving' and self.parent_ref_type == 'document_flow.event':
+            event = self.env['document_flow.event'].search([
+                ('id', '=', self.parent_ref_id)
+            ], limit=1)
+            if event:
+                event.action_accept_approval()
+
         activities = self.env['mail.activity'].search([
             ('res_id', '=', self.id),
             ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
@@ -132,10 +144,28 @@ class Task(models.Model):
         ])
         for activity in activities:
             activity.action_done()
-        self.write({'state': 'done', 'is_closed': True})
+        self.write({'state': 'done', 'is_closed': True, 'date_closed': date.today()})
 
     def action_cancel(self):
-        self.write({'state': 'cancel', 'is_closed': True})
+        if self.type == 'approving' and self.parent_ref_type == 'document_flow.event':
+            event = self.env['document_flow.event'].search([
+                ('id', '=', self.parent_ref_id)
+            ], limit=1)
+            if event:
+                event.action_decline_approval()
+                if self.implementation_report:
+                    event.message_post(
+                        body=self.implementation_report,
+                        message_type='comment',
+                        subtype_xmlid='mail.mt_note')
+        activities = self.env['mail.activity'].search([
+            ('res_id', '=', self.id),
+            ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
+            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_email').id)
+        ])
+        for activity in activities:
+            activity.unlink()
+        self.write({'state': 'cancel', 'is_closed': True, 'date_closed': date.today()})
 
     def action_open_task(self):
         return {

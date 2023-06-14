@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-12 17:14+0000\n"
-"PO-Revision-Date: 2023-06-12 17:14+0000\n"
+"POT-Creation-Date: 2023-06-14 15:30+0000\n"
+"PO-Revision-Date: 2023-06-14 15:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -72,6 +72,11 @@ msgid "Administrator"
 msgstr "Администратор"
 
 #. module: task
+#: model:ir.model.fields.selection,name:task.selection__task_task__type__approving
+msgid "Approving"
+msgstr "Согласование"
+
+#. module: task
 #: model:ir.model.fields.selection,name:task.selection__task_task__state__assigned
 msgid "Assigned"
 msgstr "Назначена"
@@ -129,6 +134,11 @@ msgstr "Созданные мной"
 #: model:ir.model.fields,field_description:task.field_task_task_type__create_date
 msgid "Created on"
 msgstr "Создано"
+
+#. module: task
+#: model:ir.model.fields,field_description:task.field_task_task__date_closed
+msgid "Date Closed"
+msgstr "Дата исполнения"
 
 #. module: task
 #: model:ir.model.fields,field_description:task.field_task_task__date_deadline
@@ -503,7 +513,7 @@ msgstr "Тема"
 #: model:ir.model.fields.selection,name:task.selection__task_task__state__to_do
 #: model_terms:ir.ui.view,arch_db:task.task_view_form
 msgid "To Do"
-msgstr "К выполнению"
+msgstr "К исполнению"
 
 #. module: task
 #: model:ir.model.fields,field_description:task.field_task_task__type
@@ -519,11 +529,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:task.task_view_search
 msgid "Unassigned"
 msgstr "Неназначенные"
-
-#. module: task
-#: model:res.groups,name:task.group_task_user
-msgid "User"
-msgstr "Пользователь"
 
 #. module: task
 #: model_terms:ir.ui.view,arch_db:task.task_view_form

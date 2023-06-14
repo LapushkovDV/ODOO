@@ -24,28 +24,32 @@ class EventProtocol(models.AbstractModel):
             run = paragraph.runs[0]
             run.font.italic = True
             for member in event.member_ids:
-                doc.add_paragraph(member.name)
-            paragraph = doc.add_paragraph(_('Agenda of the event:'))
-            paragraph.paragraph_format.space_before = Mm(5)
-            run = paragraph.runs[0]
-            run.font.italic = True
-            run.font.underline = True
-            counter = 1
-            for question in event.question_ids:
-                doc.add_paragraph('%s. %s' % (counter, question.name.striptags())).paragraph_format.space_before = Mm(
-                    3)
-                counter += 1
+                doc.add_paragraph(member.name + ' - %s' % member.partner_id.function if member.partner_id else '')
+            if event.question_ids:
+                paragraph = doc.add_paragraph(_('Agenda of the event:'))
+                paragraph.paragraph_format.space_before = Mm(5)
+                run = paragraph.runs[0]
+                run.font.italic = True
+                run.font.underline = True
+                counter = 1
+                for question in event.question_ids:
+                    doc.add_paragraph('%s. %s' % (counter, question.name.striptags())).paragraph_format.space_before = Mm(
+                        3)
+                    counter += 1
             paragraph = doc.add_paragraph(_('Decisions:'))
             paragraph.paragraph_format.space_before = Mm(5)
             run = paragraph.runs[0]
             run.font.italic = True
             run.font.underline = True
-            counter = 1
             for decision in event.decision_ids:
-                doc.add_paragraph('%s. %s' % (counter, decision.name.striptags())).paragraph_format.space_before = Mm(
+                doc.add_paragraph('%s. %s' % (decision.num, decision.name.striptags())).paragraph_format.space_before = Mm(
                     3)
                 if decision.responsible_id:
-                    doc.add_paragraph(_('Ответственный: %s') % decision.responsible_id.name)
+                    doc.add_paragraph(_('Responsible: %s') % decision.responsible_id.name)
+                if decision.executor_ids:
+                    doc.add_paragraph(_("Executors: %s", ', '.join(decision.executor_ids.mapped('name'))))
                 if decision.date_deadline:
-                    doc.add_paragraph(_('Срок исполнения: %s') % decision.date_deadline)
-                counter += 1
+                    if decision.deadline_type == 'by_date':
+                        doc.add_paragraph(_('Due date: %s') % decision.date_deadline)
+                    else:
+                        doc.add_paragraph(_('Due date: within %s after execution paragraph %s') % (decision.number_days, decision.after_decision_id.num))

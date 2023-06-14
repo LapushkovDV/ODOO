@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-12 17:19+0000\n"
-"PO-Revision-Date: 2023-06-12 17:19+0000\n"
+"POT-Creation-Date: 2023-06-14 14:13+0000\n"
+"PO-Revision-Date: 2023-06-14 14:13+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -20,8 +20,8 @@ msgstr ""
 msgid ""
 "'Protocol %s from %s' % (object.name, "
 "object.date_start.strftime('%d.%m.%Y'))"
-msgstr "'Протокол %s от %s' % (object.name, "
-"object.date_start.strftime('%d.%m.%Y'))"
+msgstr ""
+"'Протокол %s от %s' % (object.name, object.date_start.strftime('%d.%m.%Y'))"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_needaction
@@ -56,9 +56,15 @@ msgid "Add attachments for this event"
 msgstr "Добавьте вложение для мероприятия"
 
 #. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__after_decision_id
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__deadline_type__after_decision
+msgid "After Decision"
+msgstr "После решения"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__name
 msgid "Agenda"
-msgstr "Содержание"
+msgstr "Повестка"
 
 #. module: document_flow
 #. odoo-python
@@ -66,6 +72,24 @@ msgstr "Содержание"
 #, python-format
 msgid "Agenda of the event:"
 msgstr "Повестка:"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__agreed_id
+msgid "Agreed"
+msgstr "Согласовант"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Approval on a protocol of event %s"
+msgstr "Согласование протокола мероприятия %s"
+
+#. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event__state__approved
+msgid "Approved"
+msgstr "Согласовано"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_attachment_count
@@ -78,6 +102,11 @@ msgstr "Количество вложений"
 #, python-format
 msgid "Attachments"
 msgstr "Вложения"
+
+#. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event__state__completed
+msgid "Completed"
+msgstr "Завершено"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__create_uid
@@ -97,6 +126,11 @@ msgstr "Дата создания"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__date_deadline
 msgid "Deadline"
 msgstr "Срок исполнения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__deadline_type
+msgid "Deadline Type"
+msgstr "Выполнить"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__name
@@ -125,14 +159,14 @@ msgstr "Статус задачи на исполнение"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__decision_ids
 #: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
 msgid "Decisions"
-msgstr "Решения"
+msgstr "Обсуждения и решения"
 
 #. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/report/event_protocol.py:0
 #, python-format
 msgid "Decisions:"
-msgstr "Решения:"
+msgstr "Обсуждения и решения:"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__description
@@ -166,6 +200,13 @@ msgstr "Документы"
 #, python-format
 msgid "Due date: %s"
 msgstr "Срок исполнения: %s"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/report/event_protocol.py:0
+#, python-format
+msgid "Due date: within %s after execution paragraph %s"
+msgstr "Срок исполнения: в течение %s дня(-ей) после выполнения пункта %s"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__email_cc
@@ -222,9 +263,26 @@ msgid "Events"
 msgstr "Мероприятия"
 
 #. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__task_type__execution
+msgid "Execution"
+msgstr "Исполнение"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__date_execution
+msgid "Execution Date"
+msgstr "Дата исполнения"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__executor_ids
 msgid "Executors"
 msgstr "Исполнители"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/report/event_protocol.py:0
+#, python-format
+msgid "Executors: %s"
+msgstr "Исполнители: %s"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_follower_ids
@@ -391,6 +449,16 @@ msgid "Number of messages with delivery error"
 msgstr ""
 
 #. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event__state__on_approval
+msgid "On Approval"
+msgstr "На согласовании"
+
+#. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event__state__on_registration
+msgid "On Registration"
+msgstr "На регистрации"
+
+#. module: document_flow
 #: model_terms:ir.actions.act_window,help:document_flow.action_view_all_task
 msgid ""
 "Organize your tasks by dispatching them across the pipeline.\n"
@@ -414,6 +482,34 @@ msgid "Protocol %s from %s"
 msgstr "Протокол %s от %s"
 
 #. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Protocol of event %s was approved"
+msgstr "Протокол совещания %s был согласован"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Protocol of event %s was declined"
+msgstr "Протокол совещания %s был отклонен"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Protocol was approved"
+msgstr "Протокол согласован"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Protocol was declined"
+msgstr "Протокол отклонен"
+
+#. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.event_question_view_form
 msgid "Question"
 msgstr "Повестка"
@@ -428,6 +524,13 @@ msgstr "Повестка..."
 #: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
 msgid "Questions"
 msgstr "Повестка"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Request for approval on a protocol was send for the user: %s"
+msgstr "Запрос на согласование протокола был отправлен пользователю: %s"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__responsible_id
@@ -447,12 +550,9 @@ msgid "Responsible: %s"
 msgstr "Ответственный: %s"
 
 #. module: document_flow
-#. odoo-python
-#: code:addons/document_flow/models/event.py:0
-#: code:addons/document_flow/models/event.py:0
-#, python-format
-msgid "Review of result event %s"
-msgstr "Ознакомление с результатами мероприятия %s"
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__task_type__review
+msgid "Review"
+msgstr "Ознакомление"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_has_sms_error
@@ -461,13 +561,13 @@ msgstr ""
 
 #. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
-msgid "Send for execution"
-msgstr "Отправить на исполнение"
+msgid "Send for approve"
+msgstr "Отправить на согласование"
 
 #. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
-msgid "Send for review"
-msgstr "Отправить на ознакомление"
+msgid "Send for execution"
+msgstr "Отправить на исполнение"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__speaker_ids
@@ -478,6 +578,11 @@ msgstr "Докладчики"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__date_start
 msgid "Start Date"
 msgstr "Дата начала"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__state
+msgid "Status"
+msgstr "Статус"
 
 #. module: document_flow
 #: model:ir.model.fields,help:document_flow.field_document_flow_event__activity_state
@@ -494,6 +599,7 @@ msgstr ""
 
 #. module: document_flow
 #: model:ir.model,name:document_flow.model_task_task
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__task_id
 msgid "Task"
 msgstr "Задача"
 
@@ -526,16 +632,14 @@ msgid "Tasks for execution were created for the following user(s): %s"
 msgstr "Задачи на исполнение были созданы для пользователей: %s"
 
 #. module: document_flow
-#. odoo-python
-#: code:addons/document_flow/models/event.py:0
-#, python-format
-msgid "Tasks for review were created for the following user(s): %s"
-msgstr "Задачи на ознакомление созданы для участников: %s"
-
-#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__time_end
 msgid "To"
 msgstr "По"
+
+#. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__deadline_type__to_date
+msgid "To Date"
+msgstr "К дате"
 
 #. module: document_flow
 #. odoo-python
@@ -546,6 +650,11 @@ msgstr "По"
 #, python-format
 msgid "To run an errand by event \"%s\""
 msgstr "Выполните поручение по мероприятию \"%s\""
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__task_type
+msgid "Type"
+msgstr "Тип задачи"
 
 #. module: document_flow
 #: model:ir.model.fields,help:document_flow.field_document_flow_event__activity_exception_decoration
@@ -570,8 +679,19 @@ msgid "Were present:"
 msgstr "Присутствовали:"
 
 #. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__number_days
+msgid "Within"
+msgstr "В течение (дней)"
+
+#. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "You have new request for approval"
+msgstr "У вас есть новый запрос на согласование"
+
+#. module: document_flow
+#. odoo-python
 #: code:addons/document_flow/models/event.py:0
 #: code:addons/document_flow/models/event.py:0
 #, python-format
