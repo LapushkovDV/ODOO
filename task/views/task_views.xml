@@ -49,7 +49,7 @@
                     <button string="To Do" type="object" name="action_to_do" class="oe_highlight"
                             attrs="{'invisible': ['|', ('type', '=', 'review'), ('state', 'not in', ('cancel'))]}"/>
                     <button string="In Progress" type="object" name="action_in_progress" class="oe_highlight"
-                            attrs="{'invisible': ['|', ('type', '=', 'review'), ('state', '!=', 'to_do')]}"/>
+                            attrs="{'invisible': ['|', ('type', 'in', ('review', 'approving')), ('state', '!=', 'to_do')]}"/>
                     <button string="Done" type="object" name="action_done" class="oe_highlight"
                             attrs="{'invisible': ['|', '&amp;', ('type', '=', 'execution'), ('state', '=', 'to_do'), ('state', 'in', ('done', 'cancel'))]}"/>
                     <button string="Cancel" type="object" name="action_cancel" class="oe_highlight"
@@ -111,7 +111,7 @@
                                    placeholder="Task description..."/>
                         </page>
                         <page name="sub_tasks_page" string="Sub-tasks"
-                              attrs="{'invisible' : [('type', '=', 'review')]}">
+                              attrs="{'invisible' : [('type', 'in', ('review', 'approving'))]}">
                             <field name="child_ids"
                                    context="{'search_view_ref' : 'task.task_view_search',
                                    'default_user_ids': user_ids, 'default_parent_id': id, 'search_default_parent_ref': parent_ref }"
@@ -127,15 +127,17 @@
                             </field>
                         </page>
                         <page name="report_page" string="Report on the implementation"
-                              attrs="{'invisible' : ['|', ('type', '!=', 'execution'), ('state', 'in', ('to_do', 'cancel'))]}">
-                            <field name="implementation_report" type="html" options="{'collaborative': true, 'resizable': false}"/>
+                              attrs="{'invisible' : ['|', ('type', '=', 'review'),
+                              '&amp;', ('type', '=', 'execution'), ('state', 'in', ('to_do', 'cancel'))]}">
+                            <field name="implementation_report" type="html"
+                                   options="{'collaborative': true, 'resizable': false}"/>
                         </page>
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
                     <field name="activity_ids" widget="mail_activity"/>
-                    <field name="message_ids" widget="mail_thread" attrs="{'readonly':[('state','=','done')]}" />
+                    <field name="message_ids" widget="mail_thread"/>
                 </div>
             </form>
         </field>
