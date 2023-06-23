@@ -204,7 +204,7 @@ class report_budget_svod_excel(models.AbstractModel):
         sum_q3 = 0
         sum_q4 = 0
         if project:
-            if project.estimated_probability_id.name in ('30','50', '75','100'): # смотрим сумму контрактования в эталоне и с учетом 100
+            if project.estimated_probability_id.name in ('50', '75','100'): # смотрим сумму контрактования в эталоне и с учетом 100
                 if project.end_presale_project_month.year == self.YEARint:
                     sum_year = project.total_amount_of_revenue_with_vat
                     if project.end_presale_project_month.month in (1, 2, 3):
@@ -297,9 +297,9 @@ class report_budget_svod_excel(models.AbstractModel):
         # 20230530 Алина Козленко сказала, что если эталон 0, а факт есть, то новое = факт и это на все действует
         if sum_contract_etalon_year == 0 and sum_year_fact != 0 : sum_year = sum_year_fact
         if sum_contract_etalon_q1 == 0 and sum_q1_fact != 0 : sum_q1 = sum_q1_fact
-        if sum_contract_etalon_q2 == 0 and sum_q2_fact != 0: sum_q2 = sum_q2_fact
+        if sum_contract_etalon_q2 == 0 and sum_q2_fact != 0 : sum_q2 = sum_q2_fact
         if sum_contract_etalon_q3 == 0 and sum_q3_fact != 0 : sum_q3 = sum_q3_fact
-        if sum_contract_etalon_q4 == 0 and sum_q4_fact != 0: sum_q4 = sum_q4_fact
+        if sum_contract_etalon_q4 == 0 and sum_q4_fact != 0 : sum_q4 = sum_q4_fact
 
         return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
 
@@ -616,11 +616,9 @@ class report_budget_svod_excel(models.AbstractModel):
         sum_q3 = 0
         sum_q4 = 0
         if step:
-            if not etalon_step:
-                sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_contract_new(step, etalon_step)
+            sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_contract_new(step, etalon_step)
         else:
-            if not etalon_project:
-                sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_contract_new(project, etalon_project)
+            sum_year, sum_q1, sum_q2, sum_q3, sum_q4 = self.get_sum_contract_new(project, etalon_project)
         sheet.write_number(row, column + 2, sum_year, row_format_number)
         sheet.write_number(row, column + 19, sum_q1, row_format_number)
         sheet.write_number(row, column + 56, sum_q2, row_format_number)
@@ -641,49 +639,61 @@ class report_budget_svod_excel(models.AbstractModel):
         sheet.write_number(row, column + 131, sum_q4, row_format_number)
         # end контрактование факт
         # контрактование остаток
+        sum_year_curr = sum_q1_curr = sum_q2_curr = sum_q3_curr = sum_q4_curr = 0
+        if step:
+            sum_year_curr, sum_q1_curr, sum_q2_curr, sum_q3_curr, sum_q4_curr = self.get_sum_contract(step)
+        else:
+            sum_year_curr, sum_q1_curr, sum_q2_curr, sum_q3_curr, sum_q4_curr = self.get_sum_contract(project)
+
+
         colFormula = column + 4
         if estimated_probability in ('0','30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                             sum_year_curr,#xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 21
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                             sum_q1_curr   ,#xl_col_to_name(colFormula - 4), Алина сказала, что считаем только от текущего состояния, на эталон срать
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 58
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                             sum_q2_curr, #xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 95
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q3_curr, #xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 132
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q4_curr, #xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         # end контрактование остаток
@@ -723,49 +733,56 @@ class report_budget_svod_excel(models.AbstractModel):
         #  end ПДС факт
 
         # ПДС остаток
+        sum_year_curr = sum_q1_curr = sum_q2_curr = sum_q3_curr = sum_q4_curr = 0
+        sum_year_curr, sum_q1_curr, sum_q2_curr, sum_q3_curr, sum_q4_curr = self.get_sum_pds(project, step, project,step)  # сумму нового сразу присваиваем текущему
         colFormula = column + 9
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_year_curr, #xl_col_to_name(colFormula - 4),Алина сказал, что смотри только на текущее состояние, на эталон срать
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 26
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q1_curr,  #xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 63
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q2_curr ,#xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 100
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q3_curr, #xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 137
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q4_curr, #xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         # end ПДС остаток
@@ -804,45 +821,52 @@ class report_budget_svod_excel(models.AbstractModel):
         #  end валовая выручка факт
         # валовая выручка остаток
         colFormula = column + 14
-        formula = '=-1*if({1}{0}+{2}{0} = 0, 0, {1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+        sum_year_curr = sum_q1_curr = sum_q2_curr = sum_q3_curr = sum_q4_curr = 0
+        sum_year_curr, sum_q1_curr, sum_q2_curr, sum_q3_curr, sum_q4_curr = self.get_sum_acceptance(project, step, project, step)
+        formula = '=-1*if({1} = 0, 0, {1}-{2}{0})'.format(row + 1,
+                                                             sum_year_curr,   #xl_col_to_name(colFormula - 4), аЛИНА СКАЗАЛА, ЧТО СМОТРИМ ТОЛЬКО НА ТЕКУЩЕЕ СОСТОЯНИЕ, НА ЭТАЛОН СРАТЬ
+                                                       #      xl_col_to_name(colFormula - 2),
+                                                       #      xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 31
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q1_curr, #xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 68
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q2_curr, #xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 105
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q3_curr,# xl_col_to_name(colFormula - 4),
+                                                          #   xl_col_to_name(colFormula - 2),
+                                                          #   xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         colFormula = column + 142
         if estimated_probability in ('0', '30'):
             formula = '=0'
         else:
-            formula = '=-1*if({1}{0}+{2}{0} = 0, 0,{1}{0}+{2}{0}-{3}{0}-{4}{0})'.format(row + 1, xl_col_to_name(colFormula - 4),
-                                                             xl_col_to_name(colFormula - 2),
-                                                             xl_col_to_name(colFormula - 3),
+            formula = '=-1*if({1} = 0, 0,{1}-{2}{0})'.format(row + 1,
+                                                            sum_q4_curr,# xl_col_to_name(colFormula - 4),
+                                                            #№ xl_col_to_name(colFormula - 2),
+                                                            # xl_col_to_name(colFormula - 3),
                                                              xl_col_to_name(colFormula - 1))
         sheet.write_formula(row, colFormula, formula, row_format_number)
         # end валовая выручка остаток
