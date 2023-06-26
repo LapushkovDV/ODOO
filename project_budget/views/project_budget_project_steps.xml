@@ -62,6 +62,18 @@
                             </group>
                         </group>
                         <h5>
+                            <field name="is_revenue_from_the_sale_of_works"  invisible="1"/>
+                            <field name="is_revenue_from_the_sale_of_goods"  invisible="1"/>
+                            <field name="is_cost_of_goods" invisible="1"/>
+                            <field name="is_own_works_fot" invisible="1"/>
+                            <field name="is_third_party_works" invisible="1"/>
+                            <field name="is_awards_on_results_project" invisible="1"/>
+                            <field name="is_transportation_expenses" invisible="1"/>
+                            <field name="is_travel_expenses" invisible="1"/>
+                            <field name="is_representation_expenses" invisible="1"/>
+                            <field name="is_warranty_service_costs" invisible="1"/>
+                            <field name="is_rko_other" invisible="1"/>
+                            <field name="is_other_expenses" invisible="1"/>
                             <group col ="3">
                                     <group>
                                          <field name="total_amount_of_revenue"
@@ -109,10 +121,14 @@
                         </h4>
                         <group col="3">
                             <group>
-                                <field name="revenue_from_the_sale_of_works" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="revenue_from_the_sale_of_works"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                       ,'invisible': [('is_revenue_from_the_sale_of_works', '=', False)]}"/>
                             </group>
                             <group>
-                                <field name="revenue_from_the_sale_of_goods" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="revenue_from_the_sale_of_goods"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                       ,'invisible': [('is_revenue_from_the_sale_of_goods', '=', False)]}"/>
                             </group>
                             <group>
                             </group>
@@ -123,22 +139,42 @@
                         </h4>
                         <group col="3">
                             <group>
-                                <field name="cost_of_goods" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="third_party_works" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="transportation_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="warranty_service_costs" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="cost_of_goods"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                        ,'invisible': [('is_cost_of_goods', '=', False)]}"/>
+                                <field name="third_party_works"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                        ,'invisible': [('is_third_party_works', '=', False)]}"/>
+                                <field name="transportation_expenses"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                        ,'invisible': [('is_transportation_expenses', '=', False)]}"/>
+                                <field name="warranty_service_costs"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                       ,'invisible': [('is_warranty_service_costs', '=', False)]}"/>
                             </group>
                             <group>
-                                <field name="travel_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="representation_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="rko_other" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="other_expenses" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-
+                                <field name="travel_expenses"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                       ,'invisible': [('is_travel_expenses', '=', False)]}"/>
+                                <field name="representation_expenses"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                        ,'invisible': [('is_representation_expenses', '=', False)]}"/>
+                                <field name="rko_other"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                       ,'invisible': [('is_rko_other', '=', False)]}"/>
+                                <field name="other_expenses"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                       ,'invisible': [('is_other_expenses', '=', False)]}"/>
                             </group>
                             <group>
-                                <field name="own_works_fot" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="awards_on_results_project" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                <field name="taxes_fot_premiums" />
+                                <field name="own_works_fot"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                       ,'invisible': [('is_own_works_fot', '=', False)]}"/>
+                                <field name="awards_on_results_project"
+                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
+                                       ,'invisible': [('is_awards_on_results_project', '=', False)]}"/>
+                                <field name="taxes_fot_premiums"
+                                       attrs="{'invisible': [('is_own_works_fot', '=', False),('is_awards_on_results_project', '=', False)]}"/>
                             </group>
                         </group>
                     </sheet>

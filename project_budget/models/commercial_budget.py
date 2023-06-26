@@ -103,6 +103,21 @@ class commercial_budget(models.Model):
                             [('projects_id', '=', project.id), ('step_id', '=', fact_acceptance_flow.project_steps_id.step_id)])
                         fact_acceptance_flow.project_steps_id = current_project.id
 
+                for fact_acceptance_flow in project.fact_acceptance_flow_ids: # у нас на распределение (distribution) ссылается плановые и фактические данные и при копировании у фрейма крутит голову. потому вручную ссылка на плановое поступеление в распределенеии ставим
+                    for distribution_acceptance in fact_acceptance_flow.distribution_acceptance_ids: # идем по распределению, привязанному к факту  - копирование оставили тоолько у факта для фрейма
+                        if distribution_acceptance.planned_acceptance_flow_id.acceptance_id: # берем acceptance_id  и по нему ищем в новом бюдете запись
+                            new_planned_acceptance = self.env['project_budget.planned_acceptance_flow'].search(
+                                [('projects_id', '=', project.id),
+                                 ('acceptance_id', '=', distribution_acceptance.planned_acceptance_flow_id.acceptance_id)])
+                            distribution_acceptance.planned_acceptance_flow_id = new_planned_acceptance.id # ставим ссылку на скопированную зщапись в распределениии
+                for fact_cash_flow in project.fact_cash_flow_ids: # у нас на распределение (distribution) ссылается плановые и фактические данные и при копировании у фрейма крутит голову. потому вручную ссылка на плановое поступеление в распределенеии ставим
+                    for distribution_cash in fact_cash_flow.distribution_cash_ids: # идем по распределению, привязанному к факту  - копирование оставили тоолько у факта для фрейма
+                        if distribution_cash.planned_cash_flow_id.cash_id: # берем cash_id  и по нему ищем в новом бюдете запись
+                            new_planned_cash = self.env['project_budget.planned_cash_flow'].search(
+                                [('projects_id', '=', project.id),
+                                 ('cash_id', '=', distribution_cash.planned_cash_flow_id.cash_id)])
+                            distribution_cash.planned_cash_flow_id = new_planned_cash.id # ставим ссылку на скопированную зщапись в распределениии
+
             # self.env['project_budget.projects'].search([('project_id', '=', self.id)]).write({'approve_state': 'need_approve_manager'})
             # meeting_act_type = self.env['mail.activity.type'].search([('category', '=', 'meeting')], limit=1)
             # if not meeting_act_type:

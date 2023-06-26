@@ -15,9 +15,11 @@ class report_budget_forecast_excel(models.AbstractModel):
                                    'HY2/YEAR итого','YEAR итого']
     month_rus_name_revenue_margin = ['Q1','Q2','HY1/YEAR','Q3','Q4','HY2/YEAR','YEAR']
 
-    array_col_itogi = [28, 49, 55, 76, 97, 103, 109, 130, 151, 157, 178, 199, 205, 217, 223, 229, 235, 241, 248, 254, 260, 266, 272, 278, 284, 291, 297,]
+    array_col_itogi = [28, 49, 55, 76, 97, 103, 109, 130, 151, 157, 178, 199, 205, 211, 217, 223, 229, 235, 241, 254, 260, 266, 272, 278, 284, 297,]
 
     array_col_itogi75 = [247, 290,]
+
+    array_col_itogi75NoFormula = [248, 291,]
 
     dict_contract_pds = {
         1: {'name': 'Контрактование, с НДС', 'color': '#FFD966'},
@@ -1186,7 +1188,9 @@ class report_budget_forecast_excel(models.AbstractModel):
                         formula = '={1}{0} + {2}{0}'.format(row+1,xl_col_to_name(col+ 1),xl_col_to_name(col+ 2))
                         print('formula = ', formula)
                         sheet.write_formula(row, col -1, formula, head_format_month_itogo)
-
+                    for col in self.array_col_itogi75NoFormula:
+                        formula = '=0'
+                        sheet.write_formula(row, col - 1, formula, head_format_month_itogo)
 
             if isFoundProjectsByOffice:
                 row += 1

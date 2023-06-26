@@ -12,14 +12,16 @@
         <menuitem id="project_budget_catalogs_project_supervisor" parent ="project_budget_catalogs" name = "project_supervisor" action="show_project_supervisor"/>
         <menuitem id="project_budget_catalogs_project_office" parent ="project_budget_catalogs" name = "project_office" action="show_project_office"/>
         <menuitem id="project_budget_catalogs_project_manager" parent ="project_budget_catalogs" name = "project_manager" action="show_project_manager"/>
+        <menuitem id="project_budget_catalogs_rukovoditel_project" parent ="project_budget_catalogs" name = "rukovoditel_project" action="show_rukovoditel_project"/>
+
         <menuitem id="project_budget_catalogs_customer_organization" parent ="project_budget_catalogs" name = "customer_organization" action="show_customer_organization"/>
         <menuitem id="project_budget_catalogs_customer_status" parent ="project_budget_catalogs" name = "customer_status" action="show_customer_status"/>
         <menuitem id="project_budget_catalogs_industry" parent ="project_budget_catalogs" name = "industry" action="show_industry"/>
         <menuitem id="project_budget_catalogs_vat_attribute" parent ="project_budget_catalogs" name = "vat_attribute" action="show_vat_attribute"/>
         <menuitem id="project_budget_catalogs_legal_entity_signing" parent ="project_budget_catalogs" name = "legal_entity_signing" action="show_legal_entity_signing"/>
         <menuitem id="project_budget_catalogs_project_type" parent ="project_budget_catalogs" name = "project_type" action="show_project_type"/>
-        <menuitem id="project_budget_catalogs_technological_direction" parent ="project_budget_catalogs" name = "technological_direction" action="show_technological_direction"/>
         <menuitem id="project_budget_catalogs_project_steps_type" parent ="project_budget_catalogs" name = "type of project steps" action="show_project_steps_type"/>
+        <menuitem id="project_budget_catalogs_technological_direction" parent ="project_budget_catalogs" name = "technological_direction" action="show_technological_direction"/>
 
         <menuitem id="project_budget_dashboards" parent ="project_budget_menu" name = "Dashboards"/>
         <menuitem id="project_budget_dashboards_dashboard_1" parent ="project_budget_dashboards" name = "Dashboard 1" action = "dashboard_1"/>
@@ -27,6 +29,7 @@
         <menuitem id="project_budget_access" parent ="project_budget_menu" name = "Access"/>
         <menuitem id="project_budget_catalogs_project_supervisor_access" parent ="project_budget_access" name = "project_supervisor_access" action="show_comercial_budget_spec_supervisor_access" groups="project_budget.project_budget_admin"/>
         <menuitem id="project_budget_catalogs_project_manager_access" parent ="project_budget_access" name = "project_manager_access" action="show_comercial_budget_spec_manager_access" groups="project_budget.project_budget_admin"/>
+        <menuitem id="project_budget_catalogs_rukovoditel_project_access" parent ="project_budget_access" name = "rukovoditel_project_access" action="show_comercial_budget_spec_rukovoditel_project_access" groups="project_budget.project_budget_admin"/>
 
     </data>
 </odoo>

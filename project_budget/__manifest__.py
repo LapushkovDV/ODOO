@@ -22,6 +22,8 @@
         'security/ir.model.access.csv',
         'data/project_budget_data.xml',
         'views/project_sequence.xml',
+        'views/fact_cash_flow.xml',
+        'views/fact_acceptance_flow.xml',
         'views/project_budget_catalogs.xml',
         'views/project_budget_comercial_budget_access.xml',
         'views/project_budget_comercial_budget_search.xml',

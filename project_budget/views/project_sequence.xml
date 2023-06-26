@@ -19,5 +19,23 @@
             <field name="number_increment">1</field>
         </record>
 
+        <record id="acceptance_id_generate" model="ir.sequence">
+            <field name="name">Acceptance ID</field>
+            <field name="code">project_budget.planned_acceptance_flow</field>
+            <field name="prefix">%(year)s%(month)s-</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="cash_id_generate" model="ir.sequence">
+            <field name="name">Cash ID</field>
+            <field name="code">project_budget.planned_cash_flow</field>
+            <field name="prefix">%(year)s%(month)s-</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
     </data>
 </odoo>
