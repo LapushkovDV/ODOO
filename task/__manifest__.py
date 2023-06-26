@@ -2,7 +2,7 @@
     'name': 'Task Management',
     'version': '1.0.0',
     'category': '',
-    'depends': ['base', 'mail', 'uom', 'project_budget'],
+    'depends': ['base', 'mail', 'uom'],
     'description': """
     """,
     'author': '',
@@ -23,8 +23,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/task_security.xml',
-        'views/task_views.xml',
-        'views/project_budget_views.xml'
+        'views/task_views.xml'
     ],
     'demo': [
     ],

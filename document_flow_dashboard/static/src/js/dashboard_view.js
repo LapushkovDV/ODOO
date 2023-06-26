@@ -406,7 +406,7 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 views: [[false, 'list'], [false, 'form']],
                 domain: [
                     ['state', 'not in', ['done', 'cancel']],
-                    ['user_ids', 'in', require('web.session').user_id]
+                    ['user_ids', 'in', require('web.session').user_id],
                     ['date_deadline', '<', new Date()]
                 ],
                 context: {create: false},
@@ -426,7 +426,7 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 views: [[false, 'list'], [false, 'form']],
                 domain: [
                     ['state', 'in', ['to_do', 'assigned', 'in_progress']],
-                    ['write_uid', '=', require('web.session').user_id]
+                    ['write_uid', '=', require('web.session').user_id],
                     ['date_deadline', '>', new Date()]
                 ],
                 context: { default_state: 'to_do' },
@@ -446,7 +446,7 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 views: [[false, 'list'], [false, 'form']],
                 domain: [
                     ['state', 'not in', ['done', 'cancel']],
-                    ['write_uid', '=', require('web.session').user_id]
+                    ['write_uid', '=', require('web.session').user_id],
                     ['date_deadline', '<', new Date()]
                 ],
                 context: {create: false},
