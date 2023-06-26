@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_view_all_process" model="ir.actions.act_window">
+        <field name="name">Processes</field>
+        <field name="res_model">document_flow.process</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No processes found. Let's create one!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="document_flow_menu_process" parent="document_flow_menu" name="Processes" sequence="5"
+              action="action_view_all_process"/>
+
+    <record id="process_view_tree" model="ir.ui.view">
+        <field name="name">document_flow.process.tree</field>
+        <field name="model">document_flow.process</field>
+        <field name="arch" type="xml">
+            <tree string="Processes" multi_edit="1" sample="1">
+                <field name="type" optional="show" readonly="1"/>
+                <field name="name" optional="show" readonly="1"/>
+                <field name="date_start" widget="date" optional="show" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="process_view_form" model="ir.ui.view">
+        <field name="name">document_flow.process.form</field>
+        <field name="model">document_flow.process</field>
+        <field name="arch" type="xml">
+            <form string="Process">
+                <header>
+                    <button string="Start process" type="object" name="action_start" class="oe_highlight"
+                            attrs="{'invisible': [('is_started', '=', True)]}"/>
+<!--                    <field name="state" widget="statusbar" options="{'clickable': False, 'fold_field': 'fold'}"-->
+<!--                           invisible="1"/>-->
+                </header>
+                <sheet string="Process">
+<!--                    <div name="button_box" position="inside">-->
+<!--                        <button class="oe_stat_button" type="object" name="action_open_attachments"-->
+<!--                                icon="fa-files-o">-->
+<!--                            <field string="Documents" name="attachment_count" widget="statinfo"/>-->
+<!--                        </button>-->
+<!--                        <button class="oe_stat_button" type="object" name="action_open_tasks"-->
+<!--                                icon="fa-tasks">-->
+<!--                            <field string="Tasks" name="task_count" widget="statinfo"/>-->
+<!--                        </button>-->
+<!--                    </div>-->
+                    <group invisible="1">
+                        <field name="is_started"/>
+                        <field name="is_closed"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                    </group>
+                    <div class="oe_title mb-3">
+                        <h1>
+                            <field name="name" placeholder="Process Title..." attrs="{'readonly': [('is_started', '=', True)]}"/>
+                        </h1>
+                    </div>
+                    <group col="3">
+                        <group>
+                            <field name="type" attrs="{'readonly': [('is_started', '=', True)]}"/>
+                        </group>
+                        <group>
+                            <field name="template_id" attrs="{'readonly': [('is_started', '=', True)]}"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company" attrs="{'readonly': [('is_started', '=', True)]}"/>
+                        </group>
+                    </group>
+                    <group col="2" attrs="{'invisible': [('type', '!=', 'execution')], 'readonly': [('is_started', '=', True)]}">
+                        <group>
+                            <field name="reviewer_ref"/>
+                        </group>
+                        <group>
+                            <field name="date_deadline" widget="date"/>
+                        </group>
+                    </group>
+                    <group attrs="{'invisible': [('type', '!=', 'complex')], 'readonly': [('is_started', '=', True)]}">
+                        <field name="controller_ref"/>
+                    </group>
+                    <group>
+                        <field name="description" string="Description" type="html" class="text_high"
+                               options="{'collaborative': true, 'resizable': false}"
+                               placeholder="Description..."
+                               attrs="{'readonly': [('is_started', '=', True)]}"/>
+                    </group>
+                    <notebook>
+                        <page name="executors_page" string="Executors" attrs="{'invisible': [('type', '=', 'complex')]}">
+                            <field name="executor_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="executor_ref" optional="show"/>
+                                    <field name="date_deadline" optional="show"/>
+                                    <field name="sequence" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="tasks_page" string="Tasks" attrs="{'invisible': [('is_started', '=', False)]}">
+                            <field name="task_ids" mode="tree">
+                                <tree create="0" delete="0"
+                                      decoration-info="state != 'done' and date_deadline &gt; current_date"
+                                      decoration-success="state == 'done'"
+                                      decoration-warning="state == 'to_do' and date_deadline &gt; current_date"
+                                      decoration-danger="state != 'done' and date_deadline &lt; current_date"
+                                      decoration-muted="state == 'cancel'">
+                                    <field name="name" optional="show"/>
+                                    <field name="user_ids" widget="many2many_avatar_user" optional="show"/>
+                                    <field name="date_deadline" optional="show"/>
+                                    <field name="date_closed" optional="show"/>
+                                    <field name="state" optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="processes_page" string="Processes" attrs="{'invisible': [('type', '!=', 'complex')]}">
+                            <field name="process_ids" widget="section_and_note_one2many" mode="tree">
+                                <tree>
+                                    <field name="type" optional="show"/>
+                                    <field name="name" optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+<!--                <div class="oe_chatter">-->
+<!--                    <field name="message_ids" widget="mail_thread"/>-->
+<!--                </div>-->
+            </form>
+        </field>
+    </record>
+
+    <record id="process_executor_view_form" model="ir.ui.view">
+        <field name="name">document_flow.process.executor.form</field>
+        <field name="model">document_flow.process.executor</field>
+        <field name="arch" type="xml">
+            <form string="Executor">
+                <sheet string="Executor">
+                    <group col="2">
+                        <group>
+                            <group>
+                                <field name="executor_ref" options="{'collaborative': true, 'resizable': false}"/>
+                            </group>
+                            <group>
+                                <field name="date_deadline" optional="show"/>
+                            </group>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

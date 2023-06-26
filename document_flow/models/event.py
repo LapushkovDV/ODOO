@@ -1,5 +1,4 @@
 from odoo import _, models, fields, api
-from odoo.exceptions import UserError
 from datetime import datetime, date, timedelta
 
 
@@ -12,12 +11,13 @@ class Event(models.Model):
     description = fields.Html(string='Description')
     date_start = fields.Datetime(string='Start Date', required=True, index=True, copy=False)
     date_end = fields.Datetime(string='End Date', index=True, copy=False)
-    location = fields.Char(string='Location', index=False, copy=False)
+    location = fields.Char(string='Location', index=False)
 
     organizer_id = fields.Many2one('res.users', string='Organizer')
     agreed_id = fields.Many2one('res.users', string='Agreed')
     member_ids = fields.Many2many('res.users', relation='event_user_rel', column1='event_id', column2='user_id',
-                                  string='Members', tracking=True)
+                                  string='Members')
+    management_committee_id = fields.Many2one('document_flow.management_committee', string='Management Committee')
     question_ids = fields.One2many('document_flow.event.question', 'event_id', string='Questions')
     decision_ids = fields.One2many('document_flow.event.decision', 'event_id', string='Decisions')
 
@@ -26,10 +26,24 @@ class Event(models.Model):
         ('on_approval', 'On Approval'),
         ('approved', 'Approved'),
         ('completed', 'Completed')
-    ], required=True, index=True, string='Status', default='on_registration', readonly=True, tracking=True)
+    ], required=True, index=True, string='Status', default='on_registration', readonly=True, tracking=True, copy=False)
 
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Documents')
     task_count = fields.Integer(compute='_compute_task_count', string='Tasks')
+    decision_count = fields.Integer(compute='_compute_decision_count')
+
+    # todo: отказаться от этого поля
+    request_for_review_sent = fields.Boolean(readonly=True)
+
+    @api.onchange('decision_ids')
+    def _onchange_decisions(self):
+        print('We are in _onchange_decisions')
+        self._compute_decision_count()
+
+    @api.onchange('management_committee_id')
+    def _onchange_management_committee(self):
+        if self.management_committee_id and not self.member_ids:
+            self.member_ids = self.management_committee_id.member_ids
 
     def _compute_attachment_count(self):
         for event in self:
@@ -40,18 +54,27 @@ class Event(models.Model):
 
     def _compute_task_count(self):
         for task in self:
-            task_count = self.env['task.task'].sudo().search_count([
+            task_count = self.env['task.task'].search_count([
                 ('parent_id', '=', False),
                 ('parent_ref_type', '=', self._name),
                 ('parent_ref_id', 'in', [ev.id for ev in self])
             ])
             for decision in task.decision_ids:
-                task_count = task_count + self.env['task.task'].sudo().search_count([
+                task_count = task_count + self.env['task.task'].search_count([
                     ('parent_id', '=', False),
                     ('parent_ref_type', '=', type(decision).__name__),
                     ('parent_ref_id', 'in', [d.id for d in decision])
                 ])
             task.task_count = task_count
+
+    def _compute_decision_count(self):
+        for event in self:
+            event.decision_count = len(self.decision_ids) + 1
+
+    def unlink(self):
+        self.question_ids.unlink()
+        self.decision_ids.unlink()
+        return super(Event, self).unlink()
 
     def action_send_for_approval(self):
         if self.agreed_id:
@@ -119,7 +142,7 @@ class Event(models.Model):
             })
 
     def action_send_for_execution(self):
-        for decision in self.decision_ids:
+        for decision in self.decision_ids.search([('date_deadline', '=', True)]):
             task = False
             if decision.responsible_id:
                 task = self.env['task.task'].search([
@@ -206,6 +229,44 @@ class Event(models.Model):
             }
         }
 
+    def action_send_for_review(self):
+        members = list(set(self.member_ids) | set(self.management_committee_id.member_ids))
+        for member in members:
+            task = self.env['task.task'].search([
+                ('type', '=', 'review'), ('parent_ref_type', '=', self._name),
+                ('parent_ref_id', '=', self.id), ('user_ids', '=', member.id)
+            ])
+            if not task:
+                task = self.env['task.task'].create({
+                    'name': _('Review of result event %s', self.name),
+                    'type': 'review',
+                    'description': self.description,
+                    'parent_ref': '%s,%s' % (self._name, self.id),
+                    'parent_ref_type': self._name,
+                    'parent_ref_id': self.id,
+                    'date_deadline': self.date_start + timedelta(1),
+                    'user_ids': [(4, member.id)]
+                })
+                activity = self.env['mail.activity'].create({
+                    'display_name': _('You have new task'),
+                    'summary': _('Review of result event %s', self.name),
+                    'date_deadline': task.date_deadline,
+                    'user_id': member.id,
+                    'res_id': task.id,
+                    'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
+                    'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
+                })
+        self.write({'request_for_review_sent': True})
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'sticky': False,
+                'message': _("Tasks for review were created for the following user(s)")
+            }
+        }
+
     def action_open_attachments(self):
         self.ensure_one()
         return {
@@ -281,7 +342,16 @@ class EventDecision(models.Model):
     ], required=True, default='to_date', string='Deadline Type')
     number_days = fields.Integer(string='Within')
     after_decision_id = fields.Many2one('document_flow.event.decision', string='After Decision',
-                                        domain='[("event_id", "=", event_id), ("id", "!=", id)]')
+                                        domain="[('id', 'in', parent.decision_ids), ('id', '!=', id)]")
+    # after_decision_ids = fields.Many2many('document_flow.event.decision', )
+    # domain="[('id', '!=', id), ('event_id', '=', event_id)]")
+
+    repeat_interval = fields.Selection([
+        ('week', 'Weeks'),
+        ('month', 'Months'),
+        ('quarter', 'Quarter'),
+        ('year', 'Years'),
+    ], required=False, string='Repeat Interval')
 
     def name_get(self):
         decisions = []
@@ -299,24 +369,14 @@ class EventDecision(models.Model):
                 ('parent_ref_id', '=', decision.id)
             ], limit=1)
 
-    @api.depends('decision_state')
-    def _compute_decision_state(self):
-        for decision in self:
-            decision.decision_state = self.env['task.task'].sudo().search([
-                ('parent_id', '=', False),
-                ('parent_ref_type', '=', self._name),
-                ('parent_ref_id', '=', decision.id)
-            ]).state
-
     @api.onchange('deadline_type', 'after_decision_id', 'number_days')
     def onchange_date_deadline(self):
-        for decision in self:
-            if decision.deadline_type == 'to_date':
-                decision.after_decision_id = False
-                decision.number_days = False
-            elif decision.deadline_type == 'after_decision' and decision.number_days:
-                decision.date_deadline = self._get_decision_date_deadline(decision.after_decision_id) + timedelta(
-                    days=decision.number_days)
+        if self.deadline_type == 'to_date':
+            self.after_decision_id = False
+            self.number_days = False
+        elif self.deadline_type == 'after_decision' and self.number_days:
+            self.date_deadline = self._get_decision_date_deadline(self.after_decision_id) + timedelta(
+                days=self.number_days)
 
     def _get_decision_date_deadline(self, decision):
         if decision.deadline_type == 'to_date':
