@@ -146,6 +146,17 @@ class Task(models.Model):
             activity.action_done()
         self.write({'state': 'done', 'is_closed': True, 'date_closed': date.today()})
 
+    def action_create_activity(self):
+        return self.env['mail.activity'].create({
+            'display_name': _('You have new task'),
+            'summary': self.name,
+            'date_deadline': self.date_deadline,
+            'user_id': self.user_ids[0].id,
+            'res_id': self.id,
+            'res_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id,
+            'activity_type_id': self.env.ref('mail.mail_activity_data_todo').id
+        })
+
     def action_cancel(self):
         if self.type == 'approving' and self.parent_ref_type == 'document_flow.event':
             event = self.env['document_flow.event'].search([

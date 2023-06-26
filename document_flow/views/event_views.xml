@@ -11,6 +11,17 @@
         </field>
     </record>
 
+    <record id="action_view_all_management_committee" model="ir.actions.act_window">
+        <field name="name">Management Committiees</field>
+        <field name="res_model">document_flow.management_committee</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No management committee found. Let's create one!
+            </p>
+        </field>
+    </record>
+
     <record id="action_view_task_id" model="ir.actions.act_window">
         <field name="name">Tasks</field>
         <field name="res_model">task.task</field>
@@ -35,7 +46,7 @@
         <field name="res_model">task.task</field>
         <field name="view_mode">tree,kanban,calendar,form</field>
         <field name="domain">[
-            ('parent_ref_type', 'in', ['document_flow.event', 'document_flow.event.decision'])]
+            ('parent_ref_type', 'in', ['document_flow.event', 'document_flow.event.decision', 'document_flow.process'])]
         </field>
         <field name="context">{
             'search_default_open_tasks': 1}
@@ -54,8 +65,13 @@
     </record>
 
     <menuitem id="document_flow_menu" name="Document Flow" sequence="10"/>
-    <menuitem id="document_flow_menu_event" parent = "document_flow_menu" name = "Events" action="action_view_all_event"/>
+    <menuitem id="document_flow_menu_event" parent="document_flow_menu" name="Events" sequence="10"
+              action="action_view_all_event"/>
     <menuitem id="menu_task_management" parent="document_flow_menu" name="Tasks" action="action_view_all_task"/>
+
+    <menuitem id="document_flow_menu_configuration" parent="document_flow_menu" sequence="100" name="Configuration"/>
+    <menuitem id="menu_management_committee" parent="document_flow_menu_configuration" sequence="10" name="Management Committees"
+              action="action_view_all_management_committee"/>
 
     <record id="event_view_tree" model="ir.ui.view">
         <field name="name">document_flow.event.tree</field>
@@ -63,7 +79,7 @@
         <field name="arch" type="xml">
             <tree string="Events" multi_edit="1" sample="1">
                 <field name="name" optional="show" readonly="1"/>
-                <field name="date_start" optional="show" readonly="1"/>
+                <field name="date_start" widget="date" optional="show" readonly="1"/>
                 <field name="member_ids" optional="show" widget="many2many_avatar_user" options='{"no_quick_create": True}'/>
             </tree>
         </field>
@@ -75,6 +91,8 @@
         <field name="arch" type="xml">
             <form string="Event">
                 <header>
+                    <button string="Send for review" type="object" name="action_send_for_review" class="oe_highlight"
+                            attrs="{'invisible': ['|', ('state', '!=', 'approved'), ('request_for_review_sent', '=', True)]}"/>
                     <button string="Send for approve" type="object" name="action_send_for_approval" class="oe_highlight"
                             attrs="{'invisible': [('state', '!=', 'on_registration')]}"/>
                     <button string="Send for execution" type="object" name="action_send_for_execution"
@@ -94,29 +112,27 @@
                             <field string="Tasks" name="task_count" widget="statinfo"/>
                         </button>
                     </div>
-                    <div class="oe_title pe-0">
-                        <h1 class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex w-100">
-                                <field name="name" class="o_event_name text-truncate w-100 w-md-75 pe-2"
-                                       placeholder="Event Title..."/>
-                            </div>
+                    <div class="oe_title mb-3">
+                        <h1>
+                            <field name="name" placeholder="Event Title..."/>
                         </h1>
                     </div>
                     <group>
+                        <field name="decision_count" invisible="1"/>
+                        <field name="request_for_review_sent" invisible="1"/>
                         <group>
-                            <field name="location"/>
-                            <field name="organizer_id"/>
-                        </group>
-                        <group>
-                            <field name="date_start" widget="date"/>
-                            <field name="date_end" invisible="1"/>
-                            <field name="agreed_id"/>
-                        </group>
-                        <group>
+                            <field name="management_committee_id"/>
                             <field name="member_ids"
                                    options="{'no_open': True, 'no_quick_create': True}"
                                    widget="many2many_avatar_user"
                                    domain="[('share', '=', False)]"/>
+                        </group>
+                        <group>
+                            <field name="location"/>
+                            <field name="date_start" widget="date"/>
+                            <field name="date_end" invisible="1"/>
+                            <field name="organizer_id"/>
+                            <field name="agreed_id"/>
                         </group>
                     </group>
                     <notebook>
@@ -135,12 +151,12 @@
                             </field>
                         </page>
                         <page name="decisions_page" string="Decisions">
-                            <field name="decision_ids" widget="section_and_note_one2many" mode="tree">
+                            <field name="decision_ids" widget="section_and_note_one2many" mode="tree" context="{'default_num': decision_count}">
                                 <tree
-                                        decoration-info="decision_state != 'done' and date_deadline == current_date"
+                                        decoration-info="decision_state != 'done' and date_deadline and date_deadline == current_date"
                                         decoration-success="decision_state == 'done'"
-                                        decoration-warning="decision_state == 'to_do' and date_deadline &gt; current_date"
-                                        decoration-danger="decision_state == 'cancel' or (decision_state != 'done' and date_deadline &lt; current_date)">
+                                        decoration-warning="decision_state == 'to_do' and date_deadline and date_deadline &gt; current_date"
+                                        decoration-danger="decision_state == 'cancel' or (decision_state != 'done' and date_deadline and date_deadline &lt; current_date)">
                                     <field name="num" optional="show"/>
                                     <field name="name" optional="show"/>
                                     <field name="responsible_id" optional="show"/>

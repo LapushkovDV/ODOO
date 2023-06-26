@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-14 14:13+0000\n"
-"PO-Revision-Date: 2023-06-14 14:13+0000\n"
+"POT-Creation-Date: 2023-06-18 20:13+0000\n"
+"PO-Revision-Date: 2023-06-18 20:13+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -109,9 +109,15 @@ msgid "Completed"
 msgstr "Завершено"
 
 #. module: document_flow
+#: model:ir.ui.menu,name:document_flow.document_flow_menu_configuration
+msgid "Configuration"
+msgstr "Настройки"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__create_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_management_committee__create_uid
 msgid "Created by"
 msgstr "Автор"
 
@@ -119,6 +125,7 @@ msgstr "Автор"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__create_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_management_committee__create_date
 msgid "Created on"
 msgstr "Дата создания"
 
@@ -151,6 +158,11 @@ msgid "Decision"
 msgstr "Решение"
 
 #. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__decision_count
+msgid "Decision Count"
+msgstr ""
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__decision_state
 msgid "Decision State"
 msgstr "Статус задачи на исполнение"
@@ -180,6 +192,7 @@ msgstr "Описание"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__display_name
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_management_committee__display_name
 msgid "Display Name"
 msgstr "Наименование"
 
@@ -228,11 +241,6 @@ msgstr "Дата окончания"
 #, python-format
 msgid "Event"
 msgstr "Мероприятие"
-
-#. module: document_flow
-#: model:ir.actions.report,name:document_flow.event_protocol
-msgid "Event (docx)"
-msgstr "Мероприятие (docx)"
 
 #. module: document_flow
 #: model:ir.model,name:document_flow.model_document_flow_event_decision
@@ -313,6 +321,7 @@ msgstr "Есть сообщения"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_management_committee__id
 msgid "ID"
 msgstr ""
 
@@ -346,6 +355,7 @@ msgstr "Подписчик"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question____last_update
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_management_committee____last_update
 msgid "Last Modified on"
 msgstr "Дата последнего изменения"
 
@@ -353,6 +363,7 @@ msgstr "Дата последнего изменения"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__write_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_management_committee__write_uid
 msgid "Last Updated by"
 msgstr "Автор последнего изменения"
 
@@ -360,6 +371,7 @@ msgstr "Автор последнего изменения"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__write_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_management_committee__write_date
 msgid "Last Updated on"
 msgstr "Дата последнего изменения"
 
@@ -374,7 +386,25 @@ msgid "Main Attachment"
 msgstr "Основное вложение"
 
 #. module: document_flow
+#: model:ir.model,name:document_flow.model_document_flow_management_committee
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__management_committee_id
+#: model_terms:ir.ui.view,arch_db:document_flow.management_committee_view_form
+msgid "Management Committee"
+msgstr "Управляющий комитет"
+
+#. module: document_flow
+#: model:ir.ui.menu,name:document_flow.menu_management_committee
+msgid "Management Committees"
+msgstr "Управляющий комитет"
+
+#. module: document_flow
+#: model:ir.actions.act_window,name:document_flow.action_view_all_management_committee
+msgid "Management Committiees"
+msgstr "Управляющие комитеты"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__member_ids
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_management_committee__member_ids
 msgid "Members"
 msgstr "Участники"
 
@@ -389,12 +419,18 @@ msgid "Messages"
 msgstr "Сообщения"
 
 #. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__repeat_interval__month
+msgid "Months"
+msgstr "Ежемесячно"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__my_activity_date_deadline
 msgid "My Activity Deadline"
 msgstr "Срок исполнения моей активности"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__name
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_management_committee__name
 msgid "Name"
 msgstr "Содержание"
 
@@ -422,6 +458,11 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:document_flow.action_view_all_event
 msgid "No events found. Let's create one!"
 msgstr "Не найдено ни одного мероприятия. Давайте создадим одно!"
+
+#. module: document_flow
+#: model_terms:ir.actions.act_window,help:document_flow.action_view_all_management_committee
+msgid "No management committee found. Let's create one!"
+msgstr "Управляющие комитеты не найдены. Давайте создадим первый!"
 
 #. module: document_flow
 #: model_terms:ir.actions.act_window,help:document_flow.action_view_all_task
@@ -478,8 +519,13 @@ msgstr "Организатор"
 #. odoo-python
 #: code:addons/document_flow/report/event_protocol.py:0
 #, python-format
-msgid "Protocol %s from %s"
-msgstr "Протокол %s от %s"
+msgid "Protocol \"%s\" from %s"
+msgstr "Протокол \"%s\" от %s"
+
+#. module: document_flow
+#: model:ir.actions.report,name:document_flow.event_protocol
+msgid "Protocol (docx)"
+msgstr "Мероприятие (docx)"
 
 #. module: document_flow
 #. odoo-python
@@ -510,6 +556,11 @@ msgid "Protocol was declined"
 msgstr "Протокол отклонен"
 
 #. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__repeat_interval__quarter
+msgid "Quarter"
+msgstr "Ежеквартально"
+
+#. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.event_question_view_form
 msgid "Question"
 msgstr "Повестка"
@@ -524,6 +575,16 @@ msgstr "Повестка..."
 #: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
 msgid "Questions"
 msgstr "Повестка"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__repeat_interval
+msgid "Repeat Interval"
+msgstr "Интервал повторения"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__request_for_review_sent
+msgid "Request For Review Sent"
+msgstr ""
 
 #. module: document_flow
 #. odoo-python
@@ -555,6 +616,14 @@ msgid "Review"
 msgstr "Ознакомление"
 
 #. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Review of result event %s"
+msgstr "Ознакомление с результатами события %s"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr ""
@@ -568,6 +637,11 @@ msgstr "Отправить на согласование"
 #: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
 msgid "Send for execution"
 msgstr "Отправить на исполнение"
+
+#. module: document_flow
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
+msgid "Send for review"
+msgstr "Отправить на ознакомление"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__speaker_ids
@@ -632,6 +706,13 @@ msgid "Tasks for execution were created for the following user(s): %s"
 msgstr "Задачи на исполнение были созданы для пользователей: %s"
 
 #. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Tasks for review were created for the following user(s)"
+msgstr "Задачи на ознакомление были созданы для пользователя(-ей)"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__time_end
 msgid "To"
 msgstr "По"
@@ -672,6 +753,11 @@ msgid "Website communication history"
 msgstr ""
 
 #. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__repeat_interval__week
+msgid "Weeks"
+msgstr "Еженедельно"
+
+#. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/report/event_protocol.py:0
 #, python-format
@@ -684,6 +770,11 @@ msgid "Within"
 msgstr "В течение (дней)"
 
 #. module: document_flow
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__repeat_interval__year
+msgid "Years"
+msgstr "Ежегодно"
+
+#. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/models/event.py:0
 #, python-format
@@ -692,6 +783,7 @@ msgstr "У вас есть новый запрос на согласование
 
 #. module: document_flow
 #. odoo-python
+#: code:addons/document_flow/models/event.py:0
 #: code:addons/document_flow/models/event.py:0
 #: code:addons/document_flow/models/event.py:0
 #, python-format

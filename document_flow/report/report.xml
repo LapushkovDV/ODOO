@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="document_flow.event_protocol" model="ir.actions.report">
-        <field name="name">Event (docx)</field>
+        <field name="name">Protocol (docx)</field>
         <field name="model">document_flow.event</field>
         <field name="report_type">docx</field>
         <field name="report_name">document_flow.event_protocol</field>
