@@ -54,7 +54,7 @@ class fact_acceptance_flow(models.Model):
             else:
                 row.sum_cash = row.sum_cash_without_vat * (1 + row.projects_id.vat_attribute_id.percent / 100)
 
-    @api.depends("distribution_acceptance_ids")
+    @api.onchange("distribution_acceptance_ids")
     def _compute_distribution_sum(self):
         for row in self:
             row.distribution_sum_with_vat = row.distribution_sum_without_vat = 0

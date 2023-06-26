@@ -78,5 +78,5 @@ class planned_cash_flow(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             if not vals.get('cash_id') or vals['cash_id'] == '-':
-                vals['acceptance_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.planned_cash_flow')
+                vals['cash_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.planned_cash_flow')
         return super().create(vals_list)
