@@ -76,45 +76,6 @@ class Event(models.Model):
         self.decision_ids.unlink()
         return super(Event, self).unlink()
 
-    def action_send_for_approval(self):
-        if self.agreed_id:
-            task = self.env['task.task'].search([
-                ('type', '=', 'approving'), ('parent_ref_type', '=', self._name),
-                ('parent_ref_id', '=', self.id), ('user_ids', '=', self.agreed_id.id)
-            ])
-            if not task:
-                task = self.env['task.task'].create({
-                    'name': _('Approval on a protocol of event %s', self.name),
-                    'type': 'approving',
-                    'description': self.description,
-                    'parent_ref': '%s,%s' % (self._name, self.id),
-                    'parent_ref_type': self._name,
-                    'parent_ref_id': self.id,
-                    'date_deadline': datetime.now(),
-                    'user_ids': [(4, self.agreed_id.id)]
-                })
-            else:
-                task.action_to_do()
-            activity = self.env['mail.activity'].create({
-                'display_name': _('You have new request for approval'),
-                'summary': _('Approval on a protocol of event %s', self.name),
-                'date_deadline': datetime.now(),
-                'user_id': self.agreed_id.id,
-                'res_id': task.id,
-                'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
-                'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
-            })
-        self.write({'state': 'on_approval'})
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'type': 'success',
-                'sticky': False,
-                'message': _("Request for approval on a protocol was send for the user: %s") % self.agreed_id.name
-            }
-        }
-
     def action_decline_approval(self):
         self.write({'state': 'on_registration'})
         if self.organizer_id:
@@ -264,6 +225,86 @@ class Event(models.Model):
                 'type': 'success',
                 'sticky': False,
                 'message': _("Tasks for review were created for the following user(s)")
+            }
+        }
+
+    def action_send_for_approving(self):
+        if self.agreed_id:
+            complex_process = self.env['document_flow.process'].create({
+                'name': _('Agree on a protocol of event "%s"', self.name),
+                'type': 'complex',
+                'description': self.description
+            })
+
+            process_agreement = self.env['document_flow.process'].create({
+                'name': _('Agree on a protocol of event "%s"', self.name),
+                'type': 'agreement',
+                'description': self.description,
+                'parent_id': complex_process.id
+            })
+            process_agreement_executor = self.env['document_flow.process.executor'].create({
+                'process_id': process_agreement.id,
+                'executor_ref': '%s,%s' % (type(self.agreed_id).__name__, self.agreed_id.id),
+                'date_deadline': datetime.now()
+            })
+
+            reviews = self.decision_ids.search([
+                ('task_type', '=', 'review'),
+                ('date_deadline', '!=', False),
+                ('executor_ids', '!=', False)
+            ])
+            if reviews.ids:
+                for decision in reviews:
+                    process_review = self.env['document_flow.process'].create({
+                        'name': _('Review with decision of event "%s"', self.name),
+                        'type': 'review',
+                        'description': decision.name,
+                        'parent_id': complex_process.id
+                    })
+                    for executor in decision.executor_ids:
+                        process_review_executor = self.env['document_flow.process.executor'].create({
+                            'process_id': process_review.id,
+                            'executor_ref': '%s,%s' % (type(executor).__name__, executor.id),
+                            'date_deadline': decision.date_deadline
+                        })
+
+            executions = self.decision_ids.search([
+                "&", "&",
+                ('task_type', '=', 'review'),
+                ('date_deadline', '!=', False),
+                "|",
+                ('executor_ids', '!=', False),
+                ('responsible_id', '!=', False)
+            ])
+            if executions.ids:
+                for decision in executions:
+                    process_execution = self.env['document_flow.process'].create({
+                        'name': _('Execute decision of event "%s"', self.name),
+                        'type': 'execution',
+                        'description': decision.name,
+                        'parent_id': complex_process.id
+                    })
+                    # TODO: свернуть в 1 запись
+                    if decision.reviewer_ref:
+                        process_execution.write({
+                            'controller_ref': '%s,%s' % (type(decision.reviewer_ref).__name__, decision.reviewer_ref.id)
+                        })
+                    if decision.executor_ids:
+                        for executor in decision.executor_ids:
+                            process_execution_executor = self.env['document_flow.process.executor'].create({
+                                'process_id': process_execution.id,
+                                'executor_ref': '%s,%s' % (type(executor).__name__, executor.id),
+                                'date_deadline': decision.date_deadline
+                            })
+
+        # self.write({'state': 'on_approval'})
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'sticky': False,
+                'message': _("The process of agreement a protocol were started")
             }
         }
 

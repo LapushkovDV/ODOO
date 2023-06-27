@@ -129,6 +129,7 @@ class ProcessExecutor(models.Model):
         return selection_executor_model()
 
     process_id = fields.Many2one('document_flow.process', string='Process')
+    description = fields.Html(string='Description')
     executor_ref = fields.Reference(string='Executor', selection='_selection_executor_model', store=True)
     executor_ref_id = fields.Integer(string='Executor Id', index=True, copy=False)
     executor_ref_type = fields.Char(string='Executor Type', index=True, copy=False)

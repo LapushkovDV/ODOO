@@ -108,17 +108,18 @@ class Task(models.Model):
     #             })
 
     def action_assign_to_user(self):
-        self.write({'state': 'assigned'})
-        for user in self.user_ids:
-            self.env['mail.activity'].create({
-                'display_name': _('You have new task'),
-                'summary': _('You have new task by project %s' % self.project_id),
-                'date_deadline': self.date_deadline,
-                'user_id': user.id,
-                'res_id': self.id,
-                'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
-                'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
-            })
+        pass
+        # self.write({'state': 'assigned'})
+        # for user in self.user_ids:
+        #     self.env['mail.activity'].create({
+        #         'display_name': _('You have new task'),
+        #         'summary': _('You have new task by project %s' % self.project_id),
+        #         'date_deadline': self.date_deadline,
+        #         'user_id': user.id,
+        #         'res_id': self.id,
+        #         'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
+        #         'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
+        #     })
 
     def action_to_do(self):
         self.write({'state': 'to_do', 'is_closed': False, 'implementation_report': False})
