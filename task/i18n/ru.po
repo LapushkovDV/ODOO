@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-14 15:30+0000\n"
-"PO-Revision-Date: 2023-06-14 15:30+0000\n"
+"POT-Creation-Date: 2023-06-26 08:46+0000\n"
+"PO-Revision-Date: 2023-06-26 08:46+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -227,7 +227,6 @@ msgstr "Если отмечено, то сообщения требуют Ваш
 
 #. module: task
 #: model:ir.model.fields,help:task.field_task_task__message_has_error
-#: model:ir.model.fields,help:task.field_task_task__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Если отмечено, то есть ошибки доставки"
 
@@ -292,7 +291,6 @@ msgid "My Activity Deadline"
 msgstr "Срок исполнения моей активности"
 
 #. module: task
-#: model:ir.ui.menu,name:task.menu_task_management
 #: model_terms:ir.ui.view,arch_db:task.task_view_search
 msgid "My Tasks"
 msgstr "Мои задачи"
@@ -423,11 +421,6 @@ msgid "Review"
 msgstr "Ознакомление"
 
 #. module: task
-#: model:ir.model.fields,field_description:task.field_task_task__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr ""
-
-#. module: task
 #: model:ir.model.fields,field_description:task.field_task_task__state
 msgid "Status"
 msgstr "Статус"
@@ -496,8 +489,6 @@ msgstr ""
 #. module: task
 #: model:ir.actions.act_window,name:task.action_view_all_task
 #: model:ir.actions.act_window,name:task.action_view_task_id
-#: model:ir.model.fields,field_description:task.field_project_budget_projects__task_count
-#: model_terms:ir.ui.view,arch_db:task.project_budget_task_view_inherit_form
 #: model_terms:ir.ui.view,arch_db:task.task_view_calendar
 #: model_terms:ir.ui.view,arch_db:task.task_view_search
 #: model_terms:ir.ui.view,arch_db:task.task_view_tree
@@ -513,7 +504,7 @@ msgstr "Тема"
 #: model:ir.model.fields.selection,name:task.selection__task_task__state__to_do
 #: model_terms:ir.ui.view,arch_db:task.task_view_form
 msgid "To Do"
-msgstr "К исполнению"
+msgstr "Новая"
 
 #. module: task
 #: model:ir.model.fields,field_description:task.field_task_task__type
@@ -536,18 +527,8 @@ msgid "View Task"
 msgstr "Открыть задачу"
 
 #. module: task
-#: model:ir.model.fields,field_description:task.field_task_task__website_message_ids
-msgid "Website Messages"
-msgstr ""
-
-#. module: task
-#: model:ir.model.fields,help:task.field_task_task__website_message_ids
-msgid "Website communication history"
-msgstr ""
-
-#. module: task
 #. odoo-python
-#: code:addons/task/models/task.py:0
+#: code:addons/task/models/task.py:0 code:addons/task/models/task.py:0
 #, python-format
 msgid "You have new task"
 msgstr "Вам назначена новая задача"
@@ -558,8 +539,3 @@ msgstr "Вам назначена новая задача"
 #, python-format
 msgid "You have new task by project %s"
 msgstr "Вам назначена новая задача по проекту %s"
-
-#. module: task
-#: model:ir.model,name:task.model_project_budget_projects
-msgid "project_office commercial budget projects"
-msgstr "Проекты"

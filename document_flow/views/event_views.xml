@@ -93,7 +93,7 @@
                 <header>
                     <button string="Send for review" type="object" name="action_send_for_review" class="oe_highlight"
                             attrs="{'invisible': ['|', ('state', '!=', 'approved'), ('request_for_review_sent', '=', True)]}"/>
-                    <button string="Send for approve" type="object" name="action_send_for_approval" class="oe_highlight"
+                    <button string="Send for approve" type="object" name="action_send_for_approving" class="oe_highlight"
                             attrs="{'invisible': [('state', '!=', 'on_registration')]}"/>
                     <button string="Send for execution" type="object" name="action_send_for_execution"
                             class="oe_highlight"
