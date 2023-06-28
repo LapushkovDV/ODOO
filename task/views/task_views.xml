@@ -46,14 +46,17 @@
                 <header>
 <!--                    <button string="Assign to user" type="object" name="action_assign_to_user" class="oe_highlight"-->
 <!--                            attrs="{'invisible': [('state', '!=', 'new'), ('state', '!=', 'cancel')]}"/>-->
-                    <button string="To Do" type="object" name="action_to_do" class="oe_highlight"
-                            attrs="{'invisible': ['|', ('type', '=', 'review'), ('state', 'not in', ('cancel'))]}"/>
+<!--                    TODO: Разобраться как передать button caption в контексте, а то чет кнопок дохуя-->
                     <button string="In Progress" type="object" name="action_in_progress" class="oe_highlight"
-                            attrs="{'invisible': ['|', ('type', 'in', ('review', 'approving')), ('state', '!=', 'to_do')]}"/>
+                            attrs="{'invisible': [('state', '!=', 'to_do')]}"/>
+                    <button string="Reviewed" type="object" name="action_reviewed" class="oe_highlight"
+                            attrs="{'invisible': ['|', ('type', '!=', 'review'), ('state', 'not in', ['to_do'])]}"/>
+                    <button string="Agreed" type="object" name="action_agreed" class="oe_highlight"
+                            attrs="{'invisible': ['|', ('type', '!=', 'agreement'), ('state', 'not in', ['to_do'])]}"/>
                     <button string="Done" type="object" name="action_done" class="oe_highlight"
-                            attrs="{'invisible': ['|', '&amp;', ('type', '=', 'execution'), ('state', '=', 'to_do'), ('state', 'in', ('done', 'cancel'))]}"/>
-                    <button string="Cancel" type="object" name="action_cancel" class="oe_highlight"
-                            attrs="{'invisible': ['|', ('type', '=', 'review'), ('state', 'in', ('done', 'cancel'))]}"/>
+                            attrs="{'invisible': ['|', ('type', '!=', 'execution'), ('state', 'not in', ['to_do'])]}"/>
+                    <button string="Not Agreed" type="object" name="action_not_agreed" class="oe_highlight"
+                            attrs="{'invisible': ['|', ('type', '!=', 'agreement'), ('state', 'not in', ['to_do'])]}"/>
                     <field name="state" widget="statusbar" options="{'clickable': False, 'fold_field': 'fold'}"
                            invisible="1"/>
                 </header>
@@ -111,7 +114,7 @@
                                    placeholder="Task description..."/>
                         </page>
                         <page name="sub_tasks_page" string="Sub-tasks"
-                              attrs="{'invisible' : [('type', 'in', ('review', 'approving'))]}">
+                              attrs="{'invisible' : [('type', 'in', ('review', 'agreement'))]}">
                             <field name="child_ids"
                                    context="{'search_view_ref' : 'task.task_view_search',
                                    'default_user_ids': user_ids, 'default_parent_id': id, 'search_default_parent_ref': parent_ref }"
@@ -126,11 +129,10 @@
                                 </tree>
                             </field>
                         </page>
-                        <page name="report_page" string="Report on the implementation"
-                              attrs="{'invisible' : ['|', ('type', '=', 'review'),
-                              '&amp;', ('type', '=', 'execution'), ('state', 'in', ('to_do', 'cancel'))]}">
-                            <field name="implementation_report" type="html"
-                                   options="{'collaborative': true, 'resizable': false}"/>
+                        <page name="report_page" string="Comment">
+                            <field name="execution_result" type="html"
+                                   options="{'collaborative': true, 'resizable': false}"
+                                   placeholder="Comment..."/>
                         </page>
                     </notebook>
                 </sheet>

@@ -9,6 +9,10 @@ PROCESS_TYPES = [
     ('complex', _('Complex'))
 ]
 
+PROCESS_STATES = [
+    ('on_registration', _('On Registration'))
+]
+
 
 # todo: необходима возможность выбора роли, возможно каких-то предопределенных методов
 def selection_executor_model():
@@ -29,7 +33,7 @@ class Process(models.Model):
     company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
     template_id = fields.Many2one('document_flow.process.template', string='Template',
                                   domain="[('type', '=', type)]")
-    parent_id = fields.Many2one('document_flow.process', string='Parent Process')
+    parent_id = fields.Many2one('document_flow.process', string='Parent Process', ondelete='cascade', index=True)
     executor_ids = fields.One2many('document_flow.process.executor', 'process_id', string='Executors')
 
     is_started = fields.Boolean(string='Is Started', default=False)
@@ -49,6 +53,10 @@ class Process(models.Model):
     process_ids = fields.One2many('document_flow.process', 'parent_id', string='Processes')
     task_ids = fields.One2many('task.task', 'parent_ref_id', string='Tasks',
                                domain=lambda self: [('parent_ref_type', '=', 'document_flow.process')])
+    sequence = fields.Integer(string='Sequence')
+
+    # task_ids = fields.One2many('task.task', 'parent_ref_id', string='Tasks', compute='_compute_task_ids', readonly=True,
+    #                            store=True)
 
     @api.depends('reviewer_ref_type', 'reviewer_ref_id')
     def _compute_reviewer_ref(self):
@@ -82,12 +90,16 @@ class Process(models.Model):
                     'date_deadline': fields.Datetime.now() + timedelta(executor.deadline)
                 })
 
-    def action_start(self):
+    def action_start_process(self):
         if not self.is_started:
             if self.type == 'complex':
-                self.action_start_complex_process()
-            else:
-                self.action_start_process()
+                self.start_complex_process()
+            elif self.type == 'review':
+                self.start_review_process()
+            elif self.type == 'agreement':
+                self.start_agreement_process()
+            elif self.type == 'execution':
+                self.start_execution_process()
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -100,7 +112,24 @@ class Process(models.Model):
             }
         }
 
-    def action_start_process(self):
+    def start_review_process(self):
+        if self.executor_ids:
+            for executor in self.executor_ids:
+                task = self.env['task.task'].create({
+                    'name': self.name,
+                    'type': self.type,
+                    'description': self.description,
+                    'parent_ref': '%s,%s' % (self._name, self.id),
+                    'parent_ref_type': self._name,
+                    'parent_ref_id': self.id,
+                    'date_deadline': executor.date_deadline,
+                    'user_ids': [(4, executor.executor_ref.id)]
+                })
+                # TODO: создание активности необходимо перенести в таски, при создании/изменении исполнителя
+                task.action_create_activity()
+
+    # TODO: разобраться с reviewer, нужен ли и какой процесс
+    def start_agreement_process(self):
         if self.executor_ids:
             for executor in self.executor_ids:
                 task = self.env['task.task'].create({
@@ -116,8 +145,54 @@ class Process(models.Model):
                 task.action_create_activity()
             self.write({'is_started': True})
 
-    def action_start_complex_process(self):
-        pass
+    def start_execution_process(self):
+        if self.executor_ids:
+            for executor in self.executor_ids:
+                task = self.env['task.task'].create({
+                    'name': self.name,
+                    'type': self.type,
+                    'description': self.description,
+                    'parent_ref': '%s,%s' % (self._name, self.id),
+                    'parent_ref_type': self._name,
+                    'parent_ref_id': self.id,
+                    'date_deadline': executor.date_deadline,
+                    'user_ids': [(4, executor.executor_ref.id)]
+                })
+                task.action_create_activity()
+            self.write({'is_started': True})
+
+    def start_complex_process(self):
+        min_sequence = self.process_ids.search([
+            ('parent_id', '=', self.id)
+        ], order='sequence, id', limit=1).sequence or 0
+        for process in self.process_ids.search([
+            ('parent_id', '=', self.id),
+            ('sequence', '=', min_sequence)
+        ], order='id'):
+            process.action_start_process()
+        self.write({'is_started': True})
+
+    def process_task_result(self, date_closed):
+        if self.parent_id:
+            next_sequence = self.parent_id.process_ids.search([
+                ('parent_id', '=', self.parent_id.id),
+                ('sequence', '>', self.sequence)
+            ], order='sequence, id', limit=1).sequence or False
+            if not next_sequence:
+                if not self.parent_id.process_ids.search([
+                    ('id', '!=', self.id),
+                    ('parent_id', '=', self.parent_id.id),
+                    ('sequence', '=', self.sequence),
+                    ('is_closed', '=', False)
+                ]):
+                    self.parent_id.write({'is_closed': True, 'date_end': date_closed})
+            else:
+                for process in self.process_ids.search([
+                    ('parent_id', '=', self.parent_id.id),
+                    ('sequence', '=', next_sequence)
+                ], order='id'):
+                    process.action_start_process()
+        self.write({'is_closed': True, 'date_end': date_closed})
 
 
 class ProcessExecutor(models.Model):
@@ -128,7 +203,8 @@ class ProcessExecutor(models.Model):
     def _selection_executor_model(self):
         return selection_executor_model()
 
-    process_id = fields.Many2one('document_flow.process', string='Process')
+    process_id = fields.Many2one('document_flow.process', string='Process', ondelete='cascade', index=True,
+                                 required=True)
     description = fields.Html(string='Description')
     executor_ref = fields.Reference(string='Executor', selection='_selection_executor_model', store=True)
     executor_ref_id = fields.Integer(string='Executor Id', index=True, copy=False)

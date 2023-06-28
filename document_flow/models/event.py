@@ -7,11 +7,11 @@ class Event(models.Model):
     _description = 'Event'
     _inherit = ['mail.thread.cc', 'mail.activity.mixin']
 
-    name = fields.Char(string='Name', required=True)
+    name = fields.Char(string='Name', required=True, copy=True)
     description = fields.Html(string='Description')
-    date_start = fields.Datetime(string='Start Date', required=True, index=True, copy=False)
+    date_start = fields.Datetime(string='Start Date', required=True, index=True, copy=True)
     date_end = fields.Datetime(string='End Date', index=True, copy=False)
-    location = fields.Char(string='Location', index=False)
+    location = fields.Char(string='Location')
 
     organizer_id = fields.Many2one('res.users', string='Organizer')
     agreed_id = fields.Many2one('res.users', string='Agreed')
@@ -239,6 +239,7 @@ class Event(models.Model):
             process_agreement = self.env['document_flow.process'].create({
                 'name': _('Agree on a protocol of event "%s"', self.name),
                 'type': 'agreement',
+                'sequence': 0,
                 'description': self.description,
                 'parent_id': complex_process.id
             })
@@ -258,6 +259,7 @@ class Event(models.Model):
                     process_review = self.env['document_flow.process'].create({
                         'name': _('Review with decision of event "%s"', self.name),
                         'type': 'review',
+                        'sequence': 1,
                         'description': decision.name,
                         'parent_id': complex_process.id
                     })
@@ -270,7 +272,7 @@ class Event(models.Model):
 
             executions = self.decision_ids.search([
                 "&", "&",
-                ('task_type', '=', 'review'),
+                ('task_type', '=', 'execution'),
                 ('date_deadline', '!=', False),
                 "|",
                 ('executor_ids', '!=', False),
@@ -281,13 +283,14 @@ class Event(models.Model):
                     process_execution = self.env['document_flow.process'].create({
                         'name': _('Execute decision of event "%s"', self.name),
                         'type': 'execution',
+                        'sequence': 1,
                         'description': decision.name,
                         'parent_id': complex_process.id
                     })
                     # TODO: свернуть в 1 запись
-                    if decision.reviewer_ref:
+                    if decision.responsible_id and decision.executor_ids:
                         process_execution.write({
-                            'controller_ref': '%s,%s' % (type(decision.reviewer_ref).__name__, decision.reviewer_ref.id)
+                            'reviewer_ref': '%s,%s' % (type(decision.responsible_id).__name__, decision.responsible_id.id)
                         })
                     if decision.executor_ids:
                         for executor in decision.executor_ids:
@@ -296,6 +299,13 @@ class Event(models.Model):
                                 'executor_ref': '%s,%s' % (type(executor).__name__, executor.id),
                                 'date_deadline': decision.date_deadline
                             })
+                    elif decision.responsible_id:
+                        process_execution_executor = self.env['document_flow.process.executor'].create({
+                            'process_id': process_execution.id,
+                            'executor_ref': '%s,%s' % (type(decision.responsible_id).__name__, decision.responsible_id.id),
+                            'date_deadline': decision.date_deadline
+                        })
+            # complex_process.start_process()
 
         # self.write({'state': 'on_approval'})
         return {
