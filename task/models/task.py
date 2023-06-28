@@ -27,8 +27,7 @@ class Task(models.Model):
     ], required=True, default='review', index=True, string='Type')
 
     company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
-    user_ids = fields.Many2many('res.users', relation='task_task_user_rel', column1='task_id', column2='user_id',
-                                string='Assignees', tracking=True)
+    user_id = fields.Many2one('res.users', string='Assigned', tracking=True)
     state = fields.Selection([
         ('to_do', 'To Do'),
         ('assigned', 'Assigned'),
@@ -113,7 +112,7 @@ class Task(models.Model):
             'display_name': _('You have new task'),
             'summary': self.name,
             'date_deadline': self.date_deadline,
-            'user_id': self.user_ids[0].id,
+            'user_id': self.user_id.id,
             'res_id': self.id,
             'res_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id,
             'activity_type_id': self.env.ref('mail.mail_activity_data_todo').id

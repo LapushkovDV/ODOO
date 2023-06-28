@@ -53,7 +53,7 @@ class Process(models.Model):
     process_ids = fields.One2many('document_flow.process', 'parent_id', string='Processes')
     task_ids = fields.One2many('task.task', 'parent_ref_id', string='Tasks',
                                domain=lambda self: [('parent_ref_type', '=', 'document_flow.process')])
-    sequence = fields.Integer(string='Sequence')
+    sequence = fields.Integer(string='Sequence', default=0)
 
     # task_ids = fields.One2many('task.task', 'parent_ref_id', string='Tasks', compute='_compute_task_ids', readonly=True,
     #                            store=True)
@@ -123,7 +123,7 @@ class Process(models.Model):
                     'parent_ref_type': self._name,
                     'parent_ref_id': self.id,
                     'date_deadline': executor.date_deadline,
-                    'user_ids': [(4, executor.executor_ref.id)]
+                    'user_id': executor.executor_ref.id
                 })
                 # TODO: создание активности необходимо перенести в таски, при создании/изменении исполнителя
                 task.action_create_activity()
@@ -140,7 +140,7 @@ class Process(models.Model):
                     'parent_ref_type': self._name,
                     'parent_ref_id': self.id,
                     'date_deadline': executor.date_deadline,
-                    'user_ids': [(4, executor.executor_ref.id)]
+                    'user_id': executor.executor_ref.id
                 })
                 task.action_create_activity()
             self.write({'is_started': True})
@@ -156,7 +156,7 @@ class Process(models.Model):
                     'parent_ref_type': self._name,
                     'parent_ref_id': self.id,
                     'date_deadline': executor.date_deadline,
-                    'user_ids': [(4, executor.executor_ref.id)]
+                    'user_id': executor.executor_ref.id
                 })
                 task.action_create_activity()
             self.write({'is_started': True})

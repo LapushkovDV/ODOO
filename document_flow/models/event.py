@@ -8,6 +8,7 @@ class Event(models.Model):
     _inherit = ['mail.thread.cc', 'mail.activity.mixin']
 
     name = fields.Char(string='Name', required=True, copy=True)
+    company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
     description = fields.Html(string='Description')
     date_start = fields.Datetime(string='Start Date', required=True, index=True, copy=True)
     date_end = fields.Datetime(string='End Date', index=True, copy=False)
@@ -362,7 +363,7 @@ class EventQuestion(models.Model):
     name = fields.Html(string='Agenda', required=True)
     time_start = fields.Float(string="From")
     time_end = fields.Float(string="To")
-    event_id = fields.Many2one('document_flow.event', string='Event', copy=False)
+    event_id = fields.Many2one('document_flow.event', string='Event', ondelete='cascade', index=True, required=True)
     speaker_ids = fields.Many2many('res.users', relation='event_question_user_rel', column1='question_id',
                                    column2='speaker_id', string='Speakers')
 
@@ -374,7 +375,7 @@ class EventDecision(models.Model):
 
     num = fields.Integer(string='№', required=True)
     name = fields.Html(string='Decided', required=True)
-    event_id = fields.Many2one('document_flow.event', string='Event', copy=False)
+    event_id = fields.Many2one('document_flow.event', string='Event', ondelete='cascade', index=True, required=True)
     task_type = fields.Selection([
         ('review', 'Review'),
         ('execution', 'Execution')
@@ -441,14 +442,3 @@ class EventDecision(models.Model):
     def unlink(self):
         self.mapped('task_id').unlink()
         return super(EventDecision, self).unlink()
-
-
-class EventTask(models.Model):
-    _inherit = "task.task"
-
-    @api.model
-    def _selection_parent_model(self):
-        types = super(EventTask, self)._selection_parent_model()
-        types.append(('document_flow.event', _('Event')))
-        types.append(('document_flow.event.decision', _('Decision')))
-        return types
