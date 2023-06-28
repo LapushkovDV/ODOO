@@ -9,7 +9,7 @@
                         <field name="budget_state" invisible="True"/>
                         <field name="approve_state" invisible="True"/>
                         <field name="project_have_steps" invisible="True"/>
-                        <field name="projects_id" invisible="True"/>
+                        <field name="projects_id" invisible="False"/>
                         <group>
                             <group>
                                 <field name="date_cash" placeholder="enter planned cash flow date"/>

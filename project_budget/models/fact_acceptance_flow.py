@@ -19,10 +19,11 @@ class fact_acceptance_flow(models.Model):
     _name = 'project_budget.fact_acceptance_flow'
     _description = "fact acceptance flow"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True,ondelete='cascade')
+    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True,ondelete='cascade', auto_join=True,readonly=True)
     project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps',
                                         readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade')
+    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade',
+                                       domain='[("projects_id", "=", projects_id)]',)
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
     sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True)
