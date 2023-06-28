@@ -22,10 +22,11 @@ class Task(models.Model):
 
     type = fields.Selection([
         ('review', 'Review'),
-        ('approving', 'Approving'),
+        ('agreement', 'agreement'),
         ('execution', 'Execution')
     ], required=True, default='review', index=True, string='Type')
 
+    company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
     user_ids = fields.Many2many('res.users', relation='task_task_user_rel', column1='task_id', column2='user_id',
                                 string='Assignees', tracking=True)
     state = fields.Selection([
@@ -48,7 +49,7 @@ class Task(models.Model):
     child_text = fields.Char(compute="_compute_child_text")
     is_closed = fields.Boolean(string="Closed", index=True)
     date_closed = fields.Date(string='Date Closed', index=True, copy=False)
-    implementation_report = fields.Html(string='Report')
+    execution_result = fields.Html(string='Execution Result')
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Documents')
 
     def _compute_attachment_count(self):
@@ -107,46 +108,6 @@ class Task(models.Model):
     #                 'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
     #             })
 
-    def action_assign_to_user(self):
-        pass
-        # self.write({'state': 'assigned'})
-        # for user in self.user_ids:
-        #     self.env['mail.activity'].create({
-        #         'display_name': _('You have new task'),
-        #         'summary': _('You have new task by project %s' % self.project_id),
-        #         'date_deadline': self.date_deadline,
-        #         'user_id': user.id,
-        #         'res_id': self.id,
-        #         'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
-        #         'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
-        #     })
-
-    def action_to_do(self):
-        self.write({'state': 'to_do', 'is_closed': False, 'implementation_report': False})
-
-    def action_in_progress(self):
-        self.write({'state': 'in_progress'})
-
-    def action_done(self):
-        if self.type == 'execution':
-            if not self.implementation_report:
-                raise ValidationError(_('Report on the implementation should be filled'))
-        elif self.type == 'approving' and self.parent_ref_type == 'document_flow.event':
-            event = self.env['document_flow.event'].search([
-                ('id', '=', self.parent_ref_id)
-            ], limit=1)
-            if event:
-                event.action_accept_approval()
-
-        activities = self.env['mail.activity'].search([
-            ('res_id', '=', self.id),
-            ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
-            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_email').id)
-        ])
-        for activity in activities:
-            activity.action_done()
-        self.write({'state': 'done', 'is_closed': True, 'date_closed': date.today()})
-
     def action_create_activity(self):
         return self.env['mail.activity'].create({
             'display_name': _('You have new task'),
@@ -159,25 +120,67 @@ class Task(models.Model):
         })
 
     def action_cancel(self):
-        if self.type == 'approving' and self.parent_ref_type == 'document_flow.event':
+        if self.type == 'agreement' and self.parent_ref_type == 'document_flow.event':
             event = self.env['document_flow.event'].search([
                 ('id', '=', self.parent_ref_id)
             ], limit=1)
             if event:
                 event.action_decline_approval()
-                if self.implementation_report:
+                if self.execution_result:
                     event.message_post(
-                        body=self.implementation_report,
+                        body=self.execution_result,
                         message_type='comment',
                         subtype_xmlid='mail.mt_note')
         activities = self.env['mail.activity'].search([
             ('res_id', '=', self.id),
             ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
-            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_email').id)
+            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_todo').id)
         ])
         for activity in activities:
             activity.unlink()
         self.write({'state': 'cancel', 'is_closed': True, 'date_closed': date.today()})
+
+    def action_in_progress(self):
+        self.write({'state': 'in_progress'})
+
+    def action_reviewed(self):
+        date_closed = datetime.today()
+        self.parent_ref.process_task_result(date_closed)
+        activities = self.env['mail.activity'].search([
+            ('res_id', '=', self.id),
+            ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
+            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_todo').id)
+        ])
+        for activity in activities:
+            activity.action_done()
+        self.write({'state': 'done', 'is_closed': True, 'date_closed': date_closed})
+
+    def action_agreed(self):
+        date_closed = datetime.today()
+        self.parent_ref.process_task_result(date_closed)
+        activities = self.env['mail.activity'].search([
+            ('res_id', '=', self.id),
+            ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
+            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_todo').id)
+        ])
+        for activity in activities:
+            activity.action_done()
+        self.write({'state': 'done', 'is_closed': True, 'date_closed': date_closed})
+
+    def action_done(self):
+        date_closed = datetime.today()
+        self.parent_ref.process_task_result(date_closed)
+        activities = self.env['mail.activity'].search([
+            ('res_id', '=', self.id),
+            ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
+            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_todo').id)
+        ])
+        for activity in activities:
+            activity.action_done()
+        self.write({'state': 'done', 'is_closed': True, 'date_closed': date_closed})
+
+    def action_not_agreed(self):
+        pass
 
     def action_open_task(self):
         return {

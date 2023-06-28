@@ -33,7 +33,7 @@
         <field name="arch" type="xml">
             <form string="Process">
                 <header>
-                    <button string="Start process" type="object" name="action_start" class="oe_highlight"
+                    <button string="Start process" type="object" name="action_start_process" class="oe_highlight"
                             attrs="{'invisible': [('is_started', '=', True)]}"/>
 <!--                    <field name="state" widget="statusbar" options="{'clickable': False, 'fold_field': 'fold'}"-->
 <!--                           invisible="1"/>-->
@@ -97,6 +97,15 @@
                                 </tree>
                             </field>
                         </page>
+                        <page name="processes_page" string="Processes" attrs="{'invisible': [('type', 'not in', ('complex'))]}">
+                            <field name="process_ids" widget="section_and_note_one2many" mode="tree">
+                                <tree>
+                                    <field name="type" optional="show"/>
+                                    <field name="name" optional="show"/>
+                                    <field name="sequence" optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
                         <page name="tasks_page" string="Tasks" attrs="{'invisible': [('is_started', '=', False)]}">
                             <field name="task_ids" mode="tree">
                                 <tree create="0" delete="0"
@@ -110,14 +119,6 @@
                                     <field name="date_deadline" optional="show"/>
                                     <field name="date_closed" optional="show"/>
                                     <field name="state" optional="show"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page name="processes_page" string="Processes" attrs="{'invisible': [('type', 'not in', ('execution', 'complex'))]}">
-                            <field name="process_ids" widget="section_and_note_one2many" mode="tree">
-                                <tree>
-                                    <field name="type" optional="show"/>
-                                    <field name="name" optional="show"/>
                                 </tree>
                             </field>
                         </page>
