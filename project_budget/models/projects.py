@@ -92,14 +92,14 @@ class projects(models.Model):
     budget_state = fields.Selection(related = 'commercial_budget_id.budget_state', readonly = True, index=True, store=True)
 
     project_office_id = fields.Many2one('project_budget.project_office', string='project_office', required=True,
-                                        copy=True,tracking=True)
+                                        copy=True,tracking=True,  check_company=True)
     project_supervisor_id = fields.Many2one('project_budget.project_supervisor', string='project_supervisor',
-                                            required=True, copy=True, domain=_get_supervisor_list, tracking=True)
+                                            required=True, copy=True, domain=_get_supervisor_list, tracking=True, check_company=True)
     project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=True,
-                                         copy=True, default=_get_first_manager_from_access, domain=_get_manager_list, tracking=True) # на самом деле это КАМ, а вот РП ниже
+                                         copy=True, default=_get_first_manager_from_access, domain=_get_manager_list, tracking=True, check_company=True) # на самом деле это КАМ, а вот РП ниже
 
     rukovoditel_project_id = fields.Many2one('project_budget.rukovoditel_project', string='rukovoditel_project',
-                                         copy=True,  tracking=True)
+                                         copy=True,  tracking=True, check_company=True)
 
     customer_organization_id = fields.Many2one('project_budget.customer_organization', string='customer_organization',
                                                required=True, copy=True,tracking=True)

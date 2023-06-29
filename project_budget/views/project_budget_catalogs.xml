@@ -8,6 +8,9 @@
             <field name="model">project_budget.project_office</field>
             <field name="arch" type="xml">
                 <tree string="project_office">
+                    <field name="company_id" invisible="True"/>
+                    <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
                     <field name="name"/>
                     <field name="code"/>
                     <field name="descr"/>
@@ -26,6 +29,9 @@
                 <form>
                     <sheet string="project_office">
                         <group>
+                            <field name="company_id" invisible="True"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
                             <field name="name"/>
                             <field name="code"/>
                             <field name="descr" widget="html"/>
@@ -60,6 +66,9 @@
             <field name="model">project_budget.project_supervisor</field>
             <field name="arch" type="xml">
                 <tree string="project_supervisor">
+                    <field name="company_id" invisible="True"/>
+                    <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
                     <field name="name"/>
                     <field name="user_id" widget="many2one_avatar_user"/>
                     <field name="code"/>
@@ -74,15 +83,18 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet string="project_supervisor">
-                            <group>
-                                    <field name="name"/>
-                                    <field name="code"/>
-                            </group>
-                            <group>
-                                <field name="user_id" widget="many2one_avatar_user"/>
-                                <field name="descr" widget="html"/>
-                            </group>
-                            <field name="avatar_128" widget="image"/>
+                        <field name="company_id" invisible="True"/>
+                        <field name="company_id" groups="base.group_multi_company"
+                               options="{'no_create': True}"/>
+                        <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="descr" widget="html"/>
+                        </group>
+                        <field name="avatar_128" widget="image"/>
                     </sheet>
                 </form>
             </field>
@@ -109,6 +121,9 @@
             <field name="model">project_budget.project_manager</field>
             <field name="arch" type="xml">
                 <tree string="project_manager">
+                    <field name="company_id" invisible="True"/>
+                    <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
                     <field name="name"/>
                     <field name="user_id" widget="many2one_avatar_user"/>
                     <field name="code"/>
@@ -123,6 +138,9 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet string="project_manager">
+                        <field name="company_id" invisible="True"/>
+                        <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
                             <group>
                                 <field name="name"/>
                                 <field name="code"/>
@@ -159,6 +177,9 @@
             <field name="model">project_budget.rukovoditel_project</field>
             <field name="arch" type="xml">
                 <tree string="rukovoditel_project">
+                    <field name="company_id" invisible="True"/>
+                    <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
                     <field name="name"/>
                     <field name="user_id" widget="many2one_avatar_user"/>
                     <field name="code"/>
@@ -173,6 +194,9 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet string="rukovoditel_project">
+                        <field name="company_id" invisible="True"/>
+                        <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
                             <group>
                                 <field name="name"/>
                                 <field name="code"/>

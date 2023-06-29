@@ -50,6 +50,7 @@ class project_office(models.Model):
     name = fields.Char(string="project_office name", required=True, translate=True)
     code = fields.Char(string="project_office code", required=True)
     descr = fields.Char(string="project_office description")
+    company_id = fields.Many2one('res.company',default=lambda self: self.env.company)
     user_id = fields.Many2one('res.users', string='Office manager', )
     avatar_128 = fields.Image(related='user_id.avatar_128', readonly=True)
     receive_tasks_for_approve_project = fields.Boolean(string="Recieve tasks for approve project as supervisor", default = False)
@@ -63,6 +64,7 @@ class project_supervisor(models.Model):
     name = fields.Char(string="project_supervisor name", required=True, translate=True)
     code = fields.Char(string="project_supervisor code", required=True)
     descr = fields.Char(string="project_supervisor description", translate=True)
+    company_id = fields.Many2one('res.company',default=lambda self: self.env.company)
     user_id = fields.Many2one('res.users', string='user id',  required=True,)
     avatar_128 = fields.Image(related='user_id.avatar_128', readonly=True)
     project_supervisor_access_ids = fields.One2many(
@@ -82,6 +84,7 @@ class project_supervisor_access(models.Model):
 class project_manager(models.Model):
     _name = 'project_budget.project_manager'
     _description = "project_manager"
+    company_id = fields.Many2one('res.company',default=lambda self: self.env.company)
     name = fields.Char(string="project_manager name", required=True, translate=True)
     code = fields.Char(string="project_manager code", required=True)
     descr = fields.Char(string="project_manager description", translate=True)
@@ -103,6 +106,7 @@ class project_manager_access(models.Model):
 class rukovoditel_project(models.Model):
     _name = 'project_budget.rukovoditel_project'
     _description = "rukovoditel_project"
+    company_id = fields.Many2one('res.company',default=lambda self: self.env.company)
     name = fields.Char(string="rukovoditel_project name", required=True, translate=True)
     code = fields.Char(string="rukovoditel_project code", required=True)
     descr = fields.Char(string="rukovoditel_project description", translate=True)

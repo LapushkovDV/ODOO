@@ -47,6 +47,8 @@
                                     <field name="fact_cash_flow_id" placeholder="select planned cash flow" invisible="True" />
                                     <field name="sum_cash_without_vat_plan"/>
                                     <field name="sum_cash_plan"/>
+                                    <field name="sum_cash_without_vat" placeholder="enter distribution fact on plan sum"/>
+                                    <field name="sum_cash" placeholder="enter distribution fact on plan sum" force_save="1"/>
                                     <field name="distribution_sum_without_vat" />
                                     <field name="distribution_sum_with_vat"
                                            decoration-success="sum_cash_plan == distribution_sum_with_vat"/>
@@ -56,9 +58,6 @@
                                     <field name="distribution_sum_with_vat_ostatok"
                                            decoration-danger="distribution_sum_with_vat_ostatok &lt; 0"
                                            decoration-warning="distribution_sum_with_vat_ostatok != 0"/>
-
-                                    <field name="sum_cash_without_vat" placeholder="enter distribution fact on plan sum"/>
-                                    <field name="sum_cash" placeholder="enter distribution fact on plan sum" force_save="1"/>
                                 </tree>
                             </field>
 

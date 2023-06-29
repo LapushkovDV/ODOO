@@ -386,12 +386,13 @@ class report_budget_forecast_excel(models.AbstractModel):
                 sum_ostatok_pds = sum_distribution_pds = 0
                 for planned_cash_flow in project.planned_cash_flow_ids:
                     if step:
-                        if planned_cash_flow.project_steps_id != step.id: continue
+                        if planned_cash_flow.project_steps_id.id != step.id: continue
                     if planned_cash_flow.date_cash.month == month and planned_cash_flow.date_cash.year == YEARint:
                         sum_ostatok_pds += planned_cash_flow.distribution_sum_with_vat_ostatok
                         sum_distribution_pds += planned_cash_flow.distribution_sum_without_vat
                 if sum_distribution_pds != 0 : # если есть распределение, то остаток = остатку распределения
                     sum = sum_ostatok_pds
+                    if sum < 0 : sum = 0
 
                 estimated_probability_id_name = project.estimated_probability_id.name
                 if step :
@@ -508,6 +509,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                     sum_distribution_acceptance += planned_acceptance_flow.distribution_sum_without_vat
             if sum_distribution_acceptance != 0 : # если есть распределение, то остаток = остатку распределения
                 sum = sum_ostatok_acceptance
+                if sum <= 0 : sum = 0
 
             estimated_probability_id_name = project.estimated_probability_id.name
             if step_etalon:
