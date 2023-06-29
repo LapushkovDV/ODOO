@@ -1,5 +1,6 @@
 from odoo import _, models
 from docx.shared import Pt, Mm
+from docx.enum.text import WD_BREAK
 from htmldocx import HtmlToDocx
 
 
@@ -59,5 +60,15 @@ class EventProtocol(models.AbstractModel):
                     if decision.deadline_type == 'to_date':
                         doc.add_paragraph(_('Due date: %s') % decision.date_deadline.strftime('%d.%m.%Y'))
                     else:
-                        doc.add_paragraph(_('Due date: within %s after execution paragraph %s') % (
+                        doc.add_paragraph(_('Due date: within %s days after execution paragraph %s') % (
                             decision.number_days, decision.after_decision_id.num))
+            if event.annex_ids:
+                for annex in event.annex_ids:
+                    doc.paragraphs[len(doc.paragraphs) - 1].runs[
+                        len(doc.paragraphs[len(doc.paragraphs) - 1].runs) - 1].add_break(WD_BREAK.PAGE)
+                    paragraph = doc.add_paragraph(_('Annex %s') % annex.num)
+                    paragraph.paragraph_format.space_after = Mm(5)
+                    run = paragraph.runs[0]
+                    run.font.size = Pt(14)
+                    run.font.bold = True
+                    html_parser.add_html_to_document(annex.name, doc)

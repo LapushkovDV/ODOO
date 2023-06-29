@@ -79,6 +79,9 @@
                             </div>
                         </button>
                     </div>
+                    <div class="oe_title">
+                        <field name="code" readonly="1"/>
+                    </div>
                     <div class="oe_title pe-0">
                         <h1 class="d-flex justify-content-between align-items-center">
                             <div class="d-flex w-100">
@@ -114,7 +117,7 @@
                                    placeholder="Task description..."/>
                         </page>
                         <page name="sub_tasks_page" string="Sub-tasks"
-                              attrs="{'invisible' : [('type', 'in', ('review', 'agreement'))]}">
+                              attrs="{'invisible' : [('type', 'in', ('review'))]}">
                             <field name="child_ids"
                                    context="{'search_view_ref' : 'task.task_view_search',
                                    'default_user_id': user_id, 'default_parent_id': id, 'search_default_parent_ref': parent_ref }"
@@ -150,10 +153,12 @@
         <field name="model">task.task</field>
         <field name="arch" type="xml">
             <tree string="Tasks" multi_edit="1" sample="1"
-                  decoration-info="state == 'to_do' and date_deadline &gt; current_date"
+                  decoration-info="state != 'done' and date_deadline &gt; current_date"
                   decoration-success="state == 'done'"
-                  decoration-warning="state != 'done' and date_deadline == current_date"
-                  decoration-danger="state == 'cancel' or (state != 'done' and date_deadline &lt; current_date)">
+                  decoration-warning="state == 'to_do' and date_deadline &gt; current_date"
+                  decoration-danger="state != 'done' and date_deadline &lt; current_date"
+                  decoration-muted="state == 'cancel'">
+                <field name="code" optional="show"/>
                 <field name="name" optional="show" readonly="1" widget="name_with_subtask_count"/>
                 <field name="description" optional="hide" readonly="1"/>
                 <field name="type" optional="hide" readonly="1"/>

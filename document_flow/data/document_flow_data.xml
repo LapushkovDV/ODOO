@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_document_flow_process" model="ir.sequence">
+            <field name="name">Process Number</field>
+            <field name="code">document_flow.process</field>
+            <field name="prefix">NKK-</field>
+            <field name="padding">10</field>
+            <field name="company_id" eval="True"/>
+        </record>
+    </data>
+</odoo>

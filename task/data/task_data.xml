@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_task_task" model="ir.sequence">
+            <field name="name">Task Number</field>
+            <field name="code">task.task</field>
+            <field name="prefix">NKK-</field>
+            <field name="padding">10</field>
+            <field name="company_id" eval="True"/>
+        </record>
+    </data>
+</odoo>
