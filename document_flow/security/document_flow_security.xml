@@ -18,6 +18,18 @@
             <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
+        <record model="ir.rule" id="document_flow_processes_company_rule">
+            <field name="name">Process multi-company</field>
+            <field name="model_id" ref="model_document_flow_process"/>
+            <field name="domain_force">['|', ('company_id','=',False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record model="ir.rule" id="document_flow_event_company_rule">
+            <field name="name">Event multi-company</field>
+            <field name="model_id" ref="model_document_flow_event"/>
+            <field name="domain_force">['|', ('company_id','=',False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
         <record model="ir.rule" id="document_flow_user_rule">
             <field name="name">Document flow: user</field>
             <field name="model_id" ref="model_document_flow_event"/>
