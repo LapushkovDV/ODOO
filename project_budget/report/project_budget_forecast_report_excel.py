@@ -382,6 +382,16 @@ class report_budget_forecast_excel(models.AbstractModel):
                 else:
                     sum = sum - sum100tmp
                 # print('after: sum = ', sum)
+                # посмотрим на распределение, по идее все с него надо брать, но пока оставляем 2 ветки: если нет распределения идем по старому: в рамках одного месяца сравниваем суммы факта и плаан
+                sum_ostatok_pds = sum_distribution_pds = 0
+                for planned_cash_flow in project.planned_cash_flow_ids:
+                    if step:
+                        if planned_cash_flow.project_steps_id != step.id: continue
+                    if planned_cash_flow.date_cash.month == month and planned_cash_flow.date_cash.year == YEARint:
+                        sum_ostatok_pds += planned_cash_flow.distribution_sum_with_vat_ostatok
+                        sum_distribution_pds += planned_cash_flow.distribution_sum_without_vat
+                if sum_distribution_pds != 0 : # если есть распределение, то остаток = остатку распределения
+                    sum = sum_ostatok_pds
 
                 estimated_probability_id_name = project.estimated_probability_id.name
                 if step :
@@ -486,6 +496,18 @@ class report_budget_forecast_excel(models.AbstractModel):
                 sum = 0
             else:
                 sum = sum - sum100tmp
+
+            # посмотрим на распределение, по идее все с него надо брать, но пока оставляем 2 ветки: если нет распределения идем по старому: в рамках одного месяца сравниваем суммы факта и плаан
+            sum_ostatok_acceptance = sum_distribution_acceptance = 0
+            months = self.get_months_from_quater(element_name)
+            for planned_acceptance_flow in project.planned_acceptance_flow_ids:
+                if step:
+                    if planned_acceptance_flow.project_steps_id != step.id: continue
+                if planned_acceptance_flow.date_cash.month in months and planned_acceptance_flow.date_cash.year == YEARint:
+                    sum_ostatok_acceptance += planned_acceptance_flow.distribution_sum_with_vat_ostatok
+                    sum_distribution_acceptance += planned_acceptance_flow.distribution_sum_without_vat
+            if sum_distribution_acceptance != 0 : # если есть распределение, то остаток = остатку распределения
+                sum = sum_ostatok_acceptance
 
             estimated_probability_id_name = project.estimated_probability_id.name
             if step_etalon:

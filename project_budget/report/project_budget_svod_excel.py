@@ -1318,8 +1318,8 @@ class report_budget_svod_excel(models.AbstractModel):
             sheet.write_formula(formula_itogo_last_plan_Row_end - 1, colFormula, formula, row_format_manager)
             formula = "={0}"+str(formula_itogo_last_plan_Row_end)+" - {1}3 + {2}3"
             formula = formula.format(xl_col_to_name(colFormula), xl_col_to_name(colFormula + 1),xl_col_to_name(colFormula + 2))
-            print("formula = ",formula)
-            print("formula_itogo_last_plan_Row_end  = ",formula_itogo_last_plan_Row_end)
+            # print("formula = ",formula)
+            # print("formula_itogo_last_plan_Row_end  = ",formula_itogo_last_plan_Row_end)
             sheet.write_formula(formula_itogo_last_plan_Row_end, colFormula, formula, row_format_manager)
 
         # for colFormula in range(1, 5):
