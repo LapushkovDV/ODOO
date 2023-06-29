@@ -83,6 +83,7 @@
                         <field name="approve_state" widget="statusbar" statusbar_visible="need_approve_manager,need_approve_supervisor,approved"/>
                     </header>
                     <sheet string="Project">
+                        <field name="company_id" groups="base.group_multi_company"/>
                         <field name="budget_state" invisible="1"/>
                         <group col="5">
                             <group>
@@ -475,6 +476,7 @@
                         <create name="add_specification_line" string="Add a line"/>
                     </control>
                     <!--<button name="open_record" type="object" class="oe_highlight"/>-->
+                    <field name="company_id" groups="base.group_multi_company"/>
                     <field name="project_id" readonly="1"/>
                     <field name="approve_state" readonly="1" optional="show"  widget="badge"
                                         decoration-danger="approve_state=='need_approve_manager'"

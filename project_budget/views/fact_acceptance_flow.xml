@@ -16,7 +16,9 @@
                             </group>
                             <group>
                                 <field name="project_steps_id" options="{'no_open': True,}" placeholder="select project steps"
-                                        attrs="{'invisible': [('project_have_steps', '=', False)], 'required': [('project_have_steps', '=', True)]}"/>
+                                        attrs="{'invisible': [('project_have_steps', '=', False)], 'required': [('project_have_steps', '=', True)]}"
+                                       domain='[("projects_id", "=", parent.id)]'
+                                />
                             </group>
                         </group>
 <!-- #20230403 Вавилова Ирина сказла убрать...                                       <field name="doc_cash" placeholder="type docs description"/>-->

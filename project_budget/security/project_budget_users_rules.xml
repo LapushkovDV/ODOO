@@ -17,5 +17,15 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
+        <record id="record_restricted_company_rule" model="ir.rule" >
+            <field name="name">Budget projects Restricted Record: multi-company</field>
+            <field name="model_id" ref="model_project_budget_projects"/>
+            <field name="global" eval="True"/>
+<!--     так нельзя - правила группы складываютсякак OR, а вот глобальные права - AND       <field name="groups" eval="[(4, ref('project_budget.project_budget_users'))]"/>-->
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+        </record>
+
     </data>
 </odoo>

@@ -11,7 +11,8 @@ class distribution_cash(models.Model):
     fact_cash_flow_id = fields.Many2one('project_budget.fact_cash_flow', string='fact_cash_flow', index=True, ondelete='cascade',
                                         domain='[("projects_id", "=", parent.projects_id)]', required=True, copy=True)
     planned_cash_flow_id = fields.Many2one('project_budget.planned_cash_flow', string='planned_cash_flow', index=True, ondelete='cascade',
-                                           domain='[("projects_id", "=", parent.projects_id)]', required=True,
+                                           domain='[("projects_id", "=", parent.projects_id)]',
+                                           required=True,
                                            copy=True)
     date_cash_fact = fields.Date(related='fact_cash_flow_id.date_cash', readonly=True)
     date_cash_plan = fields.Date(related='planned_cash_flow_id.date_cash', readonly=True)

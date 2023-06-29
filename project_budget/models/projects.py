@@ -8,6 +8,7 @@ class projects(models.Model):
     _description = "project_office commercial budget projects"
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'name_to_show'
+    _check_company_auto = True
     # _rec_names_search = ['project_id', 'essence_project']
 
     def action_canban_view_group(self):
@@ -67,6 +68,7 @@ class projects(models.Model):
                     [('id', '=', manager_access[0].project_manager_id.id)])
         return None
 
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True, group_operator = 'count',
                              default='ID') #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.projects'))
     specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True,
