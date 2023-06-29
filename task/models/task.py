@@ -113,7 +113,7 @@ class Task(models.Model):
 
     def action_reviewed(self):
         date_closed = datetime.today()
-        self.parent_ref.process_task_result(date_closed)
+        self.parent_ref.sudo().process_task_result(date_closed)
         activities = self.env['mail.activity'].search([
             ('res_id', '=', self.id),
             ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
@@ -125,7 +125,7 @@ class Task(models.Model):
 
     def action_agreed(self):
         date_closed = datetime.today()
-        self.parent_ref.process_task_result(date_closed)
+        self.parent_ref.sudo().process_task_result(date_closed)
         activities = self.env['mail.activity'].search([
             ('res_id', '=', self.id),
             ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
@@ -137,7 +137,7 @@ class Task(models.Model):
 
     def action_done(self):
         date_closed = datetime.today()
-        self.parent_ref.process_task_result(date_closed)
+        self.parent_ref.sudo().process_task_result(date_closed)
         activities = self.env['mail.activity'].search([
             ('res_id', '=', self.id),
             ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
@@ -151,7 +151,7 @@ class Task(models.Model):
         if not self.execution_result:
             raise ValidationError(_('Execution result should be filled'))
         date_closed = datetime.today()
-        self.parent_ref.process_task_cancel_result(date_closed)
+        self.parent_ref.sudo().process_task_cancel_result(date_closed)
         activities = self.env['mail.activity'].search([
             ('res_id', '=', self.id),
             ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
