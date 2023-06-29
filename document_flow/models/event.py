@@ -21,6 +21,7 @@ class Event(models.Model):
     management_committee_id = fields.Many2one('document_flow.management_committee', string='Management Committee')
     question_ids = fields.One2many('document_flow.event.question', 'event_id', string='Questions')
     decision_ids = fields.One2many('document_flow.event.decision', 'event_id', string='Decisions')
+    annex_ids = fields.One2many('document_flow.event.annex', 'event_id', string='Annexes')
 
     state = fields.Selection([
         ('on_registration', 'On Registration'),
@@ -32,14 +33,17 @@ class Event(models.Model):
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Documents')
     task_count = fields.Integer(compute='_compute_task_count', string='Tasks')
     decision_count = fields.Integer(compute='_compute_decision_count')
+    annex_count = fields.Integer(compute='_compute_annex_count')
 
-    # todo: отказаться от этого поля
-    request_for_review_sent = fields.Boolean(readonly=True)
+    is_process_started = fields.Boolean(compute='_compute_is_process_started')
 
     @api.onchange('decision_ids')
     def _onchange_decisions(self):
-        print('We are in _onchange_decisions')
         self._compute_decision_count()
+
+    @api.onchange('annex_ids')
+    def _onchange_decisions(self):
+        self._compute_annex_count()
 
     @api.onchange('management_committee_id')
     def _onchange_management_committee(self):
@@ -72,162 +76,19 @@ class Event(models.Model):
         for event in self:
             event.decision_count = len(self.decision_ids) + 1
 
-    def unlink(self):
-        self.question_ids.unlink()
-        self.decision_ids.unlink()
-        return super(Event, self).unlink()
+    def _compute_annex_count(self):
+        for event in self:
+            event.annex_count = len(self.annex_ids) + 1
 
-    def action_decline_approval(self):
-        self.write({'state': 'on_registration'})
-        if self.organizer_id:
-            self.env['mail.activity'].create({
-                'display_name': _('Protocol was declined'),
-                'summary': _('Protocol of event %s was declined', self.name),
-                'date_deadline': datetime.now(),
-                'user_id': self.organizer_id.id,
-                'res_id': self.id,
-                'res_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id,
-                'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
-            })
-
-    def action_accept_approval(self):
-        self.write({'state': 'approved'})
-        if self.organizer_id:
-            self.env['mail.activity'].create({
-                'display_name': _('Protocol was approved'),
-                'summary': _('Protocol of event %s was approved', self.name),
-                'date_deadline': datetime.now(),
-                'user_id': self.organizer_id.id,
-                'res_id': self.id,
-                'res_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id,
-                'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
-            })
-
-    def action_send_for_execution(self):
-        for decision in self.decision_ids.search([('date_deadline', '=', True)]):
-            task = False
-            if decision.responsible_id:
-                task = self.env['task.task'].search([
-                    ('type', '=', decision.task_type), ('parent_ref_type', '=', type(decision).__name__),
-                    ('parent_ref_id', '=', decision.id), ('parent_id', '=', False),
-                    ('user_ids', '=', decision.responsible_id.id)
-                ])
-                if not task:
-                    task = self.env['task.task'].create({
-                        'name': _('To run an errand by event "%s"', self.name),
-                        'type': decision.task_type,
-                        'description': decision.name,
-                        'parent_ref': '%s,%s' % (type(decision).__name__, decision.id),
-                        'date_deadline': decision.date_deadline,
-                        'user_ids': decision.responsible_id
-                    })
-                    activity = self.env['mail.activity'].create({
-                        'display_name': _('You have new task'),
-                        'summary': _('To run an errand by event "%s"', self.name),
-                        'date_deadline': task.date_deadline,
-                        'user_id': decision.responsible_id.id,
-                        'res_id': task.id,
-                        'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
-                        'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
-                    })
-            if decision.executor_ids:
-                if not task:
-                    task = self.env['task.task'].search([
-                        ('type', '=', decision.task_type), ('parent_ref_type', '=', type(decision).__name__),
-                        ('parent_ref_id', '=', decision.id), ('parent_id', '=', False),
-                        ('user_ids', '=', decision.executor_ids.ids)
-                    ])
-                if not task:
-                    task = self.env['task.task'].create({
-                        'name': _('To run an errand by event "%s"', self.name),
-                        'type': decision.task_type,
-                        'description': decision.name,
-                        'parent_ref': '%s,%s' % (type(decision).__name__, decision.id),
-                        'date_deadline': decision.date_deadline,
-                        'user_ids': decision.executor_ids
-                    })
-                if task and (decision.responsible_id or len(decision.executor_ids) > 1):
-                    for executor in decision.executor_ids:
-                        sub_task = self.env['task.task'].search([
-                            ('type', '=', decision.task_type), ('parent_ref_type', '=', type(decision).__name__),
-                            ('parent_ref_id', '=', decision.id), ('parent_id', '=', task.id),
-                            ('user_ids', '=', executor.id)
-                        ])
-                        if not sub_task:
-                            sub_task = self.env['task.task'].create({
-                                'name': task.name,
-                                'type': task.type,
-                                'description': self.description,
-                                'parent_id': task.id,
-                                'parent_ref': '%s,%s' % (type(decision).__name__, decision.id),
-                                'date_deadline': task.date_deadline,
-                                'user_ids': [(4, executor.id)]
-                            })
-                            activity = self.env['mail.activity'].create({
-                                'display_name': _('You have new task'),
-                                'summary': _('To run an errand by event "%s"', self.name),
-                                'date_deadline': task.date_deadline,
-                                'user_id': executor.id,
-                                'res_id': sub_task.id,
-                                'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
-                                'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
-                            })
-                activities = self.env['mail.activity'].search([
-                    ('res_id', '=', self.id),
-                    ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
-                    ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_email').id)
-                ])
-                for activity in activities:
-                    activity.action_done()
-        self.write({'state': 'completed'})
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'type': 'success',
-                'sticky': False,
-                'message': _("Tasks for execution were created for the following user(s): %s",
-                             ', '.join(self.decision_ids.executor_ids.mapped('name'))),
-            }
-        }
-
-    def action_send_for_review(self):
-        members = list(set(self.member_ids) | set(self.management_committee_id.member_ids))
-        for member in members:
-            task = self.env['task.task'].search([
-                ('type', '=', 'review'), ('parent_ref_type', '=', self._name),
-                ('parent_ref_id', '=', self.id), ('user_ids', '=', member.id)
-            ])
-            if not task:
-                task = self.env['task.task'].create({
-                    'name': _('Review of result event %s', self.name),
-                    'type': 'review',
-                    'description': self.description,
-                    'parent_ref': '%s,%s' % (self._name, self.id),
-                    'parent_ref_type': self._name,
-                    'parent_ref_id': self.id,
-                    'date_deadline': self.date_start + timedelta(1),
-                    'user_ids': [(4, member.id)]
-                })
-                activity = self.env['mail.activity'].create({
-                    'display_name': _('You have new task'),
-                    'summary': _('Review of result event %s', self.name),
-                    'date_deadline': task.date_deadline,
-                    'user_id': member.id,
-                    'res_id': task.id,
-                    'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
-                    'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
-                })
-        self.write({'request_for_review_sent': True})
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'type': 'success',
-                'sticky': False,
-                'message': _("Tasks for review were created for the following user(s)")
-            }
-        }
+    def _compute_is_process_started(self):
+        for event in self:
+            event.is_process_started = self.env['document_flow.process.parent_object'].sudo().search_count([
+                ('parent_ref_type', '=', self._name),
+                ('parent_ref_id', '=', event.id),
+                ('process_id', '!=', False),
+                ('process_id.type', '=', 'complex'),
+                ('process_id.state', 'in', ('on_registration', 'started', 'finished'))
+            ]) > 0
 
     def action_send_for_approving(self):
         if self.agreed_id:
@@ -235,6 +96,13 @@ class Event(models.Model):
                 'name': _('Agree on a protocol of event "%s"', self.name),
                 'type': 'complex',
                 'description': self.description
+            })
+
+            link = self.env['document_flow.process.parent_object'].create({
+                'process_id': complex_process.id,
+                'parent_ref': '%s,%s' % (self._name, self.id),
+                'parent_ref_id': self.id,
+                'parent_ref_type': self._name
             })
 
             process_agreement = self.env['document_flow.process'].create({
@@ -248,6 +116,34 @@ class Event(models.Model):
                 'process_id': process_agreement.id,
                 'executor_ref': '%s,%s' % (type(self.agreed_id).__name__, self.agreed_id.id),
                 'date_deadline': datetime.now()
+            })
+
+            link = self.env['document_flow.process.parent_object'].create({
+                'process_id': process_agreement.id,
+                'parent_ref': '%s,%s' % (self._name, self.id),
+                'parent_ref_id': self.id,
+                'parent_ref_type': self._name
+            })
+
+            process_review = self.env['document_flow.process'].create({
+                'name': _('Review a protocol of event "%s"', self.name),
+                'type': 'review',
+                'sequence': 1,
+                'description': self.description,
+                'parent_id': complex_process.id
+            })
+            for executor in list(set(self.member_ids) | set(self.management_committee_id.member_ids)):
+                process_review_executor = self.env['document_flow.process.executor'].create({
+                    'process_id': process_review.id,
+                    'executor_ref': '%s,%s' % (type(executor).__name__, executor.id),
+                    'date_deadline': datetime.now()
+                })
+
+            link = self.env['document_flow.process.parent_object'].create({
+                'process_id': process_review.id,
+                'parent_ref': '%s,%s' % (self._name, self.id),
+                'parent_ref_id': self.id,
+                'parent_ref_type': self._name
             })
 
             reviews = self.decision_ids.search([
@@ -270,6 +166,12 @@ class Event(models.Model):
                             'executor_ref': '%s,%s' % (type(executor).__name__, executor.id),
                             'date_deadline': decision.date_deadline
                         })
+                    link = self.env['document_flow.process.parent_object'].create({
+                        'process_id': process_review.id,
+                        'parent_ref': '%s,%s' % (type(decision).__name__, decision.id),
+                        'parent_ref_id': decision.id,
+                        'parent_ref_type': type(decision).__name__
+                    })
 
             executions = self.decision_ids.search([
                 "&", "&",
@@ -306,16 +208,23 @@ class Event(models.Model):
                             'executor_ref': '%s,%s' % (type(decision.responsible_id).__name__, decision.responsible_id.id),
                             'date_deadline': decision.date_deadline
                         })
-            # complex_process.start_process()
+                    link = self.env['document_flow.process.parent_object'].create({
+                        'process_id': process_execution.id,
+                        'parent_ref': '%s,%s' % (type(decision).__name__, decision.id),
+                        'parent_ref_id': decision.id,
+                        'parent_ref_type': type(decision).__name__
+                    })
+            complex_process.action_start_process()
 
-        # self.write({'state': 'on_approval'})
+        self.write({'state': 'on_approval'})
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'type': 'success',
                 'sticky': False,
-                'message': _("The process of agreement a protocol were started")
+                'message': _("The process of agreement a protocol were started"),
+                'next': {'type': 'ir.actions.act_window_close'}
             }
         }
 
@@ -384,9 +293,9 @@ class EventDecision(models.Model):
     executor_ids = fields.Many2many('res.users', relation='event_decision_user_rel', column1='decision_id',
                                     column2='executor_id', string='Executors')
     date_deadline = fields.Date(string='Deadline', index=True)
-    task_id = fields.Many2one('task.task', string='Task', compute='_compute_task_id')
-    date_execution = fields.Date(string="Execution Date", related='task_id.date_closed')
-    decision_state = fields.Selection(string="Decision State", related='task_id.state')
+    process_id = fields.Many2one('document_flow.process', string='Process', compute='_compute_process_id')
+    date_execution = fields.Datetime(string='Execution Date', related='process_id.date_end', readonly=True)
+    decision_state = fields.Selection(string="Decision State", related='process_id.state', readonly=True)
 
     deadline_type = fields.Selection([
         ('to_date', 'To Date'),
@@ -395,8 +304,6 @@ class EventDecision(models.Model):
     number_days = fields.Integer(string='Within')
     after_decision_id = fields.Many2one('document_flow.event.decision', string='After Decision',
                                         domain="[('id', 'in', parent.decision_ids), ('id', '!=', id)]")
-    # after_decision_ids = fields.Many2many('document_flow.event.decision', )
-    # domain="[('id', '!=', id), ('event_id', '=', event_id)]")
 
     repeat_interval = fields.Selection([
         ('week', 'Weeks'),
@@ -412,14 +319,15 @@ class EventDecision(models.Model):
             decisions.append((decision.id, name))
         return decisions
 
-    @api.depends('task_id')
-    def _compute_task_id(self):
+    @api.depends('process_id')
+    def _compute_process_id(self):
         for decision in self:
-            decision.task_id = self.env['task.task'].sudo().search([
-                ('parent_id', '=', False),
+            decision.process_id = self.env['document_flow.process.parent_object'].sudo().search([
                 ('parent_ref_type', '=', self._name),
-                ('parent_ref_id', '=', decision.id)
-            ], limit=1)
+                ('parent_ref_id', '=', decision.id),
+                ('process_id', '!=', False),
+                ('process_id.state', '!=', 'break')
+            ], limit=1).process_id
 
     @api.onchange('deadline_type', 'after_decision_id', 'number_days')
     def onchange_date_deadline(self):
@@ -440,5 +348,15 @@ class EventDecision(models.Model):
             return decision.date_deadline
 
     def unlink(self):
-        self.mapped('task_id').unlink()
+        self.mapped('process_id').unlink()
         return super(EventDecision, self).unlink()
+
+
+class EventAnnex(models.Model):
+    _name = 'document_flow.event.annex'
+    _description = 'Event Annex'
+    _order = 'num, id'
+
+    num = fields.Integer(string='№', required=True)
+    name = fields.Html(string='Name', required=True)
+    event_id = fields.Many2one('document_flow.event', string='Event', ondelete='cascade', index=True, required=True)

@@ -91,13 +91,9 @@
         <field name="arch" type="xml">
             <form string="Event">
                 <header>
-                    <button string="Send for review" type="object" name="action_send_for_review" class="oe_highlight"
-                            attrs="{'invisible': ['|', ('state', '!=', 'approved'), ('request_for_review_sent', '=', True)]}"/>
                     <button string="Send for approve" type="object" name="action_send_for_approving" class="oe_highlight"
-                            attrs="{'invisible': [('state', '!=', 'on_registration')]}"/>
-                    <button string="Send for execution" type="object" name="action_send_for_execution"
-                            class="oe_highlight"
-                            attrs="{'invisible': [('state', '!=', 'approved')]}"/>
+                            attrs="{'invisible': [('is_process_started', '=', True)]}"
+                            context="{'active_model': active_model, 'active_id': active_id}"/>
                     <field name="state" widget="statusbar" options="{'clickable': False, 'fold_field': 'fold'}"
                            invisible="1"/>
                 </header>
@@ -118,8 +114,11 @@
                         </h1>
                     </div>
                     <group>
-                        <field name="decision_count" invisible="1"/>
-                        <field name="request_for_review_sent" invisible="1"/>
+                        <group attrs="{'invisible': 1}">
+                            <field name="decision_count"/>
+                            <field name="annex_count"/>
+                            <field name="is_process_started"/>
+                        </group>
                         <group>
                             <field name="management_committee_id"/>
                             <field name="member_ids"
@@ -162,10 +161,18 @@
                                     <field name="responsible_id" optional="show"/>
                                     <field name="executor_ids" optional="show" widget="many2many_avatar_user" options='{"no_quick_create": True}'/>
                                     <field name="date_deadline" optional="show"/>
-                                    <field name="task_id" optional="hide"/>
+                                    <field name="process_id" optional="hide"/>
                                     <field name="task_type" optional="hide"/>
                                     <field name="decision_state" optional="show"/>
                                     <field name="date_execution" optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="annexes_page" string="Annexes">
+                            <field name="annex_ids" widget="section_and_note_one2many" mode="tree" context="{'default_num': annex_count}">
+                                <tree>
+                                    <field name="num" optional="show"/>
+                                    <field name="name" optional="show"/>
                                 </tree>
                             </field>
                         </page>

@@ -20,6 +20,7 @@
         <field name="model">document_flow.process</field>
         <field name="arch" type="xml">
             <tree string="Processes" multi_edit="1" sample="1">
+                <field name="code" optional="show" readonly="1"/>
                 <field name="type" optional="show" readonly="1"/>
                 <field name="name" optional="show" readonly="1"/>
                 <field name="date_start" widget="date" optional="show" readonly="1"/>
@@ -34,44 +35,38 @@
             <form string="Process">
                 <header>
                     <button string="Start process" type="object" name="action_start_process" class="oe_highlight"
-                            attrs="{'invisible': [('is_started', '=', True)]}"/>
-<!--                    <field name="state" widget="statusbar" options="{'clickable': False, 'fold_field': 'fold'}"-->
-<!--                           invisible="1"/>-->
+                            attrs="{'invisible': [('state', '!=', 'on_registration')]}"/>
+                    <field name="state" widget="statusbar" options="{'clickable': False, 'fold_field': 'fold'}"
+                           invisible="1"/>
                 </header>
                 <sheet string="Process">
-<!--                    <div name="button_box" position="inside">-->
-<!--                        <button class="oe_stat_button" type="object" name="action_open_attachments"-->
-<!--                                icon="fa-files-o">-->
-<!--                            <field string="Documents" name="attachment_count" widget="statinfo"/>-->
-<!--                        </button>-->
-<!--                        <button class="oe_stat_button" type="object" name="action_open_tasks"-->
-<!--                                icon="fa-tasks">-->
-<!--                            <field string="Tasks" name="task_count" widget="statinfo"/>-->
-<!--                        </button>-->
-<!--                    </div>-->
                     <group invisible="1">
-                        <field name="is_started"/>
-                        <field name="is_closed"/>
                         <field name="date_start"/>
                         <field name="date_end"/>
                     </group>
+                    <div class="oe_title">
+                        <field name="code" readonly="1"/>
+                    </div>
                     <div class="oe_title mb-3">
                         <h1>
-                            <field name="name" placeholder="Process Title..." attrs="{'readonly': [('is_started', '=', True)]}"/>
+                            <field name="name" placeholder="Process Title..." attrs="{'readonly': [('state', '!=', 'on_registration')]}"/>
                         </h1>
                     </div>
                     <group col="3">
                         <group>
-                            <field name="type" attrs="{'readonly': [('is_started', '=', True)]}"/>
+                            <field name="type" attrs="{'readonly': [('state', '!=', 'on_registration')]}"/>
                         </group>
                         <group>
-                            <field name="template_id" attrs="{'readonly': [('is_started', '=', True)]}"/>
+                            <field name="template_id" attrs="{'readonly': [('state', '!=', 'on_registration')]}"/>
                         </group>
                         <group>
-                            <field name="company_id" groups="base.group_multi_company" attrs="{'readonly': [('is_started', '=', True)]}"/>
+                            <field name="company_id" groups="base.group_multi_company" attrs="{'readonly': [('state', '!=', 'on_registration')]}"/>
                         </group>
                     </group>
-                    <group col="2" attrs="{'invisible': [('type', '!=', 'execution')], 'readonly': [('is_started', '=', True)]}">
+                    <group>
+                        <field name="parent_id" attrs="{'invisible': [('parent_id', '=', False)], 'readonly': [('state', '!=', 'on_registration')]}"/>
+                    </group>
+                    <group col="2" attrs="{'invisible': [('type', '!=', 'execution')], 'readonly': [('state', '!=', 'on_registration')]}">
                         <group>
                             <field name="reviewer_ref"/>
                         </group>
@@ -79,14 +74,14 @@
                             <field name="date_deadline" widget="date"/>
                         </group>
                     </group>
-                    <group attrs="{'invisible': [('type', '!=', 'complex')], 'readonly': [('is_started', '=', True)]}">
-                        <field name="controller_ref"/>
+                    <group attrs="{'invisible': [('type', '!=', 'complex')]}">
+                        <field name="controller_ref" attrs="{'readonly': [('state', '!=', 'on_registration')]}"/>
                     </group>
                     <group>
                         <field name="description" string="Description" type="html" class="text_high"
                                options="{'collaborative': true, 'resizable': false}"
                                placeholder="Description..."
-                               attrs="{'readonly': [('is_started', '=', True)]}"/>
+                               attrs="{'readonly': [('state', '!=', 'on_registration')]}"/>
                     </group>
                     <notebook>
                         <page name="executors_page" string="Executors" attrs="{'invisible': [('type', '=', 'complex')]}">
@@ -106,7 +101,7 @@
                                 </tree>
                             </field>
                         </page>
-                        <page name="tasks_page" string="Tasks" attrs="{'invisible': [('is_started', '=', False)]}">
+                        <page name="tasks_page" string="Tasks" attrs="{'invisible': [('state', '=', 'on_registration')]}">
                             <field name="task_ids" mode="tree">
                                 <tree create="0" delete="0"
                                       decoration-info="state != 'done' and date_deadline &gt; current_date"

@@ -15,6 +15,7 @@ class Task(models.Model):
     _description = "Task"
     _inherit = ['mail.thread.cc', 'mail.activity.mixin']
 
+    code = fields.Char(string='Code', required=True, readonly=True, default=lambda self: _('New'))
     name = fields.Char(string='Title', tracking=True, required=True, index='trigram')
     description = fields.Html(string='Description')
 
@@ -22,7 +23,7 @@ class Task(models.Model):
 
     type = fields.Selection([
         ('review', 'Review'),
-        ('agreement', 'agreement'),
+        ('agreement', 'Agreement'),
         ('execution', 'Execution')
     ], required=True, default='review', index=True, string='Type')
 
@@ -70,13 +71,16 @@ class Task(models.Model):
             else:
                 task.parent_ref = None
 
-    @api.model_create_multi
+    @api.model
     def create(self, vals_list):
-        for vals in vals_list:
-            if vals.get('parent_ref'):
-                vals['parent_ref_type'] = vals['parent_ref'].split(",")[0]
-                vals['parent_ref_id'] = int(vals['parent_ref'].split(",")[1])
-        return super().create(vals_list)
+        if vals_list.get('parent_ref'):
+            vals_list['parent_ref_type'] = vals_list['parent_ref'].split(",")[0]
+            vals_list['parent_ref_id'] = int(vals_list['parent_ref'].split(",")[1])
+
+        if vals_list.get('code', _('New')) == _('New'):
+            vals_list['code'] = self.env['ir.sequence'].next_by_code('task.task') or _('New')
+        res = super(Task, self).create(vals_list)
+        return res
 
     @api.depends('child_ids')
     def _compute_subtask_count(self):
@@ -93,20 +97,6 @@ class Task(models.Model):
             else:
                 task.child_text = _("(+ %(child_count)s tasks)", child_count=task.subtask_count)
 
-    # @api.onchange('user_ids')
-    # def _onchange_user_ids(self):
-    #     for task in self:
-    #         if len(task.user_ids) == 1:
-    #             self.env['mail.activity'].create({
-    #                 'display_name': _('You have new task'),
-    #                 'summary': _('You have been assigned new task "%s"', task.name),
-    #                 'date_deadline': task.date_deadline,
-    #                 'user_id': [(4, task.user_ids[0])],
-    #                 'res_id': task.id,
-    #                 'res_model_id': self.env['ir.model'].search([('model', '=', 'task.task')]).id,
-    #                 'activity_type_id': self.env.ref('mail.mail_activity_data_email').id
-    #             })
-
     def action_create_activity(self):
         return self.env['mail.activity'].create({
             'display_name': _('You have new task'),
@@ -117,27 +107,6 @@ class Task(models.Model):
             'res_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id,
             'activity_type_id': self.env.ref('mail.mail_activity_data_todo').id
         })
-
-    def action_cancel(self):
-        if self.type == 'agreement' and self.parent_ref_type == 'document_flow.event':
-            event = self.env['document_flow.event'].search([
-                ('id', '=', self.parent_ref_id)
-            ], limit=1)
-            if event:
-                event.action_decline_approval()
-                if self.execution_result:
-                    event.message_post(
-                        body=self.execution_result,
-                        message_type='comment',
-                        subtype_xmlid='mail.mt_note')
-        activities = self.env['mail.activity'].search([
-            ('res_id', '=', self.id),
-            ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
-            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_todo').id)
-        ])
-        for activity in activities:
-            activity.unlink()
-        self.write({'state': 'cancel', 'is_closed': True, 'date_closed': date.today()})
 
     def action_in_progress(self):
         self.write({'state': 'in_progress'})
@@ -179,7 +148,18 @@ class Task(models.Model):
         self.write({'state': 'done', 'is_closed': True, 'date_closed': date_closed})
 
     def action_not_agreed(self):
-        pass
+        if not self.execution_result:
+            raise ValidationError(_('Execution result should be filled'))
+        date_closed = datetime.today()
+        self.parent_ref.process_task_cancel_result(date_closed)
+        activities = self.env['mail.activity'].search([
+            ('res_id', '=', self.id),
+            ('res_model_id', '=', self.env['ir.model'].search([('model', '=', self._name)]).id),
+            ('activity_type_id', '=', self.env.ref('mail.mail_activity_data_todo').id)
+        ])
+        for activity in activities:
+            activity.unlink()
+        self.write({'state': 'cancel', 'is_closed': True, 'date_closed': date_closed})
 
     def action_open_task(self):
         return {

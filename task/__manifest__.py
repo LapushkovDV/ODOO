@@ -16,6 +16,7 @@
         ]
     },
     'data': [
+        'data/task_data.xml',
         'security/ir.model.access.csv',
         'security/task_security.xml',
         'views/task_views.xml'
