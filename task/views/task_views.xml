@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <menuitem id="task_menu" name="Tasks" sequence="20"/>
+    <menuitem id="task_configuration_menu" parent="task_menu" sequence="100" name="Configuration"/>
+
     <record id="task_view_search" model="ir.ui.view">
         <field name="name">task.task.search</field>
         <field name="model">task.task</field>
