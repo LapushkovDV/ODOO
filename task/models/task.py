@@ -3,13 +3,6 @@ from odoo.exceptions import ValidationError
 from datetime import datetime, date
 
 
-class TaskType(models.Model):
-    _name = 'task.task.type'
-    _description = 'Task Type'
-
-    name = fields.Char(string='Name', required=True)
-
-
 class Task(models.Model):
     _name = "task.task"
     _description = "Task"
@@ -19,7 +12,13 @@ class Task(models.Model):
     name = fields.Char(string='Title', tracking=True, required=True, index='trigram')
     description = fields.Html(string='Description')
 
-    # type_id = fields.Many2one('task.task.type', index=True, required=True, copy=False, tracking=True)
+    # type_id = fields.Many2one('task.type', string='Type', ondelete='restrict', required=True, index=True, copy=True,
+    #                           tracking=True)
+    # stage_id = fields.Many2one('task.stage', string='Stage', ondelete='restrict', required=True, index=True,
+    #                            tracking=True, copy=True)
+    # stage_type_id = fields.Many2one('task.stage.type', related="stage_id.type_id", string="Stage Type",
+    #                                 index=True, readonly=True, store=True)
+    # is_closed = fields.Boolean(related='stage_id.closed', store=True, index=True, readonly=True)
 
     type = fields.Selection([
         ('review', 'Review'),

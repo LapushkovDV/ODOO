@@ -8,5 +8,16 @@
             <field name="padding">10</field>
             <field name="company_id" eval="True"/>
         </record>
+
+        <record id="task_stage_type_to_do" model="task.stage.type">
+            <field name="name">To Do</field>
+            <field name="code">to_do</field>
+            <field name="bg_color">rgba(85, 170, 255, 1)</field>
+        </record>
+        <record id="task_stage_type_done" model="task.stage.type">
+            <field name="name">Done</field>
+            <field name="code">done</field>
+            <field name="bg_color">rgba(68, 170, 85, 1)</field>
+        </record>
     </data>
 </odoo>
