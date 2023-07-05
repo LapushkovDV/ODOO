@@ -26,8 +26,8 @@ class fact_acceptance_flow(models.Model):
                                        )
     date_cash = fields.Date(string="date_cash" , required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
-    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True)
-    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True, compute='_compute_sum')
+    sum_cash_without_vat = fields.Monetary(string="fact sum_cash_without_vat", required=True, copy=True)
+    sum_cash = fields.Monetary(string="fact sum_cash", required=True, copy=True, compute='_compute_sum')
     budget_state = fields.Selection(related='projects_id.budget_state', readonly=True, store=True)
     approve_state = fields.Selection(related='projects_id.approve_state', readonly=True, store=True)
 
@@ -64,4 +64,4 @@ class fact_acceptance_flow(models.Model):
                 row.distribution_sum_with_vat += distribution_acceptance.sum_cash
                 row.distribution_sum_without_vat += distribution_acceptance.sum_cash_without_vat
             row.distribution_sum_with_vat_ostatok =row.sum_cash - row.distribution_sum_with_vat
-            row.distribution_sum_without_vat_ostatok = row.sum_cash - row.distribution_sum_without_vat
+            row.distribution_sum_without_vat_ostatok = row.sum_cash_without_vat - row.distribution_sum_without_vat

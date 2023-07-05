@@ -35,8 +35,8 @@
                  <field name="name">Generate svod (EXCEL)</field>
                  <field name="model">project_budget.commercial_budget</field>
                  <field name="report_type">xlsx</field>
-                 <field name="report_name">project_budget.report_budget_svod_excel</field>
-                 <field name="report_file">project_budget.report_budget_svod_excel</field>
+                 <field name="report_name">project_budget.report_svod_excel</field>
+                 <field name="report_file">project_budget.report_svod_excel</field>
                  <field name="binding_model_id" ref="model_project_budget_commercial_budget"/>
                  <field name="binding_type">report</field>
         </record>

@@ -26,8 +26,8 @@ class distribution_cash(models.Model):
     distribution_sum_without_vat_ostatok = fields.Monetary(related='planned_cash_flow_id.distribution_sum_without_vat_ostatok', string ="distribution_sum_without_vat_ostatok", readonly=True)
     distribution_sum_with_vat_ostatok = fields.Monetary(related='planned_cash_flow_id.distribution_sum_with_vat_ostatok', string ="distribution_sum_with_vat_ostatok", readonly=True)
 
-    sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True, compute='_compute_sum')
-    sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
+    sum_cash_without_vat = fields.Monetary(string="fact sum_cash_without_vat", required=True, copy=True, compute='_compute_sum')
+    sum_cash = fields.Monetary(string="fact sum_cash", required=True, copy=True)
 
     @api.depends("sum_cash")
     def _compute_sum(self):

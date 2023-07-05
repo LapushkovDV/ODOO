@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-23 08:23+0000\n"
-"PO-Revision-Date: 2023-06-23 08:23+0000\n"
+"POT-Creation-Date: 2023-06-30 10:24+0000\n"
+"PO-Revision-Date: 2023-06-30 10:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -257,6 +257,15 @@ msgstr "Коммерческие бюджеты"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_form
 msgid "Commercial budget"
 msgstr "Коммерческие бюджеты"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__company_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__company_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__company_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__company_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__company_id
+msgid "Company"
+msgstr " Компания"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_kanban
@@ -1442,7 +1451,7 @@ msgstr "Распределение суммы факта по плановым �
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__distribution_sum_with_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__distribution_sum_with_vat
 msgid "distribution sum with vat"
-msgstr "Сумма распределения с НДС"
+msgstr "Распределение с НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__distribution_sum_without_vat
@@ -1450,13 +1459,13 @@ msgstr "Сумма распределения с НДС"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__distribution_sum_without_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__distribution_sum_without_vat
 msgid "distribution sum without vat"
-msgstr "Сумма распределения без НДС"
+msgstr "Распределение без НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__distribution_sum_with_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_cash__distribution_sum_with_vat
 msgid "distribution_sum_with_vat"
-msgstr "Сумма распределения с НДС"
+msgstr "Распределение с НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__distribution_sum_with_vat_ostatok
@@ -1466,13 +1475,13 @@ msgstr "Сумма распределения с НДС"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__distribution_sum_with_vat_ostatok
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__distribution_sum_with_vat_ostatok
 msgid "distribution_sum_with_vat_ostatok"
-msgstr "Остаток суммы для распределения с НДС"
+msgstr "Остаток для распред-ия с НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__distribution_sum_without_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_cash__distribution_sum_without_vat
 msgid "distribution_sum_without_vat"
-msgstr "Сумма распределения без НДС"
+msgstr "Распределение без НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__distribution_sum_without_vat_ostatok
@@ -1482,7 +1491,7 @@ msgstr "Сумма распределения без НДС"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__distribution_sum_without_vat_ostatok
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__distribution_sum_without_vat_ostatok
 msgid "distribution_sum_without_vat_ostatok"
-msgstr "Остаток суммы для распределения без НДС"
+msgstr "Остаток для распред-ия без НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__doc_cash
@@ -1642,6 +1651,20 @@ msgstr "Актирование"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__fact_cash_flow_ids
 msgid "fact cash flow"
 msgstr "ПДС"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_cash__sum_cash
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__sum_cash
+msgid "fact sum_cash"
+msgstr "Факт c НДС"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash_without_vat
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_cash__sum_cash_without_vat
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__sum_cash_without_vat
+msgid "fact sum_cash_without_vat"
+msgstr "Факт без НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__fact_acceptance_flow_id
@@ -1911,6 +1934,16 @@ msgid "own_works_fot"
 msgstr "Работы собственные (ФОТ)"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__sum_cash
+msgid "plan sum_cash"
+msgstr "План c НДС"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__sum_cash_without_vat
+msgid "plan sum_cash_without_vat"
+msgstr "План без НДС"
+
+#. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_planned_acceptance_flow
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__planned_acceptance_flow_ids
 msgid "planned acceptance flow"
@@ -2045,8 +2078,8 @@ msgid "project_budget.report_budget_forecast_excel"
 msgstr "Прогноз (EXCEL)"
 
 #. module: project_budget
-#: model:ir.model,name:project_budget.model_report_project_budget_report_budget_svod_excel
-msgid "project_budget.report_budget_svod_excel"
+#: model:ir.model,name:project_budget.model_report_project_budget_report_svod_excel
+msgid "project_budget.report_svod_excel"
 msgstr "Свод (EXCEL))"
 
 #. module: project_budget
@@ -2439,23 +2472,19 @@ msgstr ""
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash_plan
 msgid "sum_acceptance_plan"
-msgstr "Плановая сумма"
+msgstr "План с НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash_without_vat_fact
 msgid "sum_acceptance_without_vat fact"
-msgstr "Факт. Сумма без НДС"
+msgstr "Факт без НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash_without_vat_plan
 msgid "sum_acceptance_without_vat_plan"
-msgstr "План. Сумма без НДС"
+msgstr "План без НДС"
 
 #. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_cash__sum_cash
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__sum_cash
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__sum_cash
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__sum_cash
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__sum_cash
 msgid "sum_cash"
@@ -2473,10 +2502,6 @@ msgid "sum_cash_plan"
 msgstr "Сумма планового поступления"
 
 #. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash_without_vat
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_cash__sum_cash_without_vat
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__sum_cash_without_vat
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__sum_cash_without_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__sum_cash_without_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__sum_cash_without_vat
 msgid "sum_cash_without_vat"
@@ -2597,7 +2622,7 @@ msgstr "Пользователь"
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_res_users
 msgid "users budgets access"
-msgstr "Пользователь"
+msgstr "Доступ пользователей к бюджетам"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_vat_attribute
