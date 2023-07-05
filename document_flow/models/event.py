@@ -36,6 +36,14 @@ class Event(models.Model):
     annex_count = fields.Integer(compute='_compute_annex_count')
 
     is_process_started = fields.Boolean(compute='_compute_is_process_started')
+    
+    @api.returns('self', lambda value: value.id)
+    def copy(self, default=None):
+        self.ensure_one()
+        if default is None:
+            default = {}
+        default['name'] = _('Copy_%s') % self.name
+        return super(Event, self).copy(default=default)
 
     @api.onchange('decision_ids')
     def _onchange_decisions(self):
