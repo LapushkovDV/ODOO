@@ -20,7 +20,7 @@ class Event(models.Model):
                                   string='Members')
     management_committee_id = fields.Many2one('document_flow.management_committee', string='Management Committee')
     question_ids = fields.One2many('document_flow.event.question', 'event_id', string='Questions')
-    decision_ids = fields.One2many('document_flow.event.decision', 'event_id', string='Decisions')
+    decision_ids = fields.One2many('document_flow.event.decision', 'event_id', string='Decisions', copy=True)
     annex_ids = fields.One2many('document_flow.event.annex', 'event_id', string='Annexes')
 
     state = fields.Selection([
@@ -282,8 +282,8 @@ class EventDecision(models.Model):
     _description = 'Event Decision'
     _order = 'num, id'
 
-    num = fields.Integer(string='№', required=True)
-    name = fields.Html(string='Decided', required=True)
+    num = fields.Integer(string='№', required=True, copy=True)
+    name = fields.Html(string='Decided', required=True, copy=True)
     event_id = fields.Many2one('document_flow.event', string='Event', ondelete='cascade', index=True, required=True)
     task_type = fields.Selection([
         ('review', 'Review'),

@@ -40,7 +40,7 @@ class EventProtocol(models.AbstractModel):
                     cnt_prg = len(doc.paragraphs)
                     html_parser.add_html_to_document(question.name, doc)
                     doc.paragraphs[cnt_prg].runs[0].add_text('%s. ' % counter)
-                    doc.paragraphs[cnt_prg].paragraph_format.space_before = Mm(3)
+                    doc.paragraphs[cnt_prg].paragraph_format.space_before = Mm(5)
                     counter += 1
             paragraph = doc.add_paragraph(_('Decisions:'))
             paragraph.paragraph_format.space_before = Mm(5)
@@ -51,7 +51,7 @@ class EventProtocol(models.AbstractModel):
                 cnt_prg = len(doc.paragraphs)
                 html_parser.add_html_to_document(decision.name, doc)
                 doc.paragraphs[cnt_prg].runs[0].add_text('%s. ' % decision.num)
-                doc.paragraphs[cnt_prg].paragraph_format.space_before = Mm(3)
+                doc.paragraphs[cnt_prg].paragraph_format.space_before = Mm(5)
                 if decision.responsible_id:
                     doc.add_paragraph(_('Responsible: %s') % decision.responsible_id.name)
                 if decision.executor_ids:
