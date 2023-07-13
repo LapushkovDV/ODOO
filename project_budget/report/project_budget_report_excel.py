@@ -1,5 +1,5 @@
 from odoo import models
-
+from xlsxwriter.utility import xl_col_to_name
 
 class report_budget_excel(models.AbstractModel):
     _name = 'report.project_budget.report_budget_excel'
@@ -12,7 +12,7 @@ class report_budget_excel(models.AbstractModel):
     probabitily_list_KB = ['30','50','75']
     probabitily_list_PB = ['100']
     probabitily_list_Otmena = ['0']
-
+    array_col_itogi = [12, 13,14,15,16,17,18,19,20,21,22,23,24,252,6,27,28]
     def printworksheet(self,workbook,budget,namesheet,stateproject):
         report_name = budget.name
             # One sheet by partner
@@ -21,17 +21,21 @@ class report_budget_excel(models.AbstractModel):
         money_format = workbook.add_format({'num_format': '#,##0.00'})
         head_format = workbook.add_format({
             'bold': True,
+            'italic': True,
             'border': 1,
+            'font_name': 'Arial',
             'font_size': 11,
             'text_wrap': True,
             'align': 'center',
             'valign': 'vcenter',
-            'fg_color': '#3265a5'
+            'fg_color': '#3265a5',
+            'color': '#ffffff'
         })
 
         row_format_date_month = workbook.add_format({
             'border': 1,
-            'font_size': 10,
+            'font_size': 11,
+            'font_name': 'Times New Roman'
             # 'num_format': 14
             #                'text_wrap' : True,
             #                'align': 'center',
@@ -39,10 +43,11 @@ class report_budget_excel(models.AbstractModel):
             #                'fg_color': '#3265a5',
         })
 
-        row_format_date_month.set_num_format('mmm yyyy')
+        row_format_date_month.set_num_format('mmmm yyyy')
         row_format = workbook.add_format({
             'border': 1,
-            'font_size': 10
+            'font_size': 11,
+            'font_name': 'Times New Roman'
             #                'text_wrap' : True,
             #                'align': 'center',
             #                'valign': 'vcenter',
@@ -50,13 +55,81 @@ class report_budget_excel(models.AbstractModel):
         })
         row_format_number = workbook.add_format({
             'border': 1,
-            'font_size': 10,
-            'num_format': '#,##0.00'
+            'font_size': 11,
+            'num_format': '#,##0.00',
+            'font_name': 'Times New Roman'
         })
+        row_format_manager = workbook.add_format({
+            'border': 1,
+            'font_size': 11,
+            "bold": True,
+            "fg_color": '#D9D9D9',
+            'font_name': 'Times New Roman'
+        })
+        row_format_manager.set_num_format('#,##0')
+
+        row_format_itogo = workbook.add_format({
+            'border': 1,
+            'font_size': 11,
+            "bold": True,
+            "fg_color": '#bfbfbf',
+            'font_name': 'Times New Roman'
+        })
+        row_format_itogo.set_num_format('#,##0.00')
+
+        row_format_itogo_percent = workbook.add_format({
+            'border': 1,
+            'font_size': 11,
+            "bold": True,
+            "fg_color": '#bfbfbf',
+            'font_name': 'Times New Roman'
+        })
+        row_format_itogo_percent.set_num_format('0%')
+
+
+        row_format_office = workbook.add_format({
+            'border': 1,
+            'font_size': 11,
+            "bold": True,
+            "fg_color": '#60497a',
+            "color": '#ffffff',
+            'font_name': 'Times New Roman'
+        })
+        row_format_office.set_num_format('#,##0.00')
+
+
+        row_format_office_percent = workbook.add_format({
+            'border': 1,
+            'font_size': 11,
+            "bold": True,
+            "fg_color": '#60497a',
+            "color": '#ffffff',
+            'font_name': 'Times New Roman'
+        })
+        row_format_office_percent.set_num_format('0%')
+
+        row_format_itog_row = workbook.add_format({
+            'border': 1,
+            'font_size': 11,
+            "bold": True,
+            "color": '#244062',
+            'font_name': 'Times New Roman'
+        })
+        row_format_itog_row.set_num_format('#,##0.00')
+
+        row_format_percent_row = workbook.add_format({
+            'border': 1,
+            'font_size': 11,
+            "bold": True,
+            "color": '#244062',
+            'font_name': 'Times New Roman'
+        })
+        row_format_percent_row.set_num_format('0%')
+
 
         date_format = workbook.add_format({'num_format': 'd mmmm yyyy'})
         row = 0
-        sheet.merge_range(row,0,row,10, budget.name, bold)
+        sheet.merge_range(row,0,row,5, budget.name, bold)
         row += 1
         sheet.merge_range(row, 0, row, 1,"Состояние бюджета")
         sheet.merge_range(row, 2, row, 4,budget.budget_state, bold)
@@ -176,6 +249,7 @@ class report_budget_excel(models.AbstractModel):
         sheet.write_string(row, column, "Технологическое направление",head_format)
         sheet.set_column(column, column, 15)
         sheet.autofilter(row, 0, row, column)
+        sheet.freeze_panes(6,8)
         probabitily_list = ['']
         if stateproject == 'prepare':
             probabitily_list = self.probabitily_list_KB
@@ -184,165 +258,257 @@ class report_budget_excel(models.AbstractModel):
         if stateproject == 'cancel':
             probabitily_list = self.probabitily_list_Otmena
 
-        for spec in budget.projects_ids:
-            if spec.project_have_steps == False or spec.is_framework == True: # рамку всегда выгружать
-                if (spec.estimated_probability_id.name in probabitily_list) and (
-                            spec.end_presale_project_month.year >= self.YEARint or spec.end_sale_project_month.year >= self.YEARint):
-                    row += 1
-                    column = 0
-                    sheet.write_string(row, column, spec.project_id, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.project_office_id.name, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.project_supervisor_id.name, row_format)
-                    column += 1
-                    if spec.project_office_id.print_rukovoditel_in_kb == False:
-                        sheet.write_string(row, column, spec.project_manager_id.name, row_format)
-                    else:
-                        sheet.write_string(row, column, spec.rukovoditel_project_id.name or '', row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.customer_status_id.name, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.industry_id.name, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.essence_project  or "", row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.end_presale_project_quarter, row_format)
-                    column += 1
-                    sheet.write_datetime(row, column, spec.end_presale_project_month, row_format_date_month)
-                    column += 1
-                    sheet.write_string(row, column, spec.end_sale_project_quarter, row_format)
-                    column += 1
-                    sheet.write_datetime(row, column, spec.end_sale_project_month, row_format_date_month)
-                    column += 1
-                    sheet.write_string(row, column, spec.vat_attribute_id.name or "", row_format)
-                    column += 1
-                    sheet.write_number(row, column, spec.total_amount_of_revenue, row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.revenue_from_the_sale_of_works,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.revenue_from_the_sale_of_goods,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.cost_price,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.cost_of_goods,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.own_works_fot,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.third_party_works,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.awards_on_results_project,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.transportation_expenses,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.travel_expenses,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.representation_expenses,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.taxes_fot_premiums,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.warranty_service_costs,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.rko_other,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.other_expenses,row_format_number)
-                    column += 1
-                    sheet.write_number(row, column, spec.margin_income,row_format_number)
-                    column += 1
-                    sheet.write(row, column, spec.profitability, row_format_number)
-                    column += 1
-                    sheet.write(row, column, spec.estimated_probability_id.name, row_format_number)
-                    column += 1
-                    sheet.write(row, column, spec.legal_entity_signing_id.name, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.project_type_id.name, row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.comments or "", row_format)
-                    column += 1
-                    sheet.write_string(row, column, spec.technological_direction_id.name, row_format)
-            if spec.project_have_steps == True:
-                for step in spec.project_steps_ids:
-                    if (step.estimated_probability_id.name in probabitily_list) and (
-                            step.end_presale_project_month.year >= self.YEARint or step.end_sale_project_month.year >= self.YEARint):
-                        row += 1
-                        column = 0
-                        sheet.write_string(row, column, spec.project_id + ' | ' + step.step_id, row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.project_office_id.name, row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.project_supervisor_id.name, row_format)
-                        column += 1
-                        if spec.project_office_id.print_rukovoditel_in_kb == False:
-                            sheet.write_string(row, column, spec.project_manager_id.name, row_format)
-                        else:
-                            sheet.write_string(row, column, spec.rukovoditel_project_id.name or '', row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.customer_status_id.name, row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.industry_id.name, row_format)
-                        column += 1
-                        sheet.write_string(row, column, step.essence_project or "", row_format)
-                        column += 1
-                        sheet.write_string(row, column, step.end_presale_project_quarter, row_format)
-                        column += 1
-                        sheet.write_datetime(row, column, step.end_presale_project_month, row_format_date_month)
-                        column += 1
-                        sheet.write_string(row, column, step.end_sale_project_quarter, row_format)
-                        column += 1
-                        sheet.write_datetime(row, column, step.end_sale_project_month, row_format_date_month)
-                        column += 1
-                        sheet.write_string(row, column, step.vat_attribute_id.name or "", row_format)
-                        column += 1
-                        sheet.write_number(row, column, step.total_amount_of_revenue, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.revenue_from_the_sale_of_works, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.revenue_from_the_sale_of_goods, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.cost_price, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.cost_of_goods, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.own_works_fot, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.third_party_works, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.awards_on_results_project, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.transportation_expenses, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.travel_expenses, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.representation_expenses, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.taxes_fot_premiums, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.warranty_service_costs, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.rko_other, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.other_expenses, row_format_number)
-                        column += 1
-                        sheet.write_number(row, column, step.margin_income, row_format_number)
-                        column += 1
-                        sheet.write(row, column, step.profitability, row_format_number)
-                        column += 1
-                        sheet.write(row, column, step.estimated_probability_id.name, row_format_number)
-                        column += 1
-                        sheet.write(row, column, spec.legal_entity_signing_id.name, row_format)
-                        column += 1
-                        sheet.write_string(row, column, step.project_steps_type_id.name, row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.comments or "", row_format)
-                        column += 1
-                        sheet.write_string(row, column, spec.technological_direction_id.name, row_format)
-                #sheet.write(row, 0, 'Total', bold, row_format)
-                #sheet.write(row, 2, '=SUM(C2:C5, row_format)', money_format, row_format)
+        # sheet.set_column(14, 17, False, False, {'hidden': 1, 'level': 1})
+        # sheet.set_column(20, 29, False, False, {'hidden': 1, 'level': 1})
 
+        project_offices  = self.env['project_budget.project_office'].search([], order='name')  # для сортировки так делаем
+        project_managers = self.env['project_budget.project_manager'].search([], order='name')  # для сортировки так делаем
+        estimated_probabilitys = self.env['project_budget.estimated_probability'].search([],order='name desc')  # для сортировки так делаем
+
+        isFoundProjectsByOffice = False
+        isFoundProjectsByManager = False
+        begRowProjectsByoffice = 0
+
+        formulaItogo = '=sum(0'
+        for project_office in project_offices:
+            isFoundProjectsByOffice = False
+            begRowProjectsByoffice = 0
+            for project_manager in project_managers:
+                print('project_manager = ', project_manager.name)
+                isFoundProjectsByManager = False
+
+                column = -1
+
+                for estimated_probability in estimated_probabilitys:
+                    print('estimated_probability.name = ', estimated_probability.name)
+                    cur_budget_projects = self.env['project_budget.projects'].search([('commercial_budget_id', '=', budget.id)
+                                                                                     ,('project_office_id','=',project_office.id)
+                                                                                     ,('project_manager_id','=',project_manager.id)
+                                                                                     ,('estimated_probability_id','=',estimated_probability.id)]
+                                                                                    )
+
+                    for spec in cur_budget_projects:
+                        if spec.project_have_steps == False: # or 20230707 Вавилова Ирина сказала не выводить рамку spec.is_framework == True: # рамку всегда выгружать
+                            if (spec.estimated_probability_id.name in probabitily_list) and (
+                                        spec.end_presale_project_month.year >= self.YEARint or spec.end_sale_project_month.year >= self.YEARint):
+                                row += 1
+                                isFoundProjectsByManager = True
+                                isFoundProjectsByOffice = True
+                                if begRowProjectsByoffice == 0:
+                                    begRowProjectsByoffice = row
+                                sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
+                                column = 0
+                                sheet.write_string(row, column, spec.project_id, row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.project_office_id.name, row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.project_supervisor_id.name, row_format)
+                                column += 1
+                                if spec.project_office_id.print_rukovoditel_in_kb == False:
+                                    sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                                else:
+                                    sheet.write_string(row, column, spec.rukovoditel_project_id.name or '', row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.customer_status_id.name, row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.industry_id.name, row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.essence_project  or "", row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.end_presale_project_quarter, row_format)
+                                column += 1
+                                sheet.write_datetime(row, column, spec.end_presale_project_month, row_format_date_month)
+                                column += 1
+                                sheet.write_string(row, column, spec.end_sale_project_quarter, row_format)
+                                column += 1
+                                sheet.write_datetime(row, column, spec.end_sale_project_month, row_format_date_month)
+                                column += 1
+                                sheet.write_string(row, column, spec.vat_attribute_id.name or "", row_format)
+                                column += 1
+                                # sheet.write_number(row, column, spec.total_amount_of_revenue, row_format_number)
+                                formula = '=sum({1}{0}:{2}{0})'.format(row+1,xl_col_to_name(14),xl_col_to_name(15))
+                                sheet.write_formula(row, column, formula, row_format_itog_row)
+                                column += 1
+                                sheet.write_number(row, column, spec.revenue_from_the_sale_of_works,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.revenue_from_the_sale_of_goods,row_format_number)
+                                column += 1
+                                # sheet.write_number(row, column, spec.cost_price,row_format_number)
+                                formula = '=sum({1}{0}:{2}{0})'.format(row+1, xl_col_to_name(17), xl_col_to_name(27))
+                                sheet.write_formula(row, column, formula, row_format_itog_row)
+                                column += 1
+                                sheet.write_number(row, column, spec.cost_of_goods,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.own_works_fot,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.third_party_works,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.awards_on_results_project,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.transportation_expenses,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.travel_expenses,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.representation_expenses,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.taxes_fot_premiums,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.warranty_service_costs,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.rko_other,row_format_number)
+                                column += 1
+                                sheet.write_number(row, column, spec.other_expenses,row_format_number)
+                                column += 1
+                                # sheet.write_number(row, column, spec.margin_income,row_format_number)
+                                formula = '={1}{0}-{2}{0}'.format(row + 1, xl_col_to_name(13), xl_col_to_name(16))
+                                sheet.write_formula(row, column, formula, row_format_itog_row)
+
+                                column += 1
+                                # sheet.write(row, column, spec.profitability, row_format_number)
+                                formula = '=IFERROR({2}{0}/{1}{0},0)'.format(row + 1, xl_col_to_name(13),
+                                                                             xl_col_to_name(28))
+                                sheet.write_formula(row, column, formula, row_format_percent_row)
+
+                                column += 1
+                                sheet.write(row, column, spec.estimated_probability_id.name, row_format_number)
+                                column += 1
+                                sheet.write(row, column, spec.legal_entity_signing_id.name, row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.project_type_id.name, row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.comments or "", row_format)
+                                column += 1
+                                sheet.write_string(row, column, spec.technological_direction_id.name, row_format)
+                        if spec.project_have_steps == True:
+                            for step in spec.project_steps_ids:
+                                if (step.estimated_probability_id.name in probabitily_list) and (
+                                        step.end_presale_project_month.year >= self.YEARint or step.end_sale_project_month.year >= self.YEARint):
+                                    row += 1
+                                    isFoundProjectsByManager = True
+                                    isFoundProjectsByOffice = True
+                                    if begRowProjectsByoffice == 0:
+                                        begRowProjectsByoffice = row
+
+                                    sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
+                                    column = 0
+                                    sheet.write_string(row, column, spec.project_id + ' | ' + step.step_id, row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, spec.project_office_id.name, row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, spec.project_supervisor_id.name, row_format)
+                                    column += 1
+                                    if spec.project_office_id.print_rukovoditel_in_kb == False:
+                                        sheet.write_string(row, column, spec.project_manager_id.name, row_format)
+                                    else:
+                                        sheet.write_string(row, column, spec.rukovoditel_project_id.name or '', row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, spec.customer_organization_id.name, row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, spec.customer_status_id.name, row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, spec.industry_id.name, row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, step.essence_project or "", row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, step.end_presale_project_quarter, row_format)
+                                    column += 1
+                                    sheet.write_datetime(row, column, step.end_presale_project_month, row_format_date_month)
+                                    column += 1
+                                    sheet.write_string(row, column, step.end_sale_project_quarter, row_format)
+                                    column += 1
+                                    sheet.write_datetime(row, column, step.end_sale_project_month, row_format_date_month)
+                                    column += 1
+                                    sheet.write_string(row, column, step.vat_attribute_id.name or "", row_format)
+                                    column += 1
+                                    # sheet.write_number(row, column, step.total_amount_of_revenue, row_format_number)
+                                    formula = '=sum({1}{0}:{2}{0})'.format(row+1, xl_col_to_name(14), xl_col_to_name(15))
+                                    sheet.write_formula(row, column, formula, row_format_itog_row)
+
+                                    column += 1
+                                    sheet.write_number(row, column, step.revenue_from_the_sale_of_works, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.revenue_from_the_sale_of_goods, row_format_number)
+                                    column += 1
+                                    # sheet.write_number(row, column, step.cost_price, row_format_number)
+                                    formula = '=sum({1}{0}:{2}{0})'.format(row+1, xl_col_to_name(17), xl_col_to_name(27))
+                                    sheet.write_formula(row, column, formula, row_format_itog_row)
+
+                                    column += 1
+                                    sheet.write_number(row, column, step.cost_of_goods, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.own_works_fot, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.third_party_works, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.awards_on_results_project, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.transportation_expenses, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.travel_expenses, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.representation_expenses, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.taxes_fot_premiums, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.warranty_service_costs, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.rko_other, row_format_number)
+                                    column += 1
+                                    sheet.write_number(row, column, step.other_expenses, row_format_number)
+                                    column += 1
+                                    # sheet.write_number(row, column, step.margin_income, row_format_number)
+                                    formula = '={1}{0}-{2}{0}'.format(row + 1, xl_col_to_name(13), xl_col_to_name(16))
+                                    sheet.write_formula(row, column, formula, row_format_itog_row)
+
+                                    column += 1
+                                    # sheet.write(row, column, step.profitability, row_format_number)
+                                    formula = '=IFERROR({2}{0}/{1}{0},0)'.format(row + 1, xl_col_to_name(13), xl_col_to_name(28))
+                                    sheet.write_formula(row, column, formula, row_format_percent_row)
+                                    column += 1
+                                    sheet.write(row, column, step.estimated_probability_id.name, row_format_number)
+                                    column += 1
+                                    sheet.write(row, column, spec.legal_entity_signing_id.name, row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, step.project_steps_type_id.name, row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, spec.comments or "", row_format)
+                                    column += 1
+                                    sheet.write_string(row, column, spec.technological_direction_id.name, row_format)
+                            #sheet.write(row, 0, 'Total', bold, row_format)
+                            #sheet.write(row, 2, '=SUM(C2:C5, row_format)', money_format, row_format)
+
+
+            if isFoundProjectsByOffice:
+                row += 1
+                column = 0
+                # sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
+                # print('setrow level1 row = ', row)
+                # sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
+                sheet.write_string(row, column, 'ИТОГО ' + project_office.name, row_format_office)
+                formulaItogo = formulaItogo + ',{0}' + str(row + 1)
+                # print('formulaProjectOffice = ',formulaProjectOffice)
+                for colFormula in range(1, 35):
+                    sheet.write_string(row, colFormula, '', row_format_office)
+                for colFormula in range(13, 29):
+                    formulaProjectOffice = '=sum({0}{1}:{0}{2})'.format(xl_col_to_name(colFormula),
+                                                                        begRowProjectsByoffice + 1, row)
+                    sheet.write_formula(row, colFormula, formulaProjectOffice, row_format_office)
+
+                formula = '=IFERROR({2}{0}/{1}{0},0)'.format(row + 1, xl_col_to_name(13),
+                                                             xl_col_to_name(28))
+                sheet.write_formula(row, 29, formula, row_format_office_percent)
+
+        row+=1
+        formulaItogo = formulaItogo + ')'
+        sheet.write_string(row, column, 'ИТОГО ',row_format_itogo)
+        for colFormula in range(1, 35):
+            sheet.write_string(row, colFormula, '', row_format_itogo)
+        for colFormula in range(13, 29):
+            formula = formulaItogo.format(xl_col_to_name(colFormula))
+            print('formula = ',formula)
+            sheet.write_formula(row, colFormula, formula, row_format_itogo)
 
     def generate_xlsx_report(self, workbook, data, budgets):
         for budget in budgets:

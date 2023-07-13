@@ -17,6 +17,20 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
+        <record id="ir_rule_project_budget_access_budget_plan_kam" model="ir.rule">
+            <field name="name">Access to budgeе plan kam</field>
+            <field name="model_id" ref="model_project_budget_budget_plan_kam"/>
+            <field name="domain_force">["|",('supervisor_user_id.id','=', user.id)
+                                           ,('kam_user_id.id','=', user.id)
+                                       ]
+            </field>
+            <field name="groups" eval="[(4, ref('project_budget.project_budget_users'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
         <record id="record_restricted_company_rule" model="ir.rule" >
             <field name="name">Budget projects Restricted Record: multi-company</field>
             <field name="model_id" ref="model_project_budget_projects"/>

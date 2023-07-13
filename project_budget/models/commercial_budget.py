@@ -50,15 +50,16 @@ class commercial_budget(models.Model):
             # self.date_actual = fields.datetime.now()
             cur_datetime = self.get_user_datetime()
             print('cur_datetime=',cur_datetime)
-            newbudget = self.env['project_budget.commercial_budget'].browse(self.id).copy({'budget_state':'fixed'
+            newbudget = self.env['project_budget.commercial_budget'].sudo().browse(self.id).copy({'budget_state':'fixed'
                                                                               ,'date_actual': fields.datetime.now()
                                                                                 })
-
+            print('after copy')
             activity_type_for_approval = self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id
             activity_type_approve_supervisor = self.env.ref('project_budget.mail_act_approve_project_by_supervisor').id
             res_model_id_project_budget = self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id
-
-            for spec in self.projects_ids:
+            print('activity_type_for_approval ')
+            for spec in self.sudo().projects_ids:
+                print('spec project_id = ', spec.project_id)
                 spec.was_changes = False
                 if spec.estimated_probability_id.name in ('30','50','75','100'):
 
@@ -66,15 +67,15 @@ class commercial_budget(models.Model):
                     activity_model = self.env['mail.activity']
                     # Use the search method to find the activities that need to be marked as done
 
-                    activities = activity_model.search([('res_id', '=', spec.id),
+                    activities = activity_model.sudo().search([('res_id', '=', spec.id),
                                                         ('activity_type_id', 'in', (activity_type_for_approval,activity_type_approve_supervisor))
                                                         ])
                     # Update the state of each activity to 'done'
                     for activitie in activities:
-                        activitie.action_done()
+                        activitie.sudo().action_done()
 
                     spec.approve_state = 'need_approve_manager'
-                    self.env['mail.activity'].create({
+                    self.env['mail.activity'].sudo().create({
                         'display_name': _('Need send to supervisor for approval'),
                         'summary': _('You need send to supervisor for approval'),
                         'date_deadline': fields.datetime.now(),
@@ -84,29 +85,30 @@ class commercial_budget(models.Model):
                         'activity_type_id': activity_type_for_approval
                     })
                 # вот далее обновляем ссылки на step в созданных проектах, хотя может просто как то модель можно изменить... я ХЗ
-            for project in newbudget.projects_ids:
+            for project in newbudget.sudo().projects_ids:
+                print('project_id = ', project.project_id)
                 if project.project_have_steps:
                     for planned_cash_flow in project.planned_cash_flow_ids:
-                        current_project = self.env['project_budget.project_steps'].search(
+                        current_project = self.env['project_budget.project_steps'].sudo().search(
                             [('projects_id', '=', project.id),('step_id','=',planned_cash_flow.project_steps_id.step_id)])
                         planned_cash_flow.project_steps_id = current_project.id
                     for planned_acceptance_flow in project.planned_acceptance_flow_ids:
-                        current_project = self.env['project_budget.project_steps'].search(
+                        current_project = self.env['project_budget.project_steps'].sudo().search(
                             [('projects_id', '=', project.id), ('step_id', '=', planned_acceptance_flow.project_steps_id.step_id)])
                         planned_acceptance_flow.project_steps_id = current_project.id
                     for fact_cash_flow in project.fact_cash_flow_ids:
-                        current_project = self.env['project_budget.project_steps'].search(
+                        current_project = self.env['project_budget.project_steps'].sudo().search(
                             [('projects_id', '=', project.id), ('step_id', '=', fact_cash_flow.project_steps_id.step_id)])
                         fact_cash_flow.project_steps_id = current_project.id
                     for fact_acceptance_flow in project.fact_acceptance_flow_ids:
-                        current_project = self.env['project_budget.project_steps'].search(
+                        current_project = self.env['project_budget.project_steps'].sudo().search(
                             [('projects_id', '=', project.id), ('step_id', '=', fact_acceptance_flow.project_steps_id.step_id)])
                         fact_acceptance_flow.project_steps_id = current_project.id
 
                 for fact_acceptance_flow in project.fact_acceptance_flow_ids: # у нас на распределение (distribution) ссылается плановые и фактические данные и при копировании у фрейма крутит голову. потому вручную ссылка на плановое поступеление в распределенеии ставим
                     for distribution_acceptance in fact_acceptance_flow.distribution_acceptance_ids: # идем по распределению, привязанному к факту  - копирование оставили тоолько у факта для фрейма
                         if distribution_acceptance.planned_acceptance_flow_id.acceptance_id: # берем acceptance_id  и по нему ищем в новом бюдете запись
-                            new_planned_acceptance = self.env['project_budget.planned_acceptance_flow'].search(
+                            new_planned_acceptance = self.env['project_budget.planned_acceptance_flow'].sudo().search(
                                 [('projects_id', '=', project.id),
                                  ('acceptance_id', '=', distribution_acceptance.planned_acceptance_flow_id.acceptance_id)])
                             if new_planned_acceptance: # нулевые записи не копируются
@@ -114,7 +116,7 @@ class commercial_budget(models.Model):
                 for fact_cash_flow in project.fact_cash_flow_ids: # у нас на распределение (distribution) ссылается плановые и фактические данные и при копировании у фрейма крутит голову. потому вручную ссылка на плановое поступеление в распределенеии ставим
                     for distribution_cash in fact_cash_flow.distribution_cash_ids: # идем по распределению, привязанному к факту  - копирование оставили тоолько у факта для фрейма
                         if distribution_cash.planned_cash_flow_id.cash_id: # берем cash_id  и по нему ищем в новом бюдете запись
-                            new_planned_cash = self.env['project_budget.planned_cash_flow'].search(
+                            new_planned_cash = self.env['project_budget.planned_cash_flow'].sudo().search(
                                 [('projects_id', '=', project.id),
                                  ('cash_id', '=', distribution_cash.planned_cash_flow_id.cash_id)])
                             if new_planned_cash: # нулевые записи не копируются

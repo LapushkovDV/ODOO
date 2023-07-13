@@ -2,6 +2,10 @@ from odoo import models
 import datetime
 import xlsxwriter
 from xlsxwriter.utility import xl_col_to_name
+import logging
+
+isdebug = False
+logger = logging.getLogger("*___forecast_report___*")
 
 class report_budget_forecast_excel(models.AbstractModel):
     _name = 'report.project_budget.report_budget_forecast_excel'
@@ -9,6 +13,53 @@ class report_budget_forecast_excel(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
     strYEAR = '2023'
+    YEARint = int(strYEAR)
+
+    def isStepinYear(self, project, step):
+        if project:
+            if step:
+                if step.end_presale_project_month.year == self.YEARint or step.end_sale_project_month.year == self.YEARint:
+                    return True
+                for pds in project.planned_cash_flow_ids:
+                    if pds.project_steps_id.id == step.id:
+                        if pds.date_cash.year == self.YEARint:
+                            return True
+                for pds in project.fact_cash_flow_ids:
+                    if pds.project_steps_id.id == step.id:
+                        if pds.date_cash.year == self.YEARint:
+                            return True
+                for act in project.planned_acceptance_flow_ids:
+                    if act.project_steps_id.id == step.id:
+                        if act.date_cash.year == self.YEARint:
+                            return True
+                for act in project.fact_acceptance_flow_ids:
+                    if act.project_steps_id.id == step.id:
+                        if act.date_cash.year == self.YEARint:
+                            return True
+        return False
+
+    def isProjectinYear(self, project):
+        if project:
+            if project.project_have_steps == False:
+                if project.end_presale_project_month.year == self.YEARint or project.end_sale_project_month.year == self.YEARint:
+                    return True
+                for pds in project.planned_cash_flow_ids:
+                    if pds.date_cash.year == self.YEARint:
+                        return True
+                for pds in project.fact_cash_flow_ids:
+                    if pds.date_cash.year == self.YEARint:
+                        return True
+                for act in project.planned_acceptance_flow_ids:
+                    if act.date_cash.year == self.YEARint:
+                        return True
+                for act in project.fact_acceptance_flow_ids:
+                    if act.date_cash.year == self.YEARint:
+                        return True
+            else:
+                for step in project.project_steps_ids:
+                    if self.isStepinYear(project, step):
+                        return True
+        return False
 
     month_rus_name_contract_pds = ['Январь','Февраль','Март','Q1 итого','Апрель','Май','Июнь','Q2 итого','HY1/YEAR итого',
                                     'Июль','Август','Сентябрь','Q3 итого','Октябрь','Ноябрь','Декабрь','Q4 итого',
@@ -41,6 +92,18 @@ class report_budget_forecast_excel(models.AbstractModel):
      if name == '100+???': result = 'Исполнен/закрыт'
      return result
 
+    def get_quater_from_month(self,month):
+        if month in (1,2,3):
+            return 'Q1'
+        if month in (4,5,6):
+            return 'Q2'
+        if month in (7,8,9):
+            return 'Q3'
+        if month in (10,11,12):
+            return 'Q4'
+        return False
+
+
     def get_months_from_quater(self,quater_name):
         months = False;
         if quater_name == 'Q1':
@@ -53,64 +116,144 @@ class report_budget_forecast_excel(models.AbstractModel):
             months=(10,11,12)
         return months
 
-    def get_etalon_project(self,spec):
-        etalon_project = self.env['project_budget.projects'].search([('etalon_budget', '=', True),('budget_state','=','fixed'),('project_id','=',spec.project_id)], limit=1, order='date_actual desc')
+    def get_etalon_project(self,spec, quater):
+        datesearch = datetime.date(self.YEARint, 1, 1)
+        if quater == 'Q1':
+            datesearch = datetime.date(self.YEARint, 1, 1) # будем искать первый утвержденный в году
+        if quater == 'Q2':
+            datesearch = datetime.date(self.YEARint, 4, 1) # будем искать первый утвержденный после марта
+        if quater == 'Q3':
+            datesearch = datetime.date(self.YEARint, 7, 1) # будем искать первый утвержденный после июня
+        if quater == 'Q4':
+            datesearch = datetime.date(self.YEARint, 10, 1) # будем искать первый утвержденный после сентября
+
+        if isdebug:
+            logger.info(' self.env[project_budget.projects].search ')
+            logger.info(f'          etalon_budget = True')
+            logger.info(f'          budget_state = fixed')
+            logger.info(f'          project_id = { spec.project_id}')
+            logger.info(f'          date_actual >= { datesearch}')
+            logger.info(f'          limit=1, order= date_actual')
+
+        etalon_project = self.env['project_budget.projects'].search([('etalon_budget', '=', True),
+                                                                     ('budget_state','=','fixed'),
+                                                                     ('project_id','=',spec.project_id),
+                                                                     ('date_actual','>=',datesearch)
+                                                                    ], limit=1, order='date_actual')
+        if etalon_project == False: # если не нашли относительно даты, то поищем просто последний
+            if isdebug: logger.info(f'   etalon_project not found by date ')
+            etalon_project = self.env['project_budget.projects'].search([('etalon_budget', '=', True),
+                                                                     ('budget_state','=','fixed'),
+                                                                     ('project_id','=',spec.project_id)
+                                                                    ], limit=1, order='date_actual desc')
+        if isdebug:
+            logger.info(f'  etalon_project.id = { etalon_project.id}')
+            logger.info(f'  etalon_project.project_id = {etalon_project.project_id}')
+            logger.info(f'  etalon_project.date_actual = { etalon_project.date_actual}')
+
         # print('etalon_project.project_id = ',etalon_project.project_id)
         # print('etalon_project.date_actual = ',etalon_project.date_actual)
         return etalon_project
 
-    def get_etalon_step(self,step):
+    def get_etalon_step(self,step, quater):
+        if isdebug:
+            logger.info(f' start get_etalon_step')
+            logger.info(f' quater = {quater}')
         if step == False:
             return False
-        etalon_step = self.env['project_budget.project_steps'].search([('etalon_budget', '=', True),('step_id','=',step.step_id),('id','!=',step.id)], limit=1, order='date_actual desc')
-        # print('etalon_step.project_id = ', etalon_step.step_id)
-        # print('etalon_step.date_actual = ', etalon_step.date_actual)
+        datesearch = datetime.date(self.YEARint, 1, 1)
+        if quater == 'Q1':
+            datesearch = datetime.date(self.YEARint, 1, 1) # будем искать первый утвержденный в году
+        if quater == 'Q2':
+            datesearch = datetime.date(self.YEARint, 4, 1) # будем искать первый утвержденный после марта
+        if quater == 'Q3':
+            datesearch = datetime.date(self.YEARint, 7, 1) # будем искать первый утвержденный после июня
+        if quater == 'Q4':
+            datesearch = datetime.date(self.YEARint, 10, 1) # будем искать первый утвержденный после сентября
+        if isdebug:
+            logger.info(f'   self.env[project_budget.projects].search ')
+            logger.info(f'           etalon_budget = True')
+            logger.info(f'           step_id = {step.step_id}')
+            logger.info(f'           id != {step.id}')
+            logger.info(f'           date_actual >= {datesearch}')
+            logger.info(f'           limit = 1, order = date_actual')
+
+        etalon_step = self.env['project_budget.project_steps'].search([('etalon_budget', '=', True),
+                                                                       ('step_id','=',step.step_id),
+                                                                       ('id','!=',step.id),
+                                                                       ('date_actual', '>=', datesearch)
+                                                                      ], limit=1, order='date_actual')
+        if etalon_step:  # если не нашли относительно даты, то поищем просто последний
+            if isdebug:
+                logger.info(f'   !etalon_step found by date! ')
+        if etalon_step == False: # если не нашли относительно даты, то поищем просто последний
+            if isdebug:
+                logger.info(f'   etalon_step not found by date ')
+            etalon_step = self.env['project_budget.project_steps'].search([('etalon_budget', '=', True),
+                                                                       ('step_id','=',step.step_id),
+                                                                       ('id','!=',step.id)
+                                                                      ], limit=1, order='date_actual desc')
+        if isdebug:
+            logger.info(f' step_id = {etalon_step.step_id}')
+            logger.info(f' id = {etalon_step.id}')
+            logger.info(f' date_actual = {etalon_step.date_actual}')
+            logger.info(f' end_presale_project_month = {etalon_step.end_presale_project_month}')
+            logger.info(f' estimated_probability_id = {etalon_step.estimated_probability_id}')
+            logger.info(f' end get_etalon_step')
         return etalon_step
 
-    def get_sum_fact_pds_project_step_month(self,project, step, YEARint, month):
+    def get_sum_fact_pds_project_step_month(self,project, step, month):
         sum_cash = 0
         if month:
-            if step:
-                pds_list = self.env['project_budget.fact_cash_flow'].search([('project_steps_id', '=', step.id)])
-            else:
-                pds_list = self.env['project_budget.fact_cash_flow'].search([('projects_id', '=', project.id)])
-            if pds_list:
-                for pds in pds_list:
-                    if pds.date_cash.month == month and pds.date_cash.year == YEARint:
-                        sum_cash += pds.sum_cash
+            pds_list = project.fact_cash_flow_ids
+            # if step:
+            #     pds_list = self.env['project_budget.fact_cash_flow'].search([('project_steps_id', '=', step.id)])
+            # else:
+            #     pds_list = self.env['project_budget.fact_cash_flow'].search([('projects_id', '=', project.id)])
+            for pds in pds_list:
+                if step:
+                    if pds.project_steps_id.id != step.id: continue
+                if pds.date_cash.month == month and pds.date_cash.year == self.YEARint:
+                    sum_cash += pds.sum_cash
         return sum_cash
 
-    def get_sum_plan_pds_project_step_month(self,project, step, YEARint, month):
+    def get_sum_plan_pds_project_step_month(self,project, step, month):
         sum_cash = 0
         if month:
-            if step:
-                pds_list = self.env['project_budget.planned_cash_flow'].search([('project_steps_id', '=', step.id)])
-            else:
-                pds_list = self.env['project_budget.planned_cash_flow'].search([('projects_id', '=', project.id)])
-            if pds_list:
-                for pds in pds_list:
-                    if pds.date_cash.month == month and pds.date_cash.year == YEARint:
-                        sum_cash += pds.sum_cash
+            # if step:
+            #     pds_list = self.env['project_budget.planned_cash_flow'].search([('project_steps_id', '=', step.id)])
+            # else:
+            #     pds_list = self.env['project_budget.planned_cash_flow'].search([('projects_id', '=', project.id)])
+            pds_list = project.planned_cash_flow_ids
+            for pds in pds_list:
+                if step:
+                    if pds.project_steps_id.id != step.id: continue
+                if pds.date_cash.month == month and pds.date_cash.year == self.YEARint:
+                    sum_cash += pds.sum_cash
             # else: # если нихрена нет планового ПДС, то берем сумму общую по дате окончания sale или по дате этапа
             #     print('step = ',step)
             #     print('project = ',project)
             #     if step == False or step == False:
             #         if project:
-            #             if project.end_sale_project_month.month == month and project.end_sale_project_month.year == YEARint:
+            #             if project.end_sale_project_month.month == month and project.end_sale_project_month.year == self.YEARint:
             #                 sum_cash = project.total_amount_of_revenue_with_vat
             #     else:
             #         if step:
-            #             if step.end_sale_project_month.month == month and step.end_sale_project_month.year == YEARint:
+            #             if step.end_sale_project_month.month == month and step.end_sale_project_month.year == self.YEARint:
             #                 sum_cash = step.total_amount_of_revenue_with_vat
         return sum_cash
 
     def get_sum_plan_acceptance_step_month(self,project, step, month):
         sum_cash = 0
-        if project.project_have_steps == False:
-            acceptance_list = self.env['project_budget.planned_acceptance_flow'].search([('projects_id', '=', project.id)])
-        if project.project_have_steps and step != False:
-            acceptance_list = self.env['project_budget.planned_acceptance_flow'].search([('project_steps_id', '=', step.id)])
+        # if project.project_have_steps == False:
+        #     acceptance_list = self.env['project_budget.planned_acceptance_flow'].search([('projects_id', '=', project.id)])
+        # if project.project_have_steps and step != False:
+        #     acceptance_list = self.env['project_budget.planned_acceptance_flow'].search([('project_steps_id', '=', step.id)])
+
+        acceptance_list = project.planned_acceptance_flow_ids
         for acceptance in acceptance_list:
+            if step:
+                if acceptance.project_steps_id.id != step.id: continue
             if acceptance.date_cash.month == month:
                 sum_cash += acceptance.sum_cash_without_vat
         return sum_cash
@@ -283,7 +426,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             sheet.merge_range(row-1, colbeg, row-1, column - 1, y[0], head_format_month)
         return column
 
-    def print_month_revenue_project(self, sheet, row, column, YEARint, month, project, step, row_format_number,row_format_number_color_fact):
+    def print_month_revenue_project(self, sheet, row, column, month, project, step, row_format_number,row_format_number_color_fact):
 
         sum75tmpetalon = 0
         sum50tmpetalon = 0
@@ -291,10 +434,10 @@ class report_budget_forecast_excel(models.AbstractModel):
         sum75tmp = 0
         sum50tmp = 0
         if month:
-            project_etalon = self.get_etalon_project(project)
+            project_etalon = self.get_etalon_project(project, self.get_quater_from_month(month))
             if step == False:
                 if project_etalon:
-                    if month == project_etalon.end_presale_project_month.month and YEARint == project_etalon.end_presale_project_month.year:
+                    if month == project_etalon.end_presale_project_month.month and self.YEARint == project_etalon.end_presale_project_month.year:
                         if project_etalon.estimated_probability_id.name == '75':
                             sheet.write_number(row, column + 0, project_etalon.total_amount_of_revenue_with_vat, row_format_number)
                             sum75tmpetalon += project_etalon.total_amount_of_revenue_with_vat
@@ -302,7 +445,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                             sheet.write_number(row, column + 1, project_etalon.total_amount_of_revenue_with_vat, row_format_number)
                             sum50tmpetalon += project_etalon.total_amount_of_revenue_with_vat
 
-                if month == project.end_presale_project_month.month and YEARint == project.end_presale_project_month.year:
+                if month == project.end_presale_project_month.month and self.YEARint == project.end_presale_project_month.year:
                     if project.estimated_probability_id.name == '100':
                         sheet.write_number(row, column + 2, project.total_amount_of_revenue_with_vat, row_format_number_color_fact)
                         sum100tmp += project.total_amount_of_revenue_with_vat
@@ -313,9 +456,9 @@ class report_budget_forecast_excel(models.AbstractModel):
                         sheet.write_number(row, column + 4, project.total_amount_of_revenue_with_vat, row_format_number)
                         sum50tmp += project.total_amount_of_revenue_with_vat
             else:
-                step_etalon  = self.get_etalon_step(step)
+                step_etalon  = self.get_etalon_step(step, self.get_quater_from_month(month))
                 if step_etalon:
-                    if month == step_etalon.end_presale_project_month.month and YEARint == step_etalon.end_presale_project_month.year:
+                    if month == step_etalon.end_presale_project_month.month and self.YEARint == step_etalon.end_presale_project_month.year:
                         if step_etalon.estimated_probability_id.name == '75':
                             sheet.write_number(row, column + 0, step_etalon.total_amount_of_revenue_with_vat, row_format_number)
                             sum75tmpetalon = step_etalon.total_amount_of_revenue_with_vat
@@ -324,7 +467,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                             sum50tmpetalon = step_etalon.total_amount_of_revenue_with_vat
                 else:
                     if project_etalon: # если нет жталонного этапа, то данные берем из проекта, да это будет увеличивать сумму на количество этапов, но что делать я ХЗ
-                        if month == project_etalon.end_presale_project_month.month and YEARint == project_etalon.end_presale_project_month.year:
+                        if month == project_etalon.end_presale_project_month.month and self.YEARint == project_etalon.end_presale_project_month.year:
                             if project_etalon.estimated_probability_id.name == '75':
                                 sheet.write_number(row, column + 0, project_etalon.total_amount_of_revenue_with_vat,
                                                    row_format_number)
@@ -334,7 +477,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                                                    row_format_number)
                                 sum50tmpetalon += project_etalon.total_amount_of_revenue_with_vat
 
-                if month == step.end_presale_project_month.month and YEARint == step.end_presale_project_month.year:
+                if month == step.end_presale_project_month.month and self.YEARint == step.end_presale_project_month.year:
                     if step.estimated_probability_id.name == '100':
                         sheet.write_number(row, column + 2, step.total_amount_of_revenue_with_vat, row_format_number_color_fact)
                         sum100tmp = step.total_amount_of_revenue_with_vat
@@ -347,13 +490,13 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         return sum75tmpetalon, sum50tmpetalon, sum100tmp, sum75tmp, sum50tmp
 
-    def print_month_pds_project(self, sheet, row, column, YEARint, month, project, step, row_format_number, row_format_number_color_fact):
+    def print_month_pds_project(self, sheet, row, column, month, project, step, row_format_number, row_format_number_color_fact):
         sum75tmpetalon = sum50tmpetalon = sum100tmp = sum75tmp = sum50tmp = 0
         if month:
-                project_etalon = self.get_etalon_project(project)
-                step_etalon = self.get_etalon_step(step)
+                project_etalon = self.get_etalon_project(project, self.get_quater_from_month(month))
+                step_etalon = self.get_etalon_step(step, self.get_quater_from_month(month))
                 sum = 0
-                sum = self.get_sum_plan_pds_project_step_month(project_etalon, step_etalon, YEARint, month)
+                sum = self.get_sum_plan_pds_project_step_month(project_etalon, step_etalon, month)
 
                 if (step) and (not step_etalon): # есть этап сейчас, но нет в эталоне
                     sum = 0
@@ -369,11 +512,11 @@ class report_budget_forecast_excel(models.AbstractModel):
                         sheet.write_number(row, column + 1, sum, row_format_number)
                         sum50tmpetalon += sum
 
-                sum100tmp = self.get_sum_fact_pds_project_step_month(project, step, YEARint, month)
+                sum100tmp = self.get_sum_fact_pds_project_step_month(project, step, month)
                 if sum100tmp:
                     sheet.write_number(row, column + 2, sum100tmp, row_format_number_color_fact)
 
-                sum = self.get_sum_plan_pds_project_step_month(project, step, YEARint, month)
+                sum = self.get_sum_plan_pds_project_step_month(project, step, month)
                 # print('----- project.id=',project.id)
                 # print('sum100tmp = ',sum100tmp)
                 # print('sum = ', sum)
@@ -387,9 +530,9 @@ class report_budget_forecast_excel(models.AbstractModel):
                 for planned_cash_flow in project.planned_cash_flow_ids:
                     if step:
                         if planned_cash_flow.project_steps_id.id != step.id: continue
-                    #не важно в каком периоде if planned_cash_flow.date_cash.month == month and planned_cash_flow.date_cash.year == YEARint:
-                    sum_ostatok_pds += planned_cash_flow.distribution_sum_with_vat_ostatok
-                    sum_distribution_pds += planned_cash_flow.distribution_sum_without_vat
+                    if planned_cash_flow.date_cash.month == month and planned_cash_flow.date_cash.year == self.YEARint:
+                        sum_ostatok_pds += planned_cash_flow.distribution_sum_with_vat_ostatok
+                        sum_distribution_pds += planned_cash_flow.distribution_sum_without_vat
                 if sum_distribution_pds != 0 : # если есть распределение, то остаток = остатку распределения
                     sum = sum_ostatok_pds
                     if sum < 0 : sum = 0
@@ -407,52 +550,51 @@ class report_budget_forecast_excel(models.AbstractModel):
                         sum50tmp += sum
         return sum75tmpetalon, sum50tmpetalon, sum100tmp, sum75tmp, sum50tmp
 
-    def get_sum_fact_acceptance_project_step_quater(self, project, step, YEARint, element_name):
+    def get_sum_fact_acceptance_project_step_quater(self, project, step, element_name):
         sum_cash = 0
         months = self.get_months_from_quater(element_name)
         if months:
-            vatpercent = 0
             acceptance_list = False
-            if step == False:
-                acceptance_list = self.env['project_budget.fact_acceptance_flow'].search([('projects_id', '=', project.id)])
-                vatpercent = project.vat_attribute_id.percent
-            else:
-                acceptance_list = self.env['project_budget.fact_acceptance_flow'].search([('project_steps_id', '=', step.id)])
-                vatpercent = step.vat_attribute_id.percent
+            # if step == False:
+            #     acceptance_list = self.env['project_budget.fact_acceptance_flow'].search([('projects_id', '=', project.id)])
+            # else:
+            #     acceptance_list = self.env['project_budget.fact_acceptance_flow'].search([('project_steps_id', '=', step.id)])
+            acceptance_list = project.fact_acceptance_flow_ids
             if acceptance_list:
                 for acceptance in acceptance_list:
-                    if acceptance.date_cash.month in months and acceptance.date_cash.year == YEARint:
+                    if step:
+                        if acceptance.project_steps_id.id != step.id: continue
+                    if acceptance.date_cash.month in months and acceptance.date_cash.year == self.YEARint:
                         sum_cash += acceptance.sum_cash_without_vat
         return sum_cash
 
-    def get_sum_planned_acceptance_project_step_quater(self, project, step, YEARint, element_name):
+    def get_sum_planned_acceptance_project_step_quater(self, project, step, element_name):
         sum_acceptance = 0
 
         months = self.get_months_from_quater(element_name)
 
         if months:
-            vatpercent = 0
-            acceptance_list = False
-            if step == False:
-                acceptance_list = self.env['project_budget.planned_acceptance_flow'].search([('projects_id', '=', project.id)])
-                vatpercent = project.vat_attribute_id.percent
-            else:
-                acceptance_list = self.env['project_budget.planned_acceptance_flow'].search([('project_steps_id', '=', step.id),('projects_id', '=', project.id)])
-                vatpercent = step.vat_attribute_id.percent
+            # if step == False:
+            #     acceptance_list = self.env['project_budget.planned_acceptance_flow'].search([('projects_id', '=', project.id)])
+            # else:
+            #     acceptance_list = self.env['project_budget.planned_acceptance_flow'].search([('project_steps_id', '=', step.id),('projects_id', '=', project.id)])
 
+            acceptance_list = project.planned_acceptance_flow_ids
             if acceptance_list:
                 for acceptance in acceptance_list:
-                    if acceptance.date_cash.month in months and acceptance.date_cash.year == YEARint:
+                    if step:
+                        if acceptance.project_steps_id.id != step.id: continue
+                    if acceptance.date_cash.month in months and acceptance.date_cash.year == self.YEARint:
                         sum_acceptance += acceptance.sum_cash_without_vat
                         # sum_acceptance += acceptance.sum_cash_without_vat / (1 + vatpercent / 100)
 
         return sum_acceptance
 
-    def print_quater_planned_acceptance_project(self, sheet, row, column, YEARint, element_name, project, step, row_format_number, row_format_number_color_fact):
+    def print_quater_planned_acceptance_project(self, sheet, row, column, element_name, project, step, row_format_number, row_format_number_color_fact):
         sum75tmpetalon = sum50tmpetalon = sum100tmp = sum75tmp = sum50tmp = 0
         if element_name in ('Q1','Q2','Q3','Q4'):
-            project_etalon = self.get_etalon_project(project)
-            step_etalon = self.get_etalon_step(step)
+            project_etalon = self.get_etalon_project(project, element_name)
+            step_etalon = self.get_etalon_step(step, element_name)
 
             if step == False:
                 profitability = project.profitability
@@ -466,7 +608,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
 
             sum = 0
-            sum = self.get_sum_planned_acceptance_project_step_quater(project_etalon, step_etalon, YEARint, element_name)
+            sum = self.get_sum_planned_acceptance_project_step_quater(project_etalon, step_etalon, element_name)
             if (step ) and (not step_etalon):
                 sum = 0
 
@@ -484,7 +626,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                     sheet.write_number(row, column + 1 + 43 , sum*profitability_etalon/100, row_format_number)
                     sum50tmpetalon += sum
 
-            sum100tmp = self.get_sum_fact_acceptance_project_step_quater(project, step, YEARint, element_name)
+            sum100tmp = self.get_sum_fact_acceptance_project_step_quater(project, step, element_name)
 
             if sum100tmp:
                 sheet.write_number(row, column + 2, sum100tmp, row_format_number_color_fact)
@@ -492,7 +634,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
 
             sum = 0
-            sum = self.get_sum_planned_acceptance_project_step_quater(project, step, YEARint, element_name)
+            sum = self.get_sum_planned_acceptance_project_step_quater(project, step, element_name)
             if sum100tmp >= sum:
                 sum = 0
             else:
@@ -503,10 +645,10 @@ class report_budget_forecast_excel(models.AbstractModel):
             months = self.get_months_from_quater(element_name)
             for planned_acceptance_flow in project.planned_acceptance_flow_ids:
                 if step:
-                    if planned_acceptance_flow.project_steps_id != step.id: continue
-                #не важно в каком периоде if planned_acceptance_flow.date_cash.month in months and planned_acceptance_flow.date_cash.year == YEARint:
-                sum_ostatok_acceptance += planned_acceptance_flow.distribution_sum_with_vat_ostatok
-                sum_distribution_acceptance += planned_acceptance_flow.distribution_sum_without_vat
+                    if planned_acceptance_flow.project_steps_id.id != step.id: continue
+                if planned_acceptance_flow.date_cash.month in months and planned_acceptance_flow.date_cash.year == self.YEARint:
+                    sum_ostatok_acceptance += planned_acceptance_flow.distribution_sum_without_vat_ostatok
+                    sum_distribution_acceptance += planned_acceptance_flow.distribution_sum_without_vat
             if sum_distribution_acceptance != 0 : # если есть распределение, то остаток = остатку распределения
                 sum = sum_ostatok_acceptance
                 if sum <= 0 : sum = 0
@@ -571,12 +713,6 @@ class report_budget_forecast_excel(models.AbstractModel):
                 row_format_number.set_font_color('red')
                 row_format_number_color_fact.set_font_color('red')
                 head_format_month_itogo.set_font_color('red')
-
-
-
-
-        YEARint = int(YEAR)
-
         sumQ100etalon =0
         sumQ75etalon = 0
         sumQ50etalon = 0
@@ -609,7 +745,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             sheet.write_string(row, column + 3, "", row_format_number)
             sheet.write_string(row, column + 4, "", row_format_number)
 
-            sumQ75tmpetalon, sumQ50tmpetalon, sumQ100tmp, sumQ75tmp, sumQ50tmp = self.print_month_revenue_project(sheet, row, column, YEARint, self.get_month_number_rus(element),
+            sumQ75tmpetalon, sumQ50tmpetalon, sumQ100tmp, sumQ75tmp, sumQ50tmp = self.print_month_revenue_project(sheet, row, column, self.get_month_number_rus(element),
                                                                                     project,step, row_format_number,row_format_number_color_fact)
             sumQ75etalon += sumQ75tmpetalon
             sumQ50etalon += sumQ50tmpetalon
@@ -705,7 +841,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             sheet.write_string(row, column + 4, "", row_format_number)
 
 
-            sumQ75tmpetalon, sumQ50tmpetalon, sumQ100tmp, sumQ75tmp, sumQ50tmp = self.print_month_pds_project(sheet, row, column, YEARint, self.get_month_number_rus(element)
+            sumQ75tmpetalon, sumQ50tmpetalon, sumQ100tmp, sumQ75tmp, sumQ50tmp = self.print_month_pds_project(sheet, row, column, self.get_month_number_rus(element)
                                                                                         ,project, step, row_format_number, row_format_number_color_fact)
 
             sumQ75etalon += sumQ75tmpetalon
@@ -790,8 +926,8 @@ class report_budget_forecast_excel(models.AbstractModel):
         else:
             profitability = step.profitability
 
-        project_etalon = self.get_etalon_project(project)
-        step_etalon = self.get_etalon_step(step)
+        project_etalon = self.get_etalon_project(project, False)
+        step_etalon = self.get_etalon_step(step, False)
 
         if step_etalon == False:
             profitability_etalon = project_etalon.profitability
@@ -819,7 +955,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             sheet.write_string(row, column + 3 + 43, "", row_format_number)
             sheet.write_string(row, column + 4 + 43, "", row_format_number)
 
-            sumQ75etalon, sumQ50etalon, sumQ100, sumQ75, sumQ50 = self.print_quater_planned_acceptance_project(sheet,row,column,YEARint,element
+            sumQ75etalon, sumQ50etalon, sumQ100, sumQ75, sumQ50 = self.print_quater_planned_acceptance_project(sheet,row,column,element
                                                                                                               ,project,step,row_format_number,row_format_number_color_fact)
 
             sumHY100etalon += sumQ100etalon
@@ -1079,7 +1215,7 @@ class report_budget_forecast_excel(models.AbstractModel):
         sheet.write_string(row + 2, column, "", head_format_1)
         sheet.set_column(column, column, 2)
 
-
+        sheet.freeze_panes(9, 12)
         column += 1
         column = self.print_month_head_contract_pds(workbook, sheet, row, column,  self.strYEAR)
         column = self.print_month_head_revenue_margin(workbook, sheet, row, column,  self.strYEAR)
@@ -1097,12 +1233,12 @@ class report_budget_forecast_excel(models.AbstractModel):
             isFoundProjectsByOffice = False
             formulaProjectOffice = '=sum(0,'
             for project_manager in project_managers:
-                print('project_manager = ', project_manager.name)
+                # print('project_manager = ', project_manager.name)
                 isFoundProjectsByManager = False
                 begRowProjectsByManager = 0
                 column = -1
                 for estimated_probability in estimated_probabilitys:
-                    print('estimated_probability.name = ', estimated_probability.name)
+                    # print('estimated_probability.name = ', estimated_probability.name)
                     cur_budget_projects = self.env['project_budget.projects'].search([('commercial_budget_id', '=', budget.id)
                                                                                      ,('project_office_id','=',project_office.id)
                                                                                      ,('project_manager_id','=',project_manager.id)
@@ -1116,11 +1252,14 @@ class report_budget_forecast_excel(models.AbstractModel):
                         if spec.vgo == '-':
                             isFoundProjectsByManager = True
                             isFoundProjectsByOffice = True
-                            row += 1
+
                             if begRowProjectsByManager == 0:
                                 begRowProjectsByManager = row
                             if spec.project_have_steps:
                                 for step in spec.project_steps_ids:
+                                    if self.isStepinYear( spec, step) == False:
+                                        continue
+                                    row += 1
                                     sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
                                     # print('setrow level2 row = ',row)
                                     cur_row_format = row_format
@@ -1155,9 +1294,10 @@ class report_budget_forecast_excel(models.AbstractModel):
                                     column += 1
                                     sheet.write_string(row, column, '', head_format_1)
                                     self.print_row_Values(workbook, sheet, row, column,  self.strYEAR, spec, step)
-                                    row += 1
-                                row -= 1
                             else:
+                                if self.isProjectinYear(spec) == False:
+                                    continue
+                                row += 1
                                 sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
                                 # print('setrow level2 row = ', row)
                                 cur_row_format = row_format
@@ -1202,15 +1342,15 @@ class report_budget_forecast_excel(models.AbstractModel):
                     for colFormula in range(2, 12):
                         sheet.write_string(row, colFormula, '', row_format_manager)
                     for colFormula in range(12,302):
-                        formula = '=sum({2}{0}:{2}{1})'.format(begRowProjectsByManager + 1,row, xl_col_to_name(colFormula))
+                        formula = '=sum({2}{0}:{2}{1})'.format(begRowProjectsByManager + 2,row, xl_col_to_name(colFormula))
                         sheet.write_formula(row, colFormula, formula, row_format_manager)
                     for col in self.array_col_itogi:
                         formula = '={1}{0} + {2}{0}'.format(row+1,xl_col_to_name(col),xl_col_to_name(col+ 1))
-                        print('formula = ', formula)
+                        # print('formula = ', formula)
                         sheet.write_formula(row, col -1, formula, head_format_month_itogo)
                     for col in self.array_col_itogi75:
                         formula = '={1}{0} + {2}{0}'.format(row+1,xl_col_to_name(col+ 1),xl_col_to_name(col+ 2))
-                        print('formula = ', formula)
+                        # print('formula = ', formula)
                         sheet.write_formula(row, col -1, formula, head_format_month_itogo)
                     for col in self.array_col_itogi75NoFormula:
                         formula = '=0'
