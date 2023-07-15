@@ -819,7 +819,7 @@
                 <field name="sum_cost_price_total"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-if="['0', '30', '50','75','100'].indexOf(record.name.raw_value) > -1" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="estimated_probability">
+                        <div t-if="['0', '30', '50','75','100','100(done)'].indexOf(record.name.raw_value) > -1" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="estimated_probability">
                             <div t-attf-class="o_kanban_card_header">
                                 <div class="o_kanban_card_header_title">
                                     <div class="o_primary" t-if="['30', '50','75','100'].indexOf(record.name.raw_value) > -1">
@@ -831,6 +831,11 @@
                                     <div class="o_primary" t-if="['0'].indexOf(record.name.raw_value) > -1">
                                         <a>
                                             Canceled
+                                        </a>
+                                    </div>
+                                    <div class="o_primary" t-if="['100(done)'].indexOf(record.name.raw_value) > -1">
+                                        <a>
+                                            Done
                                         </a>
                                     </div>
 
@@ -863,6 +868,11 @@
                                     </div>
                                     <div t-if="record.name.raw_value == '100'" class="col-6 o_kanban_primary_left">
                                         <button class="btn btn-primary" name="get_action_projects_100" type="object">
+                                            <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
+                                        </button>
+                                    </div>
+                                    <div t-if="record.name.raw_value == '100(done)'" class="col-6 o_kanban_primary_left">
+                                        <button class="btn btn-success" name="get_action_projects_100done" type="object">
                                             <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
                                         </button>
                                     </div>

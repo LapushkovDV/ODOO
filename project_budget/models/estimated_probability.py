@@ -122,4 +122,7 @@ class estimated_probability(models.Model):
     def get_action_projects_100(self):
         context = {"search_default_estimated_probability_100": True}
         return self._get_action('project_budget.show_comercial_budget_spec',context)
+    def get_action_projects_100done(self):
+        context = {"search_default_estimated_probability_100done": True}
+        return self._get_action('project_budget.show_comercial_budget_spec',context)
 

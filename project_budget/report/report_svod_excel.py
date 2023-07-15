@@ -204,7 +204,7 @@ class report_svod_excel(models.AbstractModel):
         sum_q3 = 0
         sum_q4 = 0
         if project:
-            if project.estimated_probability_id.name in ('50', '75','100'): # смотрим сумму контрактования в эталоне и с учетом 100
+            if project.estimated_probability_id.name in ('50', '75','100','100(done)'): # смотрим сумму контрактования в эталоне и с учетом 100
                 if project.end_presale_project_month.year == self.YEARint:
                     sum_year = project.total_amount_of_revenue_with_vat
                     if project.end_presale_project_month.month in (1, 2, 3):
@@ -224,8 +224,8 @@ class report_svod_excel(models.AbstractModel):
         sum_q3 = 0
         sum_q4 = 0
         if project_etalon:  # если эталона нет, то считаем, что и переноса нет - все в новое пойдет
-            if (project_etalon.estimated_probability_id.name in ('50', '75', '100')) and (
-                    project.estimated_probability_id.name in ('50', '75', '100')):  # только 50 и 75  смотрим
+            if (project_etalon.estimated_probability_id.name in ('50', '75', '100','100(done)')) and (
+                    project.estimated_probability_id.name in ('50', '75', '100','100(done)')):  # только 50 и 75  смотрим
                 if project_etalon.end_presale_project_month.year == self.YEARint \
                         and project.total_amount_of_revenue_with_vat == 0 \
                         and project_etalon.total_amount_of_revenue_with_vat != 0:  # если эталон в этом году, то начинаем работать, далее только если 0 стало, а в эталоне не 0 считаем переносом
@@ -260,7 +260,7 @@ class report_svod_excel(models.AbstractModel):
         sum_contract_etalon_q4 = 0
         if project_etalon:
             if project_etalon.estimated_probability_id.name in (
-            '50', '75', '100'):  # если 30 или 0 то как будто нет ничего
+            '50', '75', '100','100(done)'):  # если 30 или 0 то как будто нет ничего
                 if project_etalon.end_presale_project_month.year == self.YEARint:  # а если текущий год уже вперери.. то и показывать в отчете нечего
                     sum_contract_etalon_year = project_etalon.total_amount_of_revenue_with_vat
                     if project_etalon.end_presale_project_month.month in (
@@ -276,7 +276,7 @@ class report_svod_excel(models.AbstractModel):
                     10, 11, 12):  # сумма контракта эталона в квартал
                         sum_contract_etalon_q4 = project_etalon.total_amount_of_revenue_with_vat
 
-        if (project.estimated_probability_id.name in ('50', '75', '100')):  # только 50 и 75 и 100 смотрим
+        if (project.estimated_probability_id.name in ('50', '75', '100','100(done)')):  # только 50 и 75 и 100 смотрим
             if project.end_presale_project_month.year == self.YEARint:  # а если текущий год уже вперери.. то и показывать в отчете нечего
                 if sum_contract_etalon_year == 0:  # сумма эталога в году 0
                     sum_year = project.total_amount_of_revenue_with_vat
@@ -312,7 +312,7 @@ class report_svod_excel(models.AbstractModel):
         if not project:  # если нет объекта то все в 0
             return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
         print('project.estimated_probability_id.name = ',project.estimated_probability_id.name)
-        if (project.estimated_probability_id.name == '100'):  # только 50 и 75  смотрим
+        if (project.estimated_probability_id.name == '100','100(done)'):  # только 50 и 75  смотрим
             if project.end_presale_project_month.year == self.YEARint:  # а если текущий год уже вперери.. то и показывать в отчете нечего
                 sum_year = project.total_amount_of_revenue_with_vat
                 if project.end_presale_project_month.month in (
@@ -339,7 +339,7 @@ class report_svod_excel(models.AbstractModel):
         if project:
             if project_cur.project_have_steps == True: #  если есть этапы сейчас
                 if project_step: # существует этап для суммирования
-                    if step_cur.estimated_probability_id.name in ('50', '75', '100'): # текущую вероятность сомтрим
+                    if step_cur.estimated_probability_id.name in ('50', '75', '100','100(done)'): # текущую вероятность сомтрим
                         for pds in project.planned_cash_flow_ids:
                             if pds.project_steps_id.id == project_step.id :
                                 if pds.date_cash.year == self.YEARint:
@@ -353,7 +353,7 @@ class report_svod_excel(models.AbstractModel):
                                     if pds.date_cash.month in (10, 11, 12):
                                         sum_q4 += pds.sum_cash
             else:
-                if project_cur.estimated_probability_id.name in ('50', '75', '100'): # вероятность по текущему проекту смотрим
+                if project_cur.estimated_probability_id.name in ('50', '75', '100','100(done)'): # вероятность по текущему проекту смотрим
                     for pds in project.planned_cash_flow_ids:
                         if pds.date_cash.year == self.YEARint:
                             sum_year += pds.sum_cash
@@ -372,10 +372,10 @@ class report_svod_excel(models.AbstractModel):
         calcsum = False
         if project.project_have_steps == True:
             if project_step:
-                if project_step.estimated_probability_id.name in ('50', '75', '100'):
+                if project_step.estimated_probability_id.name in ('50', '75', '100','100(done)'):
                     calcsum = True
         else:
-            if project.estimated_probability_id.name in ('50', '75', '100'):
+            if project.estimated_probability_id.name in ('50', '75', '100','100(done)'):
                 calcsum = True
         if calcsum == True:
             sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_pds(project, project_step, project_etalon, project_step_etalon) # перенос сразу равен эталону
@@ -453,7 +453,7 @@ class report_svod_excel(models.AbstractModel):
         if project:
             if project_cur.project_have_steps == True:  # если есть этапы сейчас
                 if project_step:  # существует этап для суммирования
-                    if step_cur.estimated_probability_id.name in ('50', '75', '100'): # по текущему смотрим
+                    if step_cur.estimated_probability_id.name in ('50', '75', '100','100(done)'): # по текущему смотрим
                         for act in project.planned_acceptance_flow_ids:
                             if act.project_steps_id.id == project_step.id:
                                 if act.date_cash.year == self.YEARint:
@@ -467,7 +467,7 @@ class report_svod_excel(models.AbstractModel):
                                     if act.date_cash.month in (10, 11, 12):
                                         sum_q4 += act.sum_cash_without_vat
             else:
-                if project_cur.estimated_probability_id.name in ('50', '75', '100'): # вероятность по текущему проекту смотрим
+                if project_cur.estimated_probability_id.name in ('50', '75', '100','100(done)'): # вероятность по текущему проекту смотрим
                     for act in project.planned_acceptance_flow_ids:
                         if act.date_cash.year == self.YEARint:
                             sum_year += act.sum_cash_without_vat
@@ -488,10 +488,10 @@ class report_svod_excel(models.AbstractModel):
         calcsum = False
         if project.project_have_steps == True:
             if project_step:
-                if project_step.estimated_probability_id.name in ('50', '75', '100'):
+                if project_step.estimated_probability_id.name in ('50', '75', '100','100(done)'):
                     calcsum = True
         else:
-            if project.estimated_probability_id.name in ('50', '75', '100'):
+            if project.estimated_probability_id.name in ('50', '75', '100','100(done)'):
                 calcsum = True
         if calcsum == True:
             sum_etalon_year, sum_etalon_q1, sum_etalon_q2, sum_etalon_q3, sum_etalon_q4 = self.get_sum_acceptance(project, project_step, project_etalon,project_step_etalon) # перенос сразу равен эталону
@@ -895,7 +895,7 @@ class report_svod_excel(models.AbstractModel):
         for project in projects:
             if project.project_have_steps:
                 for step in project.project_steps_ids:
-                    if step.estimated_probability_id.name in ('100', '75', '50'):
+                    if step.estimated_probability_id.name in ('100','100(done)', '75', '50'):
                         for pds in project.planned_cash_flow_ids:
                             if pds.project_steps_id.id == step.id:
                                 if pds.date_cash.year == self.YEARint:
@@ -933,7 +933,7 @@ class report_svod_excel(models.AbstractModel):
                             if step.end_presale_project_month.month in (10, 11, 12):
                                 sum_contract_q4 += step.total_amount_of_revenue_with_vat
             else:
-                if project.estimated_probability_id.name in ('75', '50','100'):
+                if project.estimated_probability_id.name in ('75', '50','100','100(done)'):
                     if project.end_presale_project_month.year == self.YEARint:
                         sum_contract_year += project.total_amount_of_revenue_with_vat
                         if project.end_presale_project_month.month in (1, 2, 3):
@@ -944,7 +944,7 @@ class report_svod_excel(models.AbstractModel):
                             sum_contract_q3 += project.total_amount_of_revenue_with_vat
                         if project.end_presale_project_month.month in (10, 11, 12):
                             sum_contract_q4 += project.total_amount_of_revenue_with_vat
-                        if project.estimated_probability_id.name in ('100', '75', '50'):
+                        if project.estimated_probability_id.name in ('100','100(done)', '75', '50'):
                             for pds in project.planned_cash_flow_ids:
                                 if pds.date_cash.year == self.YEARint:
                                     sum_pds_year += pds.sum_cash

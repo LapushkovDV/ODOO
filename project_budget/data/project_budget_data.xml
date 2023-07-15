@@ -21,6 +21,10 @@
             <field name="name">100</field>
             <field name="code">4</field>
         </record>
+        <record id="estimated_probability_100done" model="project_budget.estimated_probability">
+            <field name="name">100(done)</field>
+            <field name="code">5</field>
+        </record>
 
         <record id="project_steps_type_product" model="project_budget.project_steps_type">
             <field name="name">Поставка</field>

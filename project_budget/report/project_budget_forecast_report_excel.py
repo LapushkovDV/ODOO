@@ -89,7 +89,7 @@ class report_budget_forecast_excel(models.AbstractModel):
      if name == '50': result = 'Подготовка ТКП'
      if name == '75': result = 'Подписание договора'
      if name == '100': result = 'Исполнение'
-     if name == '100+???': result = 'Исполнен/закрыт'
+     if name == '100(done)': result = 'Исполнен/закрыт'
      return result
 
     def get_quater_from_month(self,month):
@@ -140,8 +140,10 @@ class report_budget_forecast_excel(models.AbstractModel):
                                                                      ('project_id','=',spec.project_id),
                                                                      ('date_actual','>=',datesearch)
                                                                     ], limit=1, order='date_actual')
-        if etalon_project == False: # если не нашли относительно даты, то поищем просто последний
-            if isdebug: logger.info(f'   etalon_project not found by date ')
+        if etalon_project:
+            if isdebug: logger.info(f'   etalon_project found by date ')
+        else: # если не нашли относительно даты, то поищем просто последний
+            if isdebug: logger.info(f'   etalon_project NOT found by date ')
             etalon_project = self.env['project_budget.projects'].search([('etalon_budget', '=', True),
                                                                      ('budget_state','=','fixed'),
                                                                      ('project_id','=',spec.project_id)
@@ -186,9 +188,9 @@ class report_budget_forecast_excel(models.AbstractModel):
         if etalon_step:  # если не нашли относительно даты, то поищем просто последний
             if isdebug:
                 logger.info(f'   !etalon_step found by date! ')
-        if etalon_step == False: # если не нашли относительно даты, то поищем просто последний
+        else: # если не нашли относительно даты, то поищем просто последний
             if isdebug:
-                logger.info(f'   etalon_step not found by date ')
+                logger.info(f'   etalon_step NOT found by date ')
             etalon_step = self.env['project_budget.project_steps'].search([('etalon_budget', '=', True),
                                                                        ('step_id','=',step.step_id),
                                                                        ('id','!=',step.id)
@@ -446,7 +448,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                             sum50tmpetalon += project_etalon.total_amount_of_revenue_with_vat
 
                 if month == project.end_presale_project_month.month and self.YEARint == project.end_presale_project_month.year:
-                    if project.estimated_probability_id.name == '100':
+                    if project.estimated_probability_id.name in ('100','100(done)'):
                         sheet.write_number(row, column + 2, project.total_amount_of_revenue_with_vat, row_format_number_color_fact)
                         sum100tmp += project.total_amount_of_revenue_with_vat
                     if project.estimated_probability_id.name == '75':
@@ -478,7 +480,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                                 sum50tmpetalon += project_etalon.total_amount_of_revenue_with_vat
 
                 if month == step.end_presale_project_month.month and self.YEARint == step.end_presale_project_month.year:
-                    if step.estimated_probability_id.name == '100':
+                    if step.estimated_probability_id.name in ('100','100(done)'):
                         sheet.write_number(row, column + 2, step.total_amount_of_revenue_with_vat, row_format_number_color_fact)
                         sum100tmp = step.total_amount_of_revenue_with_vat
                     if step.estimated_probability_id.name == '75':
@@ -505,7 +507,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                 if step_etalon :
                     estimated_probability_id_name = step_etalon.estimated_probability_id.name
                 if sum != 0:
-                    if estimated_probability_id_name in('75','100'):
+                    if estimated_probability_id_name in('75','100','100(done)'):
                         sheet.write_number(row, column + 0, sum,row_format_number)
                         sum75tmpetalon += sum
                     if estimated_probability_id_name == '50':
@@ -542,7 +544,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                     estimated_probability_id_name = step.estimated_probability_id.name
 
                 if sum != 0:
-                    if estimated_probability_id_name in('75','100'):
+                    if estimated_probability_id_name in('75','100','100(done)'):
                         sheet.write_number(row, column + 3, sum,row_format_number)
                         sum75tmp += sum
                     if estimated_probability_id_name == '50':
@@ -617,7 +619,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                 estimated_probability_id_name = step_etalon.estimated_probability_id.name
 
             if sum != 0:
-                if estimated_probability_id_name in('75','100'):
+                if estimated_probability_id_name in('75','100','100(done)'):
                     sheet.write_number(row, column + 0, sum, row_format_number)
                     sheet.write_number(row, column + 0 + 43, sum*profitability_etalon/100, row_format_number)
                     sum75tmpetalon += sum
@@ -658,7 +660,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                 estimated_probability_id_name = step.estimated_probability_id.name
 
             if sum != 0:
-                if estimated_probability_id_name in('75','100'):
+                if estimated_probability_id_name in('75','100','100(done)'):
                     sheet.write_number(row, column + 3, sum, row_format_number)
                     sheet.write_number(row, column + 3 + 43, sum*profitability/100, row_format_number)
                     sum75tmp += sum
@@ -1250,8 +1252,6 @@ class report_budget_forecast_excel(models.AbstractModel):
                         # if spec.estimated_probability_id.name != '0':
                         if spec.is_framework == True and spec.project_have_steps == False: continue # рамка без этапов - пропускаем
                         if spec.vgo == '-':
-                            isFoundProjectsByManager = True
-                            isFoundProjectsByOffice = True
 
                             if begRowProjectsByManager == 0:
                                 begRowProjectsByManager = row
@@ -1259,6 +1259,9 @@ class report_budget_forecast_excel(models.AbstractModel):
                                 for step in spec.project_steps_ids:
                                     if self.isStepinYear( spec, step) == False:
                                         continue
+                                    isFoundProjectsByManager = True
+                                    isFoundProjectsByOffice = True
+
                                     row += 1
                                     sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
                                     # print('setrow level2 row = ',row)
@@ -1298,6 +1301,8 @@ class report_budget_forecast_excel(models.AbstractModel):
                                 if self.isProjectinYear(spec) == False:
                                     continue
                                 row += 1
+                                isFoundProjectsByManager = True
+                                isFoundProjectsByOffice = True
                                 sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
                                 # print('setrow level2 row = ', row)
                                 cur_row_format = row_format

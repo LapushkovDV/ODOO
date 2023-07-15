@@ -58,13 +58,22 @@ class commercial_budget(models.Model):
             activity_type_approve_supervisor = self.env.ref('project_budget.mail_act_approve_project_by_supervisor').id
             res_model_id_project_budget = self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id
             print('activity_type_for_approval ')
+            activity_model = self.env['mail.activity']
             for spec in self.sudo().projects_ids:
                 print('spec project_id = ', spec.project_id)
                 spec.was_changes = False
+                if spec.estimated_probability_id.name in ('0', '100(done)'):
+                    spec.approve_state = '-'
+                    # Use the search method to find the activities that need to be marked as done
+                    activities = activity_model.sudo().search([('res_id', '=', spec.id),
+                                                        ('activity_type_id', 'in', (activity_type_for_approval,activity_type_approve_supervisor))
+                                                        ])
+                    for activitie in activities:
+                        activitie.sudo().action_done()
+
                 if spec.estimated_probability_id.name in ('30','50','75','100'):
 
                     # Get a reference to the mail.activity model
-                    activity_model = self.env['mail.activity']
                     # Use the search method to find the activities that need to be marked as done
 
                     activities = activity_model.sudo().search([('res_id', '=', spec.id),

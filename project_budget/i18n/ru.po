@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-12 07:52+0000\n"
-"PO-Revision-Date: 2023-07-12 07:52+0000\n"
+"POT-Creation-Date: 2023-07-15 07:02+0000\n"
+"PO-Revision-Date: 2023-07-15 07:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -533,6 +533,12 @@ msgid "Dogovor number"
 msgstr "Номер договора"
 
 #. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__specification_state__done
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_estimated_probability_kanban
+msgid "Done"
+msgstr "Исполнен"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__end_presale_project_quarter
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__end_presale_project_quarter
 msgid "End date of the Presale project(quarter)"
@@ -554,7 +560,7 @@ msgstr "Количество эталонных проектов"
 #. module: project_budget
 #: model:ir.actions.report,name:project_budget.report_project_budget_excel
 msgid "Export to EXCEL"
-msgstr "КБ (EXCEL)"
+msgstr "Экспорт в EXCEL"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
@@ -1167,22 +1173,22 @@ msgstr "Проекты:"
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
 msgid "Q1"
-msgstr "1кв."
+msgstr "1 кв."
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
 msgid "Q2"
-msgstr "2кв."
+msgstr "2 кв."
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
 msgid "Q3"
-msgstr "3кв."
+msgstr "3 кв."
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
 msgid "Q4"
-msgstr "4кв."
+msgstr "4 кв."
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__receive_tasks_for_approve_project
@@ -1519,9 +1525,19 @@ msgid "commercial_budget-"
 msgstr "Коммерческий бюджет"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q1_fact
+msgid "contracting_q1_fact"
+msgstr "Факт. Контрактование 1кв."
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q1_plan
 msgid "contracting_q1_plan"
 msgstr "План. Контрактование 1кв."
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q2_fact
+msgid "contracting_q2_fact"
+msgstr "Факт. Контрактование 2кв."
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q2_plan
@@ -1529,14 +1545,29 @@ msgid "contracting_q2_plan"
 msgstr "План. Контрактование 2кв."
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q3_fact
+msgid "contracting_q3_fact"
+msgstr "Факт. Контрактование 3кв."
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q3_plan
 msgid "contracting_q3_plan"
 msgstr "План. Контрактование 3кв."
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q4_fact
+msgid "contracting_q4_fact"
+msgstr "Факт. Контрактование 4кв."
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q4_plan
 msgid "contracting_q4_plan"
 msgstr "План. Контрактование 4кв."
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_year_fact
+msgid "contracting_year_fact"
+msgstr "Факт. Контрактование год"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_year_plan
@@ -2911,27 +2942,32 @@ msgstr "Есть изменения"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
-msgid "Вероятность проекта 0%"
+msgid "Вероятность 100%"
 msgstr ""
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
-msgid "Вероятность проекта 100%"
+msgid "Вероятность 30%"
 msgstr ""
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
-msgid "Вероятность проекта 30%"
+msgid "Вероятность 50%"
 msgstr ""
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
-msgid "Вероятность проекта 50%"
+msgid "Вероятность 75%"
 msgstr ""
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
-msgid "Вероятность проекта 75%"
+msgid "Исполнен"
+msgstr ""
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
+msgid "Отменен"
 msgstr ""
 
 #. module: project_budget

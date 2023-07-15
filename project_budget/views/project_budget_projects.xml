@@ -22,11 +22,12 @@
                                 <div t-attf-class="o_kanban_card_header">
                                     <div class="o_kanban_card_header_title">
                                         <div class="o_primary">
-                                           <field name="approve_state" readonly="1"  widget="badge"
+                                            <field name="approve_state" readonly="1"  widget="badge"
                                                 decoration-danger="approve_state=='need_approve_manager'"
                                                 decoration-warning="approve_state=='need_approve_supervisor'"
                                                 decoration-success="approve_state=='approved'"
                                                 decoration-muted="specification_state=='cancel'"
+                                                decoration-primary="specification_state=='done'"
                                            />
                                         </div>
                                         <div class="col-12">
@@ -460,9 +461,11 @@
 
                 <tree delete="0" default_order="project_id desc"
                       decoration-muted="specification_state=='cancel'"
+                      decoration-primary="specification_state=='done'"
                       decoration-danger="approve_state=='need_approve_manager' and specification_state!='cancel'"
                       decoration-warning="approve_state=='need_approve_supervisor' and specification_state!='cancel'"
                       decoration-success="approve_state=='approved' and specification_state!='cancel'"
+
                 >
 <!--colors="blue:state == 'draft';gray:state in ('cancel','done');black:state == 'open'"-->
 
@@ -488,6 +491,13 @@
                                         decoration-success="approve_state=='approved'"
                                         decoration-muted="specification_state=='cancel'"
                     />
+                    <field name="specification_state"   optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"
+                                        widget="badge"
+                                           decoration-muted="specification_state=='cancel'"
+                                           decoration-primary="specification_state=='done'"
+                                           decoration-warning ="specification_state=='prepare'"
+                                           decoration-success="specification_state=='production'"
+                    />
                     <field name="date_actual" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="project_have_steps" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="is_framework" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
@@ -496,7 +506,6 @@
                     <field name="etalon_budget" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="budget_state" optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="commercial_budget_id"   optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
-                    <field name="specification_state"   optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="currency_id" invisible="1" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="project_office_id" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="project_supervisor_id" force_save="1" widget="many2one_avatar" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>

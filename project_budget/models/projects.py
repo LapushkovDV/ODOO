@@ -71,9 +71,10 @@ class projects(models.Model):
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True, group_operator = 'count',
                              default='ID') #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.projects'))
-    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled')], required=True,
+    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled'),('done','Done')], required=True,
                                            index=True, default='prepare', store=True, copy=True, tracking=True, compute="_compute_specification_state")
-    approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor', 'need supervisors approve'), ('approved','approved')],
+    approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor'
+                                     , 'need supervisors approve'), ('approved','approved'),('-','-')],
                                     required=True, index=True, default='need_approve_manager', store=True, copy=True, tracking=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency',  required = True, copy = True,
                                   default=lambda self: self.env['res.currency'].search([('name', '=', 'RUB')], limit=1),tracking=True)
@@ -222,6 +223,8 @@ class projects(models.Model):
                 row.specification_state = 'prepare'
             if row.estimated_probability_id.name == '100':
                 row.specification_state = 'production'
+            if row.estimated_probability_id.name == '100(done)':
+                row.specification_state = 'done'
 
 
     @api.onchange('project_office_id','specification_state','currency_id','project_supervisor_id','project_manager_id',

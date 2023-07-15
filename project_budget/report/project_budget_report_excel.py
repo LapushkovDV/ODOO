@@ -10,7 +10,7 @@ class report_budget_excel(models.AbstractModel):
     YEARint = int(strYEAR)
 
     probabitily_list_KB = ['30','50','75']
-    probabitily_list_PB = ['100']
+    probabitily_list_PB = ['100','100(done)']
     probabitily_list_Otmena = ['0']
     array_col_itogi = [12, 13,14,15,16,17,18,19,20,21,22,23,24,252,6,27,28]
     def printworksheet(self,workbook,budget,namesheet,stateproject):
