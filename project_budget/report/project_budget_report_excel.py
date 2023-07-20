@@ -289,6 +289,7 @@ class report_budget_excel(models.AbstractModel):
 
                     for spec in cur_budget_projects:
                         if spec.project_have_steps == False: # or 20230707 Вавилова Ирина сказала не выводить рамку spec.is_framework == True: # рамку всегда выгружать
+                            if spec.is_framework == True: continue # 20230718 Алина Козленко сказала не выгружать в принципе рамки
                             if (spec.estimated_probability_id.name in probabitily_list) and (
                                         spec.end_presale_project_month.year >= self.YEARint or spec.end_sale_project_month.year >= self.YEARint):
                                 row += 1

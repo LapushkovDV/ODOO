@@ -35,8 +35,8 @@ class planned_cash_flow(models.Model):
     sum_cash_without_vat = fields.Monetary(string="sum_cash_without_vat", required=True, copy=True, compute='_compute_sum')
     sum_cash = fields.Monetary(string="sum_cash", required=True, copy=True)
     doc_cash = fields.Char(string="doc_cash",  copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
-    budget_state = fields.Selection(related='projects_id.budget_state', readonly=True, store=True)
-    approve_state = fields.Selection(related='projects_id.approve_state', readonly=True, store=True)
+    budget_state = fields.Selection(related='projects_id.budget_state', readonly=True)
+    approve_state = fields.Selection(related='projects_id.approve_state', readonly=True)
 
     distribution_cash_ids = fields.One2many(
         comodel_name='project_budget.distribution_cash',
