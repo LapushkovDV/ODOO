@@ -6,22 +6,20 @@ class TaskStageRoute(models.Model):
     _description = "Task Stage Route"
     _order = "sequence"
 
-    name = fields.Char(readonly=False)
+    name = fields.Char(translate=True)
     sequence = fields.Integer(default=5, index=True, required=True, tracking=True)
     stage_from_id = fields.Many2one('task.stage', string='From', ondelete='restrict', required=True, index=True,
-                                    tracking=True,
-                                    domain=[('task_type_id', '=', 'task_type_id'), ('id', '!=', 'stage_to_id.id')])
+                                    tracking=True)
     stage_to_id = fields.Many2one('task.stage', string='To', ondelete='restrict', required=True, index=True,
-                                  tracking=True,
-                                  domain=[('task_type_id', '=', 'task_type_id'), ('id', '!=', 'stage_from_id.id')])
+                                  tracking=True)
     task_type_id = fields.Many2one('task.type', 'Task Type', ondelete='cascade', required=True, index=True,
                                    tracking=True)
     close = fields.Boolean(related='stage_to_id.closed', store=True, index=True, readonly=True)
+    result_type = fields.Selection(related='stage_to_id.result_type', store=True, readonly=True)
 
-    require_response = fields.Boolean(store=True, help="If set, then user will be asked for comment on this route")
+    require_comment = fields.Boolean(store=True, help="If set, then user will be asked for comment on this route")
 
     button_style = fields.Selection([
-        ('default', 'Default'),
         ('primary', 'Primary'),
         ('secondary', 'Secondary'),
         ('success', 'Success'),
@@ -31,11 +29,7 @@ class TaskStageRoute(models.Model):
         ('light', 'Light'),
         ('dark', 'Dark'),
         ('link', 'Link'),
-    ], default='default', string='Button style')
-
-    # reopen_as_type_ids = fields.Many2many(
-    #     'request.type', 'request_type_request_stage_route_rel',
-    #     string='Reopen request type')
+    ], required=True, default='primary', string='Button style')
 
     _sql_constraints = [
         ('stage_stage_from_to_type_uniq',
@@ -56,8 +50,12 @@ class TaskStageRoute(models.Model):
             res += [(record.id, name)]
         return res
 
+    # todo: по идее, нужно проверять имеет ли пользователь права двигать таску, пока заглушка
+    def _check_can_move(self, task):
+        pass
+
     @api.model
-    def ensure_route(self, task, to_stage_id):
+    def check_route(self, task, to_stage_id):
         route = self.search([
             ('task_type_id', '=', task.type_id.id),
             ('stage_from_id', '=', task.stage_id.id),

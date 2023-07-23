@@ -6,8 +6,6 @@
         <field name="view_mode">kanban,tree,form</field>
     </record>
 
-    <menuitem id="task_stage_type_menu" parent="task.task_configuration_menu" action="task_stage_type_action_form"/>
-
     <record id="task_stage_type_view_tree" model="ir.ui.view">
         <field name="name">task.stage.type.view.tree</field>
         <field name="model">task.stage.type</field>

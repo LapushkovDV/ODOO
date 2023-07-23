@@ -12,12 +12,22 @@
         <record id="task_stage_type_to_do" model="task.stage.type">
             <field name="name">To Do</field>
             <field name="code">to_do</field>
-            <field name="bg_color">rgba(85, 170, 255, 1)</field>
+            <field name="bg_color">rgba(192, 192, 192, 1)</field>
+        </record>
+        <record id="task_stage_type_in_progress" model="task.stage.type">
+            <field name="name">In Progress</field>
+            <field name="code">in_progress</field>
+            <field name="bg_color">rgba(0, 128, 255, 1)</field>
         </record>
         <record id="task_stage_type_done" model="task.stage.type">
             <field name="name">Done</field>
             <field name="code">done</field>
             <field name="bg_color">rgba(68, 170, 85, 1)</field>
+        </record>
+        <record id="task_stage_type_cancel" model="task.stage.type">
+            <field name="name">Cancel</field>
+            <field name="code">cancel</field>
+            <field name="bg_color">rgba(255, 70, 0, 1)</field>
         </record>
     </data>
 </odoo>

@@ -1,9 +1,9 @@
 {
     'name': 'Document Flow',
-    'version': '16.0.1.0.0',
+    'version': '16.0.1.0.1',
     'category': '',
     'depends': ['base', 'mail', 'uom', 'task'],
-    "external_dependencies": {"python": ["htmldocx"]},
+    'external_dependencies': {'python': ['htmldocx']},
     'description': """
     """,
     'author': '',
@@ -23,8 +23,8 @@
     },
     'data': [
         'data/document_flow_data.xml',
-        'security/ir.model.access.csv',
         'security/document_flow_security.xml',
+        'security/ir.model.access.csv',
         'views/event_task_views.xml',
         'views/event_views.xml',
         'views/event_question_views.xml',
@@ -35,7 +35,8 @@
         'views/process_template_views.xml',
         'views/dashboard_view.xml',
         'views/dashboard_templates.xml',
-        'report/report.xml'
+        'report/report.xml',
+        'views/document_flow_menu.xml'
     ],
     'demo': [
     ],

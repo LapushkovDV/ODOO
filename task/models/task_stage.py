@@ -2,13 +2,18 @@ from odoo import models, fields, api, exceptions, _
 
 DEFAULT_BG_COLOR = 'rgba(120,120,120,1)'
 
+RESULT_TYPES = [
+    ('ok', _('Ok')),
+    ('error', _('Error'))
+]
+
 
 class TaskStage(models.Model):
     _name = "task.stage"
     _description = "Task Stage"
     _order = "sequence"
 
-    name = fields.Char(required=True, string='Name')
+    name = fields.Char(required=True, string='Name', translate=True)
     code = fields.Char(required=True, string='Code')
 
     type_id = fields.Many2one('task.stage.type', string="Stage Type", required=True, index=True, ondelete="restrict")
@@ -31,6 +36,7 @@ class TaskStage(models.Model):
                                           compute='_compute_previous_stage_ids', store=True)
 
     closed = fields.Boolean(index=True)
+    result_type = fields.Selection(RESULT_TYPES, string='Result Type', default='ok')
     diagram_position = fields.Char(readonly=True)
 
     _sql_constraints = [

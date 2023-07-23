@@ -7,7 +7,7 @@ class TaskStageType(models.Model):
     _description = 'Stage Type'
 
     code = fields.Char(required=True)
-    name = fields.Char(required=True)
+    name = fields.Char(required=True, translate=True)
 
     active = fields.Boolean(index=True, default=True)
 

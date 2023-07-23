@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 13:57+0000\n"
-"PO-Revision-Date: 2023-06-29 13:57+0000\n"
+"POT-Creation-Date: 2023-07-23 11:00+0000\n"
+"PO-Revision-Date: 2023-07-23 11:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -67,6 +67,14 @@ msgid "After Decision"
 msgstr "После решения"
 
 #. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/process.py:0
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process_executor__type_sequence__after_the_previous
+#, python-format
+msgid "After the previous"
+msgstr "После предыдущего"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__name
 msgid "Agenda"
 msgstr "Повестка"
@@ -88,6 +96,9 @@ msgstr "Согласуйте протокол мероприятия \"%s\""
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__agreed_id
+#: model:task.stage,name:document_flow.agreement_task_stage_agreed
+#: model:task.stage.route,name:document_flow.agreement_task_stage_route_in_progress_agreed
+#: model:task.stage.route,name:document_flow.agreement_task_stage_route_to_do_agreed
 msgid "Agreed"
 msgstr "Согласовант"
 
@@ -96,9 +107,18 @@ msgstr "Согласовант"
 #: code:addons/document_flow/models/process.py:0
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process__type__agreement
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process_template__type__agreement
+#: model:task.type,name:document_flow.task_type_agreement
 #, python-format
 msgid "Agreement"
 msgstr "Согласование"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/process.py:0
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process__task_sequence__all_at_once
+#, python-format
+msgid "All At Once"
+msgstr "Всем сразу"
 
 #. module: document_flow
 #. odoo-python
@@ -106,11 +126,6 @@ msgstr "Согласование"
 #, python-format
 msgid "Annex %s"
 msgstr "Приложение %s"
-
-#. module: document_flow
-#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__annex_count
-msgid "Annex Count"
-msgstr "Количество приложений"
 
 #. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.event_annex_view_form
@@ -144,6 +159,8 @@ msgstr "Количество вложений"
 #. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/models/event.py:0
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__attachment_count
+#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
 #, python-format
 msgid "Attachments"
 msgstr "Вложения"
@@ -162,8 +179,12 @@ msgid "Code"
 msgstr "Код"
 
 #. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_process__company_ids
+msgid "Companies"
+msgstr "Компании"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__company_id
-#: model:ir.model.fields,field_description:document_flow.field_document_flow_process__company_id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__company_id
 msgid "Company"
 msgstr "Компания"
@@ -201,6 +222,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process__controller_ref_type
 msgid "Controller Type"
 msgstr ""
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/event.py:0
+#, python-format
+msgid "Copy_%s"
+msgstr "Копия_%s"
 
 #. module: document_flow
 #. odoo-javascript
@@ -298,16 +326,6 @@ msgid "Decision"
 msgstr "Решение"
 
 #. module: document_flow
-#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__decision_count
-msgid "Decision Count"
-msgstr "Количество решений"
-
-#. module: document_flow
-#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__decision_state
-msgid "Decision State"
-msgstr "Статус задачи на исполнение"
-
-#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__decision_ids
 #: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
 msgid "Decisions"
@@ -363,12 +381,6 @@ msgstr "Документооборот"
 #: model:ir.module.category,name:document_flow.module_category_document_flow_management
 msgid "Document Flow Management"
 msgstr "Документооборот"
-
-#. module: document_flow
-#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__attachment_count
-#: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
-msgid "Documents"
-msgstr "Документы"
 
 #. module: document_flow
 #. odoo-python
@@ -447,11 +459,19 @@ msgid "Execute decision of event \"%s\""
 msgstr "Выполните решение мероприятия \"%s\""
 
 #. module: document_flow
+#: model:task.stage,name:document_flow.execution_task_stage_executed
+#: model:task.stage.route,name:document_flow.execution_task_stage_route_in_progress_executed
+#: model:task.stage.route,name:document_flow.execution_task_stage_route_to_do_executed
+msgid "Executed"
+msgstr ""
+
+#. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/models/process.py:0
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__task_type__execution
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process__type__execution
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process_template__type__execution
+#: model:task.type,name:document_flow.task_type_execution
 #, python-format
 msgid "Execution"
 msgstr "Исполнение"
@@ -570,6 +590,16 @@ msgid "If checked, some messages have a delivery error."
 msgstr "Если отмечено, то есть ошибки доставки"
 
 #. module: document_flow
+#: model:task.stage,name:document_flow.agreement_task_stage_in_progress
+#: model:task.stage,name:document_flow.execution_task_stage_in_progress
+#: model:task.stage,name:document_flow.review_task_stage_in_progress
+#: model:task.stage.route,name:document_flow.agreement_task_stage_route_to_do_in_progress
+#: model:task.stage.route,name:document_flow.execution_task_stage_route_to_do_in_progress
+#: model:task.stage.route,name:document_flow.review_task_stage_route_to_do_in_progress
+msgid "In progress"
+msgstr ""
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_is_follower
 msgid "Is Follower"
 msgstr "Подписчик"
@@ -665,6 +695,14 @@ msgid "Messages"
 msgstr "Сообщения"
 
 #. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/process.py:0
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process__task_sequence__mixed
+#, python-format
+msgid "Mixed"
+msgstr "Смешанно"
+
+#. module: document_flow
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__repeat_interval__month
 msgid "Months"
 msgstr "Ежемесячно"
@@ -723,7 +761,7 @@ msgstr "Тип следующей активности"
 #. module: document_flow
 #: model_terms:ir.actions.act_window,help:document_flow.action_view_all_event
 msgid "No events found. Let's create one!"
-msgstr "Не найдено ни одного мероприятия. Давайте создадим одно!"
+msgstr "Не найдено ни одного мероприятия. Давайте создадим первое!"
 
 #. module: document_flow
 #: model_terms:ir.actions.act_window,help:document_flow.action_view_all_management_committee
@@ -743,7 +781,14 @@ msgstr "Процессы не найдены. Давайте создадим п
 #. module: document_flow
 #: model_terms:ir.actions.act_window,help:document_flow.action_view_all_task
 msgid "No tasks found. Let's create one!"
-msgstr "Задачи не найдены. Давайте создадим"
+msgstr "Задачи не найдены. Давайте создадим первую!"
+
+#. module: document_flow
+#: model:task.stage,name:document_flow.agreement_task_stage_not_agreed
+#: model:task.stage.route,name:document_flow.agreement_task_stage_route_in_progress_not_agreed
+#: model:task.stage.route,name:document_flow.agreement_task_stage_route_to_do_not_agreed
+msgid "Not agreed"
+msgstr ""
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_needaction_counter
@@ -815,6 +860,11 @@ msgid "Parent Id"
 msgstr ""
 
 #. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_process__parent_obj_ref
+msgid "Parent Object"
+msgstr "Родительский объект"
+
+#. module: document_flow
 #: model:ir.model,name:document_flow.model_document_flow_process_parent_object
 msgid "Parent Object Process"
 msgstr ""
@@ -876,7 +926,7 @@ msgstr "Наименование..."
 
 #. module: document_flow
 #: model:ir.actions.act_window,name:document_flow.action_view_all_process
-#: model:ir.model.fields,field_description:document_flow.field_document_flow_process__process_ids
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_process__child_ids
 #: model:ir.ui.menu,name:document_flow.document_flow_menu_process
 #: model_terms:ir.ui.view,arch_db:document_flow.process_view_form
 #: model_terms:ir.ui.view,arch_db:document_flow.process_view_tree
@@ -944,6 +994,7 @@ msgstr "Ответственный: %s"
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__task_type__review
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process__type__review
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process_template__type__review
+#: model:task.type,name:document_flow.task_type_review
 #, python-format
 msgid "Review"
 msgstr "Ознакомление"
@@ -961,6 +1012,13 @@ msgstr "Ознакомьтесь с протоколом мероприятия 
 #, python-format
 msgid "Review with decision of event \"%s\""
 msgstr "Ознакомьтесь с решением мероприятия \"%s\""
+
+#. module: document_flow
+#: model:task.stage,name:document_flow.review_task_stage_reviewed
+#: model:task.stage.route,name:document_flow.review_task_stage_route_in_progress_reviewed
+#: model:task.stage.route,name:document_flow.review_task_stage_route_review_to_do
+msgid "Reviewed"
+msgstr ""
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process__reviewer_ref
@@ -987,9 +1045,19 @@ msgstr "Отправить на согласование"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process__sequence
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_process__visible_sequence
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_executor__sequence
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_process_executor__type_sequence
 msgid "Sequence"
 msgstr "Последовательность"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/process.py:0
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process__task_sequence__sequentially
+#, python-format
+msgid "Sequentially"
+msgstr "Последовательно"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_question__speaker_ids
@@ -1043,6 +1111,11 @@ msgid "Task"
 msgstr "Задача"
 
 #. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_process__task_sequence
+msgid "Task Form Sequence"
+msgstr "Последовательность формирования задач"
+
+#. module: document_flow
 #: model_terms:ir.actions.act_window,help:document_flow.action_view_task_id
 msgid ""
 "Task management allows you to manage the pipeline of your tasks efficiently. You can track\n"
@@ -1056,7 +1129,7 @@ msgstr ""
 #: code:addons/document_flow/models/event.py:0
 #: model:ir.actions.act_window,name:document_flow.action_view_all_task
 #: model:ir.actions.act_window,name:document_flow.action_view_task_id
-#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__task_count
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__tasks_count
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process__task_ids
 #: model:ir.ui.menu,name:document_flow.menu_task_management
 #: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
@@ -1096,6 +1169,21 @@ msgid "To Date"
 msgstr "К дате"
 
 #. module: document_flow
+#: model:task.stage,name:document_flow.agreement_task_stage_to_do
+#: model:task.stage,name:document_flow.execution_task_stage_to_do
+#: model:task.stage,name:document_flow.review_task_stage_to_do
+msgid "To do"
+msgstr ""
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/process.py:0
+#: model:ir.model.fields.selection,name:document_flow.selection__document_flow_process_executor__type_sequence__together_with_the_previous
+#, python-format
+msgid "Together with the previous"
+msgstr "Вместе с предыдущим"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__task_type
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process__type
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__type
@@ -1110,6 +1198,7 @@ msgstr ""
 #. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/models/process.py:0
+#: model:res.groups,name:document_flow.group_document_flow_user
 #, python-format
 msgid "User"
 msgstr "Пользователь"

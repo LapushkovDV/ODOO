@@ -3,11 +3,12 @@ from odoo import models, fields, api, _, exceptions
 from datetime import datetime
 
 PRIORITIES = [
-    ('0', 'Lowest'),
-    ('1', 'Low'),
-    ('2', 'Medium'),
-    ('3', 'High'),
-    ('4', 'Highest'),
+    ('0', 'Not set'),
+    ('1', 'Lowest'),
+    ('2', 'Low'),
+    ('3', 'Medium'),
+    ('4', 'High'),
+    ('5', 'Highest'),
 ]
 
 
@@ -24,7 +25,7 @@ class HelpdeskTicket(models.Model):
     company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
     module_id = fields.Many2one('ir.model', string='Module')
 
-    priority = fields.Selection(PRIORITIES, string='Priority', default='2', tracking=True)
+    priority = fields.Selection(PRIORITIES, string='Priority', default='3', tracking=True)
 
     team_id = fields.Many2one('helpdesk.team', string='Helpdesk Team', tracking=True)
     user_id = fields.Many2one('res.users', string='Assigned', check_company=True, index=True, tracking=True)

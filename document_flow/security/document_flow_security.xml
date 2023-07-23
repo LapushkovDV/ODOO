@@ -24,49 +24,72 @@
             <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-        <record model="ir.rule" id="document_flow_processes_company_rule">
-            <field name="name">Process multi-company</field>
-            <field name="model_id" ref="model_document_flow_process"/>
-            <field name="domain_force">['|', ('company_id','=',False), ('company_id', 'in', company_ids)]</field>
-        </record>
-
         <record model="ir.rule" id="document_flow_event_company_rule">
             <field name="name">Event multi-company</field>
             <field name="model_id" ref="model_document_flow_event"/>
-            <field name="domain_force">['|', ('company_id','=',False), ('company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', ('company_ids','=',False), ('company_ids', 'in', company_ids)]</field>
         </record>
 
-        <record model="ir.rule" id="document_flow_user_rule">
-            <field name="name">Document flow: user</field>
+        <record model="ir.rule" id="document_flow_processes_company_rule">
+            <field name="name">Process multi-company</field>
+            <field name="model_id" ref="model_document_flow_process"/>
+            <field name="domain_force">['|', ('company_ids','=',False), ('company_ids', 'in', company_ids)]</field>
+        </record>
+
+        <record model="ir.rule" id="document_flow_user_my_event_rule">
+            <field name="name">Document flow: edit my event</field>
+            <field name="model_id" ref="model_document_flow_event"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4,ref('document_flow.group_document_flow_user'))]"/>
+        </record>
+
+        <record model="ir.rule" id="document_flow_user_member_event_rule">
+            <field name="name">Document flow: see member events</field>
             <field name="model_id" ref="model_document_flow_event"/>
             <field name="domain_force">['|',
                 ('member_ids', '=', user.id),
                 ('management_committee_id.member_ids', '=', user.id)]
             </field>
-            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
-            <field name="perm_read">True</field>
-            <field name="perm_write">False</field>
-            <field name="perm_create">False</field>
-            <field name="perm_unlink">False</field>
+            <field name="groups" eval="[(4,ref('document_flow.group_document_flow_user'))]"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
         </record>
 
-        <record model="ir.rule" id="document_flow_manager_rule">
-            <field name="name">Document flow manager: see all</field>
+        <record model="ir.rule" id="document_flow_event_manager_rule">
+            <field name="name">Document flow manager: see all events</field>
             <field name="model_id" ref="model_document_flow_event"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4,ref('document_flow.group_document_flow_manager'))]"/>
         </record>
 
-        <record model="ir.rule" id="document_flow_user_rule">
-            <field name="name">Document flow: user</field>
-            <field name="model_id" ref="model_document_flow_process"/>
-            <field name="domain_force">[('task_ids.user_id', '=', user.id)]</field>
-            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        <record model="ir.rule" id="document_flow_user_my_decision_rule">
+            <field name="name">Document flow: edit my decision</field>
+            <field name="model_id" ref="model_document_flow_event_decision"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4,ref('document_flow.group_document_flow_user'))]"/>
         </record>
 
-        <record model="ir.rule" id="document_flow_manager_rule">
-            <field name="name">Document flow manager: see all</field>
-            <field name="model_id" ref="model_document_flow_process"/>
+        <record model="ir.rule" id="document_flow_user_my_decisions_rule">
+            <field name="name">Document flow: see my decisions</field>
+            <field name="model_id" ref="model_document_flow_event_decision"/>
+            <field name="domain_force">['|', '|', '|',
+                ('responsible_id', '=', user.id),
+                ('executor_ids', '=', user.id),
+                ('process_id.member_ids', '=', user.id),
+                ('process_id.management_committee_id.member_ids', '=', user.id)]
+            </field>
+            <field name="groups" eval="[(4,ref('document_flow.group_document_flow_user'))]"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record model="ir.rule" id="document_flow_decision_manager_rule">
+            <field name="name">Document flow manager: see all decisions</field>
+            <field name="model_id" ref="model_document_flow_event_decision"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4,ref('document_flow.group_document_flow_manager'))]"/>
         </record>
