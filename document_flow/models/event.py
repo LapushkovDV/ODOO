@@ -68,7 +68,7 @@ class Event(models.Model):
             ]).process_id
             if main_process:
                 for process in main_process.child_ids:
-                    tasks_count += len(process.task_ids)
+                    tasks_count += len(process.sudo().task_ids)
             event.tasks_count = tasks_count
 
     def _compute_is_process_started(self):
@@ -263,8 +263,8 @@ class Event(models.Model):
         ]).process_id
         if main_process:
             for process in main_process.child_ids:
-                if process.task_ids:
-                    task_ids.extend(process.task_ids.ids)
+                if process.sudo().task_ids:
+                    task_ids.extend(process.sudo().task_ids.ids)
         return {
             'name': _('Tasks'),
             'domain': [
