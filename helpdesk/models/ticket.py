@@ -154,12 +154,13 @@ class HelpdeskTicket(models.Model):
             'res_model': 'task.task',
             'type': 'ir.actions.act_window',
             'context': {
+                'default_company_id': self.company_id.id,
                 'default_name': self.name,
                 'default_description': self.description,
-                'default_company_id': self.company_id.id,
                 'default_parent_ref': '%s,%s' % (self._name,  self.id),
                 'default_parent_ref_id': self.id,
-                'default_parent_ref_type': self._name
+                'default_parent_ref_type': self._name,
+                'default_priority': self.priority
             },
             'target': 'new'
         }

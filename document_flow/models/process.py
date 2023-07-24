@@ -349,6 +349,19 @@ class ProcessTemplate(models.Model):
     reviewer_ref_type = fields.Char(string='Reviewer Type', index=True, copy=False)
     deadline = fields.Integer(string='Deadline')
 
+    parent_id = fields.Many2one('document_flow.process.template', string='Parent Template', ondelete='cascade',
+                                index=True)
+    child_ids = fields.One2many('document_flow.process.template', 'parent_id', string='Processes')
+    task_sequence = fields.Selection(TASK_FORM_SEQUENCE, required=True, default='all_at_once',
+                                     string='Task Form Sequence')
+    sequence = fields.Integer(string='Sequence', default=0)
+    visible_sequence = fields.Integer(string='Sequence', compute='_compute_sequence')
+
+    def write(self, vals):
+        res = super(ProcessTemplate, self).write(vals)
+        # self._recompute_sequence_executors()
+        return res
+
     @api.depends('reviewer_ref_type', 'reviewer_ref_id')
     def _compute_executor_ref(self):
         for template in self:
@@ -356,6 +369,11 @@ class ProcessTemplate(models.Model):
                 template.reviewer_ref = '%s,%s' % (template.reviewer_ref_type, template.reviewer_ref_id or 0)
             else:
                 template.reviewer_ref = False
+
+    @api.onchange('sequence')
+    def _compute_sequence(self):
+        for process in self:
+            process.visible_sequence = process.sequence
 
 
 class ProcessTemplateExecutor(models.Model):
@@ -366,11 +384,17 @@ class ProcessTemplateExecutor(models.Model):
     def _selection_executor_model(self):
         return selection_executor_model()
 
-    template_id = fields.Many2one('document_flow.process.template', string='Template')
+    template_id = fields.Many2one('document_flow.process.template', string='Template', ondelete='cascade', index=True,
+                                  required=True)
+    num = fields.Integer(string='№', required=True, default=0)
     executor_ref = fields.Reference(string='Executor', selection='_selection_executor_model', store=True)
     executor_ref_id = fields.Integer(string='Executor Id', index=True, copy=False)
     executor_ref_type = fields.Char(string='Executor Type', index=True, copy=False)
     deadline = fields.Integer(string='Deadline')
+
+    sequence = fields.Integer(string='Sequence', required=True, default=0)
+    type_sequence = fields.Selection(TYPE_SEQUENCE, required=True, default='together_with_the_previous',
+                                     string='Sequence')
 
     @api.depends('executor_ref_type', 'executor_ref_id')
     def _compute_executor_ref(self):

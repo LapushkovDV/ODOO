@@ -55,11 +55,21 @@
                                placeholder="Description..."/>
                     </group>
                     <notebook>
-                        <page name="executors_page" string="Executors">
+                        <page name="executors_page" string="Executors" attrs="{'invisible': [('type', '=', 'complex')]}">
                             <field name="executor_ids" mode="tree">
                                 <tree editable="bottom">
                                     <field name="executor_ref" optional="show"/>
                                     <field name="deadline" optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="child_page" string="Processes" attrs="{'invisible': [('type', 'not in', ('complex'))]}">
+                            <field name="child_ids" widget="section_and_note_one2many" mode="tree" context="{'default_sequence': len(child_ids)}">
+                                <tree>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="visible_sequence" optional="hide"/>
+                                    <field name="type"/>
+                                    <field name="name"/>
                                 </tree>
                             </field>
                         </page>
