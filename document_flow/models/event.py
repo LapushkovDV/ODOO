@@ -186,8 +186,8 @@ class Event(models.Model):
         ])
         if executions.ids:
             for decision in executions:
-                executors = [executor.company_id.id for executor in decision.executor_ids]
-                executors.extend(decision.responsible_id.company_id.id)
+                executors = list([executor.company_id.id for executor in decision.executor_ids])
+                executors.append(decision.responsible_id.company_id.id)
                 c_ids = set(executors)
                 process_execution = self.env['document_flow.process'].create({
                     'company_ids': [(6, 0, c_ids)],
