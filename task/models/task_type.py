@@ -6,7 +6,7 @@ class TaskType(models.Model):
     _description = "Task Type"
     _order = 'name, id'
 
-    name = fields.Char(required=True, copy=True)
+    name = fields.Char(required=True, copy=True, translate=True)
     code = fields.Char(required=True, copy=True)
     active = fields.Boolean(default=True, index=True)
     description = fields.Text()
@@ -23,26 +23,23 @@ class TaskType(models.Model):
     model_id = fields.Many2one('ir.model', string='Model')
 
     _sql_constraints = [
-        ('name_uniq',
-         'UNIQUE (name)',
-         'Name must be unique.'),
         ('code_uniq',
          'UNIQUE (code)',
-         'Code must be unique.'),
+         'Code must be unique.')
     ]
 
     @api.depends('stage_ids')
     def _compute_stage_count(self):
         for task_type in self:
             task_type.stage_count = self.env['task.stage'].search_count([
-                ('task_type_id', '=', self.id)
+                ('task_type_id', '=', task_type.id)
             ])
 
     @api.depends('route_ids')
     def _compute_route_count(self):
         for task_type in self:
             task_type.route_count = self.env['task.stage.route'].search_count([
-                ('task_type_id', '=', self.id)
+                ('task_type_id', '=', task_type.id)
             ])
 
     @api.depends('stage_ids', 'stage_ids.sequence', 'stage_ids.task_type_id')
@@ -82,7 +79,6 @@ class TaskType(models.Model):
         task_types = super().create(vals)
 
         if self.env.context.get('create_default_stages'):
-            # TODO: rewrite to prepare values for type's create method
             for task_type in task_types:
                 if not task_type.start_stage_id:
                     task_type._create_default_stages_and_routes()

@@ -23,63 +23,71 @@ class DocumentFlowTask(models.Model):
     @api.model
     def get_tasks_count(self):
         my_tasks_to_do_count = self.env['task.task'].search_count([
-            ('state', 'in', ['to_do', 'assigned', 'in_progress']),
+            ('parent_ref_type', '=', 'document_flow.process'),
+            ('is_closed', '=', False),
             ('date_deadline', '>=', fields.Datetime.now()),
             ('user_id', '=', self.env.uid)
         ])
         my_tasks_overdue_count = self.env['task.task'].search_count([
-            ('state', 'not in', ['done', 'cancel']),
+            ('parent_ref_type', '=', 'document_flow.process'),
+            ('is_closed', '=', False),
             ('date_deadline', '<', fields.Datetime.now()),
             ('user_id', '=', self.env.uid)
         ])
         by_me_tasks_to_do_count = self.env['task.task'].search_count([
-            ('state', 'in', ['to_do', 'assigned', 'in_progress']),
+            ('parent_ref_type', '=', 'document_flow.process'),
+            ('is_closed', '=', False),
             ('date_deadline', '>=', fields.Datetime.now()),
-            ('write_uid', '=', self.env.uid)
+            ('create_uid', '=', self.env.uid)
         ])
         by_me_tasks_overdue_count = self.env['task.task'].search_count([
-            ('state', 'not in', ['done', 'cancel']),
+            ('parent_ref_type', '=', 'document_flow.process'),
+            ('is_closed', '=', False),
             ('date_deadline', '<', fields.Datetime.now()),
-            ('write_uid', '=', self.env.uid)
+            ('create_uid', '=', self.env.uid)
         ])
 
-        tasks = self.env['task.task'].search([
-            ('state', 'in', ['to_do', 'assigned', 'in_progress'])
-        ])
-        p_tasks = []
-        for task in tasks:
-            p_tasks.append(task.name)
+        # tasks = self.env['task.task'].search([
+        #     ('state', 'in', ['to_do', 'assigned', 'in_progress'])
+        # ])
+        # p_tasks = []
+        # for task in tasks:
+        #     p_tasks.append(task.name)
 
         values = {
             'my_to_do_count': my_tasks_to_do_count,
             'my_overdue_count': my_tasks_overdue_count,
             'by_me_to_do_count': by_me_tasks_to_do_count,
-            'by_me_overdue_count': by_me_tasks_overdue_count,
-            'p_tasks': p_tasks
+            'by_me_overdue_count': by_me_tasks_overdue_count
+            # 'p_tasks': p_tasks
         }
         return values
 
     @api.model
     def get_tasks_view(self):
         my_tasks_to_do = self.env['task.task'].search([
-            ('state', 'in', ['to_do', 'assigned', 'in_progress']),
+            ('parent_ref_type', '=', 'document_flow.process'),
+            ('is_closed', '=', False),
             ('date_deadline', '>=', fields.Datetime.now()),
             ('user_id', '=', self.env.uid)
         ])
         my_tasks_overdue = self.env['task.task'].search([
-            ('state', 'not in', ('done', 'cancel')),
+            ('parent_ref_type', '=', 'document_flow.process'),
+            ('is_closed', '=', False),
             ('date_deadline', '<', fields.Datetime.now()),
             ('user_id', '=', self.env.uid)
         ])
         by_me_tasks_to_do = self.env['task.task'].search([
-            ('state', 'in', ['to_do', 'assigned', 'in_progress']),
+            ('parent_ref_type', '=', 'document_flow.process'),
+            ('is_closed', '=', False),
             ('date_deadline', '>=', fields.Datetime.now()),
-            ('write_uid', '=', self.env.uid)
+            ('create_uid', '=', self.env.uid)
         ])
         by_me_tasks_overdue = self.env['task.task'].search_count([
-            ('state', 'not in', ('done', 'cancel')),
+            ('parent_ref_type', '=', 'document_flow.process'),
+            ('is_closed', '=', False),
             ('date_deadline', '<', fields.Datetime.now()),
-            ('write_uid', '=', self.env.uid)
+            ('create_uid', '=', self.env.uid)
         ])
 
         my_to_do_list = []
@@ -96,12 +104,12 @@ class DocumentFlowTask(models.Model):
         for task in by_me_tasks_overdue:
             by_me_overdue_list.append(task.name)
 
-        tasks = self.env['task.task'].search[(
-            'state', 'in', ['to_do', 'assigned']
-        )]
-        p_tasks = []
-        for task in tasks:
-            p_tasks.append(task.name)
+        # tasks = self.env['task.task'].search[(
+        #     'state', 'in', ['to_do', 'assigned']
+        # )]
+        # p_tasks = []
+        # for task in tasks:
+        #     p_tasks.append(task.name)
 
         values = {
             'my_to_do_count': len(my_tasks_to_do),
@@ -112,8 +120,8 @@ class DocumentFlowTask(models.Model):
             'my_to_do_tasks': my_to_do_list,
             'my_overdue_tasks': my_overdue_list,
             'by_me_to_do_tasks': by_me_to_do_list,
-            'by_me_overdue_tasks': by_me_overdue_list,
-            'p_tasks': p_tasks
+            'by_me_overdue_tasks': by_me_overdue_list
+            # 'p_tasks': p_tasks
         }
         return values
 

@@ -44,9 +44,12 @@
                             <field name="type_id"/>
                         </group>
                     </group>
-                    <group col="2">
+                    <group col="3">
                         <group>
                             <field name="closed"/>
+                        </group>
+                        <group>
+                            <field name="result_type"/>
                         </group>
                         <group>
                             <field name="use_custom_colors"/>

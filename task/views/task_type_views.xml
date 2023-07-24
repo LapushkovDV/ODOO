@@ -186,7 +186,4 @@
         <field name="view_mode">kanban,tree,form</field>
         <field name="context">{'create_default_stages': True}</field>
     </record>
-
-    <menuitem id="task_type_menu" parent="task.task_configuration_menu" action="action_task_type"/>
-
 </odoo>

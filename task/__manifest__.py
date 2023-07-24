@@ -1,8 +1,8 @@
 {
     'name': 'Task Management',
-    'version': '16.0.1.0.0',
+    'version': '16.0.1.0.2',
     'category': '',
-    'depends': ['base', 'mail', 'uom'],
+    'depends': ['base', 'mail', 'crnd_web_diagram_plus'],
     'description': """
     """,
     'author': '',
@@ -13,12 +13,10 @@
     'images': ['static/description/icon.png'],
     'assets': {
         'web.assets_backend': [
+            'task/static/src/scss/task_form.scss',
+            'task/static/src/components/**/*'
         ]
     },
-    'depends': [
-        'base',
-        'crnd_web_diagram_plus'
-    ],
     'data': [
         'data/task_data.xml',
         'security/task_security.xml',
@@ -27,7 +25,9 @@
         'views/task_type_views.xml',
         'views/task_stage_views.xml',
         'views/task_stage_type_views.xml',
-        'views/task_stage_route_views.xml'
+        'views/task_stage_route_views.xml',
+        'views/task_menu.xml',
+        'wizard/task_wizard_done.xml'
     ],
     'demo': [
     ],

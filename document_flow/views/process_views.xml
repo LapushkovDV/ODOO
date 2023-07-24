@@ -12,18 +12,15 @@
         </field>
     </record>
 
-    <menuitem id="document_flow_menu_process" parent="document_flow_menu" name="Processes" sequence="5"
-              action="action_view_all_process"/>
-
     <record id="process_view_tree" model="ir.ui.view">
         <field name="name">document_flow.process.tree</field>
         <field name="model">document_flow.process</field>
         <field name="arch" type="xml">
             <tree string="Processes" multi_edit="1" sample="1">
-                <field name="code" optional="show" readonly="1"/>
-                <field name="type" optional="show" readonly="1"/>
-                <field name="name" optional="show" readonly="1"/>
-                <field name="date_start" widget="date" optional="show" readonly="1"/>
+                <field name="code" readonly="1"/>
+                <field name="type" readonly="1"/>
+                <field name="name" readonly="1"/>
+                <field name="date_start" widget="date" readonly="1"/>
             </tree>
         </field>
     </record>
@@ -43,6 +40,7 @@
                     <group invisible="1">
                         <field name="date_start"/>
                         <field name="date_end"/>
+                        <field name="sequence"/>
                     </group>
                     <div class="oe_title">
                         <field name="code" readonly="1"/>
@@ -60,11 +58,15 @@
                             <field name="template_id" attrs="{'readonly': [('state', '!=', 'on_registration')]}"/>
                         </group>
                         <group>
-                            <field name="company_id" groups="base.group_multi_company" attrs="{'readonly': [('state', '!=', 'on_registration')]}"/>
+<!--                            <field name="company_id" groups="base.group_multi_company"/>-->
+                            <field name="company_ids" widget="many2many_tags" groups="base.group_multi_company"/>
                         </group>
                     </group>
                     <group>
-                        <field name="parent_id" attrs="{'invisible': [('parent_id', '=', False)], 'readonly': [('state', '!=', 'on_registration')]}"/>
+                        <field name="parent_id" attrs="{'invisible': ['|', ('parent_id', '=', False), ('parent_obj_ref', '!=', False)], 'readonly': [('state', '!=', 'on_registration')]}"/>
+                    </group>
+                    <group>
+                        <field name="parent_obj_ref" attrs="{'invisible': [('parent_obj_ref', '=', False)]}"/>
                     </group>
                     <group col="2" attrs="{'invisible': [('type', '!=', 'execution')], 'readonly': [('state', '!=', 'on_registration')]}">
                         <group>
@@ -85,43 +87,46 @@
                     </group>
                     <notebook>
                         <page name="executors_page" string="Executors" attrs="{'invisible': [('type', '=', 'complex')]}">
-                            <field name="executor_ids" mode="tree">
+                            <group attrs="{'invisible': [('type', 'in', ('review'))]}">
+                                <field name="task_sequence"/>
+                            </group>
+                            <field name="executor_ids" mode="tree" context="{'default_num': len(executor_ids)}">
                                 <tree editable="bottom">
-                                    <field name="executor_ref" optional="show"/>
-                                    <field name="date_deadline" optional="show"/>
+                                    <field name="num" widget="handle"
+                                           attrs="{'column_invisible': ['|', ('parent.type', 'in', ('review')), ('parent.task_sequence', '=', 'all_at_once')]}"/>
+                                    <field name="sequence" optional="hide"
+                                           attrs="{'column_invisible': ['|', ('parent.type', 'in', ('review')), ('parent.task_sequence', '=', 'all_at_once')]}"/>
+                                    <field name="executor_ref"/>
+                                    <field name="type_sequence"
+                                           attrs="{'column_invisible': ['|', ('parent.type', 'in', ('review')), ('parent.task_sequence', '!=', 'mixed')]}"/>
+                                    <field name="date_deadline"/>
                                 </tree>
                             </field>
                         </page>
-                        <page name="processes_page" string="Processes" attrs="{'invisible': [('type', 'not in', ('complex'))]}">
-                            <field name="process_ids" widget="section_and_note_one2many" mode="tree">
+                        <page name="child_page" string="Processes" attrs="{'invisible': [('type', 'not in', ('complex'))]}">
+                            <field name="child_ids" widget="section_and_note_one2many" mode="tree" context="{'default_sequence': len(child_ids)}">
                                 <tree>
-                                    <field name="type" optional="show"/>
-                                    <field name="name" optional="show"/>
-                                    <field name="sequence" optional="show"/>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="visible_sequence" optional="hide"/>
+                                    <field name="type"/>
+                                    <field name="name"/>
                                 </tree>
                             </field>
                         </page>
-                        <page name="tasks_page" string="Tasks" attrs="{'invisible': [('state', '=', 'on_registration')]}">
+                        <page name="tasks_page" string="Tasks"
+                              attrs="{'invisible': ['|', ('type', '=', 'complex'), ('state', '=', 'on_registration')]}">
                             <field name="task_ids" mode="tree">
-                                <tree create="0" delete="0"
-                                      decoration-info="state != 'done' and date_deadline &gt; current_date"
-                                      decoration-success="state == 'done'"
-                                      decoration-warning="state == 'to_do' and date_deadline &gt; current_date"
-                                      decoration-danger="state != 'done' and date_deadline &lt; current_date"
-                                      decoration-muted="state == 'cancel'">
-                                    <field name="name" optional="show"/>
-                                    <field name="user_id" widget="many2one_avatar_user" optional="show"/>
-                                    <field name="date_deadline" optional="show"/>
-                                    <field name="date_closed" optional="show"/>
-                                    <field name="state" optional="show"/>
+                                <tree create="0" delete="0">
+                                    <field name="name"/>
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <field name="date_deadline"/>
+                                    <field name="date_closed"/>
+                                    <field name="stage_id"/>
                                 </tree>
                             </field>
                         </page>
                     </notebook>
                 </sheet>
-<!--                <div class="oe_chatter">-->
-<!--                    <field name="message_ids" widget="mail_thread"/>-->
-<!--                </div>-->
             </form>
         </field>
     </record>

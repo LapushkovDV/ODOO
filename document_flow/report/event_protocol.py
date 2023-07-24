@@ -1,4 +1,5 @@
 from odoo import _, models
+from odoo.tools import pytz
 from docx.shared import Pt, Mm
 from docx.enum.text import WD_BREAK
 from htmldocx import HtmlToDocx
@@ -16,8 +17,9 @@ class EventProtocol(models.AbstractModel):
             style.font.name = 'Calibri'
             style.font.size = Pt(11)
             style.paragraph_format.space_after = 0
-            paragraph = doc.add_paragraph(
-                _('Protocol "%s" from %s') % (event.name, event.date_start.strftime('%d.%m.%Y')))
+            paragraph = doc.add_paragraph(_('Protocol "%s" from %s')
+                                          % (event.name, pytz.utc.localize(event.date_start).astimezone(
+                                            pytz.timezone(self.env.user.tz) or pytz.utc).strftime('%d.%m.%Y')))
             run = paragraph.runs[0]
             run.font.size = Pt(14)
             run.font.bold = True

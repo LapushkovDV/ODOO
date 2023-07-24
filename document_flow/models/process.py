@@ -9,6 +9,12 @@ PROCESS_TYPES = [
     ('complex', _('Complex'))
 ]
 
+MAPPING_PROCESS_TASK_TYPES = {
+    'review': 'sys_df_review',
+    'agreement': 'sys_df_agreement',
+    'execution': 'sys_df_execution'
+}
+
 PROCESS_STATES = [
     ('on_registration', _('On Registration')),
     ('started', _('Started')),
@@ -16,10 +22,28 @@ PROCESS_STATES = [
     ('finished', _('Finished')),
 ]
 
+TASK_FORM_SEQUENCE = [
+    ('all_at_once', _('All At Once')),
+    ('sequentially', _('Sequentially')),
+    ('mixed', _('Mixed'))
+]
+
+TYPE_SEQUENCE = [
+    ('together_with_the_previous', _('Together with the previous')),
+    ('after_the_previous', _('After the previous'))
+]
+
 
 # todo: необходима возможность выбора роли, возможно каких-то предопределенных методов
 def selection_executor_model():
     return [('res.users', _('User'))]
+
+
+def selection_parent_model():
+    return [
+        ('document_flow.event', _('Event')),
+        ('document_flow.event.decision', _('Decision'))
+    ]
 
 
 class Process(models.Model):
@@ -29,6 +53,10 @@ class Process(models.Model):
     @api.model
     def _selection_executor_model(self):
         return selection_executor_model()
+
+    @api.model
+    def _selection_parent_model(self):
+        return selection_parent_model()
 
     # @api.model_create_multi
     # def create(self, vals_list):
@@ -46,7 +74,10 @@ class Process(models.Model):
     description = fields.Html(string='Description', copy=True)
     type = fields.Selection(PROCESS_TYPES, required=True, default='review', index=True, string='Type')
     state = fields.Selection(PROCESS_STATES, required=True, default='on_registration', string='State')
-    company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
+    # user_state = fields.Char(string='User State', compute='_compute_user_state')
+    company_ids = fields.Many2many('res.company', string='Companies', required=True,
+                                   default=lambda self: self.env.company)
+    # company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
     template_id = fields.Many2one('document_flow.process.template', string='Template',
                                   domain="[('type', '=', type)]")
     parent_id = fields.Many2one('document_flow.process', string='Parent Process', ondelete='cascade', index=True)
@@ -57,20 +88,25 @@ class Process(models.Model):
     date_deadline = fields.Datetime(string='Date Deadline')
 
     reviewer_ref = fields.Reference(string='Reviewer', selection='_selection_executor_model', store=True)
-    reviewer_ref_id = fields.Integer(string='Reviewer Id', index=True, copy=False)
-    reviewer_ref_type = fields.Char(string='Reviewer Type', index=True, copy=False)
+    reviewer_ref_id = fields.Integer(string='Reviewer Id', index=True)
+    reviewer_ref_type = fields.Char(string='Reviewer Type', index=True)
 
     controller_ref = fields.Reference(string='Controller', selection='_selection_executor_model', store=True)
-    controller_ref_id = fields.Integer(string="Controller Id", index=True, copy=False)
-    controller_ref_type = fields.Char(string="Controller Type", index=True, copy=False)
+    controller_ref_id = fields.Integer(string="Controller Id", index=True)
+    controller_ref_type = fields.Char(string="Controller Type", index=True)
 
-    process_ids = fields.One2many('document_flow.process', 'parent_id', string='Processes')
+    child_ids = fields.One2many('document_flow.process', 'parent_id', string='Processes')
     task_ids = fields.One2many('task.task', 'parent_ref_id', string='Tasks',
-                               domain=lambda self: [('parent_ref_type', '=', 'document_flow.process')])
-    sequence = fields.Integer(string='Sequence', default=0)
+                               domain=lambda self: [('parent_ref_type', '=', 'document_flow.process'),
+                                                    ('parent_id', '=', False)])
 
-    # task_ids = fields.One2many('task.task', 'parent_ref_id', string='Tasks', compute='_compute_task_ids', readonly=True,
-    #                            store=True)
+    task_sequence = fields.Selection(TASK_FORM_SEQUENCE, required=True, default='all_at_once',
+                                     string='Task Form Sequence')
+    sequence = fields.Integer(string='Sequence', default=0)
+    visible_sequence = fields.Integer(string='Sequence', compute='_compute_sequence')
+
+    parent_obj_ref = fields.Reference(string='Parent Object', selection='_selection_parent_model',
+                                      compute='_compute_parent_obj', readonly=True)
 
     @api.model
     def create(self, vals_list):
@@ -78,6 +114,26 @@ class Process(models.Model):
             vals_list['code'] = self.env['ir.sequence'].next_by_code('document_flow.process') or _('New')
         res = super(Process, self).create(vals_list)
         return res
+
+    def write(self, vals):
+        res = super(Process, self).write(vals)
+        self._recompute_sequence_executors()
+        return res
+
+    def unlink(self):
+        self.task_ids.unlink()
+        return super(Process, self).unlink()
+
+    def _compute_parent_obj(self):
+        for process in self:
+            process.parent_obj_ref = self.env['document_flow.process.parent_object'].search([
+                ('process_id', '=', process.id)
+            ], limit=1).parent_ref
+
+    @api.onchange('sequence')
+    def _compute_sequence(self):
+        for process in self:
+            process.visible_sequence = process.sequence
 
     @api.depends('reviewer_ref_type', 'reviewer_ref_id')
     def _compute_reviewer_ref(self):
@@ -111,6 +167,21 @@ class Process(models.Model):
                     'date_deadline': fields.Datetime.now() + timedelta(executor.deadline)
                 })
 
+    def _recompute_sequence_executors(self):
+        prevSeq = 0
+        for executor in self.executor_ids:
+            if self.task_sequence == 'all_at_once':
+                executor.sequence = prevSeq
+            elif self.task_sequence == 'sequentially':
+                executor.sequence = prevSeq
+                prevSeq += 1
+            elif self.task_sequence == 'mixed':
+                if executor.type_sequence == 'together_with_the_previous':
+                    executor.sequence = prevSeq
+                elif executor.type_sequence == 'after_the_previous':
+                    executor.sequence = prevSeq + 1
+                prevSeq = executor.sequence
+
     def action_start_process(self):
         if self.state == 'on_registration':
             if self.type == 'complex':
@@ -129,8 +200,7 @@ class Process(models.Model):
                 'type': 'success',
                 'sticky': False,
                 'message': _("Tasks were created for the following user(s)"),
-                # 'message': _("Tasks were created for the following user(s): %s",
-                #              ', '.join(self.executor_ids.mapped('executor_ref.name'))),
+                'next': {'type': 'ir.actions.act_window_close'}
             }
         }
 
@@ -138,8 +208,11 @@ class Process(models.Model):
         if self.executor_ids:
             for executor in self.executor_ids:
                 task = self.env['task.task'].create({
+                    'company_id': executor.executor_ref.company_id.id,
                     'name': self.name,
-                    'type': self.type,
+                    'type_id': self.env['task.type'].search([
+                        ('code', '=', MAPPING_PROCESS_TASK_TYPES.get(self.type))
+                    ], limit=1).id,
                     'description': self.description,
                     'parent_ref': '%s,%s' % (self._name, self.id),
                     'parent_ref_type': self._name,
@@ -147,16 +220,17 @@ class Process(models.Model):
                     'date_deadline': executor.date_deadline,
                     'user_id': executor.executor_ref.id
                 })
-                # TODO: создание активности необходимо перенести в таски, при создании/изменении исполнителя
-                task.action_create_activity()
 
     # TODO: разобраться с reviewer, нужен ли и какой процесс
     def start_agreement_process(self):
         if self.executor_ids:
             for executor in self.executor_ids:
                 task = self.env['task.task'].create({
+                    'company_id': executor.executor_ref.company_id.id,
                     'name': self.name,
-                    'type': self.type,
+                    'type_id': self.env['task.type'].search([
+                        ('code', '=', MAPPING_PROCESS_TASK_TYPES.get(self.type))
+                    ], limit=1).id,
                     'description': self.description,
                     'parent_ref': '%s,%s' % (self._name, self.id),
                     'parent_ref_type': self._name,
@@ -164,14 +238,16 @@ class Process(models.Model):
                     'date_deadline': executor.date_deadline,
                     'user_id': executor.executor_ref.id
                 })
-                task.action_create_activity()
 
     def start_execution_process(self):
         if self.executor_ids:
             for executor in self.executor_ids:
                 task = self.env['task.task'].create({
+                    'company_id': executor.executor_ref.company_id.id,
                     'name': self.name,
-                    'type': self.type,
+                    'type_id': self.env['task.type'].search([
+                        ('code', '=', MAPPING_PROCESS_TASK_TYPES.get(self.type))
+                    ], limit=1).id,
                     'description': self.description,
                     'parent_ref': '%s,%s' % (self._name, self.id),
                     'parent_ref_type': self._name,
@@ -179,47 +255,55 @@ class Process(models.Model):
                     'date_deadline': executor.date_deadline,
                     'user_id': executor.executor_ref.id
                 })
-                task.action_create_activity()
 
     def start_complex_process(self):
-        min_sequence = self.process_ids.search([
+        min_sequence = self.child_ids.search([
             ('parent_id', '=', self.id)
         ], order='sequence, id', limit=1).sequence or 0
-        for process in self.process_ids.search([
+        for process in self.child_ids.search([
             ('parent_id', '=', self.id),
             ('sequence', '=', min_sequence)
         ], order='id'):
             process.action_start_process()
 
-    def process_task_result(self, date_closed):
-        if self.parent_id:
-            next_sequence = self.parent_id.process_ids.search([
-                ('parent_id', '=', self.parent_id.id),
-                ('sequence', '>', self.sequence)
-            ], order='sequence, id', limit=1).sequence or False
-            if not next_sequence:
-                if not self.parent_id.process_ids.search([
-                    ('id', '!=', self.id),
+    def process_task_result(self, date_closed, result_type='ok', feedback=False):
+        if result_type == 'ok':
+            if self.parent_id:
+                next_sequence = self.parent_id.child_ids.search([
                     ('parent_id', '=', self.parent_id.id),
-                    ('sequence', '=', self.sequence),
-                    ('state', '!=', 'finished')
-                ]):
-                    self.parent_id.write({'state': 'finished', 'date_end': date_closed})
-            else:
-                for process in self.process_ids.search([
-                    ('parent_id', '=', self.parent_id.id),
-                    ('sequence', '=', next_sequence)
-                ], order='id'):
-                    process.action_start_process()
-        self.write({'state': 'finished', 'date_end': date_closed})
-
-    def process_task_cancel_result(self, date_closed):
-        self.write({'state': 'break', 'date_end': date_closed})
+                    ('sequence', '>', self.sequence)
+                ], order='sequence, id', limit=1).sequence or False
+                if not next_sequence:
+                    if not self.parent_id.child_ids.search([
+                        ('id', '!=', self.id),
+                        ('parent_id', '=', self.parent_id.id),
+                        ('sequence', '=', self.sequence),
+                        ('state', '!=', 'finished')
+                    ]):
+                        self.parent_id.write({'state': 'finished', 'date_end': date_closed})
+                else:
+                    for process in self.child_ids.search([
+                        ('parent_id', '=', self.parent_id.id),
+                        ('sequence', '=', next_sequence)
+                    ], order='id'):
+                        process.action_start_process()
+            self.write({'state': 'finished', 'date_end': date_closed})
+        elif result_type == 'error':
+            self.write({'state': 'break', 'date_end': date_closed})
+            if self.parent_id:
+                self.parent_id.write({'state': 'break', 'date_end': date_closed})
+            if feedback and self.parent_obj_ref:
+                self.parent_obj_ref.write({'state': 'on_registration'})
+                self.parent_obj_ref.message_post(
+                    body=feedback,
+                    message_type='comment',
+                    subtype_xmlid='mail.mt_note')
 
 
 class ProcessExecutor(models.Model):
     _name = 'document_flow.process.executor'
     _description = 'Process Executor'
+    _order = 'num, id'
 
     @api.model
     def _selection_executor_model(self):
@@ -227,11 +311,14 @@ class ProcessExecutor(models.Model):
 
     process_id = fields.Many2one('document_flow.process', string='Process', ondelete='cascade', index=True,
                                  required=True)
-    executor_ref = fields.Reference(string='Executor', selection='_selection_executor_model', store=True)
+    num = fields.Integer(string='№', required=True, default=0)
+    executor_ref = fields.Reference(string='Executor', selection='_selection_executor_model', required=True, store=True)
     executor_ref_id = fields.Integer(string='Executor Id', index=True, copy=False)
     executor_ref_type = fields.Char(string='Executor Type', index=True, copy=False)
-    date_deadline = fields.Date(string='Deadline')
-    sequence = fields.Integer(string='Sequence', default=0)
+    date_deadline = fields.Date(string='Deadline', required=True)
+    sequence = fields.Integer(string='Sequence', required=True, default=0)
+    type_sequence = fields.Selection(TYPE_SEQUENCE, required=True, default='together_with_the_previous',
+                                     string='Sequence')
 
     @api.depends('executor_ref_type', 'executor_ref_id')
     def _compute_executor_ref(self):
@@ -262,6 +349,19 @@ class ProcessTemplate(models.Model):
     reviewer_ref_type = fields.Char(string='Reviewer Type', index=True, copy=False)
     deadline = fields.Integer(string='Deadline')
 
+    parent_id = fields.Many2one('document_flow.process.template', string='Parent Template', ondelete='cascade',
+                                index=True)
+    child_ids = fields.One2many('document_flow.process.template', 'parent_id', string='Processes')
+    task_sequence = fields.Selection(TASK_FORM_SEQUENCE, required=True, default='all_at_once',
+                                     string='Task Form Sequence')
+    sequence = fields.Integer(string='Sequence', default=0)
+    visible_sequence = fields.Integer(string='Sequence', compute='_compute_sequence')
+
+    def write(self, vals):
+        res = super(ProcessTemplate, self).write(vals)
+        # self._recompute_sequence_executors()
+        return res
+
     @api.depends('reviewer_ref_type', 'reviewer_ref_id')
     def _compute_executor_ref(self):
         for template in self:
@@ -269,6 +369,11 @@ class ProcessTemplate(models.Model):
                 template.reviewer_ref = '%s,%s' % (template.reviewer_ref_type, template.reviewer_ref_id or 0)
             else:
                 template.reviewer_ref = False
+
+    @api.onchange('sequence')
+    def _compute_sequence(self):
+        for process in self:
+            process.visible_sequence = process.sequence
 
 
 class ProcessTemplateExecutor(models.Model):
@@ -279,11 +384,17 @@ class ProcessTemplateExecutor(models.Model):
     def _selection_executor_model(self):
         return selection_executor_model()
 
-    template_id = fields.Many2one('document_flow.process.template', string='Template')
+    template_id = fields.Many2one('document_flow.process.template', string='Template', ondelete='cascade', index=True,
+                                  required=True)
+    num = fields.Integer(string='№', required=True, default=0)
     executor_ref = fields.Reference(string='Executor', selection='_selection_executor_model', store=True)
     executor_ref_id = fields.Integer(string='Executor Id', index=True, copy=False)
     executor_ref_type = fields.Char(string='Executor Type', index=True, copy=False)
     deadline = fields.Integer(string='Deadline')
+
+    sequence = fields.Integer(string='Sequence', required=True, default=0)
+    type_sequence = fields.Selection(TYPE_SEQUENCE, required=True, default='together_with_the_previous',
+                                     string='Sequence')
 
     @api.depends('executor_ref_type', 'executor_ref_id')
     def _compute_executor_ref(self):
@@ -300,15 +411,11 @@ class ParentObjectProcess(models.Model):
 
     @api.model
     def _selection_parent_model(self):
-        return [
-            ('document_flow.event', _('Event')),
-            ('document_flow.event.decision', _('Decision'))
-        ]
+        return selection_parent_model()
 
     process_id = fields.Many2one('document_flow.process', string='Process', ondelete='cascade', index=True,
                                  required=True)
-    # process_state = fields.Selection(string="Process State", related='process.state')
-    parent_ref = fields.Reference(string='Parent', selection='_selection_parent_model', required=True)
+    parent_ref = fields.Reference(string='Parent', selection='_selection_parent_model', ondelete='cascade',
+                                  required=True)
     parent_ref_id = fields.Integer(string='Parent Id', index=True)
     parent_ref_type = fields.Char(string='Parent Type', index=True)
-

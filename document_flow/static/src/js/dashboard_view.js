@@ -75,7 +75,8 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 view_mode: 'tree,form',
                 views: [[false, 'list'], [false, 'form']],
                 domain: [
-                    ['state', 'in', ['to_do', 'assigned', 'in_progress']],
+                    ['parent_ref_type', '=', 'document_flow.process'],
+                    ['is_closed', '=', false],
                     ['user_id', '=', require('web.session').user_id],
                     ['date_deadline', '>=', new Date()]
                 ],
@@ -95,7 +96,8 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 view_mode: 'tree,form',
                 views: [[false, 'list'], [false, 'form']],
                 domain: [
-                    ['state', 'not in', ['done', 'cancel']],
+                    ['parent_ref_type', '=', 'document_flow.process'],
+                    ['is_closed', '=', false],
                     ['user_id', '=', require('web.session').user_id],
                     ['date_deadline', '<', new Date()]
                 ],
@@ -115,8 +117,9 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 view_mode: 'tree,form',
                 views: [[false, 'list'], [false, 'form']],
                 domain: [
-                    ['state', 'in', ['to_do', 'assigned', 'in_progress']],
-                    ['write_uid', '=', require('web.session').user_id],
+                    ['parent_ref_type', '=', 'document_flow.process'],
+                    ['is_closed', '=', false],
+                    ['create_uid', '=', require('web.session').user_id],
                     ['date_deadline', '>=', new Date()]
                 ],
                 context: { default_state: 'to_do' },
@@ -135,8 +138,9 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 view_mode: 'tree,form',
                 views: [[false, 'list'], [false, 'form']],
                 domain: [
-                    ['state', 'not in', ['done', 'cancel']],
-                    ['write_uid', '=', require('web.session').user_id],
+                    ['parent_ref_type', '=', 'document_flow.process'],
+                    ['is_closed', '=', false],
+                    ['create_uid', '=', require('web.session').user_id],
                     ['date_deadline', '<', new Date()]
                 ],
                 context: {create: false},
