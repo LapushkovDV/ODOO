@@ -51,6 +51,8 @@ class project_office(models.Model):
     code = fields.Char(string="project_office code", required=True)
     descr = fields.Char(string="project_office description")
     company_id = fields.Many2one('res.company',default=lambda self: self.env.company)
+    parent_id = fields.Many2one('project_budget.project_office', string='Parent project_office', copy=True, tracking=True, domain='[("id", "!=", id)]')
+    child_ids = fields.One2many('project_budget.project_office', 'parent_id', string="Sub project_office")
     user_id = fields.Many2one('res.users', string='Office manager', )
     avatar_128 = fields.Image(related='user_id.avatar_128', readonly=True)
     receive_tasks_for_approve_project = fields.Boolean(string="Recieve tasks for approve project as supervisor", default = False)

@@ -1223,7 +1223,7 @@ class report_budget_forecast_excel(models.AbstractModel):
         column = self.print_month_head_revenue_margin(workbook, sheet, row, column,  self.strYEAR)
         row += 2
 
-        project_offices  = self.env['project_budget.project_office'].search([], order='name')  # для сортировки так делаем
+        project_offices  = self.env['project_budget.project_office'].search([('parent_id','=',False)], order='name')  # для сортировки так делаем + берем сначала только верхние элементы
         project_managers = self.env['project_budget.project_manager'].search([], order='name')  # для сортировки так делаем
         estimated_probabilitys = self.env['project_budget.estimated_probability'].search([],order='name desc')  # для сортировки так делаем
 
@@ -1349,10 +1349,10 @@ class report_budget_forecast_excel(models.AbstractModel):
                     for colFormula in range(12,302):
                         formula = '=sum({2}{0}:{2}{1})'.format(begRowProjectsByManager + 2,row, xl_col_to_name(colFormula))
                         sheet.write_formula(row, colFormula, formula, row_format_manager)
-                    for col in self.array_col_itogi:
-                        formula = '={1}{0} + {2}{0}'.format(row+1,xl_col_to_name(col),xl_col_to_name(col+ 1))
-                        # print('formula = ', formula)
-                        sheet.write_formula(row, col -1, formula, head_format_month_itogo)
+                    # for col in self.array_col_itogi:
+                    #     formula = '={1}{0} + {2}{0}'.format(row+1,xl_col_to_name(col),xl_col_to_name(col+ 1))
+                    #     print('formula = ', formula)
+                    #     sheet.write_formula(row, col -1, formula, head_format_month_itogo)
                     for col in self.array_col_itogi75:
                         formula = '={1}{0} + {2}{0}'.format(row+1,xl_col_to_name(col+ 1),xl_col_to_name(col+ 2))
                         # print('formula = ', formula)

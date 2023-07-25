@@ -79,6 +79,21 @@ class report_svod_excel(models.AbstractModel):
                         return True
         return False
 
+    def getintestimated_probability(self,estimated_probability_id_name):
+        if estimated_probability_id_name == '0' :
+            return 0
+        if estimated_probability_id_name == '30':
+            return 30
+        if estimated_probability_id_name == '50':
+            return 50
+        if estimated_probability_id_name == '75':
+            return 75
+        if estimated_probability_id_name == '100':
+            return 100
+        if estimated_probability_id_name == '100(done)':
+            return 100
+        return 0
+
     def get_etalon_budget(self):
         etalon_budget = self.env['project_budget.commercial_budget'].search(
             [('etalon_budget', '=', True), ('budget_state', '=', 'fixed'),('name','!=','ФИНАНСЫ эталон Q2')], limit=1,
@@ -312,7 +327,7 @@ class report_svod_excel(models.AbstractModel):
         if not project:  # если нет объекта то все в 0
             return sum_year, sum_q1, sum_q2, sum_q3, sum_q4
         print('project.estimated_probability_id.name = ',project.estimated_probability_id.name)
-        if (project.estimated_probability_id.name == '100','100(done)'):  # только 50 и 75  смотрим
+        if project.estimated_probability_id.name in ('100','100(done)'):  # только 50 и 75  смотрим
             if project.end_presale_project_month.year == self.YEARint:  # а если текущий год уже вперери.. то и показывать в отчете нечего
                 sum_year = project.total_amount_of_revenue_with_vat
                 if project.end_presale_project_month.month in (
@@ -1204,10 +1219,10 @@ class report_svod_excel(models.AbstractModel):
                                     etalon_step = self.get_etalon_step(step)
                                     etalon_probability_int = 0
                                     if etalon_step:
-                                        etalon_probability_int = int(etalon_step.estimated_probability_id.name)
+                                        etalon_probability_int = self.getintestimated_probability(etalon_step.estimated_probability_id.name)
                                     current_probability_int = 0
                                     if step:
-                                        current_probability_int = int(step.estimated_probability_id.name)
+                                        current_probability_int = self.getintestimated_probability(step.estimated_probability_id.name)
                                     Probability_format = cur_row_format
                                     if current_probability_int > etalon_probability_int :
                                         Probability_format = row_format_number_probability_up
@@ -1240,10 +1255,10 @@ class report_svod_excel(models.AbstractModel):
                                 etalon_spec = self.get_etalon_project(spec)
                                 etalon_probability_int = 0
                                 if etalon_spec:
-                                    etalon_probability_int = int(etalon_spec.estimated_probability_id.name)
+                                    etalon_probability_int = self.getintestimated_probability(etalon_spec.estimated_probability_id.name)
                                 current_probability_int = 0
                                 if spec:
-                                    current_probability_int = int(spec.estimated_probability_id.name)
+                                    current_probability_int = self.getintestimated_probability(spec.estimated_probability_id.name)
                                 Probability_format = cur_row_format
                                 if current_probability_int > etalon_probability_int:
                                     Probability_format = row_format_number_probability_up

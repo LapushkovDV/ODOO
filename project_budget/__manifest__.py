@@ -1,6 +1,6 @@
 {
     'name' : 'Project_budget',
-    'version' : '1.0',
+    'version' : '16.0.1.1.0',
     'category': 'Project',
     'depends': ['base','mail','uom'],
     'description':"""
@@ -22,6 +22,7 @@
         'security/ir.model.access.csv',
         'data/project_budget_data.xml',
         'views/project_sequence.xml',
+        'views/plan_kam_supervisor.xml',
         'views/fact_cash_flow.xml',
         'views/fact_acceptance_flow.xml',
         'views/project_budget_catalogs.xml',
