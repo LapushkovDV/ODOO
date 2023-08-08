@@ -72,6 +72,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
     array_col_itogi75NoFormula = [248, 291,]
 
+    dict_formula = {}
     dict_contract_pds = {
         1: {'name': 'Контрактование, с НДС', 'color': '#FFD966'},
         2: {'name': 'Поступление денежных средсв, с НДС', 'color': '#D096BF'}
@@ -656,7 +657,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                 if sum <= 0 : sum = 0
 
             estimated_probability_id_name = project.estimated_probability_id.name
-            if step_etalon:
+            if step:
                 estimated_probability_id_name = step.estimated_probability_id.name
 
             if sum != 0:
@@ -1223,7 +1224,8 @@ class report_budget_forecast_excel(models.AbstractModel):
         column = self.print_month_head_revenue_margin(workbook, sheet, row, column,  self.strYEAR)
         row += 2
 
-        project_offices  = self.env['project_budget.project_office'].search([('parent_id','=',False)], order='name')  # для сортировки так делаем + берем сначала только верхние элементы
+        # project_offices  = self.env['project_budget.project_office'].search([('parent_id','=',False)], order='name')  # для сортировки так делаем + берем сначала только верхние элементы
+        project_offices = self.env['project_budget.project_office'].search([],order='name')  # для сортировки так делаем + берем сначала только верхние элементы
         project_managers = self.env['project_budget.project_manager'].search([], order='name')  # для сортировки так делаем
         estimated_probabilitys = self.env['project_budget.estimated_probability'].search([],order='name desc')  # для сортировки так делаем
 
