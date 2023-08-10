@@ -127,7 +127,7 @@ class projects(models.Model):
     transportation_expenses = fields.Monetary(string='transportation_expenses',tracking=True)
     travel_expenses = fields.Monetary(string='travel_expenses',tracking=True)
     representation_expenses = fields.Monetary(string='representation_expenses',tracking=True)
-    taxes_fot_premiums = fields.Monetary(string='taxes_FOT and premiums', compute='_compute_spec_totals', store=True, tracking=True)
+    taxes_fot_premiums = fields.Monetary(string='taxes_FOT and premiums', store=True, tracking=True)
     warranty_service_costs = fields.Monetary(string='Warranty service costs',tracking=True)
     rko_other = fields.Monetary(string='rko_other',tracking=True)
     other_expenses = fields.Monetary(string='other_expenses',tracking=True)
@@ -164,6 +164,7 @@ class projects(models.Model):
     is_warranty_service_costs = fields.Boolean(related='project_type_id.is_warranty_service_costs', readonly=True)
     is_rko_other = fields.Boolean(related='project_type_id.is_rko_other', readonly=True)
     is_other_expenses = fields.Boolean(related='project_type_id.is_other_expenses', readonly=True)
+    is_percent_fot_manual = fields.Boolean(related='legal_entity_signing_id.is_percent_fot_manual', readonly=True)
 
     comments  = fields.Text(string='comments project', default = "")
     technological_direction_id = fields.Many2one('project_budget.technological_direction',
@@ -233,7 +234,7 @@ class projects(models.Model):
                   'third_party_works','awards_on_results_project','transportation_expenses','travel_expenses','representation_expenses','taxes_fot_premiums','warranty_service_costs',
                   'rko_other','other_expenses','margin_income','profitability','estimated_probability_id','legal_entity_signing_id','project_type_id','comments','technological_direction_id',
                   'planned_cash_flow_sum','planned_cash_flow_ids','step_project_number','dogovor_number','planned_acceptance_flow_sum','planned_acceptance_flow_ids','fact_cash_flow_sum',
-                  'fact_cash_flow_ids','fact_acceptance_flow_sum','fact_acceptance_flow_ids','project_have_steps','project_steps_ids'
+                  'fact_cash_flow_ids','fact_acceptance_flow_sum','fact_acceptance_flow_ids','project_have_steps','project_steps_ids','taxes_fot_premiums'
                 )
     def _check_changes_project(self):
         print('_check_changes_project')
@@ -306,7 +307,7 @@ class projects(models.Model):
     @api.depends("project_steps_ids.revenue_from_the_sale_of_works", 'project_steps_ids.revenue_from_the_sale_of_goods', 'project_steps_ids.cost_of_goods', 'project_steps_ids.own_works_fot',
                  'project_steps_ids.third_party_works', "project_steps_ids.awards_on_results_project", 'project_steps_ids.transportation_expenses', 'project_steps_ids.travel_expenses',
                  'project_steps_ids.representation_expenses',"project_steps_ids.warranty_service_costs", 'project_steps_ids.rko_other', 'project_steps_ids.other_expenses',
-                 'project_steps_ids.vat_attribute_id'
+                 'project_steps_ids.vat_attribute_id','taxes_fot_premiums'
                  ,"revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
                  'third_party_works', "awards_on_results_project", 'transportation_expenses', 'travel_expenses', 'representation_expenses',
                  "warranty_service_costs", 'rko_other', 'other_expenses','vat_attribute_id','legal_entity_signing_id','project_have_steps',)
@@ -314,11 +315,14 @@ class projects(models.Model):
         for budget_spec in self:
             if budget_spec.project_have_steps == False :
                 budget_spec.total_amount_of_revenue = budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods
-                budget_spec.taxes_fot_premiums = (budget_spec.awards_on_results_project + budget_spec.own_works_fot)*budget_spec.legal_entity_signing_id.percent_fot/100
+
                 budget_spec.cost_price = budget_spec.cost_of_goods + budget_spec.own_works_fot+ budget_spec.third_party_works +budget_spec.awards_on_results_project
                 budget_spec.cost_price = budget_spec.cost_price + budget_spec.transportation_expenses+budget_spec.travel_expenses+budget_spec.representation_expenses
                 budget_spec.cost_price = budget_spec.cost_price + budget_spec.warranty_service_costs+budget_spec.rko_other+budget_spec.other_expenses
-                budget_spec.cost_price = budget_spec.cost_price + (budget_spec.awards_on_results_project + budget_spec.own_works_fot) * budget_spec.legal_entity_signing_id.percent_fot / 100
+                if budget_spec.is_percent_fot_manual == False:
+                    budget_spec.taxes_fot_premiums = (budget_spec.awards_on_results_project + budget_spec.own_works_fot)*budget_spec.legal_entity_signing_id.percent_fot/100
+                budget_spec.cost_price = budget_spec.cost_price + budget_spec.taxes_fot_premiums
+
                 budget_spec.margin_income = budget_spec.total_amount_of_revenue - budget_spec.cost_price
                 budget_spec.total_amount_of_revenue_with_vat = (budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods)*(1+budget_spec.vat_attribute_id.percent/100)
             else:

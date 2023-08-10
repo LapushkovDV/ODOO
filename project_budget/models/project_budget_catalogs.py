@@ -168,6 +168,7 @@ class legal_entity_signing(models.Model):
     name = fields.Char(string="legal_entity_signing name", required=True, translate=True)
     code = fields.Char(string="legal_entity_signing code", required=True)
     percent_fot = fields.Float(string="fot_percent", required=True, default=0)
+    is_percent_fot_manual = fields.Boolean(string="Manual fot_percent", default=0)
     descr = fields.Char(string="legal_entity_signing description", translate=True)
 
 class technological_direction(models.Model):

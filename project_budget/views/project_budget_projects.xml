@@ -179,6 +179,7 @@
                                           options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                                           invisible="1"
                                     />
+                                    <field name="is_percent_fot_manual" invisible="1"/>
                                 </group>
                                 <h5>
                                     <group col="3">
@@ -319,7 +320,8 @@
                                                attrs="{'readonly': ['|','|',('project_have_steps','=',True),('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
                                               ,'invisible': [('is_awards_on_results_project', '=', False),('project_have_steps', '=', False)]}"/>
                                         <field name="taxes_fot_premiums"
-                                               attrs="{'invisible': [('is_own_works_fot', '=', False),('is_awards_on_results_project', '=', False),('project_have_steps', '=', False)]}"/>
+                                               attrs="{'readonly': ['|','|','|',('project_have_steps','=',True),('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager'),('is_percent_fot_manual','=',False)]
+                                               ,'invisible': [('is_own_works_fot', '=', False),('is_awards_on_results_project', '=', False),('project_have_steps', '=', False)]}"/>
                                     </group>
                                 </group>
                             </page>
