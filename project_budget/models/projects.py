@@ -210,7 +210,7 @@ class projects(models.Model):
 
     def _compute_attachment_count(self):
         for project in self:
-            project.attachments_count = self.env['ir.attachment'].search_count([
+            project.attachment_count = self.env['ir.attachment'].search_count([
                 ('res_model', '=', self._name),
                 ('res_id', '=', project.id)
             ])
