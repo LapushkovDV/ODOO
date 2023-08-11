@@ -41,7 +41,7 @@
                         <group col="2">
                             <group>
                                 <field name="year" invisible="True"/>
-                                <field name="project_office_id" invisible="True" options="{'no_create': True}"/>
+                                <field name="project_office_id"  options="{'no_create': True}"/>
                                 <field name="supervisor_id" options="{'no_create': True}" widget="many2one_avatar"/>
                                 <field name="company_id" options="{'no_create': True}"/>
                             </group>
@@ -275,7 +275,7 @@
                                     </group>
                                 </group>
                                 <group col="1">
-                                    <group string="Conclusion of new contracts, with VAT"/>
+                                    <group string="Conclusion of new contracts, with VAT" style="background-color : #FFD966;"/>
                                 </group>
                                 <group col="5">
                                     <group>
@@ -295,7 +295,7 @@
                                     </group>
                                 </group>
                                 <group col="1">
-                                    <group string="Cash, with VAT" />
+                                    <group string="Cash, with VAT" style="background-color : #D096BF;" />
                                 </group>
                                 <group col="5">
                                     <group>
@@ -315,7 +315,7 @@
                                     </group>
                                 </group>
                                 <group col="1">
-                                    <group string="Acceptance, without VAT" />
+                                    <group string="Acceptance, without VAT" style="background-color : #B4C6E7;"/>
                                 </group>
                                 <group col = "5">
                                     <group>
@@ -335,7 +335,7 @@
                                     </group>
                                 </group>
                                 <group col="1">
-                                    <group string="Margin income, without VAT" />
+                                    <group string="Margin income, without VAT" style="background-color : #F4FD9F;"/>
                                 </group>>
                                 <group col="5">
                                     <group>
