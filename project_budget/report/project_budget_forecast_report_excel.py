@@ -59,6 +59,12 @@ class report_budget_forecast_excel(models.AbstractModel):
                 for step in project.project_steps_ids:
                     if self.isStepinYear(project, step):
                         return True
+
+            etalon_project = self.get_etalon_project_first(project) # поищем первый эталон в году и если контрактование или последняя отгрузка были в году, то надо проект в отчете показывать
+            if etalon_project:
+                if etalon_project.end_presale_project_month.year == self.YEARint or project.end_sale_project_month.year == self.YEARint:
+                    return True
+
         return False
 
     month_rus_name_contract_pds = ['Январь','Февраль','Март','Q1 итого','Апрель','Май','Июнь','Q2 итого','HY1/YEAR итого',
@@ -72,6 +78,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
     array_col_itogi75NoFormula = [248, 291,]
 
+    dict_formula = {}
     dict_contract_pds = {
         1: {'name': 'Контрактование, с НДС', 'color': '#FFD966'},
         2: {'name': 'Поступление денежных средсв, с НДС', 'color': '#D096BF'}
@@ -115,6 +122,15 @@ class report_budget_forecast_excel(models.AbstractModel):
         if quater_name == 'Q4':
             months=(10,11,12)
         return months
+
+    def get_etalon_project_first(self,spec):
+        datesearch = datetime.date(self.YEARint, 1, 1)  # будем искать первый утвержденный в году
+        etalon_project = self.env['project_budget.projects'].search([('etalon_budget', '=', True),
+                                                                     ('budget_state', '=', 'fixed'),
+                                                                     ('project_id', '=', spec.project_id),
+                                                                     ('date_actual', '>=', datesearch)
+                                                                     ], limit=1, order='date_actual')
+        return etalon_project
 
     def get_etalon_project(self,spec, quater):
         datesearch = datetime.date(self.YEARint, 1, 1)
@@ -656,7 +672,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                 if sum <= 0 : sum = 0
 
             estimated_probability_id_name = project.estimated_probability_id.name
-            if step_etalon:
+            if step:
                 estimated_probability_id_name = step.estimated_probability_id.name
 
             if sum != 0:
@@ -1223,9 +1239,10 @@ class report_budget_forecast_excel(models.AbstractModel):
         column = self.print_month_head_revenue_margin(workbook, sheet, row, column,  self.strYEAR)
         row += 2
 
-        project_offices  = self.env['project_budget.project_office'].search([('parent_id','=',False)], order='name')  # для сортировки так делаем + берем сначала только верхние элементы
+        # project_offices  = self.env['project_budget.project_office'].search([('parent_id','=',False)], order='name')  # для сортировки так делаем + берем сначала только верхние элементы
+        project_offices = self.env['project_budget.project_office'].search([],order='name')  # для сортировки так делаем + берем сначала только верхние элементы
         project_managers = self.env['project_budget.project_manager'].search([], order='name')  # для сортировки так делаем
-        estimated_probabilitys = self.env['project_budget.estimated_probability'].search([],order='name desc')  # для сортировки так делаем
+        estimated_probabilitys = self.env['project_budget.estimated_probability'].search([('name','!=','10')],order='name desc')  # для сортировки так делаем
 
         isFoundProjectsByOffice = False
         isFoundProjectsByManager = False

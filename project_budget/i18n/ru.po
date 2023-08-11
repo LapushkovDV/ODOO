@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-25 06:51+0000\n"
-"PO-Revision-Date: 2023-07-25 06:51+0000\n"
+"POT-Creation-Date: 2023-08-10 09:16+0000\n"
+"PO-Revision-Date: 2023-08-10 09:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -397,7 +397,7 @@ msgstr "Создайте нового руководителя проекта"
 #. module: project_budget
 #: model_terms:ir.actions.act_window,help:project_budget.show_budget_plan_supervisor
 msgid "Create a new supervisors's plan on year"
-msgstr "Создайте новый план по проектному офису на год "
+msgstr "Создайте новый план по проектному офису на год"
 
 #. module: project_budget
 #: model_terms:ir.actions.act_window,help:project_budget.show_technological_direction
@@ -824,12 +824,6 @@ msgid "KAM's plans"
 msgstr "План КАМа"
 
 #. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__year
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__year
-msgid "KAM's year plan"
-msgstr "Год"
-
-#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__supervisor_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__supervisor_id
 msgid "KAMs supervisor"
@@ -1032,19 +1026,6 @@ msgid "Net profit"
 msgstr "Чистая прибыль"
 
 #. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__activity_calendar_event_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__activity_calendar_event_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__activity_calendar_event_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__activity_calendar_event_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__activity_calendar_event_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__activity_calendar_event_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__activity_calendar_event_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__activity_calendar_event_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__activity_calendar_event_id
-msgid "Next Activity Calendar Event"
-msgstr ""
-
-#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__activity_date_deadline
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__activity_date_deadline
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__activity_date_deadline
@@ -1119,7 +1100,7 @@ msgstr "Количество ошибок"
 #: model:ir.model.fields,help:project_budget.field_project_budget_planned_cash_flow__message_needaction_counter
 #: model:ir.model.fields,help:project_budget.field_project_budget_project_steps__message_needaction_counter
 #: model:ir.model.fields,help:project_budget.field_project_budget_projects__message_needaction_counter
-msgid "Number of messages which requires an action"
+msgid "Number of messages requiring action"
 msgstr "Количество сообщений, для которых требуется действие"
 
 #. module: project_budget
@@ -1183,6 +1164,11 @@ msgstr "Организация"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__plan_supervisor_id
 msgid "Plan Supervisor"
 msgstr "Вышестоящий план ПО"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_estimated_probability_kanban
+msgid "Potential"
+msgstr "Потенциал"
 
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__specification_state__prepare
@@ -1345,6 +1331,16 @@ msgstr "Отправить проект куратору на утвержден
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Send to approve"
 msgstr "Отправить на утверждение"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+msgid "Delete"
+msgstr "Удалить"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+msgid "Reopen"
+msgstr "Вернуть в работу"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_form
@@ -2411,14 +2407,49 @@ msgstr "Удаление этапа возможно только в текущ�
 #, python-format
 msgid "only in state 'need approve manager' project can be canceled"
 msgstr ""
-"Перевести в статус 'отменен' можно только при статусе = 'утверждение КАМ'"
+"Перевести в статус 'отменен' можно только в статусе 'Согласование КАМ'"
+
+#. module: project_budget
+#. odoo-python+
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid "only project in 'need approve manager' can be deleted"
+msgstr "Удалить проект можно только в статусе 'Согласование КАМ'"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid "only project not in fixed budget can be deleted"
+msgstr "Удалить проект можно только если он не зафиксирован в бюджете"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid "only project admin can reopen projects"
+msgstr "Только администратор может вернуть проект в работу"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid "only project in '-' status can be reopened"
+msgstr "Только проект в статусе '-' можно вернуть в работу"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid "only project not in fixed budget can be reopened"
+msgstr "Вернуть в работу проект можно только если он не зафиксирован в бюджете"
 
 #. module: project_budget
 #. odoo-python
 #: code:addons/project_budget/models/project_steps.py:0
 #, python-format
 msgid "only in state 'need approve manager' project can be deleted"
-msgstr "Удаление этапа возможно только в статусе на согласовнии КАМ"
+msgstr "Удаление этапа возможно только в статусе 'Согласование КАМ'"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__other_expenses
@@ -3146,7 +3177,7 @@ msgstr "Пользователь"
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_res_users
 msgid "users budgets access"
-msgstr ""
+msgstr "Пользователь"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__is_use_ebit
@@ -3212,6 +3243,12 @@ msgid "was_changes"
 msgstr "Есть изменения"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__year
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__year
+msgid "year plan"
+msgstr "Год"
+
+#. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
 msgid "Вероятность 100%"
 msgstr ""
@@ -3244,6 +3281,11 @@ msgstr ""
 #. module: project_budget
 #: model:project_budget.project_steps_type,name:project_budget.project_steps_type_product
 msgid "Поставка"
+msgstr ""
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
+msgid "Потенциал"
 msgstr ""
 
 #. module: project_budget

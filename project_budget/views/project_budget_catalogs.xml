@@ -433,6 +433,7 @@
                     <field name="code"/>
                     <field name="percent_fot"/>
                     <field name="descr"/>
+                    <field name="is_percent_fot_manual" widget="boolean_toggle"/>
                 </tree>
             </field>
         </record>
@@ -443,14 +444,19 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet string="legal_entity_signing">
-                            <group>
-                                    <field name="name"/>
-                                    <field name="code"/>
-                            </group>
-                            <group>
-                                <field name="percent_fot" placeholder="enter FOT percent. e.g. 25"/>
-                                <field name="descr" widget="html"/>
-                            </group>
+                        <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="is_percent_fot_manual" widget="boolean_toggle"/>
+                            <field name="percent_fot" placeholder="enter FOT percent. e.g. 25"
+                                   attrs="{'invisible': [('is_percent_fot_manual', '=', True)]}"
+                            />
+                        </group>
+                        <group>
+                            <field name="descr" widget="html"/>
+                        </group>
                     </sheet>
                 </form>
             </field>
@@ -657,7 +663,7 @@
                 <field name="sum_cost_price_total"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-if="['0', '30', '50','75','100','100(done)'].indexOf(record.name.raw_value) > -1" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="estimated_probability">
+                        <div t-if="['0','10', '30', '50','75','100','100(done)'].indexOf(record.name.raw_value) > -1" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="estimated_probability">
                             <div t-attf-class="o_kanban_card_header">
                                 <div class="o_kanban_card_header_title">
                                     <div class="o_primary" t-if="['30', '50','75','100'].indexOf(record.name.raw_value) > -1">
@@ -676,7 +682,11 @@
                                             Done
                                         </a>
                                     </div>
-
+                                    <div class="o_primary" t-if="['10'].indexOf(record.name.raw_value) > -1">
+                                        <a>
+                                            Potential
+                                        </a>
+                                    </div>
                                 </div>
                                 <div class="o_kanban_manage_button_section" t-if="!selection_mode">
                                     <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/></a>
@@ -689,6 +699,12 @@
                                             <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
                                         </button>
                                     </div>
+                                    <div t-if="record.name.raw_value == '10'" class="col-6 o_kanban_primary_left">
+                                        <button class="btn btn-warning" name="get_action_projects_10" type="object">
+                                            <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
+                                        </button>
+                                    </div>
+
                                     <div t-if="record.name.raw_value == '30'" class="col-6 o_kanban_primary_left">
                                         <button class="btn btn-primary" name="get_action_projects_30" type="object">
                                             <span>Projects: <t t-esc="record.count_approve_state_total.value"/></span>
