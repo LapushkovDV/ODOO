@@ -218,6 +218,15 @@ msgid "Attachment Count"
 msgstr "Количество вложений"
 
 #. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__attachment_count
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+#, python-format
+msgid "Attachments"
+msgstr "Вложения"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__avatar_128
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_manager__avatar_128
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__avatar_128
