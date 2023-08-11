@@ -86,6 +86,12 @@
                         <field name="approve_state" widget="statusbar" statusbar_visible="need_approve_manager,need_approve_supervisor,approved"/>
                     </header>
                     <sheet string="Project">
+						<div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="object" name="action_open_attachments"
+                                    icon="fa-files-o">
+                                <field string="Attachments" name="attachment_count" widget="statinfo"/>
+                            </button>
+                        </div>
                         <field name="company_id" invisible="True"/>
                         <field name="company_id" groups="base.group_multi_company"
                                    options="{'no_create': True}"/>
