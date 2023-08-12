@@ -91,6 +91,10 @@
                                     icon="fa-files-o">
                                 <field string="Attachments" name="attachment_count" widget="statinfo"/>
                             </button>
+                            <button class="oe_stat_button" type="object" name="action_open_tenders"
+                                    icon="fa-gavel">
+                                <field string="Tenders" name="tenders_count" widget="statinfo"/>
+                            </button>
                         </div>
                         <field name="company_id" invisible="True"/>
                         <field name="company_id" groups="base.group_multi_company"

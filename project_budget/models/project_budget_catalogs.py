@@ -178,4 +178,21 @@ class technological_direction(models.Model):
     code = fields.Char(string="technological_direction code", required=True)
     descr = fields.Char(string="technological_direction description", translate=True)
 
+class tender_current_status(models.Model):
+    _name = 'project_budget.tender_current_status'
+    _description = "tender current status"
+    name = fields.Char(string="current status name", required=True, translate=True)
+    code = fields.Char(string="current status code", required=True)
+    descr = fields.Char(string="current status description", translate=True)
+
+class tender_comments_type(models.Model):
+    _name = 'project_budget.tender_comments_type'
+    _description = "tender comments type"
+    name = fields.Char(string="comment type name", required=True, translate=True)
+    code = fields.Char(string="comment type code", required=True)
+    descr = fields.Char(string="comment type description", translate=True)
+
+
+
+
 

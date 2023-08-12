@@ -1,6 +1,6 @@
 {
     'name' : 'Project_budget',
-    'version' : '16.0.1.1.0',
+    'version' : '16.0.1.1.1',
     'category': 'Project',
     'depends': ['base','mail','uom'],
     'description':"""
@@ -32,6 +32,7 @@
         'views/project_budget_projects.xml',
         'views/project_budget_comercial_budget.xml',
         'views/Dashboard_1.xml',
+        'views/tenders.xml',
         'views/project_budget_menu.xml',
         'report/project_budget_report.xml',
         'report/project_budget_report_template.xml',

@@ -208,11 +208,19 @@ class projects(models.Model):
     
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Attachments')
 
+    tenders_count = fields.Integer(compute='_compute_tenders_count', string='Tenders')
+
     def _compute_attachment_count(self):
         for project in self:
             project.attachment_count = self.env['ir.attachment'].search_count([
                 ('res_model', '=', self._name),
                 ('res_id', '=', project.id)
+            ])
+
+    def _compute_tenders_count(self):
+        for project in self:
+            project.tenders_count = self.env['project_budget.tenders'].search_count([
+                ('projects_id', '=', project.id)
             ])
 
     @api.depends('project_id','step_project_number')
@@ -566,6 +574,21 @@ class projects(models.Model):
                 <p class="o_view_nocontent_smiling_face">%s</p>
                 """ % _("Add attachments for this project")
         }
+
+    def action_open_tenders(self):
+        self.ensure_one()
+        return {
+            'name': _('Tenders'),
+            'domain': [('projects_id', '=', self.id)],
+            'res_model': 'project_budget.tenders',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree,form',
+            'context': "{'default_projects_id': %d}" % (self.id),
+            'help': """
+                <p class="o_view_nocontent_smiling_face">%s</p>
+                """ % _("Add tenders for this project")
+        }
+
 
     def process_task_result(self, date_closed, result_type='ok', feedback=False):
         pass
