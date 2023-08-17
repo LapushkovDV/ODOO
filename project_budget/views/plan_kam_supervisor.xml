@@ -236,10 +236,10 @@
                     <field name="project_office_id"/>
                     <field name="supervisor_id" widget="many2one_avatar"/>
                     <field name="currency_id"/>
-                    <field name="contracting_year_plan"/>
-                    <field name="cash_year_plan"/>
-                    <field name="acceptance_year_plan"/>
-                    <field name="margin_income_year_plan"/>
+                    <field name="contracting_year_plan" class ="clmn-contract-color"/>
+                    <field name="cash_year_plan" class="clmn-cash-color"/>
+                    <field name="acceptance_year_plan" class="clmn-acceptance-color"/>
+                    <field name="margin_income_year_plan" class="clmn-margin-color"/>
                     <field name="margin3_income_year_plan"/>
                     <field name="ebit_year_plan"/>
                     <field name="net_profit_year_plan"/>

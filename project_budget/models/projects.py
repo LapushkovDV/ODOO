@@ -71,7 +71,7 @@ class projects(models.Model):
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
     project_id = fields.Char(string="Project_ID", required=True, index=True, copy=True, group_operator = 'count',
                              default='ID') #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.projects'))
-    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled'),('done','Done')], required=True,
+    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled'),('done','Done'),('lead','Lead')], required=True,
                                            index=True, default='prepare', store=True, copy=True, tracking=True, compute="_compute_specification_state")
     approve_state= fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor'
                                      , 'need supervisors approve'), ('approved','approved'),('-','-')],
@@ -233,6 +233,8 @@ class projects(models.Model):
         for row in self:
             if row.estimated_probability_id.name == '0':
                 row.specification_state = 'cancel'
+            if row.estimated_probability_id.name == '10':
+                row.specification_state = 'lead'
             if row.estimated_probability_id.name == '30':
                 row.specification_state = 'prepare'
             if row.estimated_probability_id.name == '50':
@@ -606,9 +608,14 @@ class projects(models.Model):
         for admins only
         """
         for record in self:
+            user_id = False
+            if record.project_office_id.receive_tasks_for_approve_project:  # не только куратор может утвекрждать, но и руководитель проектного офиса надо
+                if record.project_office_id.user_id:  # вдруг просто галочка стоит, а пользователь не выбран
+                    user_id = record.project_office_id.user_id.id
 
-            if not record.env.user.has_group('project_budget.project_budget_admin'):
-                raise_text = _("only project admin can reopen projects")
+            if not (self.user_is_supervisor(record.project_supervisor_id.id) or self.user_has_groups(
+                'project_budget.project_budget_admin') or self.env.user.id == user_id):
+                raise_text = _("only project admin or supervisor or project office manager can reopen projects")
                 raise ValidationError(raise_text)
 
             if record.approve_state != '-':

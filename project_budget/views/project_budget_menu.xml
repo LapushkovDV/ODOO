@@ -36,5 +36,9 @@
         <menuitem id="project_budget_catalogs_project_manager_access" parent ="project_budget_access" name = "project_manager_access" action="show_comercial_budget_spec_manager_access" groups="project_budget.project_budget_admin"/>
         <menuitem id="project_budget_catalogs_rukovoditel_project_access" parent ="project_budget_access" name = "rukovoditel_project_access" action="show_comercial_budget_spec_rukovoditel_project_access" groups="project_budget.project_budget_admin"/>
 
+        <menuitem id="project_budget_reports" parent ="project_budget_menu" name = "Reports"/>
+        <menuitem id="project_budget_tender_print_report" parent ="project_budget_reports" name = "Print tenders list" action="action_tender_print_report" groups="project_budget_tenders_user,project_budget_tenders_admin"/>
+
+
     </data>
 </odoo>
