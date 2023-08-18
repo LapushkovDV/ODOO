@@ -32,14 +32,13 @@ class report_tender_excel(models.AbstractModel):
         report_name = 'tenders'
             # One sheet by partner
         sheet = workbook.add_worksheet('tenders')
-        bold = workbook.add_format({'bold': True})
-        money_format = workbook.add_format({'num_format': '#,##0.00'})
         head_format = workbook.add_format({
             'bold': True,
             'italic': True,
             'border': 1,
             'font_name': 'Arial',
-            'font_size': 11,
+            'font_size': 9,
+            "bold": True,
             'text_wrap': True,
             'align': 'center',
             'valign': 'vcenter',
@@ -47,155 +46,84 @@ class report_tender_excel(models.AbstractModel):
             'color': '#ffffff'
         })
 
-        row_format_date_month = workbook.add_format({
+        row_format_text = workbook.add_format({
             'border': 1,
-            'font_size': 11,
-            'font_name': 'Times New Roman'
-            # 'num_format': 14
-            #                'text_wrap' : True,
-            #                'align': 'center',
-            #                'valign': 'vcenter',
-            #                'fg_color': '#3265a5',
-        })
-
-        row_format_date_month.set_num_format('mmmm yyyy')
-        row_format = workbook.add_format({
-            'border': 1,
-            'font_size': 11,
-            'font_name': 'Times New Roman'
-            #                'text_wrap' : True,
-            #                'align': 'center',
-            #                'valign': 'vcenter',
-            #                'fg_color': '#3265a5',
-        })
-        row_format_number = workbook.add_format({
-            'border': 1,
-            'font_size': 11,
-            'num_format': '#,##0.00',
+            'font_size': 9,
+            'text_wrap': True,
             'font_name': 'Times New Roman'
         })
-        row_format_manager = workbook.add_format({
-            'border': 1,
-            'font_size': 11,
-            "bold": True,
-            "fg_color": '#D9D9D9',
-            'font_name': 'Times New Roman'
-        })
-        row_format_manager.set_num_format('#,##0')
-
-        row_format_itogo = workbook.add_format({
-            'border': 1,
-            'font_size': 11,
-            "bold": True,
-            "fg_color": '#bfbfbf',
-            'font_name': 'Times New Roman'
-        })
-        row_format_itogo.set_num_format('#,##0.00')
-
-        row_format_itogo_percent = workbook.add_format({
-            'border': 1,
-            'font_size': 11,
-            "bold": True,
-            "fg_color": '#bfbfbf',
-            'font_name': 'Times New Roman'
-        })
-        row_format_itogo_percent.set_num_format('0%')
-
-
-        row_format_office = workbook.add_format({
-            'border': 1,
-            'font_size': 11,
-            "bold": True,
-            "fg_color": '#60497a',
-            "color": '#ffffff',
-            'font_name': 'Times New Roman'
-        })
-        row_format_office.set_num_format('#,##0.00')
-
-
-        row_format_office_percent = workbook.add_format({
-            'border': 1,
-            'font_size': 11,
-            "bold": True,
-            "fg_color": '#60497a',
-            "color": '#ffffff',
-            'font_name': 'Times New Roman'
-        })
-        row_format_office_percent.set_num_format('0%')
-
-        row_format_itog_row = workbook.add_format({
-            'border': 1,
-            'font_size': 11,
-            "bold": True,
-            "color": '#244062',
-            'font_name': 'Times New Roman'
-        })
-        row_format_itog_row.set_num_format('#,##0.00')
-
-        row_format_percent_row = workbook.add_format({
-            'border': 1,
-            'font_size': 11,
-            "bold": True,
-            "color": '#244062',
-            'font_name': 'Times New Roman'
-        })
-        row_format_percent_row.set_num_format('0%')
-
 
         date_format = workbook.add_format({'num_format': 'd mmmm yyyy'})
         row = 0
         column = 0
-        sheet.write_string(row, column, 'Дата заполнения')
+        sheet.write_string(row, column, 'Дата заполнения',head_format)
+        sheet.set_column(column, column, 12.75)
         column += 1
-        sheet.write_string(row, column, 'Участник')
+        sheet.write_string(row, column, 'Участник',head_format)
+        sheet.set_column(column, column, 17.00)
         column += 1
-        sheet.write_string(row, column, '№ торгов')
+        sheet.write_string(row, column, '№ торгов',head_format)
+        sheet.set_column(column, column, 14.27)
         column += 1
-        sheet.write_string(row, column, 'Ссылка')
+        sheet.write_string(row, column, 'Ссылка',head_format)
+        sheet.set_column(column, column, 15.27)
         column += 1
-        sheet.write_string(row, column, 'Заказчик')
+        sheet.write_string(row, column, 'Заказчик',head_format)
+        sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Контактная информация')
+        sheet.write_string(row, column, 'Контактная информация',head_format)
+        sheet.set_column(column, column, 17.18)
         column += 1
-        sheet.write_string(row, column, 'Наименование закупки')
+        sheet.write_string(row, column, 'Наименование закупки',head_format)
+        sheet.set_column(column, column, 14.00)
         column += 1
-        sheet.write_string(row, column, 'НМЦК')
+        sheet.write_string(row, column, 'НМЦК',head_format)
+        sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Предложение Участника')
+        sheet.write_string(row, column, 'Предложение Участника',head_format)
+        sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Обеспечение заявки')
+        sheet.write_string(row, column, 'Обеспечение заявки',head_format)
+        sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Обеспечение контракта')
+        sheet.write_string(row, column, 'Обеспечение контракта',head_format)
+        sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Обеспечение ГО')
+        sheet.write_string(row, column, 'Обеспечение ГО',head_format)
+        sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Лицензии / СРО')
+        sheet.write_string(row, column, 'Лицензии / СРО',head_format)
+        sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'РП')
+        sheet.write_string(row, column, 'РП',head_format)
+        sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Текущий статус')
+        sheet.write_string(row, column, 'Текущий статус',head_format)
+        sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Комментарии')
+        sheet.write_string(row, column, 'Комментарии',head_format)
+        sheet.set_column(column, column, 19.89)
         column += 1
-        sheet.write_string(row, column, 'Номер пресейла ОЗ')
+        sheet.write_string(row, column, 'Номер пресейла ОЗ',head_format)
+        sheet.set_column(column, column, 12.75)
         column += 1
 
         for tender in tenders:
             row += 1
             column = 0
-            sheet.write_string(row, column, str(tender.date_of_filling_in))
+            sheet.write_string(row, column, str(tender.date_of_filling_in), row_format_text)
             column += 1
-            sheet.write_string(row, column,(tender.participant_id.name or '' ))
+            sheet.write_string(row, column,(tender.participant_id.name or '' ),row_format_text)
             column += 1
-            sheet.write_string(row, column, (tender.auction_number or '' ))
+            sheet.write_string(row, column, (tender.auction_number or '' ),row_format_text)
             column += 1
-            sheet.write_string(row, column,(tender.url_tender.striptags() or '' ))
+            sheet.write_string(row, column,(tender.url_tender.striptags() or '' ),row_format_text)
             column += 1
-            sheet.write_string(row, column, (tender.customer_organization_id.name or '' ))
+            sheet.write_string(row, column, (tender.customer_organization_id.name or '' ),row_format_text)
             column += 1
-            sheet.write_string(row, column, (tender.contact_information or '' ))
+            sheet.write_string(row, column, (tender.contact_information or '' ),row_format_text)
             column += 1
-            sheet.write_string(row, column, (tender.name_of_the_purchase or '' ))
+            sheet.write_string(row, column, (tender.name_of_the_purchase or '' ),row_format_text)
             column += 1
             sum_participants_offer = ''
             sum_initial_maximum_contract_price = ''
@@ -220,42 +148,42 @@ class report_tender_excel(models.AbstractModel):
                                                 tendersum.site_payment) +  (tendersum.site_payment_descr or '')
 
             if tender.is_need_initial_maximum_contract_price == True:
-                sheet.write_string(row, column,sum_initial_maximum_contract_price)
-            else : sheet.write_string(row, column,'НЕТ')
+                sheet.write_string(row, column,sum_initial_maximum_contract_price,row_format_text)
+            else : sheet.write_string(row, column,'НЕТ',row_format_text)
             column += 1
-            sheet.write_string(row, column, sum_participants_offer)
+            sheet.write_string(row, column, sum_participants_offer,row_format_text)
             column += 1
             if tender.is_need_securing_the_application == True:
-                sheet.write_string(row, column,sum_securing_the_application)
-            else : sheet.write_string(row, column,'НЕТ')
+                sheet.write_string(row, column,sum_securing_the_application,row_format_text)
+            else : sheet.write_string(row, column,'НЕТ',row_format_text)
             column += 1
             if tender.is_need_contract_security == True:
-                sheet.write_string(row, column,sum_contract_security)
-            else : sheet.write_string(row, column,'НЕТ')
+                sheet.write_string(row, column,sum_contract_security,row_format_text)
+            else : sheet.write_string(row, column,'НЕТ',row_format_text)
             column += 1
             if tender.is_need_provision_of_GO == True:
-                sheet.write_string(row, column, sum_provision_of_GO)
-            else : sheet.write_string(row, column,'НЕТ')
+                sheet.write_string(row, column, sum_provision_of_GO,row_format_text)
+            else : sheet.write_string(row, column,'НЕТ',row_format_text)
             column += 1
             if tender.is_need_licenses_SRO == True:
-                sheet.write_string(row, column, (tender.licenses_SRO or ''))
-            else : sheet.write_string(row, column,'НЕТ')
+                sheet.write_string(row, column, (tender.licenses_SRO or ''),row_format_text)
+            else : sheet.write_string(row, column,'НЕТ',row_format_text)
             column += 1
             str_responsible = ''
             for responsible in tender.responsible_ids:
                 print('responsible = ', responsible.name)
                 str_responsible = str_responsible + '\n'+(responsible.name or '')
             print('str_responsible = ',str_responsible)
-            sheet.write_string(row, column, str_responsible)
+            sheet.write_string(row, column, str_responsible,row_format_text)
             column += 1
-            sheet.write_string(row, column, (tender.current_status.name or ''))
+            sheet.write_string(row, column, (tender.current_status.name or ''),row_format_text)
             column += 1
             str_comment = ''
             for comment in tender.tender_comments_ids:
                 str_comment  = str_comment + '\n' + str(comment.date_comment) + ' ' + (comment.type_comment_id.name or '') + ' ' + (comment.text_comment or '')
-            sheet.write_string(row, column, str_comment)
+            sheet.write_string(row, column, str_comment,row_format_text)
             column += 1
-            sheet.write_string(row, column, (tender.presale_number or ''))
+            sheet.write_string(row, column, (tender.presale_number or ''),row_format_text)
 
 
 

@@ -12,7 +12,7 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Done" name="action_print_report" class="btn-success" type="object"/>
+                    <button string="Print" name="action_print_report" class="btn-success" type="object"/>
                     <button string="Cancel" class="btn-danger" special="cancel"/>
                 </footer>
             </form>

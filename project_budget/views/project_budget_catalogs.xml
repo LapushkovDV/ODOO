@@ -109,6 +109,7 @@
                     <field name="receive_tasks_for_approve_project" widget="boolean_toggle"/>
                     <field name="isRukovoditel_required_in_project" widget="boolean_toggle"/>
                     <field name="print_rukovoditel_in_kb" widget="boolean_toggle"/>
+                    <field name="is_prohibit_selection" widget="boolean_toggle"/>
                 </tree>
             </field>
         </record>
@@ -131,6 +132,7 @@
                             <field name="receive_tasks_for_approve_project" widget="boolean_toggle"/>
                             <field name="isRukovoditel_required_in_project" widget="boolean_toggle"/>
                             <field name="print_rukovoditel_in_kb" widget="boolean_toggle"/>
+                            <field name="is_prohibit_selection" widget="boolean_toggle"/>
                         </group>
                     </sheet>
                 </form>

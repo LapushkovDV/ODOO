@@ -93,7 +93,7 @@ class projects(models.Model):
     budget_state = fields.Selection(related = 'commercial_budget_id.budget_state', readonly = True, index=True, store=True)
 
     project_office_id = fields.Many2one('project_budget.project_office', string='project_office', required=True,
-                                        copy=True,tracking=True,  check_company=True)
+                                        copy=True,tracking=True,  check_company=True, domain ="[('is_prohibit_selection','=', False)]")
     project_supervisor_id = fields.Many2one('project_budget.project_supervisor', string='project_supervisor',
                                             required=True, copy=True, domain=_get_supervisor_list, tracking=True, check_company=True)
     project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=True,
