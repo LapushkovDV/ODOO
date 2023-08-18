@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-18 08:10+0000\n"
-"PO-Revision-Date: 2023-08-18 08:10+0000\n"
+"POT-Creation-Date: 2023-08-18 14:05+0000\n"
+"PO-Revision-Date: 2023-08-18 14:05+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -317,6 +317,7 @@ msgid "Can approve project as supervisor"
 msgstr "Может утверждать проект как куратор"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_projects_report_print_form
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_tender_report_print_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Cancel"
@@ -511,6 +512,7 @@ msgstr "Добавить признак НДС"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__create_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__create_uid
@@ -548,6 +550,7 @@ msgstr "Создано кем"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__create_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__create_date
@@ -650,6 +653,7 @@ msgstr "Описание"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__display_name
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__display_name
@@ -671,7 +675,6 @@ msgstr "Номер договора"
 
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__specification_state__done
-#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_tender_report_print_form
 msgid "Done"
 msgstr "Исполнен"
 
@@ -712,7 +715,6 @@ msgstr "Исполнение, 100%"
 
 #. module: project_budget
 #: model:ir.actions.report,name:project_budget.report_project_budget_excel
-#: model:ir.actions.report,name:project_budget.report_project_budget_tender_excel
 msgid "Export to EXCEL"
 msgstr "Экспорт в EXCEL"
 
@@ -785,6 +787,7 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr "Шрифт для иконок"
 
 #. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__forecast
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Forecast"
 msgstr "Прогноз"
@@ -859,6 +862,7 @@ msgstr "Помогает управлять бюджетными проекта�
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__id
@@ -980,6 +984,11 @@ msgid "KAMs supervisor"
 msgstr "Руководитель ПО"
 
 #. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__kb
+msgid "KB"
+msgstr ""
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget____last_update
@@ -1003,6 +1012,7 @@ msgstr "Руководитель ПО"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects____last_update
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction____last_update
@@ -1040,6 +1050,7 @@ msgstr "Дата последней модификации"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__write_uid
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__write_uid
@@ -1077,6 +1088,7 @@ msgstr "Автор последнего изменения"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__write_date
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__write_date
@@ -1399,6 +1411,17 @@ msgid "Prepare"
 msgstr "КБ"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_projects_report_print_form
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_tender_report_print_form
+msgid "Print"
+msgstr "Печать"
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.project_budget_projects_print_report
+msgid "Print projects"
+msgstr "Отчеты по сделкам"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__print_rukovoditel_in_kb
 msgid "Print rukovoditel instead KAM in KB form"
 msgstr "В отчет КБ выводить руководителя проекта вместо КАМ"
@@ -1460,6 +1483,7 @@ msgstr "ID проекта"
 #: model:ir.actions.act_window,name:project_budget.show_comercial_budget_spec
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__projects_id
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_spec
+#: model:ir.ui.menu,name:project_budget.project_budget_projects_report
 msgid "Projects"
 msgstr "Текущие сделки"
 
@@ -1474,9 +1498,34 @@ msgid "Projects Overview"
 msgstr "Обзор текущих сделок"
 
 #. module: project_budget
+#: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_forecast
+msgid "Projects Report forecast"
+msgstr "Прогноз"
+
+#. module: project_budget
+#: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_kb
+msgid "Projects Report kb"
+msgstr "КБ"
+
+#. module: project_budget
+#: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_svod
+msgid "Projects Report svod"
+msgstr "Свод"
+
+#. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_spec_all
 msgid "Projects all budgets"
 msgstr "Проекты по всем бюджетам"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.action_projects_print_report
+msgid "Projects report"
+msgstr "Сделки"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_projects_report_wizard
+msgid "Projects report Wizard"
+msgstr "Отчеты по сделкам"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_estimated_probability_kanban
@@ -1671,9 +1720,19 @@ msgid "Supervisors's budget plan on year"
 msgstr "План бюджетных показателей проектного офиса"
 
 #. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__svod
+msgid "Svod"
+msgstr "Свод"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__inn
 msgid "Tax ID"
 msgstr "ИНН"
+
+#. module: project_budget
+#: model:ir.actions.report,name:project_budget.action_tender_list_report_xlsx
+msgid "Tender Report"
+msgstr "Tender_list_31-07-2023_02-09-2023.xlsx"
 
 #. module: project_budget
 #: model:res.groups,name:project_budget.project_budget_tenders_admin
@@ -1693,13 +1752,14 @@ msgstr "Реестр тендеров"
 #. module: project_budget
 #: model:res.groups,name:project_budget.project_budget_tenders_user
 msgid "Tender user"
-msgstr "Тенжер. Пользователь"
+msgstr "Тендер. Пользователь"
 
 #. module: project_budget
 #. odoo-python
 #: code:addons/project_budget/models/projects.py:0
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__tenders_count
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_tenders
+#: model:ir.ui.menu,name:project_budget.project_budget_tenders_report
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 #, python-format
 msgid "Tenders"
@@ -1732,6 +1792,11 @@ msgstr "Последняя отгрузка"
 #, python-format
 msgid "The year must be between 2022-2030"
 msgstr "Год должен быть между 2022 и 2030"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__type_report
+msgid "Type Report"
+msgstr "Тип отчета"
 
 #. module: project_budget
 #: model:ir.model.fields,help:project_budget.field_project_budget_budget_plan_kam__activity_exception_decoration
@@ -1780,6 +1845,11 @@ msgstr "В работе"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
 msgid "Year"
 msgstr "Год"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__year
+msgid "Year of the report"
+msgstr "Год отчета"
 
 #. module: project_budget
 #. odoo-python
@@ -1954,6 +2024,7 @@ msgstr "Перечень проектов"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__commercial_budget_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__commercial_budget_id
 msgid "commercial_budget-"
 msgstr "Коммерческий бюджет"
 
@@ -2623,6 +2694,11 @@ msgid "is_own_works_fot"
 msgstr "Работы собственные (ФОТ)"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_report_wizard__is_report_for_management
+msgid "is_report_for_management"
+msgstr "Отчет для руководства"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_representation_expenses
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_representation_expenses
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_representation_expenses
@@ -2811,6 +2887,7 @@ msgstr "Наименование закупки"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__name_to_show
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__name_to_show
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__name_to_show
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__name_to_show
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__name_to_show
@@ -2881,6 +2958,7 @@ msgid ""
 "only project admin or supervisor or project office manager can reopen "
 "projects"
 msgstr ""
+"только админ модуля, куратор или руководитель офиса могут вернуть проект в работу"
 
 #. module: project_budget
 #. odoo-python
@@ -3113,9 +3191,9 @@ msgid "project_budget.report_svod_excel"
 msgstr "Свод (EXCEL))"
 
 #. module: project_budget
-#: model:ir.model,name:project_budget.model_report_project_budget_report_tender_excel
+#: model:ir.model,name:project_budget.model_report_project_budget_report_tender_xlsx
 msgid "project_budget.report_tender_excel"
-msgstr ""
+msgstr "отчет_тендеры_excel"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_projects_tenders
@@ -3799,7 +3877,7 @@ msgstr "Пользователь"
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_res_users
 msgid "users budgets access"
-msgstr ""
+msgstr "Доступы пользователей бюджета"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__is_use_ebit

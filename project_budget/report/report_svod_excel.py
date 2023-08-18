@@ -1350,5 +1350,11 @@ class report_svod_excel(models.AbstractModel):
         #     sheet.write_formula(row, colFormula, formula, row_format_number_itogo)
 
     def generate_xlsx_report(self, workbook, data, budgets):
-        for budget in budgets:
-            self.printworksheet(workbook, budget, 'Прогноз')
+        global strYEAR
+        strYEAR = data['year']
+        global YEARint
+        YEARint = int(strYEAR)
+        commercial_budget_id = data['commercial_budget_id']
+        budget = self.env['project_budget.commercial_budget'].search([('id', '=', commercial_budget_id)])
+
+        self.printworksheet(workbook, budget, 'Прогноз')

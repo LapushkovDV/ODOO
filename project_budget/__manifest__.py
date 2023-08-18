@@ -34,10 +34,8 @@
         'views/project_budget_comercial_budget.xml',
         'views/Dashboard_1.xml',
         'views/tenders.xml',
-        'report/project_budget_report.xml',
-        'report/project_budget_report_template.xml',
-        'report/project_budget_tender.xml',
         'wizard/report_tender_wizard.xml',
+        'wizard/report_projects_wizard.xml',
         'views/project_budget_menu.xml',
     ],
     'demo':[

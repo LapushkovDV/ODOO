@@ -1,5 +1,10 @@
 from odoo import models
 from xlsxwriter.utility import xl_col_to_name
+from datetime import datetime
+
+
+
+
 # from HTMLParser import HTMLParser
 # class MLStripper(HTMLParser):
 #     def __init__(self):
@@ -16,20 +21,14 @@ from xlsxwriter.utility import xl_col_to_name
 #     return s.get_data()
 
 class report_tender_excel(models.AbstractModel):
-    _name = 'report.project_budget.report_tender_excel'
+    _name = 'report.project_budget.report_tender_xlsx'
     _description = 'project_budget.report_tender_excel'
     _inherit = 'report.report_xlsx.abstract'
 
-    strYEAR = '2023'
-    YEARint = int(strYEAR)
-
-    probabitily_list_KB = ['30','50','75']
-    probabitily_list_PB = ['100','100(done)']
-    probabitily_list_Otmena = ['0']
-    array_col_itogi = [12, 13,14,15,16,17,18,19,20,21,22,23,24,252,6,27,28]
+    is_report_for_management = False
 
     def printworksheet(self,workbook, tenders):
-        report_name = 'tenders'
+        print('printworksheet is_report_for_management',is_report_for_management)
             # One sheet by partner
         sheet = workbook.add_worksheet('tenders')
         head_format = workbook.add_format({
@@ -38,7 +37,6 @@ class report_tender_excel(models.AbstractModel):
             'border': 1,
             'font_name': 'Arial',
             'font_size': 9,
-            "bold": True,
             'text_wrap': True,
             'align': 'center',
             'valign': 'vcenter',
@@ -52,6 +50,17 @@ class report_tender_excel(models.AbstractModel):
             'text_wrap': True,
             'font_name': 'Times New Roman'
         })
+
+
+        row_format_text_comments = workbook.add_format({
+            'border': 1,
+            'font_size': 9,
+            'text_wrap': True,
+            'font_name': 'Times New Roman',
+            'fg_color': '#FFFFCC',
+        })
+
+
 
         date_format = workbook.add_format({'num_format': 'd mmmm yyyy'})
         row = 0
@@ -71,9 +80,10 @@ class report_tender_excel(models.AbstractModel):
         sheet.write_string(row, column, 'Заказчик',head_format)
         sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Контактная информация',head_format)
-        sheet.set_column(column, column, 17.18)
-        column += 1
+        if is_report_for_management == False:
+            sheet.write_string(row, column, 'Контактная информация',head_format)
+            sheet.set_column(column, column, 17.18)
+            column += 1
         sheet.write_string(row, column, 'Наименование закупки',head_format)
         sheet.set_column(column, column, 14.00)
         column += 1
@@ -89,12 +99,13 @@ class report_tender_excel(models.AbstractModel):
         sheet.write_string(row, column, 'Обеспечение контракта',head_format)
         sheet.set_column(column, column, 17.91)
         column += 1
-        sheet.write_string(row, column, 'Обеспечение ГО',head_format)
-        sheet.set_column(column, column, 17.91)
-        column += 1
-        sheet.write_string(row, column, 'Лицензии / СРО',head_format)
-        sheet.set_column(column, column, 17.91)
-        column += 1
+        if is_report_for_management == False:
+            sheet.write_string(row, column, 'Обеспечение ГО',head_format)
+            sheet.set_column(column, column, 17.91)
+            column += 1
+            sheet.write_string(row, column, 'Лицензии / СРО',head_format)
+            sheet.set_column(column, column, 17.91)
+            column += 1
         sheet.write_string(row, column, 'РП',head_format)
         sheet.set_column(column, column, 17.91)
         column += 1
@@ -121,8 +132,9 @@ class report_tender_excel(models.AbstractModel):
             column += 1
             sheet.write_string(row, column, (tender.customer_organization_id.name or '' ),row_format_text)
             column += 1
-            sheet.write_string(row, column, (tender.contact_information or '' ),row_format_text)
-            column += 1
+            if is_report_for_management == False:
+                sheet.write_string(row, column, (tender.contact_information or '' ),row_format_text)
+                column += 1
             sheet.write_string(row, column, (tender.name_of_the_purchase or '' ),row_format_text)
             column += 1
             sum_participants_offer = ''
@@ -161,14 +173,15 @@ class report_tender_excel(models.AbstractModel):
                 sheet.write_string(row, column,sum_contract_security,row_format_text)
             else : sheet.write_string(row, column,'НЕТ',row_format_text)
             column += 1
-            if tender.is_need_provision_of_GO == True:
-                sheet.write_string(row, column, sum_provision_of_GO,row_format_text)
-            else : sheet.write_string(row, column,'НЕТ',row_format_text)
-            column += 1
-            if tender.is_need_licenses_SRO == True:
-                sheet.write_string(row, column, (tender.licenses_SRO or ''),row_format_text)
-            else : sheet.write_string(row, column,'НЕТ',row_format_text)
-            column += 1
+            if is_report_for_management == False:
+                if tender.is_need_provision_of_GO == True:
+                    sheet.write_string(row, column, sum_provision_of_GO,row_format_text)
+                else : sheet.write_string(row, column,'НЕТ',row_format_text)
+                column += 1
+                if tender.is_need_licenses_SRO == True:
+                    sheet.write_string(row, column, (tender.licenses_SRO or ''),row_format_text)
+                else : sheet.write_string(row, column,'НЕТ',row_format_text)
+                column += 1
             str_responsible = ''
             for responsible in tender.responsible_ids:
                 print('responsible = ', responsible.name)
@@ -181,11 +194,19 @@ class report_tender_excel(models.AbstractModel):
             str_comment = ''
             for comment in tender.tender_comments_ids:
                 str_comment  = str_comment + '\n' + str(comment.date_comment) + ' ' + (comment.type_comment_id.name or '') + ' ' + (comment.text_comment or '')
-            sheet.write_string(row, column, str_comment,row_format_text)
+            sheet.write_string(row, column, str_comment,row_format_text_comments)
             column += 1
             sheet.write_string(row, column, (tender.presale_number or ''),row_format_text)
 
 
 
-    def generate_xlsx_report(self, workbook, data, tenders):
-        self.printworksheet(workbook, tenders)
+    def generate_xlsx_report(self, workbook, data, lines):
+        print('data = ',data)
+        date_from = datetime.strptime(data['date_from'], "%d-%m-%Y").date()
+        date_to = datetime.strptime(data['date_to'], "%d-%m-%Y").date()
+        global is_report_for_management
+        is_report_for_management= data['is_report_for_management']
+        tenders_list = self.env['project_budget.tenders'].search([('date_of_filling_in', '>=', date_from),('date_of_filling_in', '<=', date_to)], order='date_of_filling_in desc')
+
+        print('is_report_for_management =' , is_report_for_management)
+        self.printworksheet(workbook, tenders_list)
