@@ -2,13 +2,25 @@ from odoo import _, models, fields, api
 import calendar
 
 
-class DocumentFlowTask(models.Model):
+class Task(models.Model):
     _inherit = 'task.task'
+
+    role_executor_id = fields.Many2one('document_flow.role_executor', string='Assigned', tracking=True)
 
     @api.model
     def _selection_parent_model(self):
-        types = super(DocumentFlowTask, self)._selection_parent_model()
+        types = super(Task, self)._selection_parent_model()
         types.append(('document_flow.process', _('Process')))
+        return types
+
+    # TODO: Связать с определением в самой модели
+    @api.model
+    def _selection_parent_obj_model(self):
+        types = super(Task, self)._selection_parent_obj_model()
+        types.append(('document_flow.event', _('Event')))
+        types.append(('document_flow.event.decision', _('Decision')))
+        types.append(('document_flow.action', _('Action')))
+        types.append(('document_flow.document', _('Document')))
         return types
 
     @api.model
@@ -22,29 +34,42 @@ class DocumentFlowTask(models.Model):
 
     @api.model
     def get_tasks_count(self):
+        roles = self.env['document_flow.role_executor'].search([
+            ('member_ids', 'in', self.env.uid)
+        ])
         my_tasks_to_do_count = self.env['task.task'].search_count([
-            ('parent_ref_type', '=', 'document_flow.process'),
+            '&', '&', '&',
+            ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '>=', fields.Datetime.now()),
-            ('user_id', '=', self.env.uid)
+            '|',
+            ('user_id', '=', self.env.uid),
+            '&',
+            ('user_id', '=', False),
+            ('role_executor_id', 'in', roles.ids)
         ])
         my_tasks_overdue_count = self.env['task.task'].search_count([
-            ('parent_ref_type', '=', 'document_flow.process'),
+            '&', '&', '&',
+            ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '<', fields.Datetime.now()),
-            ('user_id', '=', self.env.uid)
+            '|',
+            ('user_id', '=', self.env.uid),
+            '&',
+            ('user_id', '=', False),
+            ('role_executor_id', 'in', roles.ids)
         ])
         by_me_tasks_to_do_count = self.env['task.task'].search_count([
-            ('parent_ref_type', '=', 'document_flow.process'),
+            ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '>=', fields.Datetime.now()),
-            ('create_uid', '=', self.env.uid)
+            ('author_id', '=', self.env.uid)
         ])
         by_me_tasks_overdue_count = self.env['task.task'].search_count([
-            ('parent_ref_type', '=', 'document_flow.process'),
+            ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '<', fields.Datetime.now()),
-            ('create_uid', '=', self.env.uid)
+            ('author_id', '=', self.env.uid)
         ])
 
         # tasks = self.env['task.task'].search([
@@ -66,25 +91,25 @@ class DocumentFlowTask(models.Model):
     @api.model
     def get_tasks_view(self):
         my_tasks_to_do = self.env['task.task'].search([
-            ('parent_ref_type', '=', 'document_flow.process'),
+            ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '>=', fields.Datetime.now()),
             ('user_id', '=', self.env.uid)
         ])
         my_tasks_overdue = self.env['task.task'].search([
-            ('parent_ref_type', '=', 'document_flow.process'),
+            ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '<', fields.Datetime.now()),
             ('user_id', '=', self.env.uid)
         ])
         by_me_tasks_to_do = self.env['task.task'].search([
-            ('parent_ref_type', '=', 'document_flow.process'),
+            ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '>=', fields.Datetime.now()),
             ('create_uid', '=', self.env.uid)
         ])
         by_me_tasks_overdue = self.env['task.task'].search_count([
-            ('parent_ref_type', '=', 'document_flow.process'),
+            ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '<', fields.Datetime.now()),
             ('create_uid', '=', self.env.uid)
