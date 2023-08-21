@@ -1325,15 +1325,16 @@ class report_budget_forecast_excel(models.AbstractModel):
                 # sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
                 # print('setrow level1 row = ', row)
                 sheet.write_string(row, column, 'ИТОГО ' + project_office.name, row_format_office)
-                int_project_office_id = int(project_office.parent_id)
-                if int_project_office_id in self.dict_formula:
-                    self.dict_formula[int_project_office_id] = self.dict_formula[int_project_office_id] + ',{0}' + str(row+1)
+                str_project_office_id = 'project_office_' + str(int(project_office.parent_id))
+                if str_project_office_id in self.dict_formula:
+                    self.dict_formula[str_project_office_id] = self.dict_formula[str_project_office_id] + ',{0}' + str(row+1)
                 else:
-                    self.dict_formula[int_project_office_id] = ',{0}'+str(row+1)
+                    self.dict_formula[str_project_office_id] = ',{0}'+str(row+1)
 
-                int_project_office_id = int(project_office.id)
-                if int_project_office_id in self.dict_formula:
-                    formulaProjectOffice = formulaProjectOffice + self.dict_formula[int_project_office_id]+')'
+                str_project_office_id = 'project_office_' + str(int(project_office.id))
+
+                if str_project_office_id in self.dict_formula:
+                    formulaProjectOffice = formulaProjectOffice + self.dict_formula[str_project_office_id]+')'
                 else:
                     formulaProjectOffice = formulaProjectOffice + ')'
 
@@ -1523,6 +1524,7 @@ class report_budget_forecast_excel(models.AbstractModel):
         column = 0
         sheet.write_string(row, column, 'ИТОГО по отчету' , row_format_number_itogo)
         formulaItogo = formulaItogo + ')'
+        formulaItogo = '=sum('+self.dict_formula['project_office_0'] + ')'
         for colFormula in range(1, 12):
             sheet.write_string(row, colFormula, '', row_format_number_itogo)
         for colFormula in range(12, 302):
@@ -1530,6 +1532,13 @@ class report_budget_forecast_excel(models.AbstractModel):
             # print('formula = ', formula)
             sheet.write_formula(row, colFormula, formula, row_format_number_itogo)
         print('self.dict_formula = ', self.dict_formula)
+
     def generate_xlsx_report(self, workbook, data, budgets):
-        for budget in budgets:
-            self.printworksheet(workbook, budget, 'Прогноз')
+
+        global strYEAR
+        strYEAR = data['year']
+        global YEARint
+        YEARint = int(strYEAR)
+        commercial_budget_id = data['commercial_budget_id']
+        budget = self.env['project_budget.commercial_budget'].search([('id', '=', commercial_budget_id)])
+        self.printworksheet(workbook, budget, 'Прогноз')

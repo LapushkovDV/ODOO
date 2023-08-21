@@ -59,6 +59,8 @@ class project_office(models.Model):
     isRukovoditel_required_in_project = fields.Boolean(string="mark rukovoditel required in prject", default=False)
     print_rukovoditel_in_kb = fields.Boolean(string="Print rukovoditel instead KAM in KB form",
                                                        default=False)
+    is_prohibit_selection = fields.Boolean(string="is prohibit selection in projects", default=False)
+
 
 class project_supervisor(models.Model):
     _name = 'project_budget.project_supervisor'

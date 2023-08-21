@@ -11,17 +11,6 @@
         </field>
     </record>
 
-    <record id="action_view_all_management_committee" model="ir.actions.act_window">
-        <field name="name">Management Committiees</field>
-        <field name="res_model">document_flow.management_committee</field>
-        <field name="view_mode">tree,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                No management committee found. Let's create one!
-            </p>
-        </field>
-    </record>
-
     <record id="action_view_task_id" model="ir.actions.act_window">
         <field name="name">Tasks</field>
         <field name="res_model">task.task</field>
@@ -40,15 +29,13 @@
         </field>
     </record>
 
-    <!--Необходимо перенести домен в action в task и понять как его передать в action-->
     <record id="action_view_all_task" model="ir.actions.act_window">
         <field name="name">Tasks</field>
         <field name="res_model">task.task</field>
-        <field name="view_mode">tree,kanban,calendar,form</field>
-        <field name="domain">[
-            ('parent_ref_type', 'in', ['document_flow.event', 'document_flow.event.decision', 'document_flow.process'])]
-        </field>
+        <field name="view_mode">kanban,tree,calendar,form</field>
+        <field name="domain">[('parent_ref_type', 'like', 'document_flow.')]</field>
         <field name="context">{
+            'default_parent_ref_type': 'document_flow.',
             'search_default_open_tasks': 1}
         </field>
         <field name="search_view_id" ref="task.task_view_search"/>
@@ -73,6 +60,7 @@
                 <field name="date_start" widget="date"/>
                 <field name="organizer_id" widget="many2one_avatar_user"/>
                 <field name="member_ids" widget="many2many_avatar_user" options='{"no_quick_create": True}'/>
+                <field name="state"/>
                 <field name="company_ids" widget="many2many_tags" groups="base.group_multi_company"/>
             </tree>
         </field>

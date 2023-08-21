@@ -31,7 +31,7 @@
         </record>
 
         <record id="show_project_tender_comments_type" model="ir.actions.act_window">
-            <field name="name">tender_current_status</field>
+            <field name="name">tender_comments_type</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">project_budget.tender_comments_type</field>
             <field name="view_mode">tree,form</field>
@@ -109,6 +109,7 @@
                     <field name="receive_tasks_for_approve_project" widget="boolean_toggle"/>
                     <field name="isRukovoditel_required_in_project" widget="boolean_toggle"/>
                     <field name="print_rukovoditel_in_kb" widget="boolean_toggle"/>
+                    <field name="is_prohibit_selection" widget="boolean_toggle"/>
                 </tree>
             </field>
         </record>
@@ -131,6 +132,7 @@
                             <field name="receive_tasks_for_approve_project" widget="boolean_toggle"/>
                             <field name="isRukovoditel_required_in_project" widget="boolean_toggle"/>
                             <field name="print_rukovoditel_in_kb" widget="boolean_toggle"/>
+                            <field name="is_prohibit_selection" widget="boolean_toggle"/>
                         </group>
                     </sheet>
                 </form>
@@ -758,25 +760,46 @@
                         <div t-if="['0','10', '30', '50','75','100','100(done)'].indexOf(record.name.raw_value) > -1" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="estimated_probability">
                             <div t-attf-class="o_kanban_card_header">
                                 <div class="o_kanban_card_header_title">
-                                    <div class="o_primary" t-if="['30', '50','75','100'].indexOf(record.name.raw_value) > -1">
-                                        <a>
-                                            probability
-                                            <field name="name"></field>
-                                        </a>
-                                    </div>
+<!--                                    <div class="o_primary" t-if="['30', '50','75','100'].indexOf(record.name.raw_value) > -1">-->
+<!--                                        <a>-->
+<!--                                            probability-->
+<!--                                            <field name="name"></field>-->
+<!--                                        </a>-->
+<!--                                    </div>-->
+
                                     <div class="o_primary" t-if="['0'].indexOf(record.name.raw_value) > -1">
                                         <a>
-                                            Canceled
-                                        </a>
-                                    </div>
-                                    <div class="o_primary" t-if="['100(done)'].indexOf(record.name.raw_value) > -1">
-                                        <a>
-                                            Done
+                                            Canceled, 0%
                                         </a>
                                     </div>
                                     <div class="o_primary" t-if="['10'].indexOf(record.name.raw_value) > -1">
                                         <a>
-                                            Potential
+                                            Potential, 10%
+                                        </a>
+                                    </div>
+                                    <div class="o_primary" t-if="['30'].indexOf(record.name.raw_value) > -1">
+                                        <a>
+                                            Opportunity, 30%
+                                        </a>
+                                    </div>
+                                    <div class="o_primary" t-if="['50'].indexOf(record.name.raw_value) > -1">
+                                        <a>
+                                            Reserve, 50%
+                                        </a>
+                                    </div>
+                                    <div class="o_primary" t-if="['75'].indexOf(record.name.raw_value) > -1">
+                                        <a>
+                                            Commitment, 75%
+                                        </a>
+                                    </div>
+                                    <div class="o_primary" t-if="['100'].indexOf(record.name.raw_value) > -1">
+                                        <a>
+                                            Execution, 100%
+                                        </a>
+                                    </div>
+                                    <div class="o_primary" t-if="['100(done)'].indexOf(record.name.raw_value) > -1">
+                                        <a>
+                                            Done, 100(done)
                                         </a>
                                     </div>
                                 </div>
