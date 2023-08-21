@@ -34,6 +34,6 @@ class report_projects_wizard(models.TransientModel):
 
         if self.type_report == 'svod':
             self.env.ref('project_budget.action_projects_list_report_xlsx_svod').report_file = report_name
-            return self.env.ref('project_budget.action_projects_list_report_xlsx_svod').report_action(self, data=datas)
+            return self.env.ref('project_budget.action_projects_list_report_xlsx_svod').sudo().report_action(self, data=datas)
 
 
