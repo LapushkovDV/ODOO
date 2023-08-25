@@ -3859,7 +3859,7 @@ msgstr "введине наименование этапа, например п�
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__url_tender
 msgid "url of tender"
-msgstr "URL"
+msgstr "Ссылка"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__kam_user_id

@@ -22,19 +22,19 @@
                     <field name="is_main_currency"/>
                     <field name="currency_id"/>
                     <field name="participants_offer"/>
-<!--                    <field name="participants_offer_descr"/>-->
+                    <field name="participants_offer_descr" optional="hide"/>
                     <field name="initial_maximum_contract_price" attrs="{'column_invisible': [('parent.is_need_initial_maximum_contract_price', '=', False)]}"/>
-<!--                    <field name="initial_maximum_contract_price_descr" attrs="{'column_invisible': [('parent.is_need_initial_maximum_contract_price', '=', False)]}"/>-->
-                    <field name="provision_of_GO" attrs="{'column_invisible': [('parent.is_need_provision_of_GO', '=', False)]}"/>
-<!--                    <field name="provision_of_GO_descr" attrs="{'column_invisible': [('parent.is_need_provision_of_GO', '=', False)]}"/>-->
+                    <field name="initial_maximum_contract_price_descr" attrs="{'column_invisible': [('parent.is_need_initial_maximum_contract_price', '=', False)]}" optional="hide"/>
+                    <field name="provision_of_GO" attrs="{'column_invisible': [('parent.is_need_provision_of_GO', '=', False)]}" />
+                    <field name="provision_of_GO_descr" attrs="{'column_invisible': [('parent.is_need_provision_of_GO', '=', False)]}" optional="hide"/>
                     <field name="securing_the_application"  attrs="{'column_invisible': [('parent.is_need_securing_the_application', '=', False)]}"/>
-<!--                    <field name="securing_the_application_descr"  attrs="{'column_invisible': [('parent.is_need_securing_the_application', '=', False)]}"/>-->
+                    <field name="securing_the_application_descr"  attrs="{'column_invisible': [('parent.is_need_securing_the_application', '=', False)]}" optional="hide"/>
                     <field name="payment_for_the_victory" attrs="{'column_invisible': [('parent.is_need_payment_for_the_victory', '=', False)]}"/>
-<!--                    <field name="payment_for_the_victory_descr" attrs="{'column_invisible': [('parent.is_need_payment_for_the_victory', '=', False)]}"/>-->
+                    <field name="payment_for_the_victory_descr" attrs="{'column_invisible': [('parent.is_need_payment_for_the_victory', '=', False)]}" optional="hide"/>
                     <field name="contract_security" attrs="{'column_invisible': [('parent.is_need_contract_security', '=', False)]}"/>
-<!--                    <field name="contract_security_descr" attrs="{'column_invisible': [('parent.is_need_contract_security', '=', False)]}"/>-->
+                    <field name="contract_security_descr" attrs="{'column_invisible': [('parent.is_need_contract_security', '=', False)]}" optional="hide"/>
                     <field name="site_payment" attrs="{'column_invisible': [('parent.is_need_site_payment', '=', False)]}"/>
-<!--                    <field name="site_payment_descr" attrs="{'column_invisible': [('parent.is_need_site_payment', '=', False)]}"/>-->
+                    <field name="site_payment_descr" attrs="{'column_invisible': [('parent.is_need_site_payment', '=', False)]}" optional="hide"/>
                 </tree>
             </field>
         </record>
