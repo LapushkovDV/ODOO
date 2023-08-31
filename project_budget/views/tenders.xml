@@ -123,6 +123,7 @@
             <field name="model">project_budget.tenders</field>
             <field name="arch" type="xml">
                 <tree string="tenders">
+                    <field name="tender_id" optional="hide"/>
                     <field name="projects_id" optional="show"/>
 <!--                    <field name="currency_id" optional="show"/>-->
                     <field name="date_of_filling_in"/>
@@ -162,6 +163,7 @@
                                 <field string="Attachments" name="attachment_count" widget="statinfo"/>
                             </button>
                         </div>
+                        <field name="tender_id" />
                         <group col = "3">
                             <group>
                                 <field string= "main currency" name="currency_id"/>
