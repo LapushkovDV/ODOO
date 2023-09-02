@@ -11,7 +11,7 @@ class tenders(models.Model):
     _check_company_auto = True
     # _rec_names_search = ['project_id', 'essence_project']
 
-    tender_id = fields.Char(string="Tender ID", required=True, index=True, copy=True, group_operator = 'count', readonly=True,
+    tender_id = fields.Char(string="Tender ID", required=True, index=True, copy=True, group_operator = 'count',
                              default='ID') #lambda self: self.env['ir.sequence'].sudo().next_by_code('project_budget.projects'))
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
     is_need_projects = fields.Boolean(string="is_need_projects", copy=True, default = False,tracking=True)

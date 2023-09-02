@@ -163,7 +163,7 @@
                                 <field string="Attachments" name="attachment_count" widget="statinfo"/>
                             </button>
                         </div>
-                        <field name="tender_id" />
+                        <field name="tender_id" readonly="1"/>
                         <group col = "3">
                             <group>
                                 <field string= "main currency" name="currency_id"/>
