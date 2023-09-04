@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-02 13:03+0000\n"
-"PO-Revision-Date: 2023-09-02 13:03+0000\n"
+"POT-Creation-Date: 2023-09-04 17:41+0000\n"
+"PO-Revision-Date: 2023-09-04 17:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -2130,13 +2130,6 @@ msgid "current status name"
 msgstr "Наименование"
 
 #. module: project_budget
-#: model:ir.model,name:project_budget.model_project_budget_tender_current_status
-#: model_terms:ir.ui.view,arch_db:project_budget.show_project_tender_current_status_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_project_tender_current_status_tree
-msgid "highlight"
-msgstr "Подсвечивать в отчете"
-
-#. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
 msgid "current_status"
 msgstr "Статус"
@@ -2573,6 +2566,11 @@ msgstr "Сумма ПДС"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__percent_fot
 msgid "fot_percent"
 msgstr "Процент ФОТ"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_current_status__highlight
+msgid "highlight"
+msgstr "Красный шрифт в отчете"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_industry
@@ -3788,7 +3786,7 @@ msgstr ""
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_catalogs_tender_current_status
 msgid "tender status"
-msgstr "Tендер. Текущий статус"
+msgstr "тендер. Текущий статус"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__tender_sums_ids
