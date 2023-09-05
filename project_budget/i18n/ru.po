@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-04 17:41+0000\n"
-"PO-Revision-Date: 2023-09-04 17:41+0000\n"
+"POT-Creation-Date: 2023-09-05 17:57+0000\n"
+"PO-Revision-Date: 2023-09-05 17:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -580,6 +580,54 @@ msgstr "Количество текущих проектов"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Customer/Organization"
 msgstr "Заказчик/Исполнитель"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid "DENIED. Project {0} have overdue end presale project month {1}"
+msgstr "ЗАПРЕЩЕНО!. Проект {0} имеет просроченную дату контрактования {1}"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid "DENIED. Project {0} have overdue end sale project month {1}"
+msgstr "ЗАПРЕЩЕНО!. Проект {0} имеет просроченную дату последней отгрузки {1}"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid ""
+"DENIED. Project {0} have overdue planned acceptance flow  without fact {1}"
+msgstr ""
+"ЗАПРЕЩЕНО!. Проект {0} имеет просроченную плановую дату актирования {1}"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid "DENIED. Project {0} have overdue planned cash flow  without fact {1}"
+msgstr "ЗАПРЕЩЕНО!. Проект {0} имеет просроченную плановую дату ПДС {1}"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid ""
+"DENIED. Project {0} step {1} have overdue end presale project month {2}"
+msgstr ""
+"ЗАПРЕЩЕНО!. Проект {0} этап {1} имеет просроченную дату контрактования {2}"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/projects.py:0
+#, python-format
+msgid "DENIED. Project {0} step {1} have overdue end sale project month {2}"
+msgstr ""
+"ЗАПРЕЩЕНО!. Проект {0} этап {1} имеет просроченную дату последней отгрузки "
+"{2}"
 
 #. module: project_budget
 #. odoo-javascript
@@ -1489,6 +1537,11 @@ msgid "Projects Report kb"
 msgstr "КБ"
 
 #. module: project_budget
+#: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_raw_data
+msgid "Projects Report raw data"
+msgstr ""
+
+#. module: project_budget
 #: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_svod
 msgid "Projects Report svod"
 msgstr "Свод"
@@ -1536,6 +1589,11 @@ msgstr "3кв."
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
 msgid "Q4"
 msgstr "4кв."
+
+#. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__raw_data
+msgid "Raw Data"
+msgstr ""
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__receive_tasks_for_approve_project
@@ -3207,6 +3265,11 @@ msgstr "отчет бюджета проектов в EXCEL"
 #: model:ir.model,name:project_budget.model_report_project_budget_report_budget_forecast_excel
 msgid "project_budget.report_budget_forecast_excel"
 msgstr "Прогноз (EXCEL)"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_report_project_budget_report_projects_rawdata_excel
+msgid "project_budget.report_projects_rawdata_excel"
+msgstr ""
 
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_report_project_budget_report_svod_excel

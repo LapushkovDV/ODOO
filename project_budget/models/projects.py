@@ -448,62 +448,96 @@ class projects(models.Model):
                 if 'end_sale_project_month' in vals_list:
                     end_sale_project_month = datetime.datetime.strptime(vals_list['end_sale_project_month'], "%Y-%m-%d").date()
 
+            if project.estimated_probability_id.name not in ('100', '100(done)'):
+                if end_presale_project_month <= fields.datetime.now().date() :
+                    raisetext = _("DENIED. Project {0} have overdue end presale project month {1}")
+                    raisetext=raisetext.format(project.project_id,str(end_presale_project_month))
+                    return False, raisetext
 
-            if end_presale_project_month <= fields.datetime.now().date():
-                raisetext = _("DENIED. Project " + project.project_id + " have overdue end presale project month " + str(end_presale_project_month))
-                return False, raisetext
-
-            if end_sale_project_month <= fields.datetime.now().date():
-                raisetext = _("DENIED. Project " + project.project_id + " have overdue end sale project month " + str(end_sale_project_month))
-                return False, raisetext
+                if end_sale_project_month <= fields.datetime.now().date() :
+                    raisetext = _("DENIED. Project {0} have overdue end sale project month {1}")
+                    raisetext = raisetext.format(project.project_id, str(end_presale_project_month))
+                    return False, raisetext
 
             vals_list_steps = False
-            if 'project_steps_ids' in vals_list:
-                vals_list_steps = vals_list['project_steps_ids']
 
             if project.project_have_steps:
-
                 for step in project.project_steps_ids:
-                    end_presale_project_month = step.end_presale_project_month
-                    end_sale_project_month = step.end_sale_project_month
+                    if step.estimated_probability_id.name not in ('100', '100(done)'):
+                        end_presale_project_month = step.end_presale_project_month
+                        end_sale_project_month = step.end_sale_project_month
 
-                    if 'project_steps_ids' in vals_list:
-                        for vals_list_step in vals_list_steps:
-                            print('vals_list_steps =', vals_list_step)
-                            if step.id == vals_list_step[1]:
-                                vals_one_step = vals_list_step[2]
-                                print('vals_one_step = ', vals_one_step)
-                                if vals_one_step:
-                                    if 'end_presale_project_month' in vals_one_step:
-                                        end_presale_project_month = datetime.datetime.strptime(
-                                            vals_one_step['end_presale_project_month'], "%Y-%m-%d").date()
-                                    if 'end_sale_project_month' in vals_one_step:
-                                        end_sale_project_month = datetime.datetime.strptime(
-                                            vals_one_step['end_sale_project_month'], "%Y-%m-%d").date()
+                        if vals_list:
+                            if 'project_steps_ids' in vals_list:
+                                for vals_list_step in vals_list_steps:
+                                    print('vals_list_steps =', vals_list_step)
+                                    if step.id == vals_list_step[1]:
+                                        vals_one_step = vals_list_step[2]
+                                        print('vals_one_step = ', vals_one_step)
+                                        if vals_one_step:
+                                            if 'end_presale_project_month' in vals_one_step:
+                                                end_presale_project_month = datetime.datetime.strptime(
+                                                    vals_one_step['end_presale_project_month'], "%Y-%m-%d").date()
+                                            if 'end_sale_project_month' in vals_one_step:
+                                                end_sale_project_month = datetime.datetime.strptime(
+                                                    vals_one_step['end_sale_project_month'], "%Y-%m-%d").date()
 
-                    print('step.id = ', step.id)
-                    if end_presale_project_month <= fields.datetime.now().date():
-                        raisetext = _("DENIED. Project " + project.project_id + " step "+step.step_id+" have overdue end presale project month " + str(end_presale_project_month))
-                        return False, raisetext
+                        print('step.id = ', step.id)
+                        if end_presale_project_month <= fields.datetime.now().date():
+                            raisetext = _("DENIED. Project {0} step {1} have overdue end presale project month {2}" )
+                            raisetext = raisetext.format(project.project_id, step.step_id, str(end_presale_project_month))
+                            return False, raisetext
 
-                    if end_sale_project_month <= fields.datetime.now().date():
-                        raisetext = _("DENIED. Project " + project.project_id + " step "+step.step_id+" have overdue end sale project month " + str(end_sale_project_month))
-                        return False, raisetext
+                        if end_sale_project_month <= fields.datetime.now().date():
+                            raisetext = _("DENIED. Project {0} step {1} have overdue end sale project month {2}")
+                            raisetext = raisetext.format(project.project_id, step.step_id, str(end_sale_project_month))
+                            return False, raisetext
 
+            vals_list_planaccepts = False
+
+            print('project.planned_acceptance_flow_ids = ', project.planned_acceptance_flow_ids)
             for plan_accept in project.planned_acceptance_flow_ids:
-                if plan_accept.date_cash <= fields.datetime.now().date():
+                date_cash = plan_accept.date_cash
+                if vals_list_planaccepts:
+                    for vals_list_planaccept in vals_list_planaccepts:
+                        print('vals_list_planaccept =', vals_list_planaccept)
+                        if plan_accept.id == vals_list_planaccept[1]:
+                            vals_one_accept = vals_list_planaccept[2]
+                            print('vals_one_accept = ', vals_one_accept)
+                            if vals_one_accept:
+                                if 'date_cash' in vals_one_accept:
+                                    date_cash = datetime.datetime.strptime(
+                                        vals_one_accept['date_cash'], "%Y-%m-%d").date()
+
+                if date_cash <= fields.datetime.now().date():
                     if plan_accept.distribution_acceptance_ids:
-                        ok = ok
+                        ok = True
                     else:
-                        raisetext = _("DENIED. Project " + step.project_id + " have overdue planned acceptance flow  without fact")
+                        raisetext = _("DENIED. Project {0} have overdue planned acceptance flow  without fact {1}")
+                        raisetext.format(project.project_id,str(date_cash))
                         return False, raisetext
+
+
+            vals_list_plancashs = False
 
             for plan_cash in project.planned_cash_flow_ids:
-                if plan_cash.date_cash <= fields.datetime.now().date():
+                date_cash = plan_cash.date_cash
+                if vals_list_plancashs:
+                    for vals_list_plancash in vals_list_plancashs:
+                        print('vals_list_planaccept =', vals_list_plancash)
+                        if plan_cash.id == vals_list_plancash[1]:
+                            vals_one_cash = vals_list_plancash[2]
+                            print('vals_one_cash = ', vals_one_cash)
+                            if vals_one_cash:
+                                if 'date_cash' in vals_one_cash:
+                                    date_cash = datetime.datetime.strptime(
+                                        vals_one_cash['date_cash'], "%Y-%m-%d").date()
+                if date_cash <= fields.datetime.now().date():
                     if plan_cash.distribution_cash_ids:
-                        ok = ok
+                        ok = True
                     else:
-                        raisetext = _("DENIED. Project " + step.project_id + " have overdue planned acceptance flow  without fact")
+                        raisetext = _("DENIED. Project {0} have overdue planned cash flow  without fact {1}" )
+                        raisetext = raisetext.format(project.project_id, str(date_cash))
                         return False, raisetext
 
         return True, ""
@@ -530,14 +564,16 @@ class projects(models.Model):
             #         raisetext = _("DENIED. planned_cash_flow_sum <> total_amount_of_revenue_with_vat")
             #         raise ValidationError(raisetext)
 
-            isok, raisetext =self.check_overdue_date(False)
-            if isok == False:
-                raise ValidationError(raisetext)
+            # isok, raisetext =self.check_overdue_date(False)
+            # if isok == False:
+            #     raise ValidationError(raisetext)
 
+            print('0_0')
             if rows.approve_state=="need_approve_manager" and rows.budget_state == 'work' and rows.specification_state !='cancel':
-                rows.write({
-                    'approve_state': "need_approve_supervisor"
-                })
+                print('before rows.id = ', rows.id)
+                rows.write({'approve_state': "need_approve_supervisor"})
+
+                # rows.approve_state = "need_approve_supervisor"
                 print('rows.id = ', rows.id)
 
                 # Get a reference to the mail.activity model
