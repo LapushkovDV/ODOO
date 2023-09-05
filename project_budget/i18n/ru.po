@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-05 17:57+0000\n"
-"PO-Revision-Date: 2023-09-05 17:57+0000\n"
+"POT-Creation-Date: 2023-09-05 19:14+0000\n"
+"PO-Revision-Date: 2023-09-05 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -92,7 +92,6 @@ msgstr "Доступы"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__currency_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__currency_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__currency_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__currency_id
 msgid "Account Currency"
 msgstr "Валюта"
 
@@ -563,6 +562,11 @@ msgstr "Создано кем"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__create_date
 msgid "Created on"
 msgstr "Создано дата"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__currency_id
+msgid "Currency"
+msgstr "Валюта"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__current_status
@@ -2087,13 +2091,19 @@ msgstr "Контактная информация"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__contract_security
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
 msgid "contract_security"
-msgstr "Обеспечение сделки"
+msgstr "Обеспечение контракта"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__contract_security_currency_id
+msgid "contract_security Currency"
+msgstr "валюта"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__contract_security_descr
 msgid "contract_security description"
-msgstr "Обеспечение сделки. Примечание"
+msgstr "Обеспечение контракта. Примечание"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q1_fact
@@ -2171,6 +2181,11 @@ msgstr "Себестоимость товаров"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__cost_price
 msgid "cost_price"
 msgstr "Себестоимость проекта"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
+msgid "currency"
+msgstr "валюта"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_current_status__code
@@ -2273,6 +2288,11 @@ msgstr "Дата"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__date_of_filling_in
 msgid "date_of_filling_in tender"
 msgstr "Дата заполнения"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
+msgid "descr"
+msgstr "Примечание"
 
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_distribution_acceptance
@@ -2657,13 +2677,24 @@ msgstr "Наименование"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__initial_maximum_contract_price
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
 msgid "initial_maximum_contract_price"
 msgstr "НМЦК"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__initial_maximum_contract_price_currency_id
+msgid "initial_maximum_contract_price Currency"
+msgstr "валюта"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__initial_maximum_contract_price_descr
 msgid "initial_maximum_contract_price description"
 msgstr "НМЦК. Примечание"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__initial_maximum_contract_price_vat_attribute_id
+msgid "initial_maximum_contract_price vat_attribute"
+msgstr "НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_comments__is_need_type
@@ -3083,6 +3114,7 @@ msgstr "Заказчик"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__participants_offer
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
 msgid "participants_offer"
 msgstr "Предложение участника"
 
@@ -3092,9 +3124,25 @@ msgid "participants_offer description"
 msgstr "Предложение участника. Примечание"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__participants_offer_vat_attribute_id
+msgid "participants_offer vat_attribute"
+msgstr "НДС"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__participants_offer_currency_id
+msgid "participants_offer_ Currency"
+msgstr "валюта"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__payment_for_the_victory
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
 msgid "payment_for_the_victory"
 msgstr "Плата за победу"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__payment_for_the_victory_currency_id
+msgid "payment_for_the_victory Currency"
+msgstr "валюта"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__payment_for_the_victory_descr
@@ -3517,8 +3565,14 @@ msgstr ""
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__provision_of_GO
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
 msgid "provision_of_GO"
 msgstr "Обеспечение ГО"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__provision_of_GO_currency_id
+msgid "provision_of_GO Currency"
+msgstr "валюта"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__provision_of_GO_descr
@@ -3610,8 +3664,14 @@ msgstr "Доступ пользователей по руководителям 
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__securing_the_application
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
 msgid "securing_the_application"
 msgstr "Обеспечение заявки"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__securing_the_application_currency_id
+msgid "securing_the_application Currency"
+msgstr ""
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__securing_the_application_descr
@@ -3695,8 +3755,14 @@ msgstr "Выберите признак НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__site_payment
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
 msgid "site_payment"
 msgstr "Оплата площадки"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__site_payment_currency_id
+msgid "site_payment Currency"
+msgstr "валюта"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__site_payment_descr
@@ -3731,6 +3797,11 @@ msgstr "Номер этапа проекта"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__step_id
 msgid "step_id"
 msgstr ""
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
+msgid "sum"
+msgstr "Сумма"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash_plan
@@ -3984,6 +4055,11 @@ msgstr "Указать EBIT"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__is_use_net_profit
 msgid "using Net Profit"
 msgstr "Указать чистую прибыль"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
+msgid "vat"
+msgstr "НДС"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_vat_attribute
