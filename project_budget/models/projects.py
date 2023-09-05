@@ -2,6 +2,7 @@ from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
 from odoo.tools import pytz
 from datetime import timedelta
+import datetime
 
 class projects(models.Model):
     _name = 'project_budget.projects'
@@ -79,6 +80,7 @@ class projects(models.Model):
     currency_id = fields.Many2one('res.currency', string='Account Currency',  required = True, copy = True,
                                   default=lambda self: self.env['res.currency'].search([('name', '=', 'RUB')], limit=1),tracking=True)
     etalon_budget = fields.Boolean(related='commercial_budget_id.etalon_budget', readonly=True)
+    date_actual = fields.Datetime(related='commercial_budget_id.date_actual', readonly=True, store=True)
     date_actual = fields.Datetime(related='commercial_budget_id.date_actual', readonly=True, store=True)
     isRukovoditel_required_in_project = fields.Boolean(related='project_office_id.isRukovoditel_required_in_project', readonly=True, store=True)
     commercial_budget_id = fields.Many2one('project_budget.commercial_budget', string='commercial_budget-',required=True, ondelete='cascade', index=True, copy=False
@@ -205,7 +207,7 @@ class projects(models.Model):
         string="project steps", auto_join=True,copy=True)
 
     name_to_show = fields.Char(string='name_to_show', compute='_get_name_to_show')
-    
+
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Attachments')
 
     tenders_count = fields.Integer(compute='_compute_tenders_count', string='Tenders')
@@ -424,6 +426,8 @@ class projects(models.Model):
                 fieldquarter.end_sale_project_quarter = 'NA'
 
 
+
+
     def user_is_supervisor(self,supervisor_id):
         supervisor_access = self.env['project_budget.project_supervisor_access'].search([('user_id.id', '=', self.env.user.id)
                                                                                         ,('project_supervisor_id.id', '=', supervisor_id)
@@ -432,11 +436,88 @@ class projects(models.Model):
             return False
         else: return True
 
+    def check_overdue_date(self, vals_list):
+        for project in self:
 
+            end_presale_project_month = project.end_presale_project_month
+            end_sale_project_month = project.end_sale_project_month
+            print('vals_list = ',vals_list)
+            if vals_list:
+                if 'end_presale_project_month' in vals_list:
+                    end_presale_project_month = datetime.datetime.strptime(vals_list['end_presale_project_month'], "%Y-%m-%d").date()
+                if 'end_sale_project_month' in vals_list:
+                    end_sale_project_month = datetime.datetime.strptime(vals_list['end_sale_project_month'], "%Y-%m-%d").date()
+
+
+            if end_presale_project_month <= fields.datetime.now().date():
+                raisetext = _("DENIED. Project " + project.project_id + " have overdue end presale project month " + str(end_presale_project_month))
+                return False, raisetext
+
+            if end_sale_project_month <= fields.datetime.now().date():
+                raisetext = _("DENIED. Project " + project.project_id + " have overdue end sale project month " + str(end_sale_project_month))
+                return False, raisetext
+
+            vals_list_steps = False
+            if 'project_steps_ids' in vals_list:
+                vals_list_steps = vals_list['project_steps_ids']
+
+            if project.project_have_steps:
+
+                for step in project.project_steps_ids:
+                    end_presale_project_month = step.end_presale_project_month
+                    end_sale_project_month = step.end_sale_project_month
+
+                    if 'project_steps_ids' in vals_list:
+                        for vals_list_step in vals_list_steps:
+                            print('vals_list_steps =', vals_list_step)
+                            if step.id == vals_list_step[1]:
+                                vals_one_step = vals_list_step[2]
+                                print('vals_one_step = ', vals_one_step)
+                                if vals_one_step:
+                                    if 'end_presale_project_month' in vals_one_step:
+                                        end_presale_project_month = datetime.datetime.strptime(
+                                            vals_one_step['end_presale_project_month'], "%Y-%m-%d").date()
+                                    if 'end_sale_project_month' in vals_one_step:
+                                        end_sale_project_month = datetime.datetime.strptime(
+                                            vals_one_step['end_sale_project_month'], "%Y-%m-%d").date()
+
+                    print('step.id = ', step.id)
+                    if end_presale_project_month <= fields.datetime.now().date():
+                        raisetext = _("DENIED. Project " + project.project_id + " step "+step.step_id+" have overdue end presale project month " + str(end_presale_project_month))
+                        return False, raisetext
+
+                    if end_sale_project_month <= fields.datetime.now().date():
+                        raisetext = _("DENIED. Project " + project.project_id + " step "+step.step_id+" have overdue end sale project month " + str(end_sale_project_month))
+                        return False, raisetext
+
+            for plan_accept in project.planned_acceptance_flow_ids:
+                if plan_accept.date_cash <= fields.datetime.now().date():
+                    if plan_accept.distribution_acceptance_ids:
+                        ok = ok
+                    else:
+                        raisetext = _("DENIED. Project " + step.project_id + " have overdue planned acceptance flow  without fact")
+                        return False, raisetext
+
+            for plan_cash in project.planned_cash_flow_ids:
+                if plan_cash.date_cash <= fields.datetime.now().date():
+                    if plan_cash.distribution_cash_ids:
+                        ok = ok
+                    else:
+                        raisetext = _("DENIED. Project " + step.project_id + " have overdue planned acceptance flow  without fact")
+                        return False, raisetext
+
+        return True, ""
 
     def print_budget(self):
         for rows in self:
             print()
+
+    def write(self, vals_list):
+        isok, raisetext = self.check_overdue_date(vals_list)
+        if isok == False:
+            raise ValidationError(raisetext)
+        res = res = super().write(vals_list)
+        return res
 
     def set_approve_manager(self):
         for rows in self:
@@ -448,6 +529,10 @@ class projects(models.Model):
             #     if rows.total_amount_of_revenue_with_vat != rows.planned_cash_flow_sum:
             #         raisetext = _("DENIED. planned_cash_flow_sum <> total_amount_of_revenue_with_vat")
             #         raise ValidationError(raisetext)
+
+            isok, raisetext =self.check_overdue_date(False)
+            if isok == False:
+                raise ValidationError(raisetext)
 
             if rows.approve_state=="need_approve_manager" and rows.budget_state == 'work' and rows.specification_state !='cancel':
                 rows.write({
@@ -490,6 +575,10 @@ class projects(models.Model):
     def set_approve_supervisor(self):
         for rows in self:
             if rows.approve_state=="need_approve_supervisor" and rows.budget_state == 'work' and rows.specification_state !='cancel':
+
+                isok, raisetext = self.check_overdue_date(False)
+                if isok == False:
+                    raise ValidationError(raisetext)
 
                 user_id = False
                 if rows.project_office_id.receive_tasks_for_approve_project: # не только куратор может утвекрждать, но и руководитель проектного офиса надо
@@ -564,7 +653,7 @@ class projects(models.Model):
             'flags': {'initial_mode': 'edit'},
             'target': 'new',
         }
-        
+
     def action_open_attachments(self):
         self.ensure_one()
         return {
@@ -629,7 +718,6 @@ class projects(models.Model):
                 raise ValidationError(raise_text)
 
             record.approve_state = 'need_approve_manager'
-
     # def unlink(self):
     #     """ dont delete.
     #     Set specification_state to 'cancel'
