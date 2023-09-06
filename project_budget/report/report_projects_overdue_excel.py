@@ -51,6 +51,9 @@ class report_projects_overdue_excel(models.AbstractModel):
         column = 0
 
         column = 0
+        sheet.write_string(row, column, 'Проектный офис', head_format)
+        sheet.set_column(column, column, 23)
+        column += 1
         sheet.write_string(row, column, 'Project_id', head_format)
         sheet.set_column(column, column, 23)
         column += 1
@@ -76,6 +79,8 @@ class report_projects_overdue_excel(models.AbstractModel):
             if isok == True: continue
             row += 1
             column = 0
+            sheet.write_string(row, column, spec.project_office_id.name, row_format)
+            column += 1
             sheet.write_string(row, column, spec.project_id, row_format)
             column += 1
             if 'step_id' in dictvalues:
