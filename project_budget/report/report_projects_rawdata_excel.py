@@ -180,7 +180,7 @@ class report_projects_rawdata_excel(models.AbstractModel):
 
         for spec in cur_budget_projects:
             if spec.project_have_steps == False:
-                if spec.end_presale_project_month.year >= YEARint or spec.end_sale_project_month.year >= YEARint:
+                if True == True: #spec.end_presale_project_month.year >= YEARint or spec.end_sale_project_month.year >= YEARint:
                     row += 1
                     column = 0
                     sheet.write_string(row, column, spec.company_id.name, row_format)
@@ -292,7 +292,7 @@ class report_projects_rawdata_excel(models.AbstractModel):
 
             if spec.project_have_steps == True:
                 for step in spec.project_steps_ids:
-                    if step.end_presale_project_month.year >= YEARint or step.end_sale_project_month.year >= YEARint:
+                    if True == True: #step.end_presale_project_month.year >= YEARint or step.end_sale_project_month.year >= YEARint:
                         row += 1
                         column = 0
                         sheet.write_string(row, column, spec.company_id.name, row_format)

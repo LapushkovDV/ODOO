@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-05 19:14+0000\n"
-"PO-Revision-Date: 2023-09-05 19:14+0000\n"
+"POT-Creation-Date: 2023-09-06 05:47+0000\n"
+"PO-Revision-Date: 2023-09-06 05:47+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1419,6 +1419,11 @@ msgid "Opportunity, 30%"
 msgstr "Возможность, 30%"
 
 #. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__overdue
+msgid "Overdue"
+msgstr "Просроченные даты в проектах"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__parent_id
 msgid "Parent project_office"
 msgstr "Вышестоящий проектный офис"
@@ -1539,6 +1544,11 @@ msgstr "Прогноз"
 #: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_kb
 msgid "Projects Report kb"
 msgstr "КБ"
+
+#. module: project_budget
+#: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_overdue
+msgid "Projects Report overdue"
+msgstr ""
 
 #. module: project_budget
 #: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_raw_data
@@ -2093,7 +2103,7 @@ msgstr "Контактная информация"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__contract_security
 #: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
 msgid "contract_security"
-msgstr "Обеспечение контракта"
+msgstr "Обеспечение сделки"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__contract_security_currency_id
@@ -2103,7 +2113,7 @@ msgstr "валюта"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__contract_security_descr
 msgid "contract_security description"
-msgstr "Обеспечение контракта. Примечание"
+msgstr "Обеспечение сделки. Примечание"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__contracting_q1_fact
@@ -3313,6 +3323,11 @@ msgstr "отчет бюджета проектов в EXCEL"
 #: model:ir.model,name:project_budget.model_report_project_budget_report_budget_forecast_excel
 msgid "project_budget.report_budget_forecast_excel"
 msgstr "Прогноз (EXCEL)"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_report_project_budget_report_projects_overdue_excel
+msgid "project_budget.report_projects_overdue_excel"
+msgstr ""
 
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_report_project_budget_report_projects_rawdata_excel
