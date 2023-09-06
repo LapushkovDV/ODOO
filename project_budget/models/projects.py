@@ -564,9 +564,9 @@ class projects(models.Model):
             #         raisetext = _("DENIED. planned_cash_flow_sum <> total_amount_of_revenue_with_vat")
             #         raise ValidationError(raisetext)
 
-            # isok, raisetext =self.check_overdue_date(False)
-            # if isok == False:
-            #     raise ValidationError(raisetext)
+            isok, raisetext =self.check_overdue_date(False)
+            if isok == False:
+                raise ValidationError(raisetext)
 
             print('0_0')
             if rows.approve_state=="need_approve_manager" and rows.budget_state == 'work' and rows.specification_state !='cancel':
