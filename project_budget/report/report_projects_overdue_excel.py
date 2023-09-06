@@ -54,6 +54,18 @@ class report_projects_overdue_excel(models.AbstractModel):
         sheet.write_string(row, column, 'Проектный офис', head_format)
         sheet.set_column(column, column, 23)
         column += 1
+        sheet.write_string(row, column, 'Вероятность', head_format)
+        sheet.set_column(column, column, 23)
+        column += 1
+        sheet.write_string(row, column, 'Куратор', head_format)
+        sheet.set_column(column, column, 23)
+        column += 1
+        sheet.write_string(row, column, 'КАМ', head_format)
+        sheet.set_column(column, column, 23)
+        column += 1
+        sheet.write_string(row, column, 'Руководитель проекта', head_format)
+        sheet.set_column(column, column, 23)
+        column += 1
         sheet.write_string(row, column, 'Project_id', head_format)
         sheet.set_column(column, column, 23)
         column += 1
@@ -77,9 +89,30 @@ class report_projects_overdue_excel(models.AbstractModel):
             isok, raisetext, dictvalues = spec.check_overdue_date(False)
 
             if isok == True: continue
+            estimated_probability_id_name = ""
+            if 'step_id' in dictvalues:
+                step_id = dictvalues['step_id']
+                step_obj = self.env['project_budget.project_steps'].search(
+                    [('step_id', '=', step_id),('projects_id','=',spec.id)], limit=1)
+                if step_obj:
+                    estimated_probability_id_name = step_obj.estimated_probability_id.name
+            else:
+                estimated_probability_id_name = spec.estimated_probability_id.name
+
+            if estimated_probability_id_name in ('0', '100(done)'): continue
+
             row += 1
             column = 0
             sheet.write_string(row, column, spec.project_office_id.name, row_format)
+            column += 1
+            sheet.write_string(row, column, estimated_probability_id_name, row_format)
+
+            column += 1
+            sheet.write_string(row, column, (spec.project_supervisor_id.name or ""), row_format)
+            column += 1
+            sheet.write_string(row, column, (spec.project_manager_id.name or ""), row_format)
+            column += 1
+            sheet.write_string(row, column, (spec.rukovoditel_project_id.name or ""), row_format)
             column += 1
             sheet.write_string(row, column, spec.project_id, row_format)
             column += 1
