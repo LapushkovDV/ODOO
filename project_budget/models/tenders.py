@@ -134,7 +134,7 @@ class tender_sums(models.Model):
 
     tenders_id = fields.Many2one('project_budget.tenders',string='tender id', required=True, copy=True, tracking=True, ondelete='cascade',)
     is_main_currency = fields.Boolean(string="is_main_currency", compute="_compute_is_main_currency", default = True)
-    currency_id = fields.Many2one('res.currency', string='Currency',  required = True, copy = True,
+    currency_id = fields.Many2one('res.currency', string='Currency',  copy = True,
                                   default=lambda self: self.tenders_id.currency_id,tracking=True)
     participants_offer = fields.Monetary(string='participants_offer', tracking=True, required=True)
     participants_offer_currency_id = fields.Many2one('res.currency', string='participants_offer_ Currency',  required = True, copy = True,
