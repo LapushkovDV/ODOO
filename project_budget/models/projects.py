@@ -442,18 +442,25 @@ class projects(models.Model):
             end_presale_project_month = project.end_presale_project_month
             end_sale_project_month = project.end_sale_project_month
             print('vals_list = ',vals_list)
+
+            estimated_probability_id_name = project.estimated_probability_id.name
+
             if vals_list:
                 if 'end_presale_project_month' in vals_list:
                     end_presale_project_month = datetime.datetime.strptime(vals_list['end_presale_project_month'], "%Y-%m-%d").date()
                 if 'end_sale_project_month' in vals_list:
                     end_sale_project_month = datetime.datetime.strptime(vals_list['end_sale_project_month'], "%Y-%m-%d").date()
+                if 'estimated_probability_id' in vals_list:
+                    estimated_probability_id = int(vals_list['estimated_probability_id'])
+                    estimated_probability_id_obj = self.env['project_budget.estimated_probability'].search([('id', '=', estimated_probability_id)], limit=1)
+                    estimated_probability_id_name = estimated_probability_id_obj.name
 
-            if project.estimated_probability_id.name not in ('100', '100(done)'):
+            if estimated_probability_id_name not in ('0', '100','100(done)'):
                 if end_presale_project_month <= fields.datetime.now().date() :
                     raisetext = _("DENIED. Project {0} have overdue end presale project month {1}")
                     raisetext=raisetext.format(project.project_id,str(end_presale_project_month))
                     return False, raisetext, {'end_presale_project_month':str(end_presale_project_month)}
-
+            if estimated_probability_id_name not in ('0', '100(done)'):
                 if end_sale_project_month <= fields.datetime.now().date() :
                     raisetext = _("DENIED. Project {0} have overdue end sale project month {1}")
                     raisetext = raisetext.format(project.project_id, str(end_sale_project_month))
@@ -463,42 +470,54 @@ class projects(models.Model):
 
             if project.project_have_steps:
                 for step in project.project_steps_ids:
-                    if step.estimated_probability_id.name not in ('100', '100(done)'):
-                        end_presale_project_month = step.end_presale_project_month
-                        end_sale_project_month = step.end_sale_project_month
+                    estimated_probability_id_name = step.estimated_probability_id.name
+                    end_presale_project_month = step.end_presale_project_month
+                    end_sale_project_month = step.end_sale_project_month
 
-                        if vals_list:
-                            if 'project_steps_ids' in vals_list:
-                                vals_list_steps = vals_list['project_steps_ids']
-                                if vals_list_steps:
-                                    for vals_list_step in vals_list_steps:
-                                        print('vals_list_steps =', vals_list_step)
-                                        if step.id == vals_list_step[1]:
-                                            vals_one_step = vals_list_step[2]
-                                            print('vals_one_step = ', vals_one_step)
-                                            if vals_one_step:
-                                                if 'end_presale_project_month' in vals_one_step:
-                                                    end_presale_project_month = datetime.datetime.strptime(
-                                                        vals_one_step['end_presale_project_month'], "%Y-%m-%d").date()
-                                                if 'end_sale_project_month' in vals_one_step:
-                                                    end_sale_project_month = datetime.datetime.strptime(
-                                                        vals_one_step['end_sale_project_month'], "%Y-%m-%d").date()
+                    if vals_list:
+                        if 'project_steps_ids' in vals_list:
+                            vals_list_steps = vals_list['project_steps_ids']
+                            if vals_list_steps:
 
+                                for vals_list_step in vals_list_steps:
+                                    print('vals_list_steps =', vals_list_step)
+                                    if step.id == vals_list_step[1]:
+
+                                        vals_one_step = vals_list_step[2]
+                                        print('vals_one_step = ', vals_one_step)
+                                        if vals_one_step:
+                                            if 'estimated_probability_id' in vals_one_step:
+                                                estimated_probability_id = int(
+                                                    vals_one_step['estimated_probability_id'])
+                                                estimated_probability_id_obj = self.env[
+                                                    'project_budget.estimated_probability'].search(
+                                                    [('id', '=', estimated_probability_id)], limit=1)
+                                                estimated_probability_id_name = estimated_probability_id_obj.name
+
+                                            if 'end_presale_project_month' in vals_one_step:
+                                                end_presale_project_month = datetime.datetime.strptime(
+                                                    vals_one_step['end_presale_project_month'], "%Y-%m-%d").date()
+                                            if 'end_sale_project_month' in vals_one_step:
+                                                end_sale_project_month = datetime.datetime.strptime(
+                                                    vals_one_step['end_sale_project_month'], "%Y-%m-%d").date()
+
+                    if estimated_probability_id_name not in ('0', '100','100(done)'):
                         print('step.id = ', step.id)
                         if end_presale_project_month <= fields.datetime.now().date():
                             raisetext = _("DENIED. Project {0} step {1} have overdue end presale project month {2}" )
                             raisetext = raisetext.format(project.project_id, step.step_id, str(end_presale_project_month))
                             return False, raisetext, {'step_id':step.step_id,'end_presale_project_month':str(end_presale_project_month)}
-
+                        
+                    if estimated_probability_id_name not in ('0', '100(done)'):
                         if end_sale_project_month <= fields.datetime.now().date():
                             raisetext = _("DENIED. Project {0} step {1} have overdue end sale project month {2}")
                             raisetext = raisetext.format(project.project_id, step.step_id, str(end_sale_project_month))
                             return False, raisetext, {'step_id':step.step_id,'end_sale_project_month':str(end_sale_project_month)}
 
             vals_list_planaccepts = False
-
-            if 'planned_acceptance_flow_ids' in vals_list:
-                vals_list_planaccepts = vals_list['planned_acceptance_flow_ids']
+            if vals_list:
+                if 'planned_acceptance_flow_ids' in vals_list:
+                    vals_list_planaccepts = vals_list['planned_acceptance_flow_ids']
 
             print('project.planned_acceptance_flow_ids = ', project.planned_acceptance_flow_ids)
             for plan_accept in project.planned_acceptance_flow_ids:
@@ -527,8 +546,9 @@ class projects(models.Model):
 
 
             vals_list_plancashs = False
-            if 'planned_cash_flow_ids' in vals_list:
-                vals_list_plancashs = vals_list['planned_cash_flow_ids']
+            if vals_list:
+                if 'planned_cash_flow_ids' in vals_list:
+                    vals_list_plancashs = vals_list['planned_cash_flow_ids']
 
             for plan_cash in project.planned_cash_flow_ids:
                 date_cash = plan_cash.date_cash
