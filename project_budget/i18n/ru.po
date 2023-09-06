@@ -3131,7 +3131,7 @@ msgstr "Предложение участника"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__participants_offer_descr
 msgid "participants_offer description"
-msgstr "Предложение участника. Примечание"
+msgstr "Примечание"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__participants_offer_vat_attribute_id
