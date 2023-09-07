@@ -6,7 +6,7 @@ import { useService } from "@web/core/utils/hooks";
 
 const { Component, onWillStart, onWillRender, useState } = owl;
 
-export class ProcessingWidget extends Field {
+export class ProcessingBar extends Field {
     async setup() {
         super.setup();
 
@@ -28,7 +28,7 @@ export class ProcessingWidget extends Field {
      */
     async handleComponentUpdate() {
         this.process = this.props.record.data;
-        this.state.process_id = this.process.id;
+        this.state.process_id = this.process.process_id !== undefined ? this.process.process_id[0] : this.process.id;
         const forceReload = this.lastRecord !== this.props.record;
         this.lastRecord = this.props.record;
         await this.fetchProcessData(this.state.process_id, forceReload);
@@ -62,6 +62,6 @@ export class ProcessingWidget extends Field {
     }
 }
 
-ProcessingWidget.template = 'document_flow.processing_widget'
+ProcessingBar.template = 'document_flow.processing_bar'
 
-registry.category('fields').add('processing_widget', ProcessingWidget);
+registry.category('fields').add('processingbar', ProcessingBar);
