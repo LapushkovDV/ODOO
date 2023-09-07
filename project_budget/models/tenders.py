@@ -211,7 +211,7 @@ class tender_comments(models.Model):
     _name = 'project_budget.tender_comments'
     _description = "projects tender comments"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-
+    _order = 'date_comment'
 
     tenders_id = fields.Many2one('project_budget.tenders',string='tender id', required=True, copy=True, tracking=True, ondelete='cascade',)
     date_comment = fields.Date(string='date of the comment', required=True, default=fields.datetime.now(), tracking=True)
