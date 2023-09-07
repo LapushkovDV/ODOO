@@ -468,6 +468,8 @@ class projects(models.Model):
 
             vals_list_steps = False
 
+            dict_formula = {}
+
             if project.project_have_steps:
                 for step in project.project_steps_ids:
                     estimated_probability_id_name = step.estimated_probability_id.name
@@ -494,12 +496,16 @@ class projects(models.Model):
                                                     [('id', '=', estimated_probability_id)], limit=1)
                                                 estimated_probability_id_name = estimated_probability_id_obj.name
 
+
                                             if 'end_presale_project_month' in vals_one_step:
                                                 end_presale_project_month = datetime.datetime.strptime(
                                                     vals_one_step['end_presale_project_month'], "%Y-%m-%d").date()
                                             if 'end_sale_project_month' in vals_one_step:
                                                 end_sale_project_month = datetime.datetime.strptime(
                                                     vals_one_step['end_sale_project_month'], "%Y-%m-%d").date()
+
+                    step_id_str = str(step.id)
+                    dict_formula[step_id_str] = estimated_probability_id_name
 
                     if estimated_probability_id_name not in ('0', '100','100(done)'):
                         print('step.id = ', step.id)
@@ -514,14 +520,24 @@ class projects(models.Model):
                             raisetext = raisetext.format(project.project_id, step.step_id, str(end_sale_project_month))
                             return False, raisetext, {'step_id':step.step_id,'end_sale_project_month':str(end_sale_project_month)}
 
+            if project.estimated_probability_id.name not in ('0', '100(done)'):
+               if project.project_have_steps == False:
+                   return True, "", {}
+
             vals_list_planaccepts = False
             if vals_list:
                 if 'planned_acceptance_flow_ids' in vals_list:
                     vals_list_planaccepts = vals_list['planned_acceptance_flow_ids']
 
             print('project.planned_acceptance_flow_ids = ', project.planned_acceptance_flow_ids)
+            print('dict_formula =', dict_formula)
             for plan_accept in project.planned_acceptance_flow_ids:
                 date_cash = plan_accept.date_cash
+                step_id_str = str(plan_accept.project_steps_id.id)
+                print('step_id_str = ',step_id_str)
+                if step_id_str in dict_formula :
+                    if dict_formula[step_id_str] in ('0', '100(done)'):
+                        continue
 
                 if vals_list_planaccepts:
                     for vals_list_planaccept in vals_list_planaccepts:
@@ -552,6 +568,12 @@ class projects(models.Model):
 
             for plan_cash in project.planned_cash_flow_ids:
                 date_cash = plan_cash.date_cash
+
+                step_id_str = str(plan_cash.project_steps_id.id)
+                if step_id_str in dict_formula :
+                    if dict_formula[step_id_str] in ('0', '100(done)'):
+                        continue
+
                 if vals_list_plancashs:
                     for vals_list_plancash in vals_list_plancashs:
                         print('vals_list_planaccept =', vals_list_plancash)
