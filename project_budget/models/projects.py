@@ -456,12 +456,12 @@ class projects(models.Model):
                     estimated_probability_id_name = estimated_probability_id_obj.name
 
             if estimated_probability_id_name not in ('0', '100','100(done)'):
-                if end_presale_project_month <= fields.datetime.now().date() :
+                if end_presale_project_month < fields.datetime.now().date() :
                     raisetext = _("DENIED. Project {0} have overdue end presale project month {1}")
                     raisetext=raisetext.format(project.project_id,str(end_presale_project_month))
                     return False, raisetext, {'end_presale_project_month':str(end_presale_project_month)}
             if estimated_probability_id_name not in ('0', '100(done)'):
-                if end_sale_project_month <= fields.datetime.now().date() :
+                if end_sale_project_month < fields.datetime.now().date() :
                     raisetext = _("DENIED. Project {0} have overdue end sale project month {1}")
                     raisetext = raisetext.format(project.project_id, str(end_sale_project_month))
                     return False, raisetext, {'end_sale_project_month':str(end_sale_project_month)}
@@ -503,13 +503,13 @@ class projects(models.Model):
 
                     if estimated_probability_id_name not in ('0', '100','100(done)'):
                         print('step.id = ', step.id)
-                        if end_presale_project_month <= fields.datetime.now().date():
+                        if end_presale_project_month < fields.datetime.now().date():
                             raisetext = _("DENIED. Project {0} step {1} have overdue end presale project month {2}" )
                             raisetext = raisetext.format(project.project_id, step.step_id, str(end_presale_project_month))
                             return False, raisetext, {'step_id':step.step_id,'end_presale_project_month':str(end_presale_project_month)}
 
                     if estimated_probability_id_name not in ('0', '100(done)'):
-                        if end_sale_project_month <= fields.datetime.now().date():
+                        if end_sale_project_month < fields.datetime.now().date():
                             raisetext = _("DENIED. Project {0} step {1} have overdue end sale project month {2}")
                             raisetext = raisetext.format(project.project_id, step.step_id, str(end_sale_project_month))
                             return False, raisetext, {'step_id':step.step_id,'end_sale_project_month':str(end_sale_project_month)}
@@ -536,7 +536,7 @@ class projects(models.Model):
                                     date_cash = datetime.datetime.strptime(
                                         vals_one_accept['date_cash'], "%Y-%m-%d").date()
 
-                if date_cash <= fields.datetime.now().date():
+                if date_cash < fields.datetime.now().date():
                     if plan_accept.distribution_acceptance_ids:
                         ok = True
                     else:
@@ -564,7 +564,7 @@ class projects(models.Model):
                                 if 'date_cash' in vals_one_cash:
                                     date_cash = datetime.datetime.strptime(
                                         vals_one_cash['date_cash'], "%Y-%m-%d").date()
-                if date_cash <= fields.datetime.now().date():
+                if date_cash < fields.datetime.now().date():
                     if plan_cash.distribution_cash_ids:
                         ok = True
                     else:
