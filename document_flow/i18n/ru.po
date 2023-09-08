@@ -946,7 +946,7 @@ msgstr "Срок исполнения моей активности"
 #. odoo-javascript
 #: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
 #, python-format
-msgid "My tasks:"
+msgid "My Tasks:"
 msgstr "Мои задачи:"
 
 #. module: document_flow
@@ -974,7 +974,7 @@ msgstr "Содержание"
 #: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
 #, python-format
 msgid "New"
-msgstr "Новый"
+msgstr "Новые"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_date_deadline

@@ -369,7 +369,7 @@ class Process(models.Model):
                             ('sequence', '=', next_sequence)
                         ], order='id')]
                     self.write({'state': 'finished', 'date_end': date_closed})
-                    if self.parent_obj_ref:
+                    if self.parent_obj_ref and type(self.parent_obj_ref).__name__ == 'document_flow.event':
                         self.parent_obj_ref.write({'state': 'approved'})
         elif result_type == 'error':
             self.write({'state': 'break', 'date_end': date_closed})
