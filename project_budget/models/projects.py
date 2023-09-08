@@ -460,7 +460,7 @@ class projects(models.Model):
                     raisetext = _("DENIED. Project {0} have overdue end presale project month {1}")
                     raisetext=raisetext.format(project.project_id,str(end_presale_project_month))
                     return False, raisetext, {'end_presale_project_month':str(end_presale_project_month)}
-            if estimated_probability_id_name not in ('0', '100(done)'):
+            if estimated_probability_id_name not in ('0', '100', '100(done)'): # Алина сказала, что даже если на исполнение то не проверять даты контрактования
                 if end_sale_project_month < fields.datetime.now().date() :
                     raisetext = _("DENIED. Project {0} have overdue end sale project month {1}")
                     raisetext = raisetext.format(project.project_id, str(end_sale_project_month))

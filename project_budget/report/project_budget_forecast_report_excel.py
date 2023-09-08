@@ -1237,6 +1237,12 @@ class report_budget_forecast_excel(models.AbstractModel):
         cur_project_offices = project_offices.filtered(lambda r: r in cur_budget_projects.project_office_id)
         cur_project_managers = project_managers.filtered(lambda r: r in cur_budget_projects.project_manager_id)
         cur_estimated_probabilities = estimated_probabilitys.filtered(lambda r: r in cur_budget_projects.estimated_probability_id)
+        print('cur_budget_projects=',cur_budget_projects)
+        print('project_offices=',project_offices)
+        print('project_managers=',project_managers)
+        print('cur_project_offices=',cur_project_offices)
+        print('cur_project_managers=', cur_project_managers)
+        print('cur_estimated_probabilities=', cur_estimated_probabilities)
 
         for project_office in cur_project_offices:
             print('project_office.name = ', project_office.name)
