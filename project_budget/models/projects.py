@@ -10,7 +10,7 @@ class projects(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'name_to_show'
     _check_company_auto = True
-    # _rec_names_search = ['project_id', 'essence_project']
+    _rec_names_search = ['project_id', 'essence_project']
 
     def action_canban_view_group(self):
         data = self.env['project_budget.projects'].search()
