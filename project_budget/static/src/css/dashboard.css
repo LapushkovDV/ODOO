@@ -2,7 +2,7 @@
     overflow: auto !important;
 }
 
-.dashboard-card {
+.card {
     padding: 0px;
     margin-bottom: 1.5rem;
     border-radius: 0px;
@@ -13,8 +13,10 @@
     text-align: center;
 }
 
-.dashboard-card:hover {
+.card:hover {
     transform: translateY(-2px) translateZ(0) !important;
 }
 
-.
+.card-header {
+    padding: 0.5px;
+}
