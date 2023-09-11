@@ -601,10 +601,17 @@ class projects(models.Model):
             print()
 
     def write(self, vals_list):
-        isok, raisetext,emptydict = self.check_overdue_date(vals_list)
-        if isok == False:
-            raise ValidationError(raisetext)
-        res = res = super().write(vals_list)
+        print('self.env.context = ',self.env.context)
+        if self.env.context.get('form_fix_budget'):
+            f = 1
+            print('form_fix_budget')
+
+        else:
+            isok, raisetext,emptydict = self.check_overdue_date(vals_list)
+            if isok == False:
+                raise ValidationError(raisetext)
+
+        res = super().write(vals_list)
         return res
 
     def set_approve_manager(self):
