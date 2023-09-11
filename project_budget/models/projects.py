@@ -783,6 +783,53 @@ class projects(models.Model):
     def process_task_result(self, date_closed, result_type='ok', feedback=False):
         pass
 
+    @api.model
+    def get_projects_count(self):
+        work_projects = self.env['project_budget.projects'].search([
+            ('budget_state', '=', 'work')
+        ])
+
+        projects_canceled = work_projects.filtered(lambda pr: pr.estimated_probability_id.code == '0')
+        projects_potential = work_projects.filtered(lambda pr: pr.estimated_probability_id.code == '1')
+        projects_opportunity = work_projects.filtered(lambda pr: pr.estimated_probability_id.code == '2')
+        projects_reserve = work_projects.filtered(lambda pr: pr.estimated_probability_id.code == '3')
+        projects_commitment = work_projects.filtered(lambda pr: pr.estimated_probability_id.code == '4')
+        projects_execution = work_projects.filtered(lambda pr: pr.estimated_probability_id.code == '5')
+        projects_done = work_projects.filtered(lambda pr: pr.estimated_probability_id.code == '6')
+
+        values = {
+            'canceled_count': len(projects_canceled),
+            'canceled_revenue': sum([pr.total_amount_of_revenue for pr in projects_canceled]),
+            'canceled_cost': sum([pr.cost_price for pr in projects_canceled]),
+            'canceled_margin': sum([pr.margin_income for pr in projects_canceled]),
+            'potential_count': len(projects_potential),
+            'potential_revenue': sum([pr.total_amount_of_revenue for pr in projects_potential]),
+            'potential_cost': sum([pr.cost_price for pr in projects_potential]),
+            'potential_margin': sum([pr.margin_income for pr in projects_potential]),
+            'opportunity_count': len(projects_opportunity),
+            'opportunity_revenue': sum([pr.total_amount_of_revenue for pr in projects_opportunity]),
+            'opportunity_cost': sum([pr.cost_price for pr in projects_opportunity]),
+            'opportunity_margin': sum([pr.margin_income for pr in projects_opportunity]),
+            'reserve_count': len(projects_reserve),
+            'reserve_revenue': sum([pr.total_amount_of_revenue for pr in projects_reserve]),
+            'reserve_cost': sum([pr.cost_price for pr in projects_reserve]),
+            'reserve_margin': sum([pr.margin_income for pr in projects_reserve]),
+            'commitment_count': len(projects_commitment),
+            'commitment_revenue': sum([pr.total_amount_of_revenue for pr in projects_commitment]),
+            'commitment_cost': sum([pr.cost_price for pr in projects_commitment]),
+            'commitment_margin': sum([pr.margin_income for pr in projects_commitment]),
+            'execution_count': len(projects_execution),
+            'execution_revenue': sum([pr.total_amount_of_revenue for pr in projects_execution]),
+            'execution_cost': sum([pr.cost_price for pr in projects_execution]),
+            'execution_margin': sum([pr.margin_income for pr in projects_execution]),
+            'done_count': len(projects_done),
+            'done_revenue': sum([pr.total_amount_of_revenue for pr in projects_done]),
+            'done_cost': sum([pr.cost_price for pr in projects_done]),
+            'done_margin': sum([pr.margin_income for pr in projects_done])
+        }
+
+        return values
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
