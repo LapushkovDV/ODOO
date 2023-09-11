@@ -10,28 +10,7 @@
     <t t-name="ProjectDashboard">
         <link rel="stylesheet" href="/project_budget/static/src/css/dashboard.css"/>
         <div class="row main-section">
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 canceled">
-                <div class="card text-dark bg-danger">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h2 class="card-title">Canceled, 0%</h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-0">
-                                <div class="col-md-4 d-flex justify-content-center align-items-center">
-                                    <h2 class="card-text">Projects: <small id="canceled_count"/></h2>
-                                </div>
-                                <div class="col-md-8 text-end">
-                                    <p class="card-text">Revenue: <small id="canceled_revenue"/></p>
-                                    <p class="card-text">Cost: <small id="canceled_cost"/></p>
-                                    <p class="card-text">Margin: <small id="canceled_margin"/></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 potential">
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-2 mt-3 potential">
                 <div class="card text-dark bg-info">
                     <div class="dashboard-card">
                         <div class="card-header">
@@ -52,7 +31,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 opportunity">
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-2 mt-3 opportunity">
                 <div class="card text-dark bg-info">
                     <div class="dashboard-card">
                         <div class="card-header">
@@ -73,7 +52,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 reserve">
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-2 mt-3 reserve">
                 <div class="card text-dark bg-info">
                     <div class="dashboard-card">
                         <div class="card-header">
@@ -94,11 +73,11 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 commitment">
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-2 mt-3 commitment">
                 <div class="card text-dark bg-info">
                     <div class="dashboard-card">
                         <div class="card-header">
-                            <h2 class="card-title">Commitment, 70%</h2>
+                            <h2 class="card-title">Commitment, 75%</h2>
                         </div>
                         <div class="card-body">
                             <div class="row g-0">
@@ -115,7 +94,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 execution">
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-2 mt-3 execution">
                 <div class="card text-dark bg-info">
                     <div class="dashboard-card">
                         <div class="card-header">
@@ -136,7 +115,30 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 done">
+        </div>
+        <div class="row main-section">
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-2 mt-3 canceled">
+                <div class="card text-dark bg-danger">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Canceled, 0%</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-0">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                    <h2 class="card-text">Projects: <small id="canceled_count"/></h2>
+                                </div>
+                                <div class="col-md-8 text-end">
+                                    <p class="card-text">Revenue: <small id="canceled_revenue"/></p>
+                                    <p class="card-text">Cost: <small id="canceled_cost"/></p>
+                                    <p class="card-text">Margin: <small id="canceled_margin"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-2 mt-3 done">
                 <div class="card text-dark bg-success">
                     <div class="dashboard-card">
                         <div class="card-header">
