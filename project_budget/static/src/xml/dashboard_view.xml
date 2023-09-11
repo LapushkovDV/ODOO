@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ProjectBudgetDashboard">
+        <div class="pb_dashboards">
+            <div class="container-fluid o_pb_dashboard"/>
+        </div>
+    </t>
+
+    <t t-name="ProjectDashboard">
+        <link rel="stylesheet" href="/project_budget/static/src/css/dashboard.css"/>
+        <div class="row main-section">
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 canceled">
+                <div class="card text-dark bg-danger">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Canceled, 0%</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-0">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                    <h2 class="card-text">Projects: <small id="canceled_count"/></h2>
+                                </div>
+                                <div class="col-md-8 text-end">
+                                    <p class="card-text">Revenue: <small id="canceled_revenue"/></p>
+                                    <p class="card-text">Cost: <small id="canceled_cost"/></p>
+                                    <p class="card-text">Margin: <small id="canceled_margin"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 potential">
+                <div class="card text-dark bg-info">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Potential, 10%</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-0">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                    <h2 class="card-text">Projects: <small id="potential_count"/></h2>
+                                </div>
+                                <div class="col-md-8 text-end">
+                                    <p class="card-text">Revenue: <small id="potential_revenue"/></p>
+                                    <p class="card-text">Cost: <small id="potential_cost"/></p>
+                                    <p class="card-text">Margin: <small id="potential_margin"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 opportunity">
+                <div class="card text-dark bg-info">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Opportunity, 30%</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-0">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                    <h2 class="card-text">Projects: <small id="opportunity_count"/></h2>
+                                </div>
+                                <div class="col-md-8 text-end">
+                                    <p class="card-text">Revenue: <small id="opportunity_revenue"/></p>
+                                    <p class="card-text">Cost: <small id="opportunity_cost"/></p>
+                                    <p class="card-text">Margin: <small id="opportunity_margin"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 reserve">
+                <div class="card text-dark bg-info">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Reserve, 50%</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-0">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                    <h2 class="card-text">Projects: <small id="reserve_count"/></h2>
+                                </div>
+                                <div class="col-md-8 text-end">
+                                    <p class="card-text">Revenue: <small id="reserve_revenue"/></p>
+                                    <p class="card-text">Cost: <small id="reserve_cost"/></p>
+                                    <p class="card-text">Margin: <small id="reserve_margin"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 commitment">
+                <div class="card text-dark bg-info">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Commitment, 70%</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-0">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                    <h2 class="card-text">Projects: <small id="commitment_count"/></h2>
+                                </div>
+                                <div class="col-md-8 text-end">
+                                    <p class="card-text">Revenue: <small id="commitment_revenue"/></p>
+                                    <p class="card-text">Cost: <small id="commitment_cost"/></p>
+                                    <p class="card-text">Margin: <small id="commitment_margin"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 execution">
+                <div class="card text-dark bg-info">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Execution, 100%</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-0">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                    <h2 class="card-text">Projects: <small id="execution_count"/></h2>
+                                </div>
+                                <div class="col-md-8 text-end">
+                                    <p class="card-text">Revenue: <small id="execution_revenue"/></p>
+                                    <p class="card-text">Cost: <small id="execution_cost"/></p>
+                                    <p class="card-text">Margin: <small id="execution_margin"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3-12 col-md-6 col-lg-3 mt-3 done">
+                <div class="card text-dark bg-success">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Done, 100%</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-0">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                    <h2 class="card-text">Projects: <small id="done_count"/></h2>
+                                </div>
+                                <div class="col-md-8 text-end">
+                                    <p class="card-text">Revenue: <small id="done_revenue"/></p>
+                                    <p class="card-text">Cost: <small id="done_cost"/></p>
+                                    <p class="card-text">Margin: <small id="done_margin"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
