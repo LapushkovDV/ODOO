@@ -783,6 +783,9 @@ class projects(models.Model):
     def process_task_result(self, date_closed, result_type='ok', feedback=False):
         pass
 
+    def _monetary_format(self, amount):
+        return '{:,.0f}'.format(amount).replace(',', ' ')
+
     @api.model
     def get_projects_count(self):
         work_projects = self.env['project_budget.projects'].search([
@@ -799,33 +802,33 @@ class projects(models.Model):
 
         values = {
             'canceled_count': len(projects_canceled),
-            'canceled_revenue': sum([pr.total_amount_of_revenue for pr in projects_canceled]),
-            'canceled_cost': sum([pr.cost_price for pr in projects_canceled]),
-            'canceled_margin': sum([pr.margin_income for pr in projects_canceled]),
+            'canceled_revenue': self._monetary_format(round(sum([pr.total_amount_of_revenue for pr in projects_canceled]), 2)),
+            'canceled_cost': self._monetary_format(round(sum([pr.cost_price for pr in projects_canceled]), 2)),
+            'canceled_margin': self._monetary_format(round(sum([pr.margin_income for pr in projects_canceled]), 2)),
             'potential_count': len(projects_potential),
-            'potential_revenue': sum([pr.total_amount_of_revenue for pr in projects_potential]),
-            'potential_cost': sum([pr.cost_price for pr in projects_potential]),
-            'potential_margin': sum([pr.margin_income for pr in projects_potential]),
+            'potential_revenue': self._monetary_format(round(sum([pr.total_amount_of_revenue for pr in projects_potential]), 2)),
+            'potential_cost': self._monetary_format(round(sum([pr.cost_price for pr in projects_potential]), 2)),
+            'potential_margin': self._monetary_format(round(sum([pr.margin_income for pr in projects_potential]), 2)),
             'opportunity_count': len(projects_opportunity),
-            'opportunity_revenue': sum([pr.total_amount_of_revenue for pr in projects_opportunity]),
-            'opportunity_cost': sum([pr.cost_price for pr in projects_opportunity]),
-            'opportunity_margin': sum([pr.margin_income for pr in projects_opportunity]),
+            'opportunity_revenue': self._monetary_format(round(sum([pr.total_amount_of_revenue for pr in projects_opportunity]), 2)),
+            'opportunity_cost': self._monetary_format(round(sum([pr.cost_price for pr in projects_opportunity]), 2)),
+            'opportunity_margin': self._monetary_format(round(sum([pr.margin_income for pr in projects_opportunity]), 2)),
             'reserve_count': len(projects_reserve),
-            'reserve_revenue': sum([pr.total_amount_of_revenue for pr in projects_reserve]),
-            'reserve_cost': sum([pr.cost_price for pr in projects_reserve]),
-            'reserve_margin': sum([pr.margin_income for pr in projects_reserve]),
+            'reserve_revenue': self._monetary_format(round(sum([pr.total_amount_of_revenue for pr in projects_reserve]), 2)),
+            'reserve_cost': self._monetary_format(round(sum([pr.cost_price for pr in projects_reserve]), 2)),
+            'reserve_margin': self._monetary_format(round(sum([pr.margin_income for pr in projects_reserve]), 2)),
             'commitment_count': len(projects_commitment),
-            'commitment_revenue': sum([pr.total_amount_of_revenue for pr in projects_commitment]),
-            'commitment_cost': sum([pr.cost_price for pr in projects_commitment]),
-            'commitment_margin': sum([pr.margin_income for pr in projects_commitment]),
+            'commitment_revenue': self._monetary_format(round(sum([pr.total_amount_of_revenue for pr in projects_commitment]), 2)),
+            'commitment_cost': self._monetary_format(round(sum([pr.cost_price for pr in projects_commitment]), 2)),
+            'commitment_margin': self._monetary_format(round(sum([pr.margin_income for pr in projects_commitment]), 2)),
             'execution_count': len(projects_execution),
-            'execution_revenue': sum([pr.total_amount_of_revenue for pr in projects_execution]),
-            'execution_cost': sum([pr.cost_price for pr in projects_execution]),
-            'execution_margin': sum([pr.margin_income for pr in projects_execution]),
+            'execution_revenue': self._monetary_format(round(sum([pr.total_amount_of_revenue for pr in projects_execution]), 2)),
+            'execution_cost': self._monetary_format(round(sum([pr.cost_price for pr in projects_execution]), 2)),
+            'execution_margin': self._monetary_format(round(sum([pr.margin_income for pr in projects_execution]), 2)),
             'done_count': len(projects_done),
-            'done_revenue': sum([pr.total_amount_of_revenue for pr in projects_done]),
-            'done_cost': sum([pr.cost_price for pr in projects_done]),
-            'done_margin': sum([pr.margin_income for pr in projects_done])
+            'done_revenue': self._monetary_format(round(sum([pr.total_amount_of_revenue for pr in projects_done]), 2)),
+            'done_cost': self._monetary_format(round(sum([pr.cost_price for pr in projects_done]), 2)),
+            'done_margin': self._monetary_format(round(sum([pr.margin_income for pr in projects_done]), 2))
         }
 
         return values
