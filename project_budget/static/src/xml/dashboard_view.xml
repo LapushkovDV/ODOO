@@ -109,13 +109,13 @@
         <div class="row row-cols-1 row-cols-md-5 g-4 mt-1">
             <div class="col canceled">
                 <div class="card text-dark">
-                    <div class="card-header">
-                        <h2 class="card-title">Canceled, 0%</h2>
+                    <div class="card-header" style="background-color: #dc3545; opacity: 50;">
+                        <h2 class="card-title text-white">Canceled</h2>
                     </div>
                     <div class="card-body">
                         <div class="row g-0">
                             <div class="col-md-4 d-flex justify-content-center align-items-center">
-                                <button type="button" class="btn btn-danger">Projects: <small id="canceled_count"/></button>
+                                <button type="button" class="btn btn-primary">Projects: <small id="canceled_count"/></button>
                             </div>
                             <div class="col-md-8 text-end">
                                 <p class="card-text">Revenue: <small id="canceled_revenue"/></p>
@@ -128,13 +128,13 @@
             </div>
             <div class="col done">
                 <div class="card text-dark">
-                    <div class="card-header">
-                        <h2 class="card-title">Done, 100%</h2>
+                    <div class="card-header" style="background-color: #198754;">
+                        <h2 class="card-title text-white">Done</h2>
                     </div>
                     <div class="card-body">
                         <div class="row g-0">
                             <div class="col-md-4 d-flex justify-content-center align-items-center">
-                                <button type="button" class="btn btn-success">Projects: <small id="done_count"/></button>
+                                <button type="button" class="btn btn-primary">Projects: <small id="done_count"/></button>
                             </div>
                             <div class="col-md-8 text-end">
                                 <p class="card-text">Revenue: <small id="done_revenue"/></p>
