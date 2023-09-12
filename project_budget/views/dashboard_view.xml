@@ -7,6 +7,4 @@
         </record>
     </data>
 
-    <menuitem id="project_budget_menu_dashboard" parent="project_budget.project_budget_menu" name="Dashboard" sequence="100"
-              action="action_project_budget_dashboard"/>
 </odoo>

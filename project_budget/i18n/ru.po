@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-11 07:23+0000\n"
-"PO-Revision-Date: 2023-09-11 07:23+0000\n"
+"POT-Creation-Date: 2023-09-12 07:18+0000\n"
+"PO-Revision-Date: 2023-09-12 07:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -325,16 +325,14 @@ msgstr "Отмена"
 #. module: project_budget
 #. odoo-javascript
 #: code:addons/project_budget/static/src/js/dashboard_view.js:0
+#: code:addons/project_budget/static/src/xml/dashboard_view.xml:0
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__specification_state__cancel
 #, python-format
 msgid "Canceled"
 msgstr "Отменен"
 
 #. module: project_budget
-#. odoo-javascript
-#: code:addons/project_budget/static/src/xml/dashboard_view.xml:0
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_estimated_probability_kanban
-#, python-format
 msgid "Canceled, 0%"
 msgstr "Отменен, 0%"
 
@@ -665,25 +663,14 @@ msgstr ""
 #. module: project_budget
 #. odoo-javascript
 #: code:addons/project_budget/static/src/xml/dashboard_1.xml:0
-#: model:ir.ui.menu,name:project_budget.project_budget_menu_dashboard
 #, python-format
 msgid "Dashboard"
 msgstr "Дашборды"
 
 #. module: project_budget
-#: model:ir.ui.menu,name:project_budget.project_budget_dashboards_dashboard_1
-msgid "Dashboard 1"
-msgstr ""
-
-#. module: project_budget
 #: model:ir.actions.client,name:project_budget.dashboard_1
 msgid "Dashboard1"
 msgstr ""
-
-#. module: project_budget
-#: model:ir.ui.menu,name:project_budget.project_budget_dashboards
-msgid "Dashboards"
-msgstr "Дашборды"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__end_presale_project_month
@@ -758,16 +745,10 @@ msgstr "Номер договора"
 #. module: project_budget
 #. odoo-javascript
 #: code:addons/project_budget/static/src/js/dashboard_view.js:0
+#: code:addons/project_budget/static/src/xml/dashboard_view.xml:0
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects__specification_state__done
 #, python-format
 msgid "Done"
-msgstr "Исполнен"
-
-#. module: project_budget
-#. odoo-javascript
-#: code:addons/project_budget/static/src/xml/dashboard_view.xml:0
-#, python-format
-msgid "Done, 100%"
 msgstr "Исполнен"
 
 #. module: project_budget
@@ -2983,6 +2964,7 @@ msgstr "Командировочные расходы"
 #: model:ir.ui.menu,name:project_budget.project_budget_catalogs_legal_entity_signing
 #: model_terms:ir.ui.view,arch_db:project_budget.show_legal_entity_signing_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_legal_entity_signing_tree
+#: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
 msgid "legal_entity_signing"
 msgstr "Юрлицо, подписывающее договор"
 
@@ -3118,7 +3100,6 @@ msgstr "Наименование закупки"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__name_to_show
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__name_to_show
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__name_to_show
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__name_to_show
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__name_to_show
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__name_to_show
@@ -3222,6 +3203,17 @@ msgstr ""
 "Вернуть в работу проект можно только если он не зафиксирован в бюджете"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
+msgid "organization"
+msgstr "Заказчик"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__organizer_id
+#: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
+msgid "organizer"
+msgstr "Организатор"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__other_expenses
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__other_expenses
 msgid "other_expenses"
@@ -3232,11 +3224,6 @@ msgstr "Прочие расходы"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__own_works_fot
 msgid "own_works_fot"
 msgstr "Работы собственные (ФОТ)"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
-msgid "participant_id"
-msgstr "Заказчик"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__participants_offer
@@ -3464,11 +3451,6 @@ msgstr "отчет_тендеры_excel"
 #: model:ir.actions.act_window,name:project_budget.show_projects_tenders
 msgid "project_budget.tenders"
 msgstr "Тендеры"
-
-#. module: project_budget
-#: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_kandan
-msgid "project_budget_estimated_probability_action"
-msgstr "Обзор текущих сделок"
 
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_commercial_budget
@@ -4153,6 +4135,11 @@ msgid "type step name e.g. products recieve"
 msgstr "введине наименование этапа, например поставка"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__url_contract
+msgid "url of contract"
+msgstr "Ссылка на контракт"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__url_tender
 msgid "url of tender"
 msgstr "Ссылка на закупку"
@@ -4289,6 +4276,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
 msgid "Потенциал"
 msgstr ""
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.project_budget_menu_dashboard
+msgid "Work place"
+msgstr "Рабочее место"
 
 #. module: project_budget
 #: model:project_budget.project_steps_type,name:project_budget.project_steps_type_Service
