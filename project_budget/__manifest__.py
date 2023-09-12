@@ -40,8 +40,8 @@
         'views/tenders.xml',
         'wizard/report_tender_wizard.xml',
         'wizard/report_projects_wizard.xml',
-        'views/project_budget_menu.xml',
         'views/dashboard_view.xml',
+        'views/project_budget_menu.xml',
     ],
     'demo':[
 
