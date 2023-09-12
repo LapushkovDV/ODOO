@@ -14,7 +14,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
     strYEAR = '2023'
     YEARint = int(strYEAR)
-
+    koeff_reserve = float(1)
     def isStepinYear(self, project, step):
         global strYEAR
         global YEARint
@@ -477,7 +477,7 @@ class report_budget_forecast_excel(models.AbstractModel):
     def print_month_revenue_project(self, sheet, row, column, month, project, step, row_format_number,row_format_number_color_fact):
         global strYEAR
         global YEARint
-
+        global koeff_reserve
 
         sum75tmpetalon = 0
         sum50tmpetalon = 0
@@ -493,8 +493,8 @@ class report_budget_forecast_excel(models.AbstractModel):
                             sheet.write_number(row, column + 0, project_etalon.total_amount_of_revenue_with_vat, row_format_number)
                             sum75tmpetalon += project_etalon.total_amount_of_revenue_with_vat
                         if project_etalon.estimated_probability_id.name == '50':
-                            sheet.write_number(row, column + 1, project_etalon.total_amount_of_revenue_with_vat, row_format_number)
-                            sum50tmpetalon += project_etalon.total_amount_of_revenue_with_vat
+                            sheet.write_number(row, column + 1, project_etalon.total_amount_of_revenue_with_vat * koeff_reserve, row_format_number)
+                            sum50tmpetalon += project_etalon.total_amount_of_revenue_with_vat * koeff_reserve
 
                 if month == project.end_presale_project_month.month and YEARint == project.end_presale_project_month.year:
                     if project.estimated_probability_id.name in ('100','100(done)'):
@@ -504,8 +504,8 @@ class report_budget_forecast_excel(models.AbstractModel):
                         sheet.write_number(row, column + 3, project.total_amount_of_revenue_with_vat, row_format_number)
                         sum75tmp += project.total_amount_of_revenue_with_vat
                     if project.estimated_probability_id.name == '50':
-                        sheet.write_number(row, column + 4, project.total_amount_of_revenue_with_vat, row_format_number)
-                        sum50tmp += project.total_amount_of_revenue_with_vat
+                        sheet.write_number(row, column + 4, project.total_amount_of_revenue_with_vat * koeff_reserve, row_format_number)
+                        sum50tmp += project.total_amount_of_revenue_with_vat * koeff_reserve
             else:
                 step_etalon  = self.get_etalon_step(step, self.get_quater_from_month(month))
                 if step_etalon:
@@ -514,8 +514,8 @@ class report_budget_forecast_excel(models.AbstractModel):
                             sheet.write_number(row, column + 0, step_etalon.total_amount_of_revenue_with_vat, row_format_number)
                             sum75tmpetalon = step_etalon.total_amount_of_revenue_with_vat
                         if step_etalon.estimated_probability_id.name == '50':
-                            sheet.write_number(row, column + 1, step_etalon.total_amount_of_revenue_with_vat, row_format_number)
-                            sum50tmpetalon = step_etalon.total_amount_of_revenue_with_vat
+                            sheet.write_number(row, column + 1, step_etalon.total_amount_of_revenue_with_vat * koeff_reserve, row_format_number)
+                            sum50tmpetalon = step_etalon.total_amount_of_revenue_with_vat * koeff_reserve
                 else:
                     if project_etalon: # если нет жталонного этапа, то данные берем из проекта, да это будет увеличивать сумму на количество этапов, но что делать я ХЗ
                         if month == project_etalon.end_presale_project_month.month and YEARint == project_etalon.end_presale_project_month.year:
@@ -524,9 +524,9 @@ class report_budget_forecast_excel(models.AbstractModel):
                                                    row_format_number)
                                 sum75tmpetalon += project_etalon.total_amount_of_revenue_with_vat
                             if project_etalon.estimated_probability_id.name == '50':
-                                sheet.write_number(row, column + 1, project_etalon.total_amount_of_revenue_with_vat,
+                                sheet.write_number(row, column + 1, project_etalon.total_amount_of_revenue_with_vat * koeff_reserve,
                                                    row_format_number)
-                                sum50tmpetalon += project_etalon.total_amount_of_revenue_with_vat
+                                sum50tmpetalon += project_etalon.total_amount_of_revenue_with_vat * koeff_reserve
 
                 if month == step.end_presale_project_month.month and YEARint == step.end_presale_project_month.year:
                     if step.estimated_probability_id.name in ('100','100(done)'):
@@ -536,14 +536,15 @@ class report_budget_forecast_excel(models.AbstractModel):
                         sheet.write_number(row, column + 3, step.total_amount_of_revenue_with_vat, row_format_number)
                         sum75tmp = step.total_amount_of_revenue_with_vat
                     if step.estimated_probability_id.name == '50':
-                        sheet.write_number(row, column + 4, step.total_amount_of_revenue_with_vat, row_format_number)
-                        sum50tmp = step.total_amount_of_revenue_with_vat
+                        sheet.write_number(row, column + 4, step.total_amount_of_revenue_with_vat * koeff_reserve, row_format_number)
+                        sum50tmp = step.total_amount_of_revenue_with_vat * koeff_reserve
 
         return sum75tmpetalon, sum50tmpetalon, sum100tmp, sum75tmp, sum50tmp
 
     def print_month_pds_project(self, sheet, row, column, month, project, step, row_format_number, row_format_number_color_fact):
         global strYEAR
         global YEARint
+        global koeff_reserve
 
         sum75tmpetalon = sum50tmpetalon = sum100tmp = sum75tmp = sum50tmp = 0
         if month:
@@ -563,8 +564,8 @@ class report_budget_forecast_excel(models.AbstractModel):
                         sheet.write_number(row, column + 0, sum,row_format_number)
                         sum75tmpetalon += sum
                     if estimated_probability_id_name == '50':
-                        sheet.write_number(row, column + 1, sum, row_format_number)
-                        sum50tmpetalon += sum
+                        sheet.write_number(row, column + 1, sum * koeff_reserve, row_format_number)
+                        sum50tmpetalon += sum * koeff_reserve
 
                 sum100tmp = self.get_sum_fact_pds_project_step_month(project, step, month)
                 if sum100tmp:
@@ -600,8 +601,8 @@ class report_budget_forecast_excel(models.AbstractModel):
                         sheet.write_number(row, column + 3, sum,row_format_number)
                         sum75tmp += sum
                     if estimated_probability_id_name == '50':
-                        sheet.write_number(row, column + 4, sum, row_format_number)
-                        sum50tmp += sum
+                        sheet.write_number(row, column + 4, sum* koeff_reserve, row_format_number)
+                        sum50tmp += sum* koeff_reserve
         return sum75tmpetalon, sum50tmpetalon, sum100tmp, sum75tmp, sum50tmp
 
     def get_sum_fact_acceptance_project_step_quater(self, project, step, element_name):
@@ -685,9 +686,9 @@ class report_budget_forecast_excel(models.AbstractModel):
                     sheet.write_number(row, column + 0 + 43, sum*profitability_etalon/100, row_format_number)
                     sum75tmpetalon += sum
                 if estimated_probability_id_name == '50':
-                    sheet.write_number(row, column + 1, sum, row_format_number)
-                    sheet.write_number(row, column + 1 + 43 , sum*profitability_etalon/100, row_format_number)
-                    sum50tmpetalon += sum
+                    sheet.write_number(row, column + 1, sum * koeff_reserve, row_format_number)
+                    sheet.write_number(row, column + 1 + 43 , sum*profitability_etalon* koeff_reserve/100, row_format_number)
+                    sum50tmpetalon += sum* koeff_reserve
 
             sum100tmp = self.get_sum_fact_acceptance_project_step_quater(project, step, element_name)
 
@@ -726,9 +727,9 @@ class report_budget_forecast_excel(models.AbstractModel):
                     sheet.write_number(row, column + 3 + 43, sum*profitability/100, row_format_number)
                     sum75tmp += sum
                 if estimated_probability_id_name == '50':
-                    sheet.write_number(row, column + 4, sum, row_format_number)
-                    sheet.write_number(row, column + 4 + 43, sum*profitability/100, row_format_number)
-                    sum50tmp += sum
+                    sheet.write_number(row, column + 4, sum* koeff_reserve, row_format_number)
+                    sheet.write_number(row, column + 4 + 43, sum*profitability* koeff_reserve/100, row_format_number)
+                    sum50tmp += sum* koeff_reserve
         return sum75tmpetalon, sum50tmpetalon, sum100tmp, sum75tmp, sum50tmp
 
 
@@ -1677,9 +1678,12 @@ class report_budget_forecast_excel(models.AbstractModel):
         YEARint = int(strYEAR)
         global dict_formula
         dict_formula = {}
+        global koeff_reserve
+        koeff_reserve = data['koeff_reserve']
         print('YEARint=',YEARint)
         print('strYEAR =', strYEAR)
 
         commercial_budget_id = data['commercial_budget_id']
+
         budget = self.env['project_budget.commercial_budget'].search([('id', '=', commercial_budget_id)])
         self.printworksheet(workbook, budget, 'Прогноз')

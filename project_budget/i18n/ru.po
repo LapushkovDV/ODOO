@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-12 07:18+0000\n"
-"PO-Revision-Date: 2023-09-12 07:18+0000\n"
+"POT-Creation-Date: 2023-09-12 13:20+0000\n"
+"PO-Revision-Date: 2023-09-12 13:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1559,7 +1559,7 @@ msgstr "Администратор бюджетов проектов"
 #. module: project_budget
 #: model:ir.actions.client,name:project_budget.action_project_budget_dashboard
 msgid "Project Budget"
-msgstr ""
+msgstr "Сделки"
 
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_menu
@@ -1632,7 +1632,7 @@ msgstr "Свод"
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_spec_all
 msgid "Projects all budgets"
-msgstr "Проекты по всем бюджетам"
+msgstr "Сделки по всем бюджетам"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.action_projects_print_report
@@ -2960,6 +2960,11 @@ msgid "is_travel_expenses"
 msgstr "Командировочные расходы"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__koeff_reserve
+msgid "koefficient for reserve"
+msgstr "коэффициент"
+
+#. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_legal_entity_signing
 #: model:ir.ui.menu,name:project_budget.project_budget_catalogs_legal_entity_signing
 #: model_terms:ir.ui.view,arch_db:project_budget.show_legal_entity_signing_form
@@ -4145,6 +4150,11 @@ msgid "url of tender"
 msgstr "Ссылка на закупку"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__use_koeff_reserve
+msgid "use koefficient for reserve"
+msgstr "Использовать коэффициент для резерва"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__kam_user_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__supervisor_user_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__supervisor_user_id
@@ -4232,6 +4242,11 @@ msgid "was_changes"
 msgstr "Есть изменения"
 
 #. module: project_budget
+#: model:ir.ui.menu,name:project_budget.project_budget_menu_dashboard
+msgid "work place"
+msgstr "Рабочее место"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__year
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__year
 msgid "year plan"
@@ -4276,11 +4291,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
 msgid "Потенциал"
 msgstr ""
-
-#. module: project_budget
-#: model:ir.ui.menu,name:project_budget.project_budget_menu_dashboard
-msgid "Work place"
-msgstr "Рабочее место"
 
 #. module: project_budget
 #: model:project_budget.project_steps_type,name:project_budget.project_steps_type_Service
