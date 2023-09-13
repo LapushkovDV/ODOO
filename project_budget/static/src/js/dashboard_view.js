@@ -45,8 +45,8 @@ odoo.define("project_budget_dashboard.ProjectBudgetDashboard", function (require
 
             rpc.query({
                 model: "project_budget.projects",
-                method: "get_projects_count",
-                args: [],
+                method: "get_projects",
+                args: [require('web.session').user_context.allowed_company_ids]
             }).then(function (result) {
                 $("#canceled_count").append("<span class='stat-digit'>" + result.canceled_count + "</span>");
                 $("#canceled_revenue").append("<span class='stat-digit'>" + result.canceled_revenue + "</span>");
