@@ -74,10 +74,10 @@
                     </div>
                     <div class="card-body">
                         <div class="row g-0">
-                            <div class="col-md-4 d-flex justify-content-center align-items-center">
+                            <div class="col-8 d-flex justify-content-center align-items-center">
                                 <button type="button" class="btn btn-primary">Projects: <small id="commitment_count"/></button>
                             </div>
-                            <div class="col-md-8 text-end">
+                            <div class="col-4 text-end">
                                 <p class="card-text">Revenue: <small id="commitment_revenue"/></p>
                                 <p class="card-text">Cost: <small id="commitment_cost"/></p>
                                 <p class="card-text">Margin: <small id="commitment_margin"/></p>
