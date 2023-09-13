@@ -72,7 +72,8 @@
             <field name="name">project_budget.projects.form</field>
             <field name="model">project_budget.projects</field>
             <field name="arch" type="xml">
-                <form create="0">
+<!--                <form create="0">-->
+                <form>
                     <header>
                         <!--The oe_highlight class gives the button a red color when it is saved.
                         It is usually used to indicate the expected behaviour. -->

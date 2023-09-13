@@ -441,7 +441,7 @@ class projects(models.Model):
 
             end_presale_project_month = project.end_presale_project_month
             end_sale_project_month = project.end_sale_project_month
-            print('vals_list = ',vals_list)
+            # print('vals_list = ',vals_list)
 
             estimated_probability_id_name = project.estimated_probability_id.name
 
@@ -529,22 +529,22 @@ class projects(models.Model):
                 if 'planned_acceptance_flow_ids' in vals_list:
                     vals_list_planaccepts = vals_list['planned_acceptance_flow_ids']
 
-            print('project.planned_acceptance_flow_ids = ', project.planned_acceptance_flow_ids)
-            print('dict_formula =', dict_formula)
+            # print('project.planned_acceptance_flow_ids = ', project.planned_acceptance_flow_ids)
+            # print('dict_formula =', dict_formula)
             for plan_accept in project.planned_acceptance_flow_ids:
                 date_cash = plan_accept.date_cash
                 step_id_str = str(plan_accept.project_steps_id.id)
-                print('step_id_str = ',step_id_str)
+                # print('step_id_str = ',step_id_str)
                 if step_id_str in dict_formula :
                     if dict_formula[step_id_str] in ('0', '100(done)'):
                         continue
 
                 if vals_list_planaccepts:
                     for vals_list_planaccept in vals_list_planaccepts:
-                        print('vals_list_planaccept =', vals_list_planaccept)
+                        # print('vals_list_planaccept =', vals_list_planaccept)
                         if plan_accept.id == vals_list_planaccept[1]:
                             vals_one_accept = vals_list_planaccept[2]
-                            print('vals_one_accept = ', vals_one_accept)
+                            # print('vals_one_accept = ', vals_one_accept)
                             if vals_one_accept == False: # по идее это удаление, потому просто добавим день к дате, чтобы условие ниже прошло
                                 date_cash = fields.datetime.now().date() + datetime.timedelta(days=1)
                             else:
@@ -576,10 +576,10 @@ class projects(models.Model):
 
                 if vals_list_plancashs:
                     for vals_list_plancash in vals_list_plancashs:
-                        print('vals_list_planaccept =', vals_list_plancash)
+                        # print('vals_list_planaccept =', vals_list_plancash)
                         if plan_cash.id == vals_list_plancash[1]:
                             vals_one_cash = vals_list_plancash[2]
-                            print('vals_one_cash = ', vals_one_cash)
+                            # print('vals_one_cash = ', vals_one_cash)
                             if vals_one_cash == False: # по идее это удаление, потому просто добавим день к дате, чтобы условие ниже прошло
                                 date_cash = fields.datetime.now().date() +  datetime.timedelta(days=1)
                             else:
@@ -600,9 +600,24 @@ class projects(models.Model):
         for rows in self:
             print()
 
+
+    @api.returns('self', lambda value: value.id)
+    def copy(self, default=None):
+        self.ensure_one()
+        if default is None:
+            default = {}
+        if self.env.context.get('form_fix_budget'):
+            f =  1
+        else:
+            default['project_id'] = 'ID'
+            default['essence_project'] = '__КОПИЯ__ ' +self.project_id+ '__'+self.essence_project
+        return super(projects, self).copy(default=default)
+
+
     def write(self, vals_list):
         print('self.env.context = ',self.env.context)
         if self.env.context.get('form_fix_budget'):
+            # or self.env.context.get('form_view_projects'): ##из коммерческих бюджетов фиксация идет или  дублируем сделку из формы
             f = 1
             print('form_fix_budget')
 
@@ -787,10 +802,9 @@ class projects(models.Model):
         return '{:,.0f}'.format(amount).replace(',', ' ')
 
     @api.model
-    def get_projects(self, allowed_company_ids):
+    def get_projects_count(self):
         work_projects = self.env['project_budget.projects'].search([
-            ('budget_state', '=', 'work'),
-            ('company_id', 'in', allowed_company_ids)
+            ('budget_state', '=', 'work')
         ])
 
         projects_canceled = work_projects.filtered(lambda pr: pr.estimated_probability_id.code == '0')
