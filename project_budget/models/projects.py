@@ -787,9 +787,10 @@ class projects(models.Model):
         return '{:,.0f}'.format(amount).replace(',', ' ')
 
     @api.model
-    def get_projects_count(self):
+    def get_projects(self, allowed_company_ids):
         work_projects = self.env['project_budget.projects'].search([
-            ('budget_state', '=', 'work')
+            ('budget_state', '=', 'work'),
+            ('company_id', 'in', allowed_company_ids)
         ])
 
         projects_canceled = work_projects.filtered(lambda pr: pr.estimated_probability_id.code == '0')
