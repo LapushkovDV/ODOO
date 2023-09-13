@@ -604,6 +604,10 @@ class projects(models.Model):
     @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
         self.ensure_one()
+        if self.date_actual: # сделка в зафиксированном бюджете
+            raisetext = _("This project is in fixed budget. Copy deny")
+            raise (ValidationError(raisetext))
+
         if default is None:
             default = {}
         if self.env.context.get('form_fix_budget'):
