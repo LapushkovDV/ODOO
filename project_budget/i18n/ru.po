@@ -3291,8 +3291,8 @@ msgstr "План c НДС"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__sum_cash_without_vat
-msgid "plan sum_cash_without_vat"
-msgstr "План без НДС"
+msgid "fact sum_cash_without_vat"
+msgstr "Факт без НДС"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_tree
