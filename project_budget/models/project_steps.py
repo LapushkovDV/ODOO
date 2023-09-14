@@ -175,8 +175,13 @@ class project_steps(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        print('---****-----STEPS CREATE', self.env.context)
         for vals in vals_list:
             if not vals.get('step_id') or vals['step_id'] == '-':
+                vals['step_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.project_steps')
+            if self.env.context.get('form_fix_budget'):
+                f = 1
+            else:
                 vals['step_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.project_steps')
         return super().create(vals_list)
 

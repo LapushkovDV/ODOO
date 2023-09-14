@@ -188,7 +188,7 @@ class projects(models.Model):
         string="planned acceptance flow", auto_join=True,copy=True)
     fact_cash_flow_sum = fields.Monetary(string='fact_cash_flow_sum', compute='_compute_fact_cash_flow_sum', store=False
                                          , tracking=True)
-    fact_cash_flow_ids = fields.One2many(
+    fact_cash_flow_ids  = fields.One2many(
         comodel_name='project_budget.fact_cash_flow',
         inverse_name='projects_id',
         string="fact cash flow", auto_join=True, copy=True)
@@ -604,6 +604,7 @@ class projects(models.Model):
     @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
         self.ensure_one()
+        print('default = ',default)
         if self.date_actual: # сделка в зафиксированном бюджете
             raisetext = _("This project is in fixed budget. Copy deny")
             raise (ValidationError(raisetext))
@@ -615,11 +616,17 @@ class projects(models.Model):
         else:
             default['project_id'] = 'ID'
             default['essence_project'] = '__КОПИЯ__ ' +self.project_id+ '__'+self.essence_project
+            default['planned_acceptance_flow_ids'] = []
+            default['planned_cash_flow_ids'] = []
+            default['fact_cash_flow_ids'] = []
+            default['fact_acceptance_flow_ids'] = []
+            print('2 default = ', default)
         return super(projects, self).copy(default=default)
 
 
     def write(self, vals_list):
         print('self.env.context = ',self.env.context)
+        print('vals_list = ',vals_list)
         if self.env.context.get('form_fix_budget'):
             # or self.env.context.get('form_view_projects'): ##из коммерческих бюджетов фиксация идет или  дублируем сделку из формы
             f = 1
