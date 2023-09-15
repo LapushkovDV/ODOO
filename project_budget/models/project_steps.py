@@ -243,3 +243,8 @@ class project_steps(models.Model):
             'etalon_projects': len(etalon_projects),
             'current_projects': len(current_projects),
         }
+
+    def action_copy_step(self):
+        self.ensure_one()
+        self.env['project_budget.project_steps'].sudo().browse(self.id).copy({'step_id': '-'})
+

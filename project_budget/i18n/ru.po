@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-13 16:47+0000\n"
-"PO-Revision-Date: 2023-09-13 16:47+0000\n"
+"POT-Creation-Date: 2023-09-15 10:54+0000\n"
+"PO-Revision-Date: 2023-09-15 10:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -399,6 +399,11 @@ msgstr "Заключение новых контрактов, с НДС"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_kanban
 msgid "Contract:"
 msgstr "Контрактование:"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_project_steps_tree
+msgid "Copy step"
+msgstr "Дублировать"
 
 #. module: project_budget
 #. odoo-javascript
@@ -2709,6 +2714,7 @@ msgstr "ПДС"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_cash__sum_cash
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__sum_cash
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__sum_cash
 msgid "fact sum_cash"
 msgstr "Факт c НДС"
 
@@ -2716,6 +2722,7 @@ msgstr "Факт c НДС"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_acceptance__sum_cash_without_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_distribution_cash__sum_cash_without_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__sum_cash_without_vat
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__sum_cash_without_vat
 msgid "fact sum_cash_without_vat"
 msgstr "Факт без НДС"
 
@@ -3283,16 +3290,6 @@ msgstr "Плата за победу. Примечание"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_tree
 msgid "plan kam"
 msgstr "План бюджетных показателей КАМ"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__sum_cash
-msgid "plan sum_cash"
-msgstr "План c НДС"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__sum_cash_without_vat
-msgid "fact sum_cash_without_vat"
-msgstr "Факт без НДС"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_tree
