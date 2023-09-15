@@ -246,5 +246,8 @@ class project_steps(models.Model):
 
     def action_copy_step(self):
         self.ensure_one()
+        if self.projects_id.date_actual:  # сделка в зафиксированном бюджете
+            raisetext = _("This project is in fixed budget. Copy deny")
+            raise (ValidationError(raisetext))
         self.env['project_budget.project_steps'].sudo().browse(self.id).copy({'step_id': '-'})
 
