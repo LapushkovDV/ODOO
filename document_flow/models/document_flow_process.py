@@ -1,6 +1,6 @@
 from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
-from odoo.tools.safe_eval import test_python_expr
+from odoo.tools.safe_eval import test_python_expr, safe_eval
 from datetime import datetime, date, timedelta
 
 ACTION_TYPES = [
@@ -73,6 +73,17 @@ def recompute_sequence_executors(processes):
                 elif executor.type_sequence == 'after_the_previous':
                     executor.sequence = prevSeq + 1
                 prevSeq = executor.sequence
+
+
+def recompute_sequence_actions(templates):
+    for template in templates:
+        prevSeq = 0
+        for action in template.action_ids:
+            if action.type_sequence == 'together_with_the_previous':
+                action.sequence = prevSeq
+            elif action.type_sequence == 'after_the_previous':
+                action.sequence = prevSeq + 1
+            prevSeq = action.sequence
 
 
 class Process(models.Model):
@@ -195,13 +206,13 @@ class Process(models.Model):
         for process in self:
             process.task_ids = self.env['task.task'].search([
                 ('parent_ref_type', '=', process._name),
-                ('parent_ref_id', 'in', process.child_ids.ids if process.type == 'complex' else [process.id])
+                ('parent_ref_id', 'in', process._get_subprocess_ids_by_process_id().get(process.id, []) if process.type == 'complex' else [process.id])
             ]).ids or False
 
     def _compute_task_history_ids(self):
         for process in self:
             process.task_history_ids = self.env['document_flow.task.history'].search([
-                ('process_id', 'in', process.child_ids.ids if process.type == 'complex' else [process.id])
+                ('process_id', 'in', process._get_subprocess_ids_by_process_id().get(process.id, []) if process.type == 'complex' else [process.id])
             ]).ids or False
 
     @api.onchange('template_id')
@@ -214,6 +225,47 @@ class Process(models.Model):
             'process_id': self.id,
             'task_id': task.id
         })
+
+    def _get_subprocess_ids_by_process_id(self):
+        if not self:
+            return {}
+
+        res = dict.fromkeys(self._ids, [])
+        if all(self._ids):
+            self.env.cr.execute(
+                """
+                WITH RECURSIVE process_tree
+                AS (
+                    SELECT id, id as complex_process_id
+                    FROM document_flow_process
+                    WHERE id IN %(process_ids)s
+                    UNION
+                    SELECT pr.id, tree.complex_process_id
+                    FROM document_flow_process pr
+                    JOIN process_tree tree ON tree.id = pr.parent_id
+                )
+                SELECT complex_process_id, ARRAY_AGG(id)
+                FROM process_tree
+                WHERE id != complex_process_id
+                GROUP BY complex_process_id
+                """,
+                {
+                    "process_ids": tuple(self.ids)
+                }
+            )
+            res.update(dict(self.env.cr.fetchall()))
+        else:
+            res.update({
+                process.id: process._get_subprocess_recursively().ids
+                for process in self
+            })
+        return res
+
+    def _get_subprocess_recursively(self):
+        children = self.child_ids
+        if not children:
+            return self.env['document_flow.process']
+        return children + children._get_subprocesses_recursively()
 
     def fill_process_by_template(self):
         if self.template_id:
@@ -295,6 +347,12 @@ class Process(models.Model):
                 executor.create_task_for_executor()
 
     def start_execution_process(self):
+        # string_value = "c = a + b"
+        # value = {'c': 1}
+        # print('value_before', value)
+        #
+        # safe_eval(string_value, {'a': 4, 'b': 7}, value, mode="exec", nocopy=True)
+        # print('value_after', value)
         if self.executor_ids:
             min_sequence = self.executor_ids.search([
                 ('process_id', '=', self.id)
@@ -311,10 +369,13 @@ class Process(models.Model):
         [process.action_start_process() for process in
          self.child_ids.filtered(lambda pr: pr.sequence == min_sequence).sorted(lambda pr: pr.id)]
 
-    def pause_processing(self):
-        pass
+    def break_execution(self):
+        for process in self:
+            self.state = 'break'
+            for task in process.task_ids.filtered(lambda t: not t.is_closed):
+                task.active = False
 
-    def resume_from_last_stage(self):
+    def resume_process_from_last_stage(self):
         process = self.child_ids.filtered(lambda pr: pr.state == 'break')[0] if self.type == 'complex' else self
         if process:
             decline_tasks = process.task_ids.filtered(lambda t: t.active and t.stage_id.result_type == 'error')
@@ -328,47 +389,24 @@ class Process(models.Model):
 
     def process_task_result(self, date_closed, result_type='ok', feedback=False):
         if result_type == 'ok':
-            if not self.parent_id:
-                next_sequence = self.executor_ids.search([
-                    ('process_id', '=', self.id),
-                    ('sequence', '>', self.sequence)
-                ], order='sequence, id', limit=1).sequence or False
-                if not next_sequence:
-                    self.write({'state': 'finished', 'date_end': date_closed})
-                else:
-                    for executor in self.executor_ids.search([
-                        ('process_id', '=', self.id),
-                        ('sequence', '=', next_sequence)
-                    ], order='id'):
+            open_tasks = self.task_ids.filtered(lambda t: not t.is_closed)
+            if len(open_tasks) - 1 == 0:
+                next_executors = self.executor_ids.filtered(lambda ex: ex.sequence > self.sequence)
+                if any(next_executors):
+                    for executor in next_executors:
                         executor.fill_date_deadline()
-                        task = executor.create_task_for_executor()
-            else:
-                task_count = 1
-                if self.type == 'review':
-                    task_count = self.env['task.task'].search_count([
-                        ('parent_ref_type', '=', self._name),
-                        ('parent_ref_id', '=', self.id),
-                        ('is_closed', '=', False)
-                    ])
-                if task_count - 1 == 0:
-                    next_sequence = self.parent_id.child_ids.search([
-                        ('parent_id', '=', self.parent_id.id),
-                        ('sequence', '>', self.sequence)
-                    ], order='sequence, id', limit=1).sequence or False
-                    if not next_sequence:
-                        if not self.parent_id.child_ids.search([
-                            ('id', '!=', self.id),
-                            ('parent_id', '=', self.parent_id.id),
-                            ('sequence', '=', self.sequence),
-                            ('state', '!=', 'finished')
-                        ]):
-                            self.parent_id.write({'state': 'finished', 'date_end': date_closed})
-                    else:
-                        [process.action_start_process() for process in self.child_ids.search([
-                            ('parent_id', '=', self.parent_id.id),
-                            ('sequence', '=', next_sequence)
-                        ], order='id')]
+                        executor.create_task_for_executor()
+                else:
                     self.write({'state': 'finished', 'date_end': date_closed})
+                    if self.parent_id:
+                        current_processes = self.parent_id.child_ids.filtered(
+                            lambda pr: pr.sequence == self.sequence and pr.state != 'finished')
+                        if len(current_processes) == 0:
+                            next_processes = self.parent_id.child_ids.filtered(lambda pr: pr.sequence > self.sequence)
+                            if any(next_processes):
+                                [process.action_start_process() for process in next_processes]
+                            else:
+                                self.parent_id.write({'state': 'finished', 'date_end': date_closed})
                     if self.parent_obj_ref and type(self.parent_obj_ref).__name__ == 'document_flow.event':
                         self.parent_obj_ref.write({'state': 'approved'})
         elif result_type == 'error':
@@ -459,7 +497,8 @@ class ProcessTemplate(models.Model):
     description = fields.Html(string='Description')
     company_id = fields.Many2one('res.company', string='Company', required=True,
                                  default=lambda self: self.env.company)
-    model_id = fields.Many2one('ir.model', string='Model')
+    # model_id = fields.Many2one('ir.model', string='Model')
+    document_type_id = fields.Many2one('document_flow.document.type', string='Document Type')
 
     action_ids = fields.One2many('document_flow.action', 'parent_ref_id', string='Actions',
                                  domain=lambda self: [('parent_ref_type', '=', self._name)])
@@ -468,8 +507,15 @@ class ProcessTemplate(models.Model):
     process_count = fields.Integer(compute='_compute_process_count')
     active = fields.Boolean(default=True, index=True)
 
+    @api.model
+    def create(self, vals_list):
+        res = super(ProcessTemplate, self).create(vals_list)
+        recompute_sequence_actions(self)
+        return res
+
     def write(self, vals):
         res = super(ProcessTemplate, self).write(vals)
+        recompute_sequence_actions(self)
         return res
 
     @api.depends('process_ids')
@@ -486,12 +532,12 @@ class ProcessTemplate(models.Model):
 class Action(models.Model):
     _name = 'document_flow.action'
     _description = 'Action'
+    _order = 'sequence, id'
 
     @api.model
     def _selection_parent_model(self):
         return [
             ('document_flow.process.template', _('Process Template')),
-            ('document_flow.document', _('Document')),
             ('document_flow.processing', _('Processing'))
         ]
 
@@ -500,19 +546,24 @@ class Action(models.Model):
         return selection_executor_model()
 
     name = fields.Char(string='Name', required=True)
-    type = fields.Selection(ACTION_TYPES, required=True, default='review', index=True, string='Type')
+    type = fields.Selection(PROCESS_TYPES, required=True, default='review', index=True, string='Type')
     parent_ref = fields.Reference(string='Parent', ondelete='restrict', selection="_selection_parent_model")
     parent_ref_type = fields.Char(string="Parent Type", index=True)
     parent_ref_id = fields.Integer(string="Parent Id", index=True)
     executor_ids = fields.One2many('document_flow.action.executor', 'action_id', string='Executors')
+
+    parent_id = fields.Many2one('document_flow.action', string='Parent Action', ondelete='cascade', index=True)
+    child_ids = fields.One2many('document_flow.action', 'parent_id', string='Actions')
 
     reviewer_ref = fields.Reference(string='Reviewer', selection='_selection_executor_model', store=True)
     reviewer_ref_id = fields.Integer(string='Reviewer Id', index=True, copy=False)
     reviewer_ref_type = fields.Char(string='Reviewer Type', index=True, copy=False)
     period = fields.Integer(string='Period')
 
-    task_sequence = fields.Selection(TASK_FORM_SEQUENCE, required=True, default='all_at_once',
-                                     string='Task Form Sequence')
+    task_sequence = fields.Selection(TASK_FORM_SEQUENCE, string='Task Form Sequence', copy=False, required=True,
+                                     default='all_at_once')
+    type_sequence = fields.Selection(TYPE_SEQUENCE, string='Sequence', copy=False, required=True,
+                                     default='together_with_the_previous')
     sequence = fields.Integer(string='Sequence', default=0)
     visible_sequence = fields.Integer(string='Sequence', compute='_compute_sequence')
     compute_condition = fields.Text(string='Compute Condition',
@@ -524,6 +575,21 @@ class Action(models.Model):
         res = super(Action, self).write(vals)
         recompute_sequence_executors(self)
         return res
+
+    @api.returns('self', lambda value: value.id)
+    def copy(self, default=None):
+        self.ensure_one()
+        clone = super(Action, self).copy(default)
+
+        for child in self.child_ids:
+            child_clone = super(Action, child).copy({'parent_id': clone.id})
+            for executor in child.executor_ids:
+                super(ActionExecutor, executor).copy({'action_id': child_clone.id})
+
+        for executor in self.executor_ids:
+            super(ActionExecutor, executor).copy({'action_id': clone.id})
+
+        return clone
 
     @api.constrains('compute_condition')
     def _check_compute_condition(self):

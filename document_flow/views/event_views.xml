@@ -137,6 +137,8 @@
                             </field>
                         </page>
                         <page name="decisions_page" string="Decisions">
+                            <button string="Renumber Decisions" class="btn btn-primary" type="object"
+                                    name="action_renumber_decisions" icon="fa-sort-numeric-asc"/>
                             <field name="decision_ids" widget="section_and_note_one2many" mode="tree">
                                 <tree>
                                     <field name="num" widget="handle"/>
