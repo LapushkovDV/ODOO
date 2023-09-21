@@ -1,15 +1,5 @@
 from odoo import _, models, fields, api
-from odoo.exceptions import ValidationError
-from datetime import datetime, date, timedelta
-
-
-def selection_parent_model():
-    return [
-        ('document_flow.event', _('Event')),
-        ('document_flow.event.decision', _('Decision')),
-        ('document_flow.action', _('Action')),
-        ('document_flow.document', _('Document'))
-    ]
+from .document_flow_process import selection_parent_model
 
 
 class Processing(models.Model):
@@ -67,7 +57,7 @@ class Processing(models.Model):
                 'task_sequence': action.task_sequence,
                 'sequence': action.sequence,
                 'reviewer_ref': action.reviewer_ref,
-                'compute_condition': action.compute_condition
+                'start_condition': action.start_condition
             })
             for child in action.child_ids:
                 pr = self.env['document_flow.process'].create({
@@ -77,7 +67,7 @@ class Processing(models.Model):
                     'task_sequence': child.task_sequence,
                     'sequence': child.sequence,
                     'reviewer_ref': child.reviewer_ref,
-                    'compute_condition': child.compute_condition
+                    'start_condition': child.start_condition
                 })
                 for executor in child.executor_ids:
                     self.env['document_flow.process.executor'].create({

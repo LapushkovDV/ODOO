@@ -141,17 +141,10 @@
                             </field>
                         </page>
                         <page name="child_page" string="Actions" attrs="{'invisible': [('type', 'not in', ('complex'))]}">
-                            <field name="child_ids" widget="section_and_note_one2many" mode="tree" context="{'default_sequence': len(child_ids)}">
-                                <tree>
-                                    <field name="sequence" widget="handle"/>
-                                    <field name="visible_sequence" optional="hide"/>
-                                    <field name="type"/>
-                                    <field name="name"/>
-                                </tree>
-                            </field>
+                            <field name="child_ids" widget="section_and_note_one2many" mode="tree" context="{'default_sequence': len(child_ids)}"/>
                         </page>
-                        <page name="compute_condition" string="Compute Condition">
-                            <field name="compute_condition" widget="ace" options="{'mode': 'python'}"/>
+                        <page name="start_condition" string="Start Condition">
+                            <field name="start_condition" widget="ace" options="{'mode': 'python'}"/>
                         </page>
                     </notebook>
                 </sheet>
