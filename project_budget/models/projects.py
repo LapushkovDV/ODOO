@@ -633,9 +633,10 @@ class projects(models.Model):
             print('form_fix_budget')
 
         else:
-            isok, raisetext,emptydict = self.check_overdue_date(vals_list)
-            if isok == False:
-                raise ValidationError(raisetext)
+            if self.approve_state == 'need_approve_manager':
+                isok, raisetext,emptydict = self.check_overdue_date(vals_list)
+                if isok == False:
+                    raise ValidationError(raisetext)
 
         res = super().write(vals_list)
         return res
