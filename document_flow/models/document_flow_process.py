@@ -1,13 +1,7 @@
-from odoo import _, models, fields, api
+from odoo import _, models, fields, api, Command
 from odoo.exceptions import ValidationError
 from odoo.tools.safe_eval import test_python_expr, safe_eval
 from datetime import datetime, date, timedelta
-
-ACTION_TYPES = [
-    ('review', _('Review')),
-    ('agreement', _('Agreement')),
-    ('execution', _('Execution'))
-]
 
 PROCESS_TYPES = [
     ('review', _('Review')),
@@ -42,7 +36,7 @@ TYPE_SEQUENCE = [
 ]
 
 
-# todo: необходима возможность выбора роли, возможно каких-то предопределенных методов
+# TODO: необходима возможность выбора роли, возможно каких-то предопределенных методов
 def selection_executor_model():
     return [
         ('res.users', _('User')),
@@ -50,6 +44,7 @@ def selection_executor_model():
     ]
 
 
+# TODO: подумать над необходимостью решений (точно deprecated), документов в этом списке
 def selection_parent_model():
     return [
         ('document_flow.event', _('Event')),
@@ -59,32 +54,65 @@ def selection_parent_model():
     ]
 
 
-def recompute_sequence_executors(processes):
-    for process in processes:
-        prevSeq = 0
-        for executor in process.executor_ids:
-            if process.task_sequence == 'all_at_once':
-                executor.sequence = prevSeq
-            elif process.task_sequence == 'sequentially':
-                executor.sequence = prevSeq
-                prevSeq += 1
-            elif process.task_sequence == 'mixed':
-                if executor.type_sequence == 'together_with_the_previous':
-                    executor.sequence = prevSeq
-                elif executor.type_sequence == 'after_the_previous':
-                    executor.sequence = prevSeq + 1
-                prevSeq = executor.sequence
+def recompute_sequence_executors(model, task_sequence, executors):
+    i = 0
+    sequence = 0
+    for command, line_id, line_vals in executors:
+        if command not in (Command.UNLINK, Command.DELETE):
+            if line_vals:
+                if task_sequence == 'all_at_once':
+                    sequence = sequence
+                elif task_sequence == 'sequentially':
+                    sequence += 1
+                elif task_sequence == 'mixed':
+                    if line_vals.get('type_sequence', False):
+                        sequence = sequence if line_vals.get(
+                            'type_sequence') == 'together_with_the_previous' else sequence + 1
+                    elif line_id:
+                        sequence = sequence if model.browse(
+                            line_id).type_sequence == 'together_with_the_previous' else sequence + 1
+            elif line_id:
+                executors[i][0] = 1
+                if task_sequence == 'all_at_once':
+                    sequence = sequence
+                elif task_sequence == 'sequentially':
+                    sequence += 1
+                elif task_sequence == 'mixed':
+                    sequence = sequence if model.browse(
+                        line_id).type_sequence == 'together_with_the_previous' else sequence + 1
+
+            if not line_vals:
+                line_vals = dict()
+            line_vals['sequence'] = sequence
+
+            executors[i][2] = line_vals
+            i += 1
 
 
-def recompute_sequence_actions(templates):
-    for template in templates:
-        prevSeq = 0
-        for action in template.action_ids:
-            if action.type_sequence == 'together_with_the_previous':
-                action.sequence = prevSeq
-            elif action.type_sequence == 'after_the_previous':
-                action.sequence = prevSeq + 1
-            prevSeq = action.sequence
+def recompute_sequence_actions(model, actions):
+    i = 0
+    sequence = 0
+    for command, line_id, line_vals in actions:
+        if command not in (Command.UNLINK, Command.DELETE):
+            if not i == 0:
+                if line_vals:
+                    if line_vals.get('type_sequence', False):
+                        sequence = sequence if line_vals.get(
+                            'type_sequence') == 'together_with_the_previous' else sequence + 1
+                    elif line_id:
+                        sequence = sequence if model.browse(
+                            line_id).type_sequence == 'together_with_the_previous' else sequence + 1
+                elif line_id:
+                    actions[i][0] = 1
+                    sequence = sequence if model.browse(
+                        line_id).type_sequence == 'together_with_the_previous' else sequence + 1
+
+            if not line_vals:
+                line_vals = dict()
+            line_vals['sequence'] = sequence
+
+            actions[i][2] = line_vals
+            i += 1
 
 
 class Process(models.Model):
@@ -170,7 +198,6 @@ class Process(models.Model):
 
     def write(self, vals):
         res = super(Process, self).write(vals)
-        recompute_sequence_executors(self)
         return res
 
     def unlink(self):
@@ -553,13 +580,15 @@ class ProcessTemplate(models.Model):
 
     @api.model
     def create(self, vals_list):
+        if any(vals_list.get('action_ids', [])):
+            recompute_sequence_actions(self.env['document_flow.action'], vals_list.get('action_ids'))
         res = super(ProcessTemplate, self).create(vals_list)
-        recompute_sequence_actions(res)
         return res
 
     def write(self, vals):
+        if any(vals.get('action_ids', [])):
+            recompute_sequence_actions(self.env['document_flow.action'], vals.get('action_ids'))
         res = super(ProcessTemplate, self).write(vals)
-        recompute_sequence_actions(self)
         return res
 
     @api.depends('process_ids')
@@ -589,51 +618,51 @@ class Action(models.Model):
     def _selection_executor_model(self):
         return selection_executor_model()
 
-    name = fields.Char(string='Name', required=True)
-    type = fields.Selection(PROCESS_TYPES, required=True, default='review', index=True, string='Type')
-    parent_ref = fields.Reference(string='Parent', ondelete='restrict', selection="_selection_parent_model")
-    parent_ref_type = fields.Char(string="Parent Type", index=True)
-    parent_ref_id = fields.Integer(string="Parent Id", index=True)
-    executor_ids = fields.One2many('document_flow.action.executor', 'action_id', string='Executors')
+    name = fields.Char(string='Name', copy=True, required=True)
+    type = fields.Selection(PROCESS_TYPES, string='Type', copy=True, index=True, required=True, default='review')
+    parent_ref = fields.Reference(string='Parent', selection='_selection_parent_model', ondelete='restrict')
+    parent_ref_type = fields.Char(string='Parent Type', index=True)
+    parent_ref_id = fields.Integer(string='Parent Id', index=True)
+    executor_ids = fields.One2many('document_flow.action.executor', 'action_id', string='Executors', copy=True)
 
     parent_id = fields.Many2one('document_flow.action', string='Parent Action', ondelete='cascade', index=True)
-    child_ids = fields.One2many('document_flow.action', 'parent_id', string='Actions')
+    child_ids = fields.One2many('document_flow.action', 'parent_id', string='Actions', copy=True)
 
     reviewer_ref = fields.Reference(string='Reviewer', selection='_selection_executor_model', store=True)
-    reviewer_ref_id = fields.Integer(string='Reviewer Id', index=True, copy=False)
-    reviewer_ref_type = fields.Char(string='Reviewer Type', index=True, copy=False)
-    period = fields.Integer(string='Period')
+    reviewer_ref_id = fields.Integer(string='Reviewer Id', copy=True, index=True)
+    reviewer_ref_type = fields.Char(string='Reviewer Type', copy=True, index=True)
+    period = fields.Integer(string='Period', copy=True)
 
     task_sequence = fields.Selection(TASK_FORM_SEQUENCE, string='Task Form Sequence', copy=True, required=True,
                                      default='all_at_once')
     type_sequence = fields.Selection(TYPE_SEQUENCE, string='Sequence', copy=True, required=True,
                                      default='together_with_the_previous')
-    sequence = fields.Integer(string='Sequence', default=0)
+    sequence = fields.Integer(string='Sequence', copy=True, default=0)
     visible_sequence = fields.Integer(string='Sequence', compute='_compute_sequence')
-    start_condition = fields.Text(string='Compute Condition',
+    start_condition = fields.Text(string='Compute Condition', copy=True,
                                   help='Conditions that will be checked before action will be started.')
 
     process_id = fields.Many2one('document_flow.process', string='Process', compute='_compute_process_id')
 
-    def write(self, vals):
-        res = super(Action, self).write(vals)
-        recompute_sequence_executors(self)
+    @api.model
+    def create(self, vals_list):
+        if any(vals_list.get('executor_ids', [])):
+            recompute_sequence_executors(self.env['document_flow.action.executor'], vals_list.get('task_sequence'),
+                                         vals_list.get('executor_ids'))
+        res = super(Action, self).create(vals_list)
         return res
 
-    @api.returns('self', lambda value: value.id)
-    def copy(self, default=None):
-        self.ensure_one()
-        clone = super(Action, self).copy(default)
-
-        for child in self.child_ids:
-            child_clone = super(Action, child).copy({'parent_id': clone.id})
-            for executor in child.executor_ids:
-                super(ActionExecutor, executor).copy({'action_id': child_clone.id})
-
-        for executor in self.executor_ids:
-            super(ActionExecutor, executor).copy({'action_id': clone.id})
-
-        return clone
+    def write(self, vals):
+        if vals.get('task_sequence') or any(vals.get('executor_ids', [])):
+            task_seq = self.task_sequence if not vals.get('task_sequence', False) else vals.get('task_sequence')
+            if not vals.get('executor_ids', False):
+                executors = list()
+                for executor in self.executor_ids:
+                    executors.append(list((1, executor.id, dict())))
+                vals['executor_ids'] = executors
+            recompute_sequence_executors(self.env['document_flow.action.executor'], task_seq, vals.get('executor_ids'))
+        res = super(Action, self).write(vals)
+        return res
 
     @api.constrains('start_condition')
     def _check_start_condition(self):
@@ -650,10 +679,10 @@ class Action(models.Model):
             else:
                 template.reviewer_ref = False
 
-    @api.onchange('sequence')
+    @api.depends('sequence')
     def _compute_sequence(self):
-        for process in self:
-            process.visible_sequence = process.sequence
+        for action in self:
+            action.visible_sequence = action.sequence
 
     def _compute_process_id(self):
         for action in self:
@@ -666,7 +695,7 @@ class Action(models.Model):
 class ActionExecutor(models.Model):
     _name = 'document_flow.action.executor'
     _description = 'Action Executor'
-    _order = 'num, id'
+    _order = 'sequence, id'
 
     @api.model
     def _selection_executor_model(self):
@@ -674,15 +703,21 @@ class ActionExecutor(models.Model):
 
     action_id = fields.Many2one('document_flow.action', string='Action', ondelete='cascade', index=True,
                                 required=True)
-    num = fields.Integer(string='№', required=True, default=0)
     executor_ref = fields.Reference(string='Executor', selection='_selection_executor_model', store=True)
     executor_ref_id = fields.Integer(string='Executor Id', index=True, copy=False)
     executor_ref_type = fields.Char(string='Executor Type', index=True, copy=False)
     period = fields.Integer(string='Period')
 
-    sequence = fields.Integer(string='Sequence', required=True, default=0)
     type_sequence = fields.Selection(TYPE_SEQUENCE, string='Sequence', required=True,
                                      default='together_with_the_previous')
+
+    sequence = fields.Integer(string='Sequence', required=True, default=0)
+    visible_sequence = fields.Integer(string='Sequence', compute='_compute_sequence')
+
+    @api.depends('sequence')
+    def _compute_sequence(self):
+        for executor in self:
+            executor.visible_sequence = executor.sequence
 
     @api.depends('executor_ref_type', 'executor_ref_id')
     def _compute_executor_ref(self):
