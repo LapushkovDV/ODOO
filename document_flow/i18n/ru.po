@@ -571,7 +571,7 @@ msgstr "Заголовок..."
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__document_type_id
 #: model_terms:ir.ui.view,arch_db:document_flow.document_flow_document_type_view_form
 msgid "Document Type"
-msgstr "Вид документа"
+msgstr "Тип документа"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type__sequence_id

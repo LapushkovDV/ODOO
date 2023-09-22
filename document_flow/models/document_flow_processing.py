@@ -1,15 +1,5 @@
 from odoo import _, models, fields, api
-from odoo.exceptions import ValidationError
-from datetime import datetime, date, timedelta
-
-
-def selection_parent_model():
-    return [
-        ('document_flow.event', _('Event')),
-        ('document_flow.event.decision', _('Decision')),
-        ('document_flow.action', _('Action')),
-        ('document_flow.document', _('Document'))
-    ]
+from .document_flow_process import recompute_sequence_actions, selection_parent_model
 
 
 class Processing(models.Model):
@@ -19,6 +9,9 @@ class Processing(models.Model):
     @api.model
     def _selection_parent_model(self):
         return selection_parent_model()
+
+    def _get_action_ids_domain(self):
+        return [('parent_ref_type', '=', self._name)]
 
     process_id = fields.Many2one('document_flow.process', string='Process', ondelete='restrict', readonly=True,
                                  index=True)
@@ -33,9 +26,22 @@ class Processing(models.Model):
     template_id = fields.Many2one('document_flow.process.template', string='Template',
                                   domain="[('document_type_id', '=', document_type_id)]")
     action_ids = fields.One2many('document_flow.action', 'parent_ref_id', string='Actions',
-                                 domain=lambda self: [('parent_ref_type', '=', self._name)])
+                                 domain=_get_action_ids_domain)
     task_history_ids = fields.One2many('document_flow.task.history', related='process_id.task_history_ids',
                                        string='Processing History')
+
+    @api.model
+    def create(self, vals_list):
+        if any(vals_list.get('action_ids', [])):
+            recompute_sequence_actions(self.env['document_flow.action'], vals_list.get('action_ids'))
+        res = super(Processing, self).create(vals_list)
+        return res
+
+    def write(self, vals):
+        if any(vals.get('action_ids', [])):
+            recompute_sequence_actions(self.env['document_flow.action'], vals.get('action_ids'))
+        res = super(Processing, self).write(vals)
+        return res
 
     def fill_by_template(self):
         if self.template_id:
@@ -47,10 +53,18 @@ class Processing(models.Model):
                     'parent_ref_type': self._name,
                     'parent_ref_id': self.id
                 })
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'reload'
-        }
+            self._get_action_ids_domain()
+        else:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'type': 'danger',
+                    'sticky': False,
+                    'message': _('Template is not set.'),
+                    'next': {'type': 'ir.actions.act_window_close'}
+                }
+            }
 
     def action_start_processing(self):
         process = self.env['document_flow.process'].create(dict(
@@ -67,7 +81,7 @@ class Processing(models.Model):
                 'task_sequence': action.task_sequence,
                 'sequence': action.sequence,
                 'reviewer_ref': action.reviewer_ref,
-                'compute_condition': action.compute_condition
+                'start_condition': action.start_condition
             })
             for child in action.child_ids:
                 pr = self.env['document_flow.process'].create({
@@ -77,7 +91,7 @@ class Processing(models.Model):
                     'task_sequence': child.task_sequence,
                     'sequence': child.sequence,
                     'reviewer_ref': child.reviewer_ref,
-                    'compute_condition': child.compute_condition
+                    'start_condition': child.start_condition
                 })
                 for executor in child.executor_ids:
                     self.env['document_flow.process.executor'].create({

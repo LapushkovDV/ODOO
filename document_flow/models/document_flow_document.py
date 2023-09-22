@@ -1,6 +1,4 @@
 from odoo import _, models, fields, api
-from odoo.exceptions import ValidationError
-from datetime import datetime, date, timedelta
 
 
 class DocumentType(models.Model):
@@ -35,7 +33,8 @@ class Document(models.Model):
     attachment_ids = fields.One2many('ir.attachment', string='Attachments', compute='_compute_attachment_ids')
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Attachment Count')
 
-    project_id = fields.Many2one('project_budget.projects', string='Project', copy=True, required=True, tracking=True)
+    project_id = fields.Many2one('project_budget.projects', string='Project', copy=True, ondelete='restrict',
+                                 required=True, tracking=True)
     customer_id = fields.Many2one('res.partner', related='project_id.customer_organization_id.partner_id',
                                   string='Customer', copy=False, readonly=True, required=True)
 

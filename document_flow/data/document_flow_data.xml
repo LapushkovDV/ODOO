@@ -18,7 +18,7 @@
         </record>
 
         <record id="task_type_review" model="task.type">
-            <field name="name">{""en_US"": ""Agreement"", ""ru_RU"": ""Согласование""}</field>
+            <field name="name">Agreement</field>
             <field name="code">sys_df_review</field>
             <field name="active">True</field>
             <field name="color">rgba(85, 170, 255, 1)</field>

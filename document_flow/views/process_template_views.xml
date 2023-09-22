@@ -129,10 +129,9 @@
                             </group>
                             <field name="executor_ids" mode="tree">
                                 <tree editable="bottom">
-                                    <field name="num" widget="handle"
+                                    <field name="sequence" widget="handle"
                                            attrs="{'column_invisible': ['|', ('parent.type', 'in', ('review')), ('parent.task_sequence', '=', 'all_at_once')]}"/>
-                                    <field name="sequence" optional="hide"
-                                           attrs="{'column_invisible': ['|', ('parent.type', 'in', ('review')), ('parent.task_sequence', '=', 'all_at_once')]}"/>
+                                    <field name="visible_sequence" width="5%" optional="hide"/>
                                     <field name="executor_ref"/>
                                     <field name="type_sequence"
                                            attrs="{'column_invisible': ['|', ('parent.type', 'in', ('review')), ('parent.task_sequence', '!=', 'mixed')]}"/>
@@ -141,17 +140,10 @@
                             </field>
                         </page>
                         <page name="child_page" string="Actions" attrs="{'invisible': [('type', 'not in', ('complex'))]}">
-                            <field name="child_ids" widget="section_and_note_one2many" mode="tree" context="{'default_sequence': len(child_ids)}">
-                                <tree>
-                                    <field name="sequence" widget="handle"/>
-                                    <field name="visible_sequence" optional="hide"/>
-                                    <field name="type"/>
-                                    <field name="name"/>
-                                </tree>
-                            </field>
+                            <field name="child_ids" widget="section_and_note_one2many" mode="tree" context="{'default_sequence': len(child_ids)}"/>
                         </page>
-                        <page name="compute_condition" string="Compute Condition">
-                            <field name="compute_condition" widget="ace" options="{'mode': 'python'}"/>
+                        <page name="start_condition" string="Start Condition">
+                            <field name="start_condition" widget="ace" options="{'mode': 'python'}"/>
                         </page>
                     </notebook>
                 </sheet>

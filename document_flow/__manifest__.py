@@ -1,6 +1,6 @@
 {
     'name': 'Document Flow',
-    'version': '16.0.1.0.6',
+    'version': '16.0.1.0.8',
     'category': '',
     'depends': ['base', 'mail', 'task', 'hr_replacement', 'project_budget'],
     'external_dependencies': {'python': ['htmldocx']},
