@@ -85,7 +85,8 @@ def recompute_sequence_executors(model, task_sequence, executors):
                 line_vals = dict()
             line_vals['sequence'] = sequence
 
-            executors[i][2] = line_vals
+            if not executors[i][2]:
+                executors[i][2] = line_vals
             i += 1
 
 
@@ -111,7 +112,8 @@ def recompute_sequence_actions(model, actions):
                 line_vals = dict()
             line_vals['sequence'] = sequence
 
-            actions[i][2] = line_vals
+            if not actions[i][2]:
+                actions[i][2] = line_vals
             i += 1
 
 
@@ -178,7 +180,7 @@ class Process(models.Model):
                                        compute='_compute_task_history_ids')
 
     @api.constrains('start_condition')
-    def _check_start_condition(self):
+    def _verify_start_condition(self):
         for process in self.filtered('start_condition'):
             msg = test_python_expr(expr=process.start_condition.strip(), mode='exec')
             if msg:
@@ -673,7 +675,7 @@ class Action(models.Model):
         return res
 
     @api.constrains('start_condition')
-    def _check_start_condition(self):
+    def _verify_start_condition(self):
         for action in self.filtered('start_condition'):
             msg = test_python_expr(expr=action.start_condition.strip(), mode='exec')
             if msg:
