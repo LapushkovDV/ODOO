@@ -525,10 +525,22 @@ class projects(models.Model):
                    return True, "", {}
 
             vals_list_planaccepts = False
+            vals_list_factaccepts = False
+            vals_list_distribution_acceptance = False
             if vals_list:
                 if 'planned_acceptance_flow_ids' in vals_list:
                     vals_list_planaccepts = vals_list['planned_acceptance_flow_ids']
+                # if 'fact_acceptance_flow_ids' in vals_list:
+                #     vals_list_factaccepts = vals_list['fact_acceptance_flow_ids']
+                #     vals_list_factaccepts = vals_list_factaccepts[0]
+                #     print('vals_list_factaccepts[0] = ', vals_list_factaccepts[0])
+                #     print('vals_list_factaccepts[1] = ', vals_list_factaccepts[1])
+                #     print('vals_list_factaccepts[2] = ', vals_list_factaccepts[2])
+                # if 'distribution_acceptance_ids' in vals_list_factaccepts:
+                #         vals_list_distribution_acceptance = vals_list_factaccepts['distribution_acceptance_ids']
 
+            print('vals_list_factaccepts = ', vals_list_factaccepts)
+            print('vals_list_distribution_acceptance = ', vals_list_distribution_acceptance)
             # print('project.planned_acceptance_flow_ids = ', project.planned_acceptance_flow_ids)
             # print('dict_formula =', dict_formula)
             for plan_accept in project.planned_acceptance_flow_ids:
