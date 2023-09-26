@@ -487,6 +487,7 @@
                     <field name="code"/>
                     <field name="percent"/>
                     <field name="descr"/>
+                    <field name="is_prohibit_selection" widget="boolean_toggle"/>
                 </tree>
             </field>
         </record>
@@ -503,6 +504,7 @@
                             </group>
                             <group>
                                 <field name="percent"/>
+                                <field name="is_prohibit_selection" widget="boolean_toggle"/>
                                 <field name="descr" widget="html"/>
                             </group>
                     </sheet>
