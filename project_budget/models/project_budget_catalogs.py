@@ -175,6 +175,7 @@ class vat_attribute(models.Model):
     code = fields.Char(string="vat_attribute code", required=True)
     percent = fields.Float(string="vat_percent", required=True, default=0)
     descr = fields.Char(string="vat_attribute description", translate=True)
+    is_prohibit_selection = fields.Boolean(string="is prohibit selection in projects", default=False)
 
 class legal_entity_signing(models.Model):
     _name = 'project_budget.legal_entity_signing'
