@@ -22,7 +22,7 @@ class Task(models.Model):
     # TODO: Принять решение об архитектуре предметов согласования
     def _compute_parent_obj(self):
         for task in self:
-            if task.parent_ref_type.startswith('document_flow.') and task.parent_ref:
+            if task.parent_ref_type and task.parent_ref_type.startswith('document_flow.') and task.parent_ref:
                 parent_ref = self.env['document_flow.process.parent_object'].search([
                     ('process_id', '=', task.parent_ref.id)
                 ]).parent_ref
