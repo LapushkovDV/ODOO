@@ -139,8 +139,8 @@ class Task(models.Model):
 
         # TODO: что-то тут не так
         if res.user_id:
-            res.action_create_activity()
-            # res._send_message_notify(self.env.ref('task.mail_template_task_assigned_notify', raise_if_not_found=False))
+            # res.action_create_activity()
+            res._send_message_notify(self.env.ref('task.mail_template_task_assigned_notify', raise_if_not_found=False))
 
         return res
 
@@ -148,8 +148,8 @@ class Task(models.Model):
         user_changed = vals.get('user_id', False) and self.user_id.id != vals['user_id']
         res = super(Task, self.with_context(mail_create_nolog=False)).write(vals)
         if user_changed:
-            self.action_create_activity()
-            # self._send_message_notify(self.env.ref('task.mail_template_task_assigned_notify', raise_if_not_found=False))
+            # self.action_create_activity()
+            self._send_message_notify(self.env.ref('task.mail_template_task_assigned_notify', raise_if_not_found=False))
         return res
 
     def _compute_attachment_count(self):
@@ -275,7 +275,7 @@ class Task(models.Model):
     def _send_message_notify(self, template):
         if not template:
             return
-        template.send_mail(self.id, email_layout_xmlid='mail.mail_notification_layout', force_send=True)
+        template.sudo().send_mail(self.id, email_layout_xmlid='mail.mail_notification_layout', force_send=True)
 
     def _close_mail_activities(self):
         self.ensure_one()
