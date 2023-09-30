@@ -335,6 +335,7 @@
             <field name="arch" type="xml">
                 <tree string="customer_organization">
 <!--                    <field name="name_to_show" invisible="False"/>-->
+                    <field name="avatar_128" widget="image" class="oe_avatar"/>
                     <field name="name"/>
                     <field name="longname"/>
                     <field name="inn"/>
