@@ -1,0 +1,49 @@
+<odoo>
+    <data>
+        <record id="show_jrn_jrn_tree" model="ir.ui.view">
+            <field name="name">jrn.jrn.tree</field>
+            <field name="model">jrn.jrn</field>
+            <field name="arch" type="xml">
+                <tree string="jrn" create="false" edit="false" delete="false">
+                    <field name="uuid_event"/>
+                    <field name="table_name_id"/>
+                    <field name="datetime_event"/>
+                    <field name="user_event"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="show_jrn_jrn_form" model="ir.ui.view">
+            <field name="name">jrn.jrn.form</field>
+            <field name="model">jrn.jrn</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet string="tender" >
+                        <field name="id" readonly="1"/>
+                        <group col = "3">
+                            <field name="uuid_event"/>
+                            <field name="table_name_id"/>
+                            <field name="datetime_event"/>
+                            <field name="user_event"/>
+                        </group>
+                     </sheet>
+                    </form>
+                </field>
+            </record>
+
+        <record id="show_jrn" model="ir.actions.act_window">
+            <field name="name">jrn.jrn</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">jrn.jrn</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                  here you'll see all changes in tables, that configure to check changes
+                </p>
+                <p>
+
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>
