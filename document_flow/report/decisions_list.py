@@ -1,18 +1,12 @@
-from odoo import _, models
 import datetime
-from html.parser import HTMLParser
+
+from odoo import _, models
+from html2text import html2text
 
 
-class HTMLFilter(HTMLParser):
-    text = ""
-
-    def handle_data(self, data):
-        self.text += data
-
-
-class EventProtocol(models.AbstractModel):
-    _name = 'report.document_flow.decisions_list'
-    _description = 'document_flow.decisions_list'
+class ReportDecisionsList(models.AbstractModel):
+    _name = 'report.document_flow.event_decisions_list'
+    _description = 'document_flow.event_decisions_list'
     _inherit = "report.report_xlsx.abstract"
 
     def generate_xlsx_report(self, workbook, data, events):
@@ -50,33 +44,27 @@ class EventProtocol(models.AbstractModel):
             'valign': 'top',
         })
 
-        sheet = workbook.add_worksheet('Tasks')
+        sheet = workbook.add_worksheet('Decisions')
 
-        sheet.merge_range(0, 0, 0, 3, 'Отчет на ' + datetime.date.strftime(datetime.date.today(), '%d.%m.%Y') + ' по ' + event.name)
-
+        sheet.merge_range(0, 0, 0, 3,
+                          'Отчет на ' + datetime.date.strftime(datetime.date.today(), '%d.%m.%Y') + ' по ' + event.name)
         row = 1
-
         sheet.set_column(0, 0, 15)
-        sheet.write_string(row, 0, 'Задача', head_format)
+        sheet.write_string(row, 0, _('Task'), head_format)
         sheet.set_column(1, 1, 100)
-        sheet.write_string(row, 1, 'Описание', head_format)
+        sheet.write_string(row, 1, _('Description'), head_format)
         sheet.set_column(2, 2, 35)
-        sheet.write_string(row, 2, 'Исполнитель', head_format)
+        sheet.write_string(row, 2, _('Executors'), head_format)
         sheet.set_column(3, 3, 25)
-        sheet.write_string(row, 3, 'Крайний срок исполнения', head_format)
+        sheet.write_string(row, 3, _('Deadline'), head_format)
+        sheet.set_column(4, 4, 25)
+        sheet.write_string(row, 4, _('Comment'), head_format)
 
         sheet.freeze_panes(2, 0)
 
-        main_process = self.env['document_flow.process.parent_object'].search([
-            ('parent_ref_id', '=', event.id),
-            ('parent_ref_type', '=', event._name),
-            ('process_id', '!=', False),
-            ('process_id.type', '=', 'complex'),
-            ('process_id.state', '!=', 'break')
-        ]).process_id
-
-        if main_process:
-            for task in main_process.task_ids:
+        processes = event.process_id.child_ids.filtered(lambda pr: pr.type == 'complex')
+        if processes:
+            for task in processes[0].active_task_ids:
                 row += 1
 
                 if task.is_closed:
@@ -86,19 +74,12 @@ class EventProtocol(models.AbstractModel):
                 else:
                     row_format = row_format_not_done
 
-                if task.description:
-                    f = HTMLFilter()
-                    html_descr = (str(task.description)
-                                  .replace('<li>', '\n  - <li>')
-                                  .replace('</ul>', '</ul>\n\n')
-                                  .replace('<ul>', '\n<ul>'))
-                    f.feed(html_descr)
-                    text = f.text.strip()
-                else:
-                    text = task.name
-
                 sheet.write_string(row, 0, task.code, row_format)
-                sheet.write_string(row, 1, text, row_format)
-                sheet.write_string(row, 2, task.user_id.name, row_format)
-                sheet.write_string(row, 3, datetime.date.strftime(task.date_deadline, '%d.%m.%Y'), row_format)
-                sheet.set_row(row, 14)
+                sheet.write_string(row, 1, task.name if not task.description else html2text(task.description),
+                                   row_format)
+                sheet.write_string(row, 2, ', '.join(task.user_ids.mapped('name')), row_format)
+                sheet.write_string(row, 3, task.date_deadline.strftime('%d.%m.%Y'), row_format)
+                sheet.write_string(row, 4, html2text(task.execution_result) if task.is_closed else '', row_format)
+                sheet.set_row(row, None)
+
+            # sheet.autofit()
