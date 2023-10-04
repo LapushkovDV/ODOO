@@ -13,10 +13,13 @@ class jrn(models.Model):
     _description = "main journal table"
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    uuid_event     = fields.Char(string='guid', size=16, index=True, readonly = True)
+    # uuid_event     = fields.Char(string='guid', size=16, index=True, readonly = True)
     table_name_id  = fields.Many2one('jrn.tables', required=True, index=True, readonly = True)
+    table_id       = fields.Integer(string="id in table", required=True, index=True, readonly=True)
     datetime_event = fields.Datetime(string="Datetime of the event", index=True, readonly = True)
     user_event     = fields.Char(string="User who make event", index=True, readonly = True)
+    status         = fields.Integer(string="status", required=True, index=True, readonly=True)
+    operation      = fields.Integer(string="type of operation", required=True, index=True, readonly=True)
 
     def get_current_db_name(self):
         query = "SELECT current_database();"
@@ -114,9 +117,10 @@ class table_name(models.Model):
     _description = "journal tables"
     _inherit = ['mail.thread', 'mail.activity.mixin']
     name = fields.Char(string='Table name', required = True, readonly = True)
-    check_insert = fields.Boolean(string='Check insert', default = False, readonly = True)
-    check_update = fields.Boolean(string='Check update', default = False, readonly = True)
-    check_delete = fields.Boolean(string='Check delete', default = False, readonly = True)
+    check_changes = fields.Boolean(string='check_changes', default = False, readonly = True)
+    # check_insert = fields.Boolean(string='Check insert', default = False, readonly = True)
+    # check_update = fields.Boolean(string='Check update', default = False, readonly = True)
+    # check_delete = fields.Boolean(string='Check delete', default = False, readonly = True)
     is_structure_correct = fields.Boolean(string='is structure correct', default = False, readonly = True)
     is_table_exist_in_jrn = fields.Boolean(string='is table exist in jrn', default=False, readonly=True)
 
@@ -124,14 +128,14 @@ class table_name(models.Model):
     def fill_table_list(self):
         jrn = self.env['jrn.jrn']
         print('jrn.get_current_db_name() = ',jrn.get_current_db_name())
-
-        query = "select 1 FROM pg_catalog.pg_database d WHERE d.datname = '{0}';"
-        query = query.format(jrn.get_journal_db_name())
-        self.env.cr.execute(query)
-        if self.env.cr.fetchall():
-            f = 1
-        else:
-            jrn.create_journal_base()
+        self.env.cr.execute("""CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; """)
+        # query = "select 1 FROM pg_catalog.pg_database d WHERE d.datname = '{0}';"
+        # query = query.format(jrn.get_journal_db_name())
+        # self.env.cr.execute(query)
+        # if self.env.cr.fetchall():
+        #     f = 1
+        # else:
+        #     jrn.create_journal_base()
 
         query = """         insert into
                                 jrn_tables(name)
@@ -144,7 +148,7 @@ class table_name(models.Model):
                             and table_type = 'BASE TABLE'
                             and table_name not like 'jrn%'
                             and jrn_tables.id is null        
-        """
+                """
         print('1 query = ', query)
         self.env.cr.execute(query)
 
@@ -163,8 +167,10 @@ class table_name(models.Model):
         print('2 query = ', query)
         self.env.cr.execute(query)
 
-        tables = self.env['jrn.tables']
+        tables = self.env['jrn.tables'].search([])
+        print('tables = ', tables)
         for table in tables:
+            print('table = ', table)
             self.action_check_structure_one(table)
 
         return {'type': 'ir.actions.client',
@@ -175,11 +181,11 @@ class table_name(models.Model):
         sql_string_original = "SELECT column_name || '|' || data_type || coalesce(cast(character_maximum_length as char), '') || coalesce(cast(character_octet_length as char), '') ||" \
                               "coalesce(cast(numeric_precision as char), '') || coalesce(cast(numeric_precision_radix as char), '') || coalesce(cast(numeric_scale as char), '') || " \
                               "coalesce(cast(datetime_precision as char), '') || coalesce(cast(interval_type as char), '') FROM information_schema.columns " \
-                              "WHERE table_name = '{0}' and column_name not in ('jrn_action', 'jrn_guid');"
+                              "WHERE table_name = '{0}' and column_name not in ('jrn_oldnewrec', 'jrn_id');"
         sql_string_jrn = "SELECT column_name || '|' || data_type || coalesce(cast(character_maximum_length as char), '') || coalesce(cast(character_octet_length as char), '') ||" \
                          "coalesce(cast(numeric_precision as char), '') || coalesce(cast(numeric_precision_radix as char), '') || coalesce(cast(numeric_scale as char), '') || " \
                          "coalesce(cast(datetime_precision as char), '') || coalesce(cast(interval_type as char), '') FROM information_schema.columns " \
-                         "WHERE table_name = 'jrn_{0}' and column_name not in ('jrn_action', 'jrn_guid');"
+                         "WHERE table_name = 'jrn_{0}' and column_name not in ('jrn_oldnewrec', 'jrn_id');"
 
         sql_string_original = sql_string_original.format(table.name)
         self.env.cr.execute(sql_string_original)
@@ -213,6 +219,11 @@ class table_name(models.Model):
             self.action_check_structure_one(table)
 
     def action_recreate_tables_one(self, table):
+        sql_string = "DROP TABLE IF EXISTS jrn_{0}_tmp; "
+        sql_string = sql_string.format(table.name)
+        print('sql_string = ', sql_string)
+        self.env.cr.execute(sql_string)
+
         sql_string = "ALTER TABLE jrn_{0} RENAME TO jrn_{0}_tmp;"
         sql_string = sql_string.format(table.name)
         self.env.cr.execute(sql_string)
@@ -231,13 +242,17 @@ class table_name(models.Model):
         select_fields_string = ''
         for record_jrn in self.env.cr.fetchall():
             if select_fields_string == '':
-                select_fields_string += ''.join(record_jrn)
+                select_fields_string += '"'+''.join(record_jrn)+'"'
             else:
-                select_fields_string += ',' + ''.join(record_jrn)
+                select_fields_string += ',"' + ''.join(record_jrn)+'"'
 
         print('select_fields_string = ', select_fields_string)
         sql_string = "insert into jrn_{0} ({1}) select {1} from jrn_{0}_tmp; "
         sql_string = sql_string.format(table.name, select_fields_string)
+        print('sql_string = ', sql_string)
+        self.env.cr.execute(sql_string)
+        sql_string = "DROP TABLE IF EXISTS jrn_{0}_tmp; "
+        sql_string = sql_string.format(table.name)
         print('sql_string = ', sql_string)
         self.env.cr.execute(sql_string)
 
@@ -255,45 +270,50 @@ class table_name(models.Model):
 
     def action_create_jrn_tables_one(self, table):
         jrn = self.env['jrn.jrn']
-        db_name = jrn.get_current_db_name()
-        db_name_journal = jrn.get_journal_db_name()
+        # db_name = jrn.get_current_db_name()
+        # db_name_journal = jrn.get_journal_db_name()
+        #
+        # db = odoo.sql_db.db_connect(db_name_journal)
+        # with closing(db.cursor()) as cr:
+        #     sql_string="SELECT 1 FROM pg_catalog.pg_tables WHERE schemaname = 'public' AND tablename = 'jrn_{0}'"
+        #     sql_string = sql_string.format(table.name)
+        #     cr.execute(sql_string)
+        #     if cr.fetchall():
+        #         f = 1
+        #         print('already exists table jrn_', table.name)
+        #     else:
+        #         print('Start create table jrn_', table.name)
+        #         sql_string = "CREATE TABLE jrn_{0} (like {0}, jrn_action integer, jrn_guid char(16), PRIMARY KEY(jrn_guid));"
+        #         # sql_string = "CREATE TABLE jrn_{0}(like {0} including all, jrn_action integer, jrn_guid char(16) );"
+        #         # sql_string = "create table jrn_{0} as select * from {0} with no data;"
+        #         sql_string = sql_string.format(table.name)
+        #         print('1 sql_string', sql_string)
+        #         cr.execute(sql_string)
+        #
+        # db = odoo.sql_db.db_connect(db_name)
 
-        db = odoo.sql_db.db_connect(db_name_journal)
-        with closing(db.cursor()) as cr:
-            sql_string="SELECT 1 FROM pg_catalog.pg_tables WHERE schemaname = 'public' AND tablename = 'jrn_{0}'"
+
+        sql_string = "SELECT 1 FROM pg_catalog.pg_tables WHERE schemaname = 'public' AND tablename = 'jrn_{0}'"
+        sql_string = sql_string.format(table.name)
+        self.env.cr.execute(sql_string)
+        if self.env.cr.fetchall():
+            f = 1
+            print('already exists table jrn_', table.name)
+        else:
+            print('Start create table jrn_', table.name)
+            sql_string = "CREATE TABLE jrn_{0} (like {0}, jrn_oldnewrec integer, jrn_id integer);"
+            # sql_string = "CREATE TABLE jrn_{0}(like {0} including all, jrn_action integer, jrn_guid char(16) );"
+            # sql_string = "create table jrn_{0} as select * from {0} with no data;"
             sql_string = sql_string.format(table.name)
-            cr.execute(sql_string)
-            if cr.fetchall():
-                f = 1
-                print('already exists table jrn_', table.name)
-            else:
-                print('Start create table jrn_', table.name)
-                sql_string = "CREATE TABLE jrn_{0} (like {0}, jrn_action integer, jrn_guid char(16), PRIMARY KEY(jrn_guid));"
-                # sql_string = "CREATE TABLE jrn_{0}(like {0} including all, jrn_action integer, jrn_guid char(16) );"
-                # sql_string = "create table jrn_{0} as select * from {0} with no data;"
-                sql_string = sql_string.format(table.name)
-                print('1 sql_string', sql_string)
-                cr.execute(sql_string)
+            print('1 sql_string', sql_string)
+            self.env.cr.execute(sql_string)
+            sql_string = """CREATE INDEX jrn_id_{0} ON jrn_{0} USING btree(jrn_id);"""
+            sql_string = sql_string.format(table.name)
+            print('1 sql_string', sql_string)
+            self.env.cr.execute(sql_string)
 
-        db = odoo.sql_db.db_connect(db_name)
         table.is_table_exist_in_jrn = True
         self.action_check_structure_one(table)
-
-        # sql_string = "SELECT 1 FROM pg_catalog.pg_tables WHERE schemaname = 'public' AND tablename = 'jrn_{0}'"
-        # sql_string = sql_string.format(table.name)
-        # self.env.cr.execute(sql_string)
-        # if self.env.cr.fetchall():
-        #     f = 1
-        #     print('already exists table jrn_', table.name)
-        # else:
-        #     print('Start create table jrn_', table.name)
-        #     sql_string = "CREATE TABLE jrn_{0} (like {0}, jrn_action integer, jrn_guid char(16), PRIMARY KEY(jrn_guid));"
-        #     # sql_string = "CREATE TABLE jrn_{0}(like {0} including all, jrn_action integer, jrn_guid char(16) );"
-        #     # sql_string = "create table jrn_{0} as select * from {0} with no data;"
-        #     sql_string = sql_string.format(table.name)
-        #     print('1 sql_string', sql_string)
-        #     self.env.cr.execute(sql_string)
-
             # sql_string = "select concat('alter table public.jrn_{0} drop constraint ', constraint_name) as my_query from information_schema.table_constraints where table_schema = 'public' and table_name = 'jrn_{0}';"
             # # and constraint_type = 'PRIMARY KEY';"
             # sql_string = sql_string.format(table.name)

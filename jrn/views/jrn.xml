@@ -5,10 +5,12 @@
             <field name="model">jrn.jrn</field>
             <field name="arch" type="xml">
                 <tree string="jrn" create="false" edit="false" delete="false">
-                    <field name="uuid_event"/>
                     <field name="table_name_id"/>
+                    <field name="table_id"/>
                     <field name="datetime_event"/>
                     <field name="user_event"/>
+                    <field name="status"/>
+                    <field name="operation"/>
                 </tree>
             </field>
         </record>
@@ -21,10 +23,12 @@
                     <sheet string="tender" >
                         <field name="id" readonly="1"/>
                         <group col = "3">
-                            <field name="uuid_event"/>
                             <field name="table_name_id"/>
+                            <field name="table_id"/>
                             <field name="datetime_event"/>
                             <field name="user_event"/>
+                            <field name="status"/>
+                            <field name="operation"/>
                         </group>
                      </sheet>
                     </form>

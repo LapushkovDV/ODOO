@@ -7,9 +7,7 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="check_insert" widget="boolean_toggle"/>
-                        <field name="check_update" widget="boolean_toggle"/>
-                        <field name="check_delete" widget="boolean_toggle"/>
+                        <field name="check_changes" widget="boolean_toggle"/>
                     </group>
                 </sheet>
                 <footer>
