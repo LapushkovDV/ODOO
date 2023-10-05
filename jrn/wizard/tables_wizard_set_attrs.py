@@ -30,14 +30,31 @@ class tables_wizard_set_attrs(models.TransientModel):
         return str
 
 
+    def get_cast_primary_key(self,table):
+        query = """
+            SELECT a.attname
+            FROM   pg_index i
+            JOIN   pg_attribute a ON a.attrelid = i.indrelid
+                                 AND a.attnum = ANY(i.indkey)
+            WHERE  i.indrelid = '{0}'::regclass
+            AND    i.indisprimary;
+                """
+        query = query.format(table.name)
+        self.env.cr.execute(query)
+
+        select_fields_string = ''
+        for record_jrn in self.env.cr.fetchall():
+            if select_fields_string == '':
+                select_fields_string += 'cast({0}."'+''.join(record_jrn)+'" as varchar)'
+            else:
+                select_fields_string += '||'+"'||'||"+'cast({0}."'+''.join(record_jrn)+'" as varchar)'
+        return  select_fields_string
+
 
     def create_trigger(self, table):
-        query_function = """DROP TRIGGER IF EXISTS "jrn_{0}" on "{0}" CASCADE ;
-                            DROP FUNCTION IF EXISTS "{0}_tp"();
-        """
-        query_function = query_function.format(table.name)
-        print('query_function = ', query_function)
-        self.env.cr.execute(query_function)
+        self.drop_trigger(table)
+
+
 
         query_function =  """
             -- FUNCTION: "{0}_tp"()
@@ -51,35 +68,43 @@ class tables_wizard_set_attrs(models.TransientModel):
                 VOLATILE NOT LEAKPROOF SECURITY DEFINER
             AS $BODY$
             DECLARE
-             VTABLEID bigint;                          
+             VTABLEID varchar;                          
              VOPERATION INTEGER;
              vid integer;
+             user_id integer;
+             user_login varchar;
             BEGIN
-            
-               IF TG_OP = 'INSERT' THEN VOPERATION := 2; VTABLEID := NEW.id;
-               ELSIF TG_OP = 'UPDATE' THEN VOPERATION := 4; VTABLEID := NEW.id;
-               ELSE VOPERATION := 8; VTABLEID := OLD.id;
+                if old is distinct from new then  
+                   
+                   user_id := 0;     
+                   user_login := '' ;     
+                   {7}                                                            
+                              
+                   IF TG_OP = 'INSERT' THEN VOPERATION := 2; VTABLEID := {5};
+                   ELSIF TG_OP = 'UPDATE' THEN VOPERATION := 4; VTABLEID := {5};
+                   ELSE VOPERATION := 8; VTABLEID := {6};
+                   END IF;
+    
+                   INSERT INTO jrn_jrn (table_name_id, table_id, datetime_event, user_event, status, operation)
+                   VALUES({1}, VTABLEID, NOW(), user_login, 0, VOPERATION) RETURNING id INTO vid;
+                
+                   IF TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN
+                       INSERT INTO jrn_{0}(
+                       jrn_id,jrn_oldnewrec,{2}) 
+                        VALUES(
+                         vid,2,{3}
+                        );
+                   END IF;
+                   
+                   IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+                       INSERT INTO jrn_{0}(                   
+                        jrn_id,jrn_oldnewrec,{2}
+                        )
+                        VALUES(
+                         vid,1,{4}
+                        );
+                 END IF;
                END IF;
-
-               INSERT INTO jrn_jrn (table_name_id, table_id, datetime_event, user_event, status, operation)
-               VALUES({1}, VTABLEID, NOW(), '1', 0, VOPERATION) RETURNING id INTO vid;
-            
-               IF TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN
-                   INSERT INTO jrn_{0}(
-                   jrn_id,jrn_oldnewrec,{2}) 
-                    VALUES(
-                    vid,2,{3}
-                    );
-               END IF;
-               
-               IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-                   INSERT INTO jrn_{0}(                   
-                    jrn_id,jrn_oldnewrec,{2}
-                    )
-                    VALUES(
-                     vid,1,{4}
-                    );
-             END IF;
             RETURN NULL; END;
             
             $BODY$;
@@ -90,13 +115,33 @@ class tables_wizard_set_attrs(models.TransientModel):
         # ALTER FUNCTION "{0}_tp"() OWNER TO postgres;
         # GRANT EXECUTE ON FUNCTION "{0}_tp"() O postgres;
 
+
+
         fields =self.get_fields_table(table)
+        index = fields.find('write_uid')
+        get_user = ""
+        if index == -1:
+            get_user = ""
+        else:
+            get_user = """                   
+                              IF TG_OP = 'INSERT' THEN user_id := NEW.write_uid;
+                                  ELSIF TG_OP = 'UPDATE' THEN user_id := NEW.write_uid;
+                                  ELSE user_id := OLD.write_uid;
+                              END IF;
+                              if user_id <> 0 THEN
+                               user_login := (SELECT login FROM res_users where id = user_id );
+                              END IF;
+                              """
         print('fields = ', fields)
         old_fields = self.get_fields_table_prefix(table).format('OLD.')
         print('old_fields = ', old_fields)
         new_fields = self.get_fields_table_prefix(table).format('NEW.')
         print('new_fields = ', new_fields)
-        query_function = query_function.format(table.name, table.id, fields, old_fields, new_fields)
+        cast_primary_key_new = self.get_cast_primary_key(table)
+        cast_primary_key_new = cast_primary_key_new.format('NEW')
+        cast_primary_key_old = self.get_cast_primary_key(table)
+        cast_primary_key_old = cast_primary_key_old.format('OLD')
+        query_function = query_function.format(table.name, table.id, fields, old_fields, new_fields, cast_primary_key_new, cast_primary_key_old, get_user)
         self.env.cr.execute(query_function)
         print('query_function = ', query_function)
 
@@ -112,6 +157,12 @@ class tables_wizard_set_attrs(models.TransientModel):
         return ''
 
     def drop_trigger(self,table):
+        query_function = """DROP TRIGGER IF EXISTS "jrn_{0}" on "{0}" CASCADE ;
+                            DROP FUNCTION IF EXISTS "{0}_tp"();"""
+        query_function = query_function.format(table.name)
+        print('query_function = ', query_function)
+        self.env.cr.execute(query_function)
+
         return False
 
     def action_set_attrs(self):

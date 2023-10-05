@@ -12,6 +12,7 @@
         'views/jrn.xml',
         'views/tables.xml',
         'wizard/tables_wizard_set_attrs.xml',
+        'wizard/view_journal_record.xml',
         'views/menu.xml',
         'views/tables_add_btn.xml',
     ],

@@ -15,11 +15,27 @@ class jrn(models.Model):
 
     # uuid_event     = fields.Char(string='guid', size=16, index=True, readonly = True)
     table_name_id  = fields.Many2one('jrn.tables', required=True, index=True, readonly = True)
-    table_id       = fields.Integer(string="id in table", required=True, index=True, readonly=True)
+    table_id       = fields.Char(string="id in table", required=True, index=True, readonly=True)
     datetime_event = fields.Datetime(string="Datetime of the event", index=True, readonly = True)
     user_event     = fields.Char(string="User who make event", index=True, readonly = True)
     status         = fields.Integer(string="status", required=True, index=True, readonly=True)
-    operation      = fields.Integer(string="type of operation", required=True, index=True, readonly=True)
+    operation      = fields.Selection([('2', 'Insert'), ('4', 'Update'), ('8','Delete')]
+                    ,string="type of operation", required=True, index=True, readonly=True)
+
+    def run_wzrd_view_journal_record_spec(self):
+        action = self.env['ir.actions.actions']._for_xml_id('jrn.action_view_journal_record')
+        action['name'] = _('View journal record')
+        action['display_name'] = _('View journal record')
+        action['context'] = {
+            'default_jrn_id': self.id,
+            'default_datetime_event': self.datetime_event,
+            'default_user_event': self.user_event,
+            'default_status': self.status,
+            'default_operation': self.operation,
+            'default_table_id' : self.table_id
+        }
+        print('action', action)
+        return action
 
     def get_current_db_name(self):
         query = "SELECT current_database();"
@@ -124,8 +140,37 @@ class table_name(models.Model):
     is_structure_correct = fields.Boolean(string='is structure correct', default = False, readonly = True)
     is_table_exist_in_jrn = fields.Boolean(string='is table exist in jrn', default=False, readonly=True)
 
+    def create_trigger_jrn_jrn_delete(self):
+        query = """
+        drop function if exists "jrn_jrn_jrn_delete_record_tp"() cascade;
+
+        CREATE FUNCTION "jrn_jrn_jrn_delete_record_tp"()
+                RETURNS trigger
+                LANGUAGE 'plpgsql'
+                COST 100
+                VOLATILE NOT LEAKPROOF SECURITY DEFINER
+            AS $BODY$
+            DECLARE
+             query_str varchar;                          
+			 vtable_name varchar;
+            BEGIN
+				   vtable_name := (select tt.name from jrn_tables tt where tt.id = old.table_name_id);
+                   query_str := 'delete from jrn_' ||vtable_name||' where jrn_id = '||cast(old.id as varchar);
+				   EXECUTE query_str;
+            RETURN NULL; 
+			END;            
+            $BODY$;            
+            
+        GRANT EXECUTE ON FUNCTION "jrn_jrn_jrn_delete_record_tp"() TO PUBLIC;
+
+          CREATE TRIGGER "jrn_jrn_jrn_delete" 
+            AFTER DELETE ON jrn_jrn
+            FOR EACH ROW EXECUTE PROCEDURE "jrn_jrn_jrn_delete_record_tp"();         
+        """
+        self.env.cr.execute(query)
 
     def fill_table_list(self):
+        self.create_trigger_jrn_jrn_delete()
         jrn = self.env['jrn.jrn']
         print('jrn.get_current_db_name() = ',jrn.get_current_db_name())
         self.env.cr.execute("""CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; """)
