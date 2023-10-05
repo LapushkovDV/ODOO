@@ -8,26 +8,36 @@
                 <sheet>
                     <field name="status" invisible="1"/>
                     <field name="jrn_id" invisible="1"/>
-                    <group col="3">
+                    <group col="3"
+                    >
+                        <group>
+                            <field name="table_name"
+                              decoration-bf="1"
+                              decoration-success="operation=='2'"
+                              decoration-warning="operation=='4'"
+                              decoration-danger="operation=='8'"
+                            />
+                        </group>
                         <group>
                             <field name="table_id"/>
                         </group>
                         <group>
-
-                        </group>
-                        <group>
-                            <field name="table_name"/>
                         </group>
                     </group>
                     <group col="3">
+                        <group>
+                            <field name="operation"
+                              decoration-bf="1"
+                              decoration-success="operation=='2'"
+                              decoration-warning="operation=='4'"
+                              decoration-danger="operation=='8'"
+                            />
+                        </group>
                         <group>
                             <field name="datetime_event"/>
                         </group>
                         <group>
                             <field name="user_event"/>
-                        </group>
-                        <group>
-                            <field name="operation"/>
                         </group>
                     </group>
                      <field name="view_journal_record_spec_ids" widget="section_and_note_one2many" mode="tree">

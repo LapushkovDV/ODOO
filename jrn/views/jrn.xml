@@ -10,7 +10,7 @@
                       decoration-warning="operation=='4'"
                       decoration-danger="operation=='8'"
                 >
-                    <button name="run_wzrd_view_journal_record_spec" type="object" title="view record" string="view redcord" class="btn btn-link float-end"/>
+                    <button name="run_wzrd_view_journal_record_spec" type="object" title="view record" string="view record" class="btn btn-link float-end"/>
                     <field name="table_name_id"/>
                     <field name="table_id"/>
                     <field name="datetime_event"/>
