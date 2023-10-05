@@ -360,6 +360,7 @@ class table_name(models.Model):
             self.env.cr.execute(sql_string)
 
         table.is_table_exist_in_jrn = True
+
         self.action_check_structure_one(table)
             # sql_string = "select concat('alter table public.jrn_{0} drop constraint ', constraint_name) as my_query from information_schema.table_constraints where table_schema = 'public' and table_name = 'jrn_{0}';"
             # # and constraint_type = 'PRIMARY KEY';"
