@@ -4,7 +4,7 @@
         <field name="name">jrn.view_journal_record.form</field>
         <field name="model">jrn.view_journal_record</field>
         <field name="arch" type="xml">
-            <form create = "0">
+            <form create="false">
                 <sheet>
                     <field name="status" invisible="1"/>
                     <field name="jrn_id" invisible="1"/>

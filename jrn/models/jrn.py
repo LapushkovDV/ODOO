@@ -352,9 +352,11 @@ class table_name(models.Model):
             sql_string = sql_string.format(table.name)
             print('1 sql_string', sql_string)
             self.env.cr.execute(sql_string)
-            sql_string = """CREATE INDEX jrn_id_{0} ON jrn_{0} USING btree(jrn_id);"""
+
+            sql_string = """DROP INDEX if exists jrn_id_{0} CASCADE; 
+            CREATE INDEX jrn_id_{0} ON jrn_{0} USING btree(jrn_id);"""
             sql_string = sql_string.format(table.name)
-            print('1 sql_string', sql_string)
+            print('1q sql_string', sql_string)
             self.env.cr.execute(sql_string)
 
         table.is_table_exist_in_jrn = True
