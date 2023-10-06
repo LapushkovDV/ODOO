@@ -33,8 +33,7 @@ class project_steps(models.Model):
                         ,required = True, default = _getesimated_probability_fromProject)
     currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
-    project_step_type_id = fields.Many2one('project_budget.project_type', string='project step type',
-                                           required=True, copy=True, compute='copy_step_type', store=True)
+
     is_revenue_from_the_sale_of_works = fields.Boolean(related='project_steps_type_id.is_revenue_from_the_sale_of_works', readonly=True)
     is_revenue_from_the_sale_of_goods = fields.Boolean(related='project_steps_type_id.is_revenue_from_the_sale_of_goods', readonly=True)
     is_cost_of_goods = fields.Boolean(related='project_steps_type_id.is_cost_of_goods', readonly=True)
@@ -252,7 +251,3 @@ class project_steps(models.Model):
             raisetext = _("This project is in fixed budget. Copy deny")
             raise (ValidationError(raisetext))
         self.env['project_budget.project_steps'].sudo().browse(self.id).copy({'step_id': '-'})
-
-    def copy_step_type(self):
-        for step in self:
-            step.project_step_type_id = self.env['project_budget.project_type'].search([('id', '=', step.project_steps_type_id.id)])
