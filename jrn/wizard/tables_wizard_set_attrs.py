@@ -86,7 +86,7 @@ class tables_wizard_set_attrs(models.TransientModel):
                    END IF;
     
                    INSERT INTO jrn_jrn (table_name_id, table_id, datetime_event, user_event, status, operation)
-                   VALUES({1}, VTABLEID, NOW(), user_login, 0, VOPERATION) RETURNING id INTO vid;
+                   VALUES({1}, VTABLEID,  now() at time zone 'UTC', user_login, 0, VOPERATION) RETURNING id INTO vid;
                 
                    IF TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN
                        INSERT INTO jrn_{0}(

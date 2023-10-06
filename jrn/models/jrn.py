@@ -142,6 +142,8 @@ class table_name(models.Model):
 
     def create_trigger_jrn_jrn_delete(self):
         query = """
+         
+              
         drop function if exists "jrn_jrn_jrn_delete_record_tp"() cascade;
 
         CREATE FUNCTION "jrn_jrn_jrn_delete_record_tp"()
