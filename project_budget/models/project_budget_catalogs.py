@@ -8,7 +8,6 @@ class project_type(models.Model):
     name = fields.Char(string="project_type name", required=True, translate=True)
     code = fields.Char(string="project_type code", required=True)
     descr = fields.Char(string="project_type description", translate=True)
-    forbidden_in_steps = fields.Boolean(string="project_type forbidden in steps", default=False)
 
     is_revenue_from_the_sale_of_works = fields.Boolean(string='is_revenue_from_the_sale_of_works(services)',tracking=True, default=True)
     is_revenue_from_the_sale_of_goods = fields.Boolean(string='is_revenue_from the sale of goods',tracking=True, default=True)
