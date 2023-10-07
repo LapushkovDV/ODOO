@@ -1,8 +1,8 @@
 {
     'name' : 'jrn',
     'version' : '16.0.0.0.1',
-    'category': 'Project',
-    'depends': ['base','mail','uom'],
+    'category': 'journal',
+    'depends': ['base','uom'],
     'description':"""
     """,
     'author': 'lapus',
