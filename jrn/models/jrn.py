@@ -4,10 +4,6 @@ from contextlib import closing
 from odoo.http import request
 from psycopg2 import sql
 
-class DatabaseExists(Warning):
-    pass
-
-
 class jrn(models.Model):
     _name = 'jrn.jrn'
     _description = "main journal table"
@@ -36,11 +32,9 @@ class jrn(models.Model):
         print('action', action)
         return action
 
-
-
 class table_name(models.Model):
     _name = 'jrn.tables'
-    _description = "journal tables"
+    _description = "tables in base"
 
     name = fields.Char(string='Table name', required = True, readonly = True)
     check_changes = fields.Boolean(string='check_changes', default = False, readonly = True)
@@ -92,7 +86,7 @@ class table_name(models.Model):
 class fillTables_Controller(http.Controller):
     @http.route('/custom/createdb',auth="public", type='json', methods=['POST'])
     def fill_table_list(self, param1):
-        model = request.env['jrn.tables']
+        model = request.env['jrn.base']
         model.fill_table_list()
         return {
                   'type': 'ir.actions.client',

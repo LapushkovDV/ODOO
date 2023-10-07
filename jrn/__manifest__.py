@@ -2,7 +2,7 @@
     'name' : 'jrn',
     'version' : '16.0.0.0.1',
     'category': 'journal',
-    'depends': ['base','uom'],
+    'depends': ['base','web'],
     'description':"""
     """,
     'author': 'lapus',

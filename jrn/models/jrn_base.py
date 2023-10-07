@@ -8,7 +8,6 @@ class jrn_base(models.Model):
     _name = 'jrn.base'
     _description = "journal base"
 
-
     def get_current_db_name(self):
         query = "SELECT current_database();"
         self.env.cr.execute(query)
@@ -16,10 +15,8 @@ class jrn_base(models.Model):
             return ''.join(record_jrn)
         return ''
 
-
     def get_journal_db_name(self):
         return self.get_current_db_name() + '_journal'
-
 
     def get_pgsql_server_port(self):
         query = "SELECT setting FROM pg_settings WHERE name = 'port';"
@@ -28,16 +25,13 @@ class jrn_base(models.Model):
             return ''.join(record_jrn)
         return ''
 
-
     def get_fdw_journal(self):
         # FOREIGN DATA WRAPPER for journal db
         return 'jrn_odoo_' + self.get_journal_db_name()
 
-
     def get_fdw_current(self):
         # FOREIGN DATA WRAPPER for orogonal db
         return 'jrn_odoo_' + self.get_current_db_name()
-
 
     def create_journal_base(self):
         db = odoo.sql_db.db_connect('postgres')
@@ -106,8 +100,6 @@ class jrn_base(models.Model):
 
     def create_trigger_jrn_jrn_delete(self):
         query = """
-
-
         drop function if exists "jrn_jrn_jrn_delete_record_tp"() cascade;
 
         CREATE FUNCTION "jrn_jrn_jrn_delete_record_tp"()
@@ -220,8 +212,6 @@ class jrn_base(models.Model):
             table.is_structure_correct = False
             print('is_structure_correct', False)
 
-
-
     def action_recreate_tables_one(self, table):
         sql_string = "DROP TABLE IF EXISTS jrn_{0}_tmp; "
         sql_string = sql_string.format(table.name)
@@ -259,8 +249,6 @@ class jrn_base(models.Model):
         sql_string = sql_string.format(table.name)
         print('sql_string = ', sql_string)
         self.env.cr.execute(sql_string)
-
-
 
     def action_create_jrn_tables_one(self, table):
         jrn = self.env['jrn.base']
@@ -472,6 +460,4 @@ class jrn_base(models.Model):
         query_function = query_function.format(table.name)
         print('query_function = ', query_function)
         self.env.cr.execute(query_function)
-
         return False
-
