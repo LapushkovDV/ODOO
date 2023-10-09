@@ -7,7 +7,7 @@ from psycopg2 import sql
 class jrn(models.Model):
     _name = 'jrn.jrn'
     _description = "main journal table"
-
+    _order = 'datetime_event desc,id desc'
     # uuid_event     = fields.Char(string='guid', size=16, index=True, readonly = True)
     table_name_id  = fields.Many2one('jrn.tables', required=True, index=True, readonly = True)
     table_id       = fields.Char(string="id in table", required=True, index=True, readonly=True)

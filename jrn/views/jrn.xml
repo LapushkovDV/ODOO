@@ -5,7 +5,6 @@
             <field name="model">jrn.jrn</field>
             <field name="arch" type="xml">
                 <tree string="jrn" create="false" edit="false" delete="false"
-                      default_order="datetime_event desc"
                       decoration-success="operation=='2'"
                       decoration-warning="operation=='4'"
                       decoration-danger="operation=='8'"
