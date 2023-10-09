@@ -48,6 +48,9 @@
                         </tree>
                     </field>
                 </sheet>
+                <footer>
+                    <button string="Done" class="btn-success" special="cancel"/>
+                </footer>
             </form>
         </field>
     </record>

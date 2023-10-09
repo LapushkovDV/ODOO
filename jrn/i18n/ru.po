@@ -295,7 +295,7 @@ msgstr "Основная таблица журнала"
 #. module: jrn
 #: model:ir.ui.menu,name:jrn.jrn_settings
 msgid "settings"
-msgstr "Насройки"
+msgstr "Настройки"
 
 #. module: jrn
 #: model:ir.model.fields,field_description:jrn.field_jrn_jrn__status

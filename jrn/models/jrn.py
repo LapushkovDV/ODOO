@@ -17,6 +17,13 @@ class jrn(models.Model):
     operation      = fields.Selection([('2', 'Insert'), ('4', 'Update'), ('8','Delete')]
                     ,string="type of operation", required=True, index=True, readonly=True)
 
+    def run_undo_wizard(self):
+        action = self.env['ir.actions.actions']._for_xml_id('jrn.action_jrn_wizard_undo_changes')
+        action['name'] = _('jrn undo changes')
+        action['display_name'] = _('jrn undo changes')
+        return action
+
+
     def run_wzrd_view_journal_record_spec(self):
         action = self.env['ir.actions.actions']._for_xml_id('jrn.action_view_journal_record')
         action['name'] = _('View journal record')

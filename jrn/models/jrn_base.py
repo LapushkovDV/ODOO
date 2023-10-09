@@ -130,8 +130,13 @@ class jrn_base(models.Model):
     def fill_table_list(self):
         self.create_trigger_jrn_jrn_delete()
         jrn = self.env['jrn.base']
+
         print('jrn.get_current_db_name() = ', jrn.get_current_db_name())
-        self.env.cr.execute("""CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; """)
+
+        # db_name = self.get_current_db_name()
+        # dbjrn = odoo.sql_db.db_connect(db_name)
+        # with dbjrn.cursor() as cr: cr.execute("""CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; """)
+        # self.env.cr.execute("""CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; """)
         # query = "select 1 FROM pg_catalog.pg_database d WHERE d.datname = '{0}';"
         # query = query.format(jrn.get_journal_db_name())
         # self.env.cr.execute(query)
@@ -460,4 +465,19 @@ class jrn_base(models.Model):
         query_function = query_function.format(table.name)
         print('query_function = ', query_function)
         self.env.cr.execute(query_function)
+        return False
+
+    def undo_change(self, change):
+        # operation = fields.Selection([('2', 'Insert'), ('4', 'Update'), ('8','Delete')]
+        table_name = change.table_name_id.name
+
+        if change.Selection == '2':
+            print('undo_change insert')
+
+        if change.Selection == '4':
+            print('undo_change update')
+
+        if change.Selection == '8':
+            print('undo_change delete')
+
         return False

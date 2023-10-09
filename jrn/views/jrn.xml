@@ -10,6 +10,9 @@
                       decoration-warning="operation=='4'"
                       decoration-danger="operation=='8'"
                 >
+                    <header>
+                        <button string="Undo changes" type="object" name="run_undo_wizard" class="oe_highlight"/>
+                    </header>
                     <button name="run_wzrd_view_journal_record_spec" type="object" title="view record" string="view record" class="btn btn-link float-end"/>
                     <field name="table_name_id"/>
                     <field name="table_id"/>
