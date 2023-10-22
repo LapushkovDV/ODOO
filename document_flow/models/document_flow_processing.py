@@ -1,4 +1,4 @@
-from odoo import _, models, fields, api
+from odoo import api, Command, fields, models, _
 from .document_flow_process import recompute_sequence_actions, selection_parent_model
 
 
@@ -82,7 +82,8 @@ class Processing(models.Model):
                 'sequence': action.sequence,
                 'reviewer_ref': action.reviewer_ref,
                 'start_condition': action.start_condition,
-                'description': action.description
+                'description': action.description,
+                'company_ids': [Command.link(c_id) for c_id in action.get_executors_company_ids()]
             })
             for child in action.child_ids:
                 pr = self.env['document_flow.process'].create({
@@ -93,7 +94,8 @@ class Processing(models.Model):
                     'sequence': child.sequence,
                     'reviewer_ref': child.reviewer_ref,
                     'start_condition': child.start_condition,
-                    'description': child.description
+                    'description': child.description,
+                    'company_ids': [Command.link(c_id) for c_id in action.get_executors_company_ids()]
                 })
                 for executor in child.executor_ids:
                     self.env['document_flow.process.executor'].create({

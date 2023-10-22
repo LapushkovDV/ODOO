@@ -1,4 +1,4 @@
-from odoo import _, models, fields, api, Command
+from odoo import api, Command, fields, models, _
 from odoo.exceptions import ValidationError
 from odoo.tools.safe_eval import test_python_expr, safe_eval
 from datetime import timedelta
@@ -51,7 +51,8 @@ def selection_parent_model():
         ('document_flow.event', _('Event')),
         ('document_flow.event.decision', _('Decision')),
         ('document_flow.action', _('Action')),
-        ('document_flow.document', _('Document'))
+        ('document_flow.document', _('Document')),
+        ('sale.presale', _('Presale'))
     ]
 
 
@@ -146,6 +147,7 @@ class Process(models.Model):
     description = fields.Html(string='Description', copy=True)
     type = fields.Selection(PROCESS_TYPES, required=True, default='review', index=True, string='Type')
     state = fields.Selection(PROCESS_STATES, required=True, default='on_registration', string='State')
+    # company_ids = fields.Many2many('res.company', string='Companies', compute='_compute_company_ids')
     company_ids = fields.Many2many('res.company', string='Companies', required=True,
                                    default=lambda self: self.env.company)
     template_id = fields.Many2one('document_flow.process.template', string='Template')
@@ -207,14 +209,24 @@ class Process(models.Model):
         self.task_ids.unlink()
         return super(Process, self).unlink()
 
+    # @api.depends('executor_ids.executor_ref')
+    # def _compute_company_ids(self):
+    #     for process in self:
+    #         print(process.code)
+    #         c_ids = []
+    #         if process.type == 'complex':
+    #             c_ids = process.child_ids.company_ids.ids
+    #         else:
+    #             for executor in process.executor_ids:
+    #                 c_ids.append(executor.executor_ref.company_id.id)
+    #         process.company_ids = [Command.set(list(set(c_ids)))] if any(c_ids) else False
+    #         print(process.company_ids)
+
     def _compute_parent_obj(self):
         for process in self:
             process.parent_obj_ref = self.env['document_flow.processing'].search([
                 ('process_id', '=', process._get_mainprocess_id_by_process_id().get(process.id, None))
             ], limit=1).parent_ref
-            # process.parent_obj_ref = self.env['document_flow.process.parent_object'].search([
-            #     ('process_id', '=', process.id)
-            # ], limit=1).parent_ref
 
     @api.onchange('sequence')
     def _compute_sequence(self):
@@ -453,7 +465,7 @@ class Process(models.Model):
                     user_ids=[Command.link(executor.executor_ref.id) for executor in self.executor_ids],
                     date_deadline=self.executor_ids[0].date_deadline
                 )
-                res = self.env['task.task'].create(task_data)
+                res = self.env['task.task'].sudo().create(task_data)
                 self._put_task_to_history(res)
             else:
                 min_sequence = min(self.executor_ids, key=lambda pr: pr.sequence).sequence or 0
@@ -506,8 +518,9 @@ class Process(models.Model):
             self.write({'state': 'break', 'date_end': date_closed})
             if self.parent_id:
                 self.parent_id.process_task_result(date_closed, result_type, feedback)
-            if feedback and self.parent_obj_ref:
-                self.parent_obj_ref.write({'state': 'on_registration'})
+            if feedback and not self.parent_id and self.parent_obj_ref:
+                if self.parent_obj_ref and type(self.parent_obj_ref).__name__ == 'document_flow.event':
+                    self.parent_obj_ref.write({'state': 'on_registration'})
                 self.parent_obj_ref.message_post(
                     body=feedback,
                     message_type='comment',
@@ -572,7 +585,7 @@ class ProcessExecutor(models.Model):
             task_data['user_ids'] = [Command.link(executor_ref.id)]
         else:
             task_data['role_executor_id'] = executor_ref.id
-        res = self.env['task.task'].create(task_data)
+        res = self.env['task.task'].sudo().create(task_data)
         self.process_id._put_task_to_history(res)
         return res
 
@@ -590,6 +603,7 @@ class ProcessTemplate(models.Model):
     description = fields.Html(string='Description')
     company_id = fields.Many2one('res.company', string='Company', required=True,
                                  default=lambda self: self.env.company)
+    model_id = fields.Many2one('ir.model', string='Model')
     document_type_id = fields.Many2one('document_flow.document.type', string='Document Type')
 
     action_ids = fields.One2many('document_flow.action', 'parent_ref_id', string='Actions',
@@ -725,6 +739,18 @@ class Action(models.Model):
                 ('parent_ref_type', '=', self._name),
                 ('parent_ref_id', '=', action.id)
             ])
+
+    def get_executors_company_ids(self):
+        self.ensure_one()
+        c_ids = []
+        if self.type == 'complex':
+            for child in self.child_ids:
+                for executor in child.executor_ids:
+                    c_ids.append(executor.executor_ref.company_id.id)
+        else:
+            for executor in self.executor_ids:
+                c_ids.append(executor.executor_ref.company_id.id)
+        return set(c_ids)
 
 
 class ActionExecutor(models.Model):
