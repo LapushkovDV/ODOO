@@ -1799,7 +1799,7 @@ msgstr "4кв план"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
 msgid "Q4 plan 6+6"
-msgstr "Q2 plan 6+6"
+msgstr "4кв план 6+6"
 
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__raw_data
