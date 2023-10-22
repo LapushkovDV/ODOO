@@ -15,6 +15,7 @@
             'project_budget/static/src/scss/change_color.css',
             'project_budget/static/src/js/dashboard_view.js',
             'project_budget/static/src/xml/dashboard_view.xml'
+            # 'project_budget/static/src/js/set_row_bgcolor.js',
         ],
         },
     'data': [

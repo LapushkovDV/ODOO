@@ -190,6 +190,11 @@ class budget_plan_kam(models.Model):
         q4_plan = fields.Monetary(string='q4_plan', tracking=True)
         year_plan = fields.Monetary(string='year_plan', compute='_compute_totals', store=False,
                                     tracking=True)
+        q1_fact = fields.Monetary(string='q1 fact', tracking=True)
+        q2_fact = fields.Monetary(string='q2 fact', tracking=True)
+        q3_fact = fields.Monetary(string='q3 fact', tracking=True)
+        q4_fact = fields.Monetary(string='q4 fact', tracking=True)
+        year_fact = fields.Monetary(string='year fact', compute='_compute_totals', store=False, tracking=True)
 
         q1_plan_6_6 = fields.Monetary(string='q1_plan 6+6', tracking=True)
         q2_plan_6_6 = fields.Monetary(string='q2_plan 6+6', tracking=True)
@@ -203,7 +208,8 @@ class budget_plan_kam(models.Model):
         def _compute_totals(self):
             for row in self:
                 row.year_plan = row.q1_plan + row.q2_plan + row.q3_plan + row.q4_plan
-                row.year_plan_6_6 = row.q1_plan_6_6 + row.q2_plan_6_6 + row.q3_plan_6_6 + row.q4_plan_6_6
+                row.year_plan_6_6 = row.q1_plan_6_6 + row.q2_plan_6_6 + row.q3_plan_6_6 + row.q4_plan_6_6 + row.q1_fact + row.q2_fact
+                row.year_fact = row.q1_fact + row.q2_fact + row.q3_fact + row.q4_fact
 
         def calc_fact(self):
             for plan_kam in self:

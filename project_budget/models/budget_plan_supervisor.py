@@ -170,6 +170,7 @@ class budget_plan_supervisor_spec(models.Model):
                                                 index=True, ondelete='cascade')
     currency_id = fields.Many2one(related='budget_plan_supervisor_id.currency_id', readonly=True)
 
+
     type_row = fields.Selection(type_plan_rows, required=True, index=True, readonly=True)
 
     q1_plan = fields.Monetary(string='q1_plan', tracking=True)
@@ -177,6 +178,12 @@ class budget_plan_supervisor_spec(models.Model):
     q3_plan = fields.Monetary(string='q3_plan', tracking=True)
     q4_plan = fields.Monetary(string='q4_plan', tracking=True)
     year_plan = fields.Monetary(string='year_plan', compute='_compute_totals', store=False, tracking=True)
+
+    q1_fact = fields.Monetary(string='q1 fact', tracking=True)
+    q2_fact = fields.Monetary(string='q2 fact', tracking=True)
+    q3_fact = fields.Monetary(string='q3 fact', tracking=True)
+    q4_fact = fields.Monetary(string='q4 fact', tracking=True)
+    year_fact = fields.Monetary(string='year fact', compute='_compute_totals', store=False, tracking=True)
 
     q1_plan_6_6 = fields.Monetary(string='q1_plan 6+6', tracking=True)
     q2_plan_6_6 = fields.Monetary(string='q2_plan 6+6', tracking=True)
@@ -186,11 +193,13 @@ class budget_plan_supervisor_spec(models.Model):
                                     tracking=True)
 
     @api.depends("q1_plan", "q2_plan", "q3_plan", "q4_plan",
-                 "q1_plan_6_6", "q2_plan_6_6", "q3_plan_6_6", "q4_plan_6_6", )
+                 "q1_plan_6_6", "q2_plan_6_6", "q3_plan_6_6", "q4_plan_6_6",
+                 "q1_fact", "q2_fact", "q3_fact", "q4_fact")
     def _compute_totals(self):
         for row in self:
             row.year_plan = row.q1_plan + row.q2_plan + row.q3_plan + row.q4_plan
-            row.year_plan_6_6 = row.q1_plan_6_6 + row.q2_plan_6_6 + row.q3_plan_6_6 + row.q4_plan_6_6
+            row.year_plan_6_6 = row.q1_plan_6_6 + row.q2_plan_6_6 + row.q3_plan_6_6 + row.q4_plan_6_6 + row.q1_fact + row.q2_fact
+            row.year_fact = row.q1_fact + row.q2_fact + row.q3_fact + row.q4_fact
 
 
     def calc_fact(self):

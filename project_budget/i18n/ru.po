@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-21 13:09+0000\n"
-"PO-Revision-Date: 2023-10-21 13:09+0000\n"
+"POT-Creation-Date: 2023-10-22 10:30+0000\n"
+"PO-Revision-Date: 2023-10-22 10:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -651,13 +651,6 @@ msgid "Current Status"
 msgstr "Текущий статус"
 
 #. module: project_budget
-#. odoo-javascript
-#: code:addons/project_budget/static/src/xml/dashboard_1.xml:0
-#, python-format
-msgid "Current projects count"
-msgstr "Количество текущих проектов"
-
-#. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Customer/Organization"
 msgstr "Заказчик/Исполнитель"
@@ -709,13 +702,6 @@ msgid "DENIED. Project {0} step {1} have overdue end sale project month {2}"
 msgstr ""
 "ЗАПРЕЩЕНО!. Проект {0} этап {1} имеет просроченную дату последней отгрузки "
 "{2}"
-
-#. module: project_budget
-#. odoo-javascript
-#: code:addons/project_budget/static/src/xml/dashboard_1.xml:0
-#, python-format
-msgid "Dashboard"
-msgstr "Дашборды"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__end_presale_project_month
@@ -814,13 +800,6 @@ msgstr "Квартал контрактования"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__end_sale_project_quarter
 msgid "End date of the Sale project(quarter)"
 msgstr "Квартал последней отгрузки"
-
-#. module: project_budget
-#. odoo-javascript
-#: code:addons/project_budget/static/src/xml/dashboard_1.xml:0
-#, python-format
-msgid "Etalon project count"
-msgstr "Количество эталонных проектов"
 
 #. module: project_budget
 #. odoo-javascript
@@ -1768,14 +1747,32 @@ msgstr "Проекты:"
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
+msgid "Q1 fact"
+msgstr "1кв факт"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
 msgid "Q1 plan"
 msgstr "1кв план"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
+msgid "Q2 fact"
+msgstr "2кв план"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
 msgid "Q2 plan"
 msgstr "2кв план"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
+msgid "Q3 fact"
+msgstr "3кв план"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
@@ -1792,6 +1789,12 @@ msgstr "3кв план 6+6"
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
+msgid "Q4 fact"
+msgstr "4кв план"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
 msgid "Q4 plan"
 msgstr "4кв план"
 
@@ -1799,7 +1802,7 @@ msgstr "4кв план"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
 msgid "Q4 plan 6+6"
-msgstr "4кв план 6+6"
+msgstr "Q2 plan 6+6"
 
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__raw_data
@@ -2140,6 +2143,12 @@ msgid "Working"
 msgstr "В работе"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
+#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
+msgid "Year fact"
+msgstr "Год факт"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__year
 msgid "Year of the report"
 msgstr "Год отчета"
@@ -2190,11 +2199,13 @@ msgid "acceptance"
 msgstr "Актирование"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_acceptance_year
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_acceptance_year
 msgid "acceptance plan year"
 msgstr "Актирование"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_acceptance_year_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_acceptance_year_6_6
 msgid "acceptance plan year 6+6"
 msgstr "Актирование 6+6"
@@ -2250,11 +2261,13 @@ msgid "cash"
 msgstr "ПДС"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_cash_year
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_cash_year
 msgid "cash plan year"
 msgstr "ПДС"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_cash_year_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_cash_year_6_6
 msgid "cash plan year 6+6"
 msgstr "ПДС 6+6"
@@ -2340,64 +2353,16 @@ msgid "contracting"
 msgstr "Контрактование"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_contracting_year
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_contracting_year
 msgid "contracting plan year"
 msgstr "Контрактование"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_contracting_year_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_contracting_year_6_6
 msgid "contracting plan year 6+6"
 msgstr "Контрактование 6+6"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q1_plan
-msgid "contracting_q1_plan"
-msgstr "1кв план"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q1_plan_6_6
-msgid "contracting_q1_plan 6+6"
-msgstr "1кв план 6+6"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q2_plan
-msgid "contracting_q2_plan"
-msgstr "2кв план"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q2_plan_6_6
-msgid "contracting_q2_plan 6+6"
-msgstr "2кв план 6+6"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q3_plan
-msgid "contracting_q3_plan"
-msgstr "3кв план"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q3_plan_6_6
-msgid "contracting_q3_plan 6+6"
-msgstr "3кв план 6+6"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q4_plan
-msgid "contracting_q4_plan"
-msgstr "4кв план"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q4_plan_6_6
-msgid "contracting_q4_plan 6+6"
-msgstr "4кв план 6+6"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__year_plan
-msgid "contracting_year_plan"
-msgstr "Год план"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__year_plan_6_6
-msgid "contracting_year_plan 6+6"
-msgstr "Год план 6+6"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_estimated_probability_kanban
@@ -2695,11 +2660,13 @@ msgid "ebit"
 msgstr ""
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_ebit_year
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_ebit_year
 msgid "ebit plan year"
 msgstr "ebit"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_ebit_year_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_ebit_year_6_6
 msgid "ebit plan year 6+6"
 msgstr "ebit 6+6"
@@ -3162,21 +3129,25 @@ msgid "margin"
 msgstr "Маржа"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_margin_income_year
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_margin_income_year
 msgid "margin plan year"
 msgstr "Маржа"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_margin_income_year_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_margin_income_year_6_6
 msgid "margin plan year 6+6"
 msgstr "Маржа 6+6"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_margin3_income_year
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_margin3_income_year
 msgid "margin3 plan year"
 msgstr "Маржа3"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_margin3_income_year_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_margin3_income_year_6_6
 msgid "margin3 plan year 6+6"
 msgstr "Маржа3 6+6"
@@ -3207,7 +3178,7 @@ msgstr "Наименование"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__report_name
 msgid "name for report"
-msgstr ""
+msgstr "Наименование для отчета УК"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_form
@@ -3254,11 +3225,13 @@ msgid "net_profit"
 msgstr "Чистая прибыль"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_net_profit_year
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_net_profit_year
 msgid "net_profit plan year"
 msgstr "Чистая прибыль"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_net_profit_year_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_net_profit_year_6_6
 msgid "net_profit plan year 6+6"
 msgstr "Чистая прибыль 6+6"
@@ -3860,44 +3833,76 @@ msgid "provision_of_GO description"
 msgstr "Обеспечение ГО. Примечание"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q1_fact
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q1_fact
+msgid "q1 fact"
+msgstr "1кв факт"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q1_plan
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q1_plan
 msgid "q1_plan"
-msgstr "План. Контрактование 1кв."
+msgstr "1кв план"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q1_plan_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q1_plan_6_6
 msgid "q1_plan 6+6"
-msgstr "1кв контрактование план 6+6"
+msgstr "1кв план 6+6"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q2_fact
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q2_fact
+msgid "q2 fact"
+msgstr "2кв факт"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q2_plan
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q2_plan
 msgid "q2_plan"
-msgstr "План. Контрактование 2кв."
+msgstr "2кв план"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q2_plan_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q2_plan_6_6
 msgid "q2_plan 6+6"
-msgstr "2кв контрактование план 6+6"
+msgstr "2кв план 6+6"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q3_fact
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q3_fact
+msgid "q3 fact"
+msgstr "3кв факт"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q3_plan
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q3_plan
 msgid "q3_plan"
-msgstr "План. Контрактование 3кв."
+msgstr "3кв план"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q3_plan_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q3_plan_6_6
 msgid "q3_plan 6+6"
-msgstr "3кв контрактование план 6+6"
+msgstr "3кв план 6+6"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q4_fact
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q4_fact
+msgid "q4 fact"
+msgstr "4кв факт"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q4_plan
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q4_plan
 msgid "q4_plan"
-msgstr "План. Контрактование 4кв."
+msgstr "4кв план"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__q4_plan_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__q4_plan_6_6
 msgid "q4_plan 6+6"
-msgstr "4кв контрактование план 6+6"
+msgstr "4кв план 6+6"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_projects_report_print_form
@@ -4092,7 +4097,7 @@ msgstr "Оплата площадки. Примечание"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__report_sort
 msgid "sorting for report"
-msgstr ""
+msgstr "Сортировка для отчета"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
@@ -4469,6 +4474,12 @@ msgid "work place"
 msgstr "Рабочее место"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__year_fact
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__year_fact
+msgid "year fact"
+msgstr "Год факт"
+
+#. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_projects_report_print_form
 msgid "year from"
 msgstr "год с"
@@ -4485,14 +4496,16 @@ msgid "year to"
 msgstr "год по"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__year_plan
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__year_plan
 msgid "year_plan"
-msgstr "План. Контрактование год"
+msgstr "Год план"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam_spec__year_plan_6_6
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor_spec__year_plan_6_6
 msgid "year_plan 6+6"
-msgstr "Год контрактование план 6+6 "
+msgstr "Год план 6+6"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
