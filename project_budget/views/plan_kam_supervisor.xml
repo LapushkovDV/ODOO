@@ -50,34 +50,41 @@
                             <group>
                                 <field name="sum_contracting_year"/>
                                 <field name="sum_contracting_year_6_6"/>
+                                <field name="sum_contracting_year_fact" decoration-success="1"/>
                             </group>
                             <group>
                                 <field name="sum_cash_year"/>
                                 <field name="sum_cash_year_6_6"/>
+                                <field name="sum_cash_year_fact" decoration-success="1"/>
                             </group>
                             <group>
                                 <field name="sum_acceptance_year"/>
                                 <field name="sum_acceptance_year_6_6"/>
+                                <field name="sum_acceptance_year_fact" decoration-success="1"/>
                             </group>
                             <group>
                                 <field name="sum_margin_income_year"/>
                                 <field name="sum_margin_income_year_6_6"/>
+                                <field name="sum_margin_income_year_fact" decoration-success="1"/>
                             </group>
-                              </group>
-                            <group col="4">
-                                <group>
-                                    <field name="sum_margin3_income_year"/>
-                                    <field name="sum_margin3_income_year_6_6"/>
-                                </group>
-                                <group>
-                                    <field name="sum_ebit_year" attrs="{'invisible': [('is_use_ebit', '=', False)]}"/>
-                                    <field name="sum_ebit_year_6_6" attrs="{'invisible': [('is_use_ebit', '=', False)]}"/>
-                                </group>
-                                <group>
-                                    <field name="sum_net_profit_year" attrs="{'invisible': [('is_use_net_profit', '=', False)]}"/>
-                                    <field name="sum_net_profit_year_6_6" attrs="{'invisible': [('is_use_net_profit', '=', False)]}"/>
-                                </group>
-                                <group>
+                        </group>
+                        <group col="4">
+                            <group>
+                                <field name="sum_margin3_income_year"/>
+                                <field name="sum_margin3_income_year_6_6"/>
+                                <field name="sum_margin3_income_year_fact" decoration-success="1"/>
+                            </group>
+                            <group>
+                                <field name="sum_ebit_year" attrs="{'invisible': [('is_use_ebit', '=', False)]}"/>
+                                <field name="sum_ebit_year_6_6" attrs="{'invisible': [('is_use_ebit', '=', False)]}"/>
+                                <field name="sum_ebit_year_fact" attrs="{'invisible': [('is_use_ebit', '=', False)]}" decoration-success="1"/>
+                            </group>
+                            <group>
+                                <field name="sum_net_profit_year" attrs="{'invisible': [('is_use_net_profit', '=', False)]}"/>
+                                <field name="sum_net_profit_year_6_6" attrs="{'invisible': [('is_use_net_profit', '=', False)]}"/>
+                                <field name="sum_net_profit_year_fact" attrs="{'invisible': [('is_use_net_profit', '=', False)]}" decoration-success="1"/>
+                            </group>
+                            <group>
                             </group>
                         </group>
                         <field name="budget_plan_kam_spec_ids" widget="section_and_note_one2many"
@@ -172,32 +179,39 @@
                                     <group>
                                         <field name="sum_contracting_year"/>
                                         <field name="sum_contracting_year_6_6"/>
+                                        <field name="sum_contracting_year_fact" decoration-success="1"/>
                                     </group>
                                     <group>
                                         <field name="sum_cash_year"/>
                                         <field name="sum_cash_year_6_6"/>
+                                        <field name="sum_cash_year_fact" decoration-success="1"/>
                                     </group>
                                     <group>
                                         <field name="sum_acceptance_year"/>
                                         <field name="sum_acceptance_year_6_6"/>
+                                        <field name="sum_acceptance_year_fact" decoration-success="1"/>
                                     </group>
                                     <group>
                                         <field name="sum_margin_income_year"/>
                                         <field name="sum_margin_income_year_6_6"/>
+                                        <field name="sum_margin_income_year_fact" decoration-success="1"/>
                                     </group>
                                 </group>
                                 <group col="4">
                                     <group>
                                         <field name="sum_margin3_income_year"/>
                                         <field name="sum_margin3_income_year_6_6"/>
+                                        <field name="sum_margin3_income_year_fact" decoration-success="1"/>
                                     </group>
                                     <group>
                                         <field name="sum_ebit_year" attrs="{'invisible': [('is_use_ebit', '=', False)]}"/>
                                         <field name="sum_ebit_year_6_6" attrs="{'invisible': [('is_use_ebit', '=', False)]}"/>
+                                        <field name="sum_ebit_year_fact" attrs="{'invisible': [('is_use_ebit', '=', False)]}" decoration-success="1"/>
                                     </group>
                                     <group>
                                         <field name="sum_net_profit_year" attrs="{'invisible': [('is_use_net_profit', '=', False)]}"/>
                                         <field name="sum_net_profit_year_6_6" attrs="{'invisible': [('is_use_net_profit', '=', False)]}"/>
+                                        <field name="sum_net_profit_year_fact" attrs="{'invisible': [('is_use_net_profit', '=', False)]}" decoration-success="1"/>
                                     </group>
                                     <group>
                                     </group>

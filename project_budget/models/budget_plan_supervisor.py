@@ -43,35 +43,56 @@ class budget_plan_supervisor(models.Model):
 
     sum_contracting_year = fields.Monetary(string='contracting plan year', tracking=True, readonly = True, compute='_compute_totals_year')
     sum_contracting_year_6_6 = fields.Monetary(string='contracting plan year 6+6', tracking=True, readonly = True, compute='_compute_totals_year')
+    sum_contracting_year_fact = fields.Monetary(string='contracting fact year', tracking=True, readonly=True,
+                                               compute='_compute_totals_year')
     sum_cash_year = fields.Monetary(string='cash plan year', tracking=True, readonly = True, compute='_compute_totals_year')
     sum_cash_year_6_6 = fields.Monetary(string='cash plan year 6+6', tracking=True, readonly=True, compute='_compute_totals_year')
+    sum_cash_year_fact = fields.Monetary(string='cash fact year', tracking=True, readonly=True,
+                                        compute='_compute_totals_year')
     sum_acceptance_year = fields.Monetary(string='acceptance plan year', tracking=True, readonly = True, compute='_compute_totals_year')
     sum_acceptance_year_6_6 = fields.Monetary(string='acceptance plan year 6+6', tracking=True, readonly=True, compute='_compute_totals_year')
+    sum_acceptance_year_fact = fields.Monetary(string='acceptance fact year', tracking=True, readonly=True,
+                                              compute='_compute_totals_year')
     sum_margin_income_year = fields.Monetary(string='margin plan year', tracking=True, readonly = True, compute='_compute_totals_year')
     sum_margin_income_year_6_6 = fields.Monetary(string='margin plan year 6+6', tracking=True, readonly=True, compute='_compute_totals_year')
+    sum_margin_income_year_fact = fields.Monetary(string='margin fact year', tracking=True, readonly=True,
+                                                 compute='_compute_totals_year')
     sum_margin3_income_year = fields.Monetary(string='margin3 plan year', tracking=True, readonly = True, compute='_compute_totals_year')
     sum_margin3_income_year_6_6 = fields.Monetary(string='margin3 plan year 6+6', tracking=True, readonly=True, compute='_compute_totals_year')
+    sum_margin3_income_year_fact = fields.Monetary(string='margin3 fact year', tracking=True, readonly=True,
+                                                  compute='_compute_totals_year')
     sum_ebit_year = fields.Monetary(string='ebit plan year', tracking=True, readonly = True, compute='_compute_totals_year')
     sum_ebit_year_6_6 = fields.Monetary(string='ebit plan year 6+6', tracking=True, readonly=True, compute='_compute_totals_year')
+    sum_ebit_year_fact = fields.Monetary(string='ebit fact year', tracking=True, readonly=True,
+                                        compute='_compute_totals_year')
     sum_net_profit_year = fields.Monetary(string='net_profit plan year', tracking=True, readonly = True, compute='_compute_totals_year')
     sum_net_profit_year_6_6 = fields.Monetary(string='net_profit plan year 6+6', tracking=True, readonly=True, compute='_compute_totals_year')
+    sum_net_profit_year_fact = fields.Monetary(string='net_profit fact year', tracking=True, readonly=True,
+                                              compute='_compute_totals_year')
 
     @api.depends('budget_plan_supervisor_spec_ids')
     def _compute_totals_year(self):
         self.sum_contracting_year = 0
         self.sum_contracting_year_6_6 = 0
+        self.sum_contracting_year_fact = 0
         self.sum_cash_year = 0
         self.sum_cash_year_6_6 = 0
+        self.sum_cash_year_fact = 0
         self.sum_acceptance_year = 0
         self.sum_acceptance_year_6_6 = 0
+        self.sum_acceptance_year_fact = 0
         self.sum_margin_income_year = 0
         self.sum_margin_income_year_6_6 = 0
+        self.sum_margin_income_year_fact = 0
         self.sum_margin3_income_year = 0
         self.sum_margin3_income_year_6_6 = 0
+        self.sum_margin3_income_year_fact = 0
         self.sum_ebit_year = 0
         self.sum_ebit_year_6_6 = 0
+        self.sum_ebit_year_fact = 0
         self.sum_net_profit_year = 0
-        self.sum_net_profit_year_6_6 =0
+        self.sum_net_profit_year_6_6 = 0
+        self.sum_net_profit_year_fact = 0
 
         for row in self.budget_plan_supervisor_spec_ids:
             print('row.type_row = ', row.type_row)
@@ -80,24 +101,31 @@ class budget_plan_supervisor(models.Model):
             if row.type_row == 'contracting':
                 self.sum_contracting_year = row.year_plan
                 self.sum_contracting_year_6_6 = row.year_plan_6_6
+                self.sum_contracting_year_fact = row.year_fact
             if row.type_row == 'cash':
                 self.sum_cash_year = row.year_plan
                 self.sum_cash_year_6_6 = row.year_plan_6_6
+                self.sum_cash_year_fact = row.year_fact
             if row.type_row == 'acceptance':
                 self.sum_acceptance_year = row.year_plan
                 self.sum_acceptance_year_6_6 = row.year_plan_6_6
+                self.sum_acceptance_year_fact = row.year_fact
             if row.type_row == 'margin_income':
                 self.sum_margin_income_year = row.year_plan
                 self.sum_margin_income_year_6_6 = row.year_plan_6_6
+                self.sum_margin_income_year_fact = row.year_fact
             if row.type_row == 'margin3_income':
                 self.sum_margin3_income_year = row.year_plan
                 self.sum_margin3_income_year_6_6 = row.year_plan_6_6
+                self.sum_margin3_income_year_fact = row.year_fact
             if row.type_row == 'ebit':
                 self.sum_ebit_year = row.year_plan
                 self.sum_ebit_year_6_6 = row.year_plan_6_6
+                self.sum_ebit_year_fact = row.year_fact
             if row.type_row == 'net_profit':
                 self.sum_net_profit_year = row.year_plan
                 self.sum_net_profit_year_6_6 = row.year_plan_6_6
+                self.sum_net_profit_year_fact = row.year_fact
 
     @api.depends('supervisor_id', 'year')
     def _get_name_to_show(self):
