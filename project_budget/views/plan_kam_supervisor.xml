@@ -91,21 +91,19 @@
                                 mode="tree" >
                             <tree editable="bottom"  delete="0" create="0" >
                                 <field name="type_row" style="background-color:green;" nolabel="1"/>
-                                <field string="Q1 plan" name="q1_plan" decoration-muted="q1_plan==0"/>
-                                <field string="Q1 fact" name="q1_fact" decoration-success="1"/>
-<!--                                        <field string="Q1 plan 6+6" name="q1_plan_6_6" decoration-muted="q1_plan_6_6==0"/>-->
-                                <field string="Q2 plan" name="q2_plan" decoration-muted="q2_plan==0"/>
-                                <field string="Q2 fact" name="q2_fact" decoration-success="1"/>
-<!--                                        <field string="Q2 plan 6+6" name="q2_plan_6_6" decoration-muted="q2_plan_6_6==0"/>-->
-                                <field string="Q3 plan" name="q3_plan" decoration-muted="q3_plan==0"/>
-                                <field string="Q3 plan 6+6" name="q3_plan_6_6" decoration-muted="q3_plan_6_6==0"/>
-                                <field string="Q3 fact" name="q3_fact" decoration-success="1"/>
-                                <field string="Q4 plan" name="q4_plan" decoration-muted="q4_plan==0"/>
-                                <field string="Q4 plan 6+6" name="q4_plan_6_6" decoration-muted="q4_plan==0"/>
-                                <field string="Q4 fact" name="q4_fact" decoration-success="1"/>
-                                <field string="Year plan" name="year_plan" decoration-bf="1" decoration-muted="year_plan==0"/>
-                                <field string="Year plan 6+6" name="year_plan_6_6" decoration-bf="1" />
-                                <field string="Year fact" name="year_fact" decoration-bf="1" decoration-success="1"/>
+                                <field name="q1_plan" decoration-muted="q1_plan==0"/>
+                                <field name="q1_fact" decoration-success="1"/>
+                                <field name="q2_plan" decoration-muted="q2_plan==0"/>
+                                <field name="q2_fact" decoration-success="1"/>
+                                <field name="q3_plan" decoration-muted="q3_plan==0"/>
+                                <field name="q3_plan_6_6" decoration-muted="q3_plan_6_6==0"/>
+                                <field name="q3_fact" decoration-success="1"/>
+                                <field name="q4_plan" decoration-muted="q4_plan==0"/>
+                                <field name="q4_plan_6_6" decoration-muted="q4_plan_6_6==0"/>
+                                <field name="q4_fact" decoration-success="1"/>
+                                <field name="year_plan" decoration-bf="1" decoration-muted="year_plan==0"/>
+                                <field name="year_plan_6_6" decoration-bf="1" />
+                                <field name="year_fact" decoration-bf="1" decoration-success="1"/>
                             </tree>
                         </field>
                         </sheet>
@@ -221,21 +219,19 @@
                                         mode="tree" >
                                     <tree editable="bottom"  delete="0" create="0" >
                                         <field name="type_row" style="background-color:green;" nolabel="1"/>
-                                        <field string="Q1 plan" name="q1_plan" decoration-muted="q1_plan==0"/>
-                                        <field string="Q1 fact" name="q1_fact" decoration-success="1"/>
-<!--                                        <field string="Q1 plan 6+6" name="q1_plan_6_6" decoration-muted="q1_plan_6_6==0"/>-->
-                                        <field string="Q2 plan" name="q2_plan" decoration-muted="q2_plan==0"/>
-                                        <field string="Q2 fact" name="q2_fact" decoration-success="1"/>
-<!--                                        <field string="Q2 plan 6+6" name="q2_plan_6_6" decoration-muted="q2_plan_6_6==0"/>-->
-                                        <field string="Q3 plan" name="q3_plan" decoration-muted="q3_plan==0"/>
-                                        <field string="Q3 plan 6+6" name="q3_plan_6_6" decoration-muted="q3_plan_6_6==0"/>
-                                        <field string="Q3 fact" name="q3_fact" decoration-success="1"/>
-                                        <field string="Q4 plan" name="q4_plan" decoration-muted="q4_plan==0"/>
-                                        <field string="Q4 plan 6+6" name="q4_plan_6_6" decoration-muted="q4_plan==0"/>
-                                        <field string="Q4 fact" name="q4_fact" decoration-success="1"/>
-                                        <field string="Year plan" name="year_plan" decoration-bf="1" decoration-muted="year_plan==0"/>
-                                        <field string="Year plan 6+6" name="year_plan_6_6" decoration-bf="1" />
-                                        <field string="Year fact" name="year_fact" decoration-bf="1" decoration-success="1"/>
+                                        <field name="q1_plan" decoration-muted="q1_plan==0"/>
+                                        <field name="q1_fact" decoration-success="1"/>
+                                        <field name="q2_plan" decoration-muted="q2_plan==0"/>
+                                        <field name="q2_fact" decoration-success="1"/>
+                                        <field name="q3_plan" decoration-muted="q3_plan==0"/>
+                                        <field name="q3_plan_6_6" decoration-muted="q3_plan_6_6==0"/>
+                                        <field name="q3_fact" decoration-success="1"/>
+                                        <field name="q4_plan" decoration-muted="q4_plan==0"/>
+                                        <field name="q4_plan_6_6" decoration-muted="q4_plan_6_6==0"/>
+                                        <field name="q4_fact" decoration-success="1"/>
+                                        <field name="year_plan" decoration-bf="1" decoration-muted="year_plan==0"/>
+                                        <field name="year_plan_6_6" decoration-bf="1" />
+                                        <field name="year_fact" decoration-bf="1" decoration-success="1"/>
                                     </tree>
                                 </field>
 
