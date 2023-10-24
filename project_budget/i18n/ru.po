@@ -2288,7 +2288,7 @@ msgstr "ПДС 6+6"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__child_project_ids
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "child projects"
-msgstr "Проекты потомки"
+msgstr "Дочерние проекты"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_comercial_budget_spec_new
