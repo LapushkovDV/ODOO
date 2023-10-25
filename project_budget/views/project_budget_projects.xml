@@ -301,8 +301,8 @@
                                     </group>
 
                                 </h4>
-                                <group col="3">
-                                    <group attrs="{'invisible': [('is_parent_project', '=', True)]}">
+                                <group col="3" attrs="{'invisible': [('is_parent_project', '=', True)]}">
+                                    <group >
                                         <field name="revenue_from_the_sale_of_works"
                                                attrs="{'readonly': ['|','|','|',('is_parent_project','=',True),('project_have_steps','=',True),('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]
                                                ,'invisible': [('is_revenue_from_the_sale_of_works', '=', False),('project_have_steps', '=', False)]}"/>
