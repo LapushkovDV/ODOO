@@ -222,7 +222,7 @@ class projects(models.Model):
         comodel_name='project_budget.projects',
         inverse_name='parent_project_id',
         string="child projects", auto_join=True)
-    parent_child_rate = fields.Float(string="parent child rate", default=0, copy=True, tracking=True)
+    margin_rate_for_parent = fields.Float(string="margin rate for parent project", default=0, copy=True, tracking=True)
 
     user_is_admin = fields.Boolean(string="user is admin", compute='_check_user_is_admin')
 
@@ -360,11 +360,14 @@ class projects(models.Model):
                  ,"revenue_from_the_sale_of_works", 'revenue_from_the_sale_of_goods', 'cost_of_goods', 'own_works_fot',
                  'third_party_works', "awards_on_results_project", 'transportation_expenses', 'travel_expenses', 'representation_expenses',
                  "warranty_service_costs", 'rko_other', 'other_expenses','vat_attribute_id','legal_entity_signing_id','project_have_steps',
-                 'parent_project_id','child_project_ids','parent_child_rate')
+                 'parent_project_id','child_project_ids','margin_rate_for_parent')
     def _compute_spec_totals(self):
         # TODO уменьшать маржу проектов-потомков на нужный процент
         for budget_spec in self:
-            if budget_spec.project_have_steps == False and budget_spec.is_parent_project == False:
+            if budget_spec.project_have_steps == False:
+                if budget_spec.is_parent_project == True:
+                    budget_spec.revenue_from_the_sale_of_works = 0
+                    budget_spec.revenue_from_the_sale_of_goods = 0
                 budget_spec.total_amount_of_revenue = budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods
 
                 budget_spec.cost_price = budget_spec.cost_of_goods + budget_spec.own_works_fot+ budget_spec.third_party_works +budget_spec.awards_on_results_project
@@ -375,6 +378,9 @@ class projects(models.Model):
                 budget_spec.cost_price = budget_spec.cost_price + budget_spec.taxes_fot_premiums
 
                 budget_spec.margin_income = budget_spec.total_amount_of_revenue - budget_spec.cost_price
+                for child_project in budget_spec.child_project_ids:
+                    budget_spec.margin_income += child_project.margin_income * child_project.margin_rate_for_parent
+
                 budget_spec.total_amount_of_revenue_with_vat = (budget_spec.revenue_from_the_sale_of_works + budget_spec.revenue_from_the_sale_of_goods)*(1+budget_spec.vat_attribute_id.percent/100)
             elif budget_spec.project_have_steps == True:
                 budget_spec.total_amount_of_revenue = 0
@@ -413,27 +419,6 @@ class projects(models.Model):
                     budget_spec.warranty_service_costs += step.warranty_service_costs
                     budget_spec.rko_other += step.rko_other
                     budget_spec.other_expenses += step.other_expenses
-            else:
-                budget_spec.total_amount_of_revenue = 0
-                budget_spec.cost_price = 0
-                budget_spec.margin_income = 0
-                for child_project in budget_spec.child_project_ids:
-                    budget_spec.margin_income += child_project.margin_income * budget_spec.parent_child_rate
-                budget_spec.total_amount_of_revenue_with_vat = 0
-                budget_spec.taxes_fot_premiums = 0
-                budget_spec.profitability = 0
-                budget_spec.revenue_from_the_sale_of_works = 0
-                budget_spec.revenue_from_the_sale_of_goods = 0
-                budget_spec.cost_of_goods = 0
-                budget_spec.own_works_fot = 0
-                budget_spec.third_party_works = 0
-                budget_spec.awards_on_results_project = 0
-                budget_spec.transportation_expenses = 0
-                budget_spec.travel_expenses = 0
-                budget_spec.representation_expenses = 0
-                budget_spec.warranty_service_costs = 0
-                budget_spec.rko_other = 0
-                budget_spec.other_expenses = 0
 
             if budget_spec.total_amount_of_revenue == 0:
                 budget_spec.profitability = 0
@@ -475,7 +460,17 @@ class projects(models.Model):
                 fieldquarter.end_sale_project_quarter = 'NA'
 
 
-
+    def action_open_project(self):
+        return {
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+            'res_model': 'project_budget.projects',
+            'res_id': self.id,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'flags': {'initial_mode': 'view'}
+        }
 
     def user_is_supervisor(self,supervisor_id):
         supervisor_access = self.env['project_budget.project_supervisor_access'].search([('user_id.id', '=', self.env.user.id)

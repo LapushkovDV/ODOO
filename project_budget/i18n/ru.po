@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-22 16:18+0000\n"
-"PO-Revision-Date: 2023-10-22 16:18+0000\n"
+"POT-Creation-Date: 2023-10-25 10:07+0000\n"
+"PO-Revision-Date: 2023-10-25 10:07+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -728,6 +728,11 @@ msgstr "Удалить"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__descr
 msgid "Description"
 msgstr "Описание"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+msgid "Direct revenue is not provided in the parent project"
+msgstr "В материнском проекте не предусмотрена прямая выручка. Маржа берется как % от дочерних проектов"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__display_name
@@ -1745,66 +1750,6 @@ msgid "Projects:"
 msgstr "Проекты:"
 
 #. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q1 fact"
-msgstr "1кв факт"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q1 plan"
-msgstr "1кв план"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q2 fact"
-msgstr "2кв факт"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q2 plan"
-msgstr "2кв план"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q3 fact"
-msgstr "3кв факт"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q3 plan"
-msgstr "3кв план"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q3 plan 6+6"
-msgstr "3кв план 6+6"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q4 fact"
-msgstr "4кв факт"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q4 plan"
-msgstr "4кв план"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Q4 plan 6+6"
-msgstr "Q4 plan 6+6"
-
-#. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__raw_data
 msgid "Raw Data"
 msgstr ""
@@ -2122,6 +2067,11 @@ msgid "Vgo"
 msgstr "ВГО"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+msgid "View project"
+msgstr "Просмотр проекта"
+
+#. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_project_type_form
 msgid "Visible fields in project"
 msgstr "Видимость полей в проекте (если есть этапы, то все поля видимые)"
@@ -2143,27 +2093,9 @@ msgid "Working"
 msgstr "В работе"
 
 #. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Year fact"
-msgstr "Год факт"
-
-#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__year
 msgid "Year of the report"
 msgstr "Год отчета"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Year plan"
-msgstr "Год план"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_kam_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_budget_plan_supervisor_form
-msgid "Year plan 6+6"
-msgstr "Год план 6+6"
 
 #. module: project_budget
 #. odoo-python
@@ -3171,6 +3103,12 @@ msgid "margin plan year 6+6"
 msgstr "Маржа 6+6"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__margin_rate_for_parent
+msgid "margin rate for parent project"
+msgstr "% от маржи "
+"в материнскую сделку"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_margin3_income_year_fact
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__sum_margin3_income_year_fact
 msgid "margin3 fact year"
@@ -3354,11 +3292,6 @@ msgstr "Прочие расходы"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__own_works_fot
 msgid "own_works_fot"
 msgstr "Работы собственные (ФОТ)"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__parent_child_rate
-msgid "parent child rate"
-msgstr "Процент маржи:"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__parent_project_id
