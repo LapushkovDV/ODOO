@@ -3105,8 +3105,7 @@ msgstr "Маржа 6+6"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__margin_rate_for_parent
 msgid "margin rate for parent project"
-msgstr "% от маржи "
-"в материнскую сделку"
+msgstr "% от маржи в материнскую сделку"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__sum_margin3_income_year_fact
