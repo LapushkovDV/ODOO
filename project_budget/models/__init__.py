@@ -7,6 +7,7 @@ from . import planned_cash_flow
 from . import project_steps
 from . import projects
 from . import project_budget_catalogs
+from . import project_budget_scheduled_report
 from . import estimated_probability
 from . import users_budgets_access
 from . import distribution_acceptance
