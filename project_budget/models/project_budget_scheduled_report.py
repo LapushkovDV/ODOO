@@ -23,7 +23,9 @@ class ScheduledReport(models.Model):
         result, report_format = self.env['ir.actions.report'].with_context(
             allowed_company_ids=[self.company_id.id])._render(self.report_id.report_name, res_ids=[], data=data)
 
-        report_name = self.report_id.print_report_name if self.report_id.print_report_name else self.report_id.name
+        report_name = self.with_context(
+            lang=self.env.user.lang).report_id.print_report_name if self.report_id.print_report_name else self.with_context(
+            lang=self.env.user.lang).report_id.name
         ext = '.' + report_format
         if not report_name.endswith(ext):
             report_name += ext
@@ -40,11 +42,12 @@ class ScheduledReport(models.Model):
         attachment = self.env['ir.attachment'].sudo().create(ir_values)
 
         vals = {
-            'subject': _('Report %s', report_name),
-            'body_html': _("Dear %s,<br/><br/>Report '%s' was generated.", ', '.join(self.user_ids.mapped('name')),
+            'subject': report_name,
+            'body_html': _("Dear %s,<br/><br/>'%s' was generated.", ', '.join(self.user_ids.mapped('name')),
                            report_name),
             'email_to': ', '.join(self.user_ids.mapped('email')),
             'auto_delete': False,
+            'reply_to': False,
             'attachment_ids': [(4, attachment.id)]
         }
 
