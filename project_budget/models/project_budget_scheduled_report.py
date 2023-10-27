@@ -42,9 +42,9 @@ class ScheduledReport(models.Model):
         attachment = self.env['ir.attachment'].sudo().create(ir_values)
 
         vals = {
-            'subject': report_name,
-            'body_html': _("Dear %s,<br/><br/>'%s' was generated.", ', '.join(self.user_ids.mapped('name')),
-                           report_name),
+            'subject': _("%s for company '%s'", report_name, self.company_id.name),
+            'body_html': _("Dear %s,<br/><br/>'%s' for company '%s' was generated.",
+                           ', '.join(self.user_ids.mapped('name')), report_name, self.company_id.name),
             'email_to': ', '.join(self.user_ids.mapped('email')),
             'auto_delete': False,
             'reply_to': False,

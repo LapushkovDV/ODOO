@@ -736,8 +736,8 @@ msgstr "Описание"
 #. odoo-python
 #: code:addons/project_budget/models/project_budget_scheduled_report.py:0
 #, python-format
-msgid "Dear %s,<br/><br/>'%s' was generated."
-msgstr "Уважаемый(-ые) %s,<br/><br/>Сформирован '%s'."
+msgid "Dear %s,<br/><br/>'%s' for company '%s' was generated."
+msgstr "Уважаемый(-ые) %s,<br/><br/>Сформирован '%s' по компании '%s'."
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
@@ -1791,6 +1791,13 @@ msgstr "Вернуть в работу"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__report_id
 msgid "Report"
 msgstr "Отчет"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_scheduled_report.py:0
+#, python-format
+msgid "%s for company '%s'"
+msgstr "%s по компании '%s'"
 
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.menu_project_budget_report
