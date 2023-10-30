@@ -22,6 +22,7 @@ class Task(models.Model):
     # TODO: Принять решение об архитектуре предметов согласования
     def _compute_parent_obj(self):
         for task in self:
+            parent_ref = False
             if task.parent_ref_type and task.parent_ref_type.startswith('document_flow.') and task.parent_ref:
                 parent_ref = self.env['document_flow.process.parent_object'].search([
                     ('process_id', '=', task.parent_ref.id)
@@ -31,7 +32,7 @@ class Task(models.Model):
                         ('process_id', '=', task.parent_ref._get_mainprocess_id_by_process_id().get(task.parent_ref.id, None))
                     ]).parent_ref
                 task.parent_obj_ref = parent_ref
-            task.parent_obj_ref = False if not parent_ref else parent_ref
+            task.parent_obj_ref = parent_ref
 
     @api.model
     def check_user_group(self):
