@@ -147,7 +147,6 @@ class Process(models.Model):
     description = fields.Html(string='Description', copy=True)
     type = fields.Selection(PROCESS_TYPES, required=True, default='review', index=True, string='Type')
     state = fields.Selection(PROCESS_STATES, required=True, default='on_registration', string='State')
-    # company_ids = fields.Many2many('res.company', string='Companies', compute='_compute_company_ids')
     company_ids = fields.Many2many('res.company', string='Companies', required=True,
                                    default=lambda self: self.env.company)
     template_id = fields.Many2one('document_flow.process.template', string='Template')
@@ -177,6 +176,7 @@ class Process(models.Model):
     start_condition = fields.Text(string='Start Condition',
                                   help='Conditions that will be checked before process will be started.')
 
+    action_id = fields.Many2one('document_flow.action', string='Action')
     parent_obj_ref = fields.Reference(string='Parent Object', selection='_selection_parent_model',
                                       compute='_compute_parent_obj', readonly=True)
     task_history_ids = fields.One2many('document_flow.task.history', string='Task History',
@@ -201,34 +201,13 @@ class Process(models.Model):
         res = super(Process, self).create(vals_list)
         return res
 
-    def write(self, vals):
-        res = super(Process, self).write(vals)
-        return res
-
-    def unlink(self):
-        self.task_ids.unlink()
-        return super(Process, self).unlink()
-
-    # @api.depends('executor_ids.executor_ref')
-    # def _compute_company_ids(self):
-    #     for process in self:
-    #         print(process.code)
-    #         c_ids = []
-    #         if process.type == 'complex':
-    #             c_ids = process.child_ids.company_ids.ids
-    #         else:
-    #             for executor in process.executor_ids:
-    #                 c_ids.append(executor.executor_ref.company_id.id)
-    #         process.company_ids = [Command.set(list(set(c_ids)))] if any(c_ids) else False
-    #         print(process.company_ids)
-
     def _compute_parent_obj(self):
         for process in self:
             process.parent_obj_ref = self.env['document_flow.processing'].search([
                 ('process_id', '=', process._get_mainprocess_id_by_process_id().get(process.id, None))
             ], limit=1).parent_ref
 
-    @api.onchange('sequence')
+    @api.depends('sequence')
     def _compute_sequence(self):
         for process in self:
             process.visible_sequence = process.sequence
@@ -249,6 +228,11 @@ class Process(models.Model):
             else:
                 process.controller_ref = False
 
+    @api.depends('action_id.description')
+    def _compute_description(self):
+        for process in self:
+            process.description = process.action_id.description
+
     def _compute_task_ids(self):
         for process in self:
             process.task_ids = self.env['task.task'].with_context(active_test=False).search([
@@ -265,6 +249,14 @@ class Process(models.Model):
             process.task_history_ids = self.env['document_flow.task.history'].search([
                 ('process_id', 'in', process._get_subprocess_ids_by_process_id().get(process.id, []) if process.type == 'complex' else [process.id])
             ]).ids or False
+
+    def write(self, vals):
+        res = super(Process, self).write(vals)
+        return res
+
+    def unlink(self):
+        self.task_ids.unlink()
+        return super(Process, self).unlink()
 
     def _put_task_to_history(self, task):
         return self.env['document_flow.task.history'].create({
