@@ -15,8 +15,8 @@
                                 </group>
                             </group>
                         </h4>
-                        <field name="step_id"/>
-                        <field name="current_amount_spec_type"/>
+                        <field name="step_id"  readonly="1" />
+                        <field name="current_amount_spec_type"  readonly="1" />
                         <field name="amount_spec_ids" widget="section_and_note_one2many"
                                mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
                         >
