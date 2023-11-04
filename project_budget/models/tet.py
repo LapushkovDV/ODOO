@@ -1,5 +1,3 @@
-nums = 'red blue green'
-print(nums.split('e'))
-
-
-print(nums)
+a = 7
+b = 9+a
+print("a=F(",b,")")
