@@ -591,14 +591,7 @@ class projects(models.Model):
                  'parent_project_id','child_project_ids','margin_rate_for_parent','amount_spec_ids')
     def _compute_spec_totals(self):
         # TODO уменьшать маржу проектов-потомков на нужный процент
-        project = None
-        print('_compute_spec_totals project = ',project)
-        if project == None:
-            object = self
-        else: object = project
-        print('_compute_spec_totals object = ', object)
-        print('_compute_spec_totals object.id = ', object.id)
-        for budget_spec in object:
+        for budget_spec in self:
             self._culculate_all_sums(budget_spec)
 
     @api.depends('end_presale_project_month','end_sale_project_month')
