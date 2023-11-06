@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-04 14:29+0000\n"
-"PO-Revision-Date: 2023-11-04 14:29+0000\n"
+"POT-Creation-Date: 2023-11-06 14:29+0000\n"
+"PO-Revision-Date: 2023-11-06 14:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -799,6 +799,13 @@ msgstr "Удалить"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__descr
 msgid "Description"
 msgstr "Описание"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_scheduled_report.py:0
+#, python-format
+msgid "Dear %s,<br/><br/>Report '%s' was generated."
+msgstr "Уважаемый(-ые) %s,<br/><br/>Сформирован отчет '%s'."
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
@@ -1894,6 +1901,11 @@ msgid "Projects Report svod"
 msgstr "Свод"
 
 #. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.action_view_project_budget_scheduled_reports
+msgid "No scheduled reports found. Let's create one!"
+msgstr "Автоматические отчеты не найдены. Давайте создадим первый!"
+
+#. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_spec_all
 msgid "Projects all budgets"
 msgstr "Сделки по всем бюджетам"
@@ -1946,6 +1958,18 @@ msgstr "Вернуть в работу"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__report_id
 msgid "Report"
 msgstr "Отчет"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_scheduled_report.py:0
+#, python-format
+msgid "Report %s"
+msgstr "Отчет %s"
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.menu_project_budget_report
+msgid "Reporting"
+msgstr "Отчетность"
 
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_reports
@@ -2021,11 +2045,6 @@ msgstr "Правило для руководителя проекта"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_form
 msgid "Save"
 msgstr "Сохранить"
-
-#. module: project_budget
-#: model:ir.model,name:project_budget.model_project_budget_scheduled_report
-msgid "Scheduled Report"
-msgstr "Автоматический отчет"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_customer_organization_search
@@ -2173,9 +2192,28 @@ msgid "Tender report"
 msgstr "Реестр тендеров"
 
 #. module: project_budget
+#: model:ir.actions.server,name:project_budget.ir_cron_project_budget_scheduler_action_ir_actions_server
+#: model:ir.cron,cron_name:project_budget.ir_cron_project_budget_scheduler_action
+msgid "Project Budget: Reports Email"
+msgstr "Управление проектами: Рассылка отчетов по email"
+
+#. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_tender_report_wizard
 msgid "Tender report Wizard"
 msgstr "Реестр тендеров"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_project_budget_scheduled_report
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_scheduled_report_view_form
+msgid "Scheduled Report"
+msgstr "Автоматический отчет"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.action_view_project_budget_scheduled_reports
+#: model:ir.ui.menu,name:project_budget.menu_action_scheduled_report_form
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_scheduled_report_view_tree
+msgid "Scheduled Reports"
+msgstr "Автоматические отчеты"
 
 #. module: project_budget
 #: model:res.groups,name:project_budget.project_budget_tenders_user
