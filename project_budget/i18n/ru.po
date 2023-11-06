@@ -875,7 +875,7 @@ msgstr "Исполнен, 100(done)"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_amount_spec
 #: model_terms:ir.ui.view,arch_db:project_budget.show_step_amount_spec
 msgid "Edit summ specification:"
-msgstr "Редактирование расшифровки суммы"
+msgstr "Просмотр/редактирование расшифровки суммы"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__end_presale_project_quarter
