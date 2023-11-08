@@ -6,8 +6,8 @@
             <field name="model_id" ref="task.model_task_task"/>
             <field name="subject">Task {{ object.code }} {{ object.display_name }} assigned to you</field>
             <field name="description">Template to automate email when tasks assigned to users</field>
-            <field name="email_to">{{object.user_id.email}}</field>
-            <field name="lang">{{ object.user_id.lang }}</field>
+            <field name="email_to">{{ ctx['user_id'].email }}</field>
+            <field name="lang">{{ ctx['user_id'].lang }}</field>
             <field name="auto_delete" eval="True"/>
             <field name="body_html" type="html">
                 <table cols="1" cellpadding="12"
@@ -26,7 +26,7 @@
                 </table>
                 <div style="margin: 0px; padding: 0px; font-size: 13px;">
                     <br/>
-                    Dear <t t-out="object.user_id.name or ''">user</t>,
+                    Dear <t t-out="ctx['user_id'].name or ''">user</t>,
                     <br/>
                     <br/>
                     <p style="margin:0px 0 12px 0;box-sizing:border-box;">
@@ -53,7 +53,7 @@
             <field name="model_id" ref="task.model_task_task"/>
             <field name="subject">Stage of task {{ object.code }} {{ object.display_name }} was changed</field>
             <field name="description">Set this template on a stage to automate email when tasks reach stages</field>
-            <field name="email_to">{{object.author_id.email}}</field>
+            <field name="email_to">{{ object.author_id.email }}</field>
             <field name="lang">{{ object.author_id.lang }}</field>
             <field name="auto_delete" eval="True"/>
             <field name="body_html" type="html">

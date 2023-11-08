@@ -288,11 +288,11 @@ class Task(models.Model):
         if not template:
             return
         for user_id in user_ids.filtered(lambda u: u.email):
-            email_context = {
-                'email_to': user_id.email
+            render_ctx = {
+                'user_id': user_id
             }
-            template.sudo().send_mail(self.id, email_values=email_context,
-                                      email_layout_xmlid='mail.mail_notification_layout', force_send=True)
+            template.sudo().with_context(render_ctx).send_mail(self.id, email_layout_xmlid='mail.mail_notification_layout',
+                                                               force_send=True)
 
     def _get_assigned_emails(self):
         self.ensure_one()
