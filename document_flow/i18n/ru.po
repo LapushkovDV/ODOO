@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-09 10:59+0000\n"
-"PO-Revision-Date: 2023-10-09 10:59+0000\n"
+"POT-Creation-Date: 2023-11-08 13:53+0000\n"
+"PO-Revision-Date: 2023-11-08 13:53+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,11 @@ msgid "'Acknowledgement form \"%s\"' % object.name"
 msgstr ""
 "'Лист ознакомления \"%s от %s\"' % (object.name, "
 "object.date_start.strftime('%d.%m.%Y'))"
+
+#. module: document_flow
+#: model:ir.actions.report,print_report_name:document_flow.action_report_document_approval_form
+msgid "'Approval form \"%s\"' % object.name"
+msgstr "'Лист согласования \"%s\"' % object.name"
 
 #. module: document_flow
 #: model:ir.actions.report,print_report_name:document_flow.action_report_event_decisions_list
@@ -58,6 +63,8 @@ msgstr "Лист ознакомления (docx)"
 #: code:addons/document_flow/models/document_flow_process.py:0
 #: model:ir.model,name:document_flow.model_document_flow_action
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action_executor__action_id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__action_id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_process__action_id
 #: model_terms:ir.ui.view,arch_db:document_flow.action_view_form
 #, python-format
 msgid "Action"
@@ -187,12 +194,22 @@ msgid "Agree on a protocol of event"
 msgstr "Согласование протокола мероприятия"
 
 #. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/report/approval_form.py:0
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__agreed_id
+#, python-format
+msgid "Agreed"
+msgstr "Согласовант"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/report/approval_form.py:0
 #: model:task.stage,name:document_flow.agreement_task_stage_agreed
 #: model:task.stage.route,name:document_flow.agreement_task_stage_route_in_progress_agreed
 #: model:task.stage.route,name:document_flow.agreement_task_stage_route_to_do_agreed
+#, python-format
 msgid "Agreed"
-msgstr "Согласовант"
+msgstr "Согласовано"
 
 #. module: document_flow
 #. odoo-python
@@ -230,6 +247,18 @@ msgstr "Приложение..."
 #: model_terms:ir.ui.view,arch_db:document_flow.event_view_form
 msgid "Annexes"
 msgstr "Приложения"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/report/approval_form.py:0
+#, python-format
+msgid "Approval form"
+msgstr "Лист согласования"
+
+#. module: document_flow
+#: model:ir.actions.report,name:document_flow.action_report_document_approval_form
+msgid "Approval form (docx)"
+msgstr "Лист согласования (docx)"
 
 #. module: document_flow
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event__state__approved
@@ -297,6 +326,7 @@ msgstr "Код"
 #. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/report/acknowledgement_form.py:0
+#: code:addons/document_flow/report/approval_form.py:0
 #: code:addons/document_flow/report/decisions_list.py:0
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__comment
 #, python-format
@@ -437,11 +467,6 @@ msgid "Currency"
 msgstr "Валюта"
 
 #. module: document_flow
-#: model:ir.model.fields,field_description:document_flow.field_document_flow_document__customer_id
-msgid "Customer"
-msgstr "Заказчик"
-
-#. module: document_flow
 #: model:ir.ui.menu,name:document_flow.document_flow_menu_dashboard
 msgid "Dashboard"
 msgstr "Дашборды"
@@ -449,6 +474,7 @@ msgstr "Дашборды"
 #. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/report/acknowledgement_form.py:0
+#: code:addons/document_flow/report/approval_form.py:0
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__date
 #, python-format
 msgid "Date"
@@ -584,6 +610,13 @@ msgstr "Наименование"
 #, python-format
 msgid "Document"
 msgstr "Документ"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/report/approval_form.py:0
+#, python-format
+msgid "Document \"%s\" from %s"
+msgstr "Документ \"%s\" от %s"
 
 #. module: document_flow
 #: model:ir.actions.client,name:document_flow.action_document_flow_dashboard
@@ -831,6 +864,7 @@ msgstr "С"
 #. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/report/acknowledgement_form.py:0
+#: code:addons/document_flow/report/approval_form.py:0
 #, python-format
 msgid "Full name"
 msgstr "ФИО"
@@ -838,7 +872,7 @@ msgstr "ФИО"
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_task_task__role_executor_id
 msgid "Group"
-msgstr "Исполнитель"
+msgstr "Группа исполнителей"
 
 #. module: document_flow
 #. odoo-javascript
@@ -1011,6 +1045,11 @@ msgid "Main Attachment"
 msgstr "Основное вложение"
 
 #. module: document_flow
+#: model:res.groups,name:document_flow.group_document_flow_worker_with_document
+msgid "Manage Documents"
+msgstr "Работа с документами"
+
+#. module: document_flow
 #: model:ir.model,name:document_flow.model_document_flow_management_committee
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__management_committee_id
 #: model_terms:ir.ui.view,arch_db:document_flow.management_committee_view_form
@@ -1053,6 +1092,11 @@ msgid "Mixed"
 msgstr "Смешанно"
 
 #. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__model_id
+msgid "Model"
+msgstr "Модель"
+
+#. module: document_flow
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__repeat_interval__month
 msgid "Months"
 msgstr "Ежемесячно"
@@ -1084,8 +1128,8 @@ msgid "Name"
 msgstr "Содержание"
 
 #. module: document_flow
-#. odoo-javascript
 #. odoo-python
+#. odoo-javascript
 #: code:addons/document_flow/models/document_flow_document.py:0
 #: code:addons/document_flow/models/document_flow_document.py:0
 #: code:addons/document_flow/models/document_flow_document.py:0
@@ -1101,6 +1145,12 @@ msgstr "Содержание"
 #, python-format
 msgid "New"
 msgstr "Новые"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document__activity_calendar_event_id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_event__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__activity_date_deadline
@@ -1161,9 +1211,12 @@ msgid "No tasks found. Let's create one!"
 msgstr "Задачи не найдены. Давайте создадим"
 
 #. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/report/approval_form.py:0
 #: model:task.stage,name:document_flow.agreement_task_stage_not_agreed
 #: model:task.stage.route,name:document_flow.agreement_task_stage_route_in_progress_not_agreed
 #: model:task.stage.route,name:document_flow.agreement_task_stage_route_to_do_not_agreed
+#, python-format
 msgid "Not agreed"
 msgstr "Не согласовано"
 
@@ -1288,6 +1341,11 @@ msgstr "Процесс-родитель"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__parent_ref_type
 msgid "Parent Type"
 msgstr "Тип родителя"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document__partner_id
+msgid "Partner"
+msgstr "Контрагент"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action__period
@@ -1431,6 +1489,13 @@ msgid "Protocol (docx)"
 msgstr "Протокол (docx)"
 
 #. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/document_flow_process.py:0
+#, python-format
+msgid "Purchase Request"
+msgstr "Запрос на закупку"
+
+#. module: document_flow
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__repeat_interval__quarter
 msgid "Quarter"
 msgstr "Ежеквартально"
@@ -1487,6 +1552,7 @@ msgstr "Ответственный: %s"
 #. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/report/acknowledgement_form.py:0
+#: code:addons/document_flow/report/approval_form.py:0
 #, python-format
 msgid "Result"
 msgstr "Результат"
@@ -1526,7 +1592,7 @@ msgstr "Ознакомьтесь с решением мероприятия \"%s
 #: model:task.stage.route,name:document_flow.review_task_stage_route_in_progress_reviewed
 #: model:task.stage.route,name:document_flow.review_task_stage_route_review_to_do
 msgid "Reviewed"
-msgstr ""
+msgstr "Ознакомлен"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action__reviewer_ref
@@ -1845,6 +1911,11 @@ msgstr "В течение (дней)"
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__repeat_interval__year
 msgid "Years"
 msgstr "Ежегодно"
+
+#. module: document_flow
+#: model:ir.model,name:document_flow.model_report_document_flow_document_approval_form
+msgid "document_flow.document_approval_form"
+msgstr ""
 
 #. module: document_flow
 #: model:ir.model,name:document_flow.model_report_document_flow_event_acknowledgement_form

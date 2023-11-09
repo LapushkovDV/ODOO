@@ -52,7 +52,7 @@ def selection_parent_model():
         ('document_flow.event.decision', _('Decision')),
         ('document_flow.action', _('Action')),
         ('document_flow.document', _('Document')),
-        ('sale.presale', _('Presale'))
+        ('purchase.request', _('Purchase Request'))
     ]
 
 
@@ -227,11 +227,6 @@ class Process(models.Model):
                 process.controller_ref = '%s,%d' % (process.controller_ref_type, process.controller_ref_id or 0)
             else:
                 process.controller_ref = False
-
-    @api.depends('action_id.description')
-    def _compute_description(self):
-        for process in self:
-            process.description = process.action_id.description
 
     def _compute_task_ids(self):
         for process in self:
@@ -457,7 +452,7 @@ class Process(models.Model):
                     user_ids=[Command.link(executor.executor_ref.id) for executor in self.executor_ids],
                     date_deadline=self.executor_ids[0].date_deadline
                 )
-                res = self.env['task.task'].sudo().create(task_data)
+                res = self.env['task.task'].sudo().with_user(self.create_uid).create(task_data)
                 self._put_task_to_history(res)
             else:
                 min_sequence = min(self.executor_ids, key=lambda pr: pr.sequence).sequence or 0
@@ -577,7 +572,7 @@ class ProcessExecutor(models.Model):
             task_data['user_ids'] = [Command.link(executor_ref.id)]
         else:
             task_data['role_executor_id'] = executor_ref.id
-        res = self.env['task.task'].sudo().create(task_data)
+        res = self.env['task.task'].sudo().with_user(self.create_uid).create(task_data)
         self.process_id._put_task_to_history(res)
         return res
 
@@ -677,17 +672,18 @@ class Action(models.Model):
 
     process_id = fields.Many2one('document_flow.process', string='Process', compute='_compute_process_id')
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals_list):
-        if any(vals_list.get('child_ids', [])):
-            recompute_sequence_actions(self.env['document_flow.action'], vals_list.get('child_ids'))
+        for vals in vals_list:
+            if any(vals.get('child_ids', [])):
+                recompute_sequence_actions(self.env['document_flow.action'], vals.get('child_ids'))
 
-        if any(vals_list.get('executor_ids', [])):
-            recompute_sequence_executors(self.env['document_flow.action.executor'], vals_list.get('task_sequence'),
-                                         vals_list.get('executor_ids'))
+            if any(vals.get('executor_ids', [])):
+                recompute_sequence_executors(self.env['document_flow.action.executor'], vals.get('task_sequence'),
+                                             vals.get('executor_ids'))
 
-        res = super(Action, self).create(vals_list)
-        return res
+        records = super(Action, self).create(vals_list)
+        return records
 
     def write(self, vals):
         if any(vals.get('child_ids', [])):
@@ -727,9 +723,8 @@ class Action(models.Model):
 
     def _compute_process_id(self):
         for action in self:
-            action.process_id = self.env['document_flow.process.parent_object'].search([
-                ('parent_ref_type', '=', self._name),
-                ('parent_ref_id', '=', action.id)
+            action.process_id = self.env['document_flow.process'].search([
+                ('action_id', '=', action.id)
             ])
 
     def get_executors_company_ids(self):
