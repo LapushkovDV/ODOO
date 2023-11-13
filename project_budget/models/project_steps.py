@@ -253,6 +253,7 @@ class project_steps(models.Model):
 
     name_to_show = fields.Char(string = 'name_to_show', compute = '_get_name_to_show')
     projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True, ondelete='cascade')
+    different_project_offices_in_steps = fields.Boolean(related='projects_id.legal_entity_signing_id.different_project_offices_in_steps', readonly=True)
     etalon_budget = fields.Boolean(related='projects_id.etalon_budget', readonly=True)
     date_actual = fields.Datetime(related='projects_id.date_actual', readonly=True, store=True)
     budget_state = fields.Selection(related='projects_id.budget_state', readonly=True, store=True)
@@ -270,6 +271,10 @@ class project_steps(models.Model):
                         ,required = True, default = _getesimated_probability_fromProject)
     currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
+    project_office_id = fields.Many2one('project_budget.project_office', string='project office',
+                                        copy=True, tracking=True, check_company=True, required=True,
+                                        domain="[('is_prohibit_selection','=', False)]",
+                                        )
 
     is_revenue_from_the_sale_of_works = fields.Boolean(related='project_steps_type_id.is_revenue_from_the_sale_of_works', readonly=True)
     is_revenue_from_the_sale_of_goods = fields.Boolean(related='project_steps_type_id.is_revenue_from_the_sale_of_goods', readonly=True)
