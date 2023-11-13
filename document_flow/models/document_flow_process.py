@@ -37,11 +37,11 @@ TYPE_SEQUENCE = [
 ]
 
 
-# TODO: необходима возможность выбора роли, возможно каких-то предопределенных методов
 def selection_executor_model():
     return [
         ('res.users', _('User')),
-        ('document_flow.role_executor', _('Role'))
+        ('document_flow.role_executor', _('Role')),
+        ('document_flow.auto_substitution', _('Auto-substitution'))
     ]
 
 
@@ -452,7 +452,7 @@ class Process(models.Model):
                     user_ids=[Command.link(executor.executor_ref.id) for executor in self.executor_ids],
                     date_deadline=self.executor_ids[0].date_deadline
                 )
-                res = self.env['task.task'].sudo().with_user(self.create_uid).create(task_data)
+                res = self.env['task.task'].with_user(self.create_uid).sudo().create(task_data)
                 self._put_task_to_history(res)
             else:
                 min_sequence = min(self.executor_ids, key=lambda pr: pr.sequence).sequence or 0
@@ -557,7 +557,8 @@ class ProcessExecutor(models.Model):
     def _create_task(self, executor_ref):
         task_data = dict(
             author_id=self.create_uid.id,
-            company_ids=[Command.link(executor_ref.company_id.id)],
+            company_ids=[Command.link(executor_ref.company_id.id if executor_ref._fields.get(
+                'company_id', False) else self.env.company.id)],
             name=self.process_id.name,
             type_id=self.env['task.type'].search([
                 ('code', '=', MAPPING_PROCESS_TASK_TYPES.get(self.process_id.type))
@@ -570,9 +571,14 @@ class ProcessExecutor(models.Model):
         )
         if type(executor_ref).__name__ == 'res.users':
             task_data['user_ids'] = [Command.link(executor_ref.id)]
-        else:
+        elif type(executor_ref).__name__ == 'document_flow.role_executor':
             task_data['role_executor_id'] = executor_ref.id
-        res = self.env['task.task'].sudo().with_user(self.create_uid).create(task_data)
+        elif type(executor_ref).__name__ == 'document_flow.auto_substitution':
+            result = dict()
+            safe_eval(self.executor_ref.expression.strip(), dict(record=self), result, mode="exec", nocopy=True)
+            executor = result.get('result', True)
+            task_data['user_ids'] = [Command.link(executor.id)]
+        res = self.env['task.task'].with_user(self.create_uid).sudo().create(task_data)
         self.process_id._put_task_to_history(res)
         return res
 
@@ -733,10 +739,12 @@ class Action(models.Model):
         if self.type == 'complex':
             for child in self.child_ids:
                 for executor in child.executor_ids:
-                    c_ids.append(executor.executor_ref.company_id.id)
+                    c_ids.append(executor.executor_ref.company_id.id if executor.executor_ref._fields.get(
+                        'company_id', False) else self.env.company.id)
         else:
             for executor in self.executor_ids:
-                c_ids.append(executor.executor_ref.company_id.id)
+                c_ids.append(executor.executor_ref.company_id.id if executor.executor_ref._fields.get(
+                    'company_id', False) else self.env.company.id)
         return set(c_ids)
 
 
