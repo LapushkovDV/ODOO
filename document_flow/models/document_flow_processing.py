@@ -116,15 +116,15 @@ class Processing(models.Model):
                     'executor_ref': '%s,%s' % (type(executor.executor_ref).__name__, executor.executor_ref.id),
                     'period': executor.period
                 })
-        process.action_start_process()
         self.process_id = process.id
+        process.action_start_process()
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'type': 'success',
                 'sticky': False,
-                'message': _("Processing was started"),
+                'message': _('Processing was started'),
                 'next': {'type': 'ir.actions.act_window_close'}
             }
         }
@@ -138,7 +138,7 @@ class Processing(models.Model):
             'params': {
                 'type': 'success',
                 'sticky': False,
-                'message': _("Processing was break"),
+                'message': _('Processing was break'),
                 'next': {'type': 'ir.actions.act_window_close'}
             }
         }
@@ -152,7 +152,7 @@ class Processing(models.Model):
             'params': {
                 'type': 'success',
                 'sticky': False,
-                'message': _("Processing was resumed"),
+                'message': _('Processing was resumed'),
                 'next': {'type': 'ir.actions.act_window_close'}
             }
         }
