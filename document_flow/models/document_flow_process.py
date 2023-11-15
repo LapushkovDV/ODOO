@@ -580,7 +580,7 @@ class ProcessExecutor(models.Model):
             executor = result.get('result', False)
             if not executor:
                 raise ValueError(
-                    _("Could not be determined '%s'. Check the route or settings project office",
+                    _("Could not be determined '%s'. Check the route or settings.",
                       self.executor_ref.name))
             task_data['user_ids'] = [Command.link(executor.id)]
         res = self.env['task.task'].with_user(self.create_uid).sudo().create(task_data)

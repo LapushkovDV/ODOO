@@ -421,9 +421,9 @@ msgstr "Копия_%s"
 #: code:addons/document_flow/models/document_flow_process.py:0
 #, python-format
 msgid ""
-"Could not be determined '%s'. Check the route or settings project office"
+"Could not be determined '%s'. Check the route or settings."
 msgstr ""
-"Не удалось определить '%s'. Проверьте маршрут согласования или настройки проектного офиса"
+"Не удалось определить '%s'. Проверьте маршрут согласования или настройки."
 
 #. module: document_flow
 #. odoo-javascript
