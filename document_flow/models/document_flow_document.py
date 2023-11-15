@@ -1,4 +1,5 @@
 from odoo import _, models, fields, api
+from odoo.exceptions import UserError
 
 
 class DocumentType(models.Model):
@@ -50,6 +51,24 @@ class Document(models.Model):
 
         res = super(Document, self).create(vals_list)
         return res
+
+    def unlink(self):
+        if self.process_id:
+            if any(self.process_id.task_ids.filtered(lambda task: task.is_closed)):
+                raise UserError(_('You cannot delete this document because some tasks were closed.'))
+
+            self.process_id.mapped('task_history_ids').unlink()
+            self.process_id.mapped('task_ids').unlink()
+
+            process = self.process_id
+            processing = self.env['document_flow.processing'].search([
+                ('parent_ref', '=', '%s,%d' % (self._name, self.id))
+            ])
+            processing.unlink()
+            process.unlink()
+
+        result = super(Document, self).unlink()
+        return result
 
     def _compute_process_id(self):
         for document in self:
