@@ -575,8 +575,13 @@ class ProcessExecutor(models.Model):
             task_data['role_executor_id'] = executor_ref.id
         elif type(executor_ref).__name__ == 'document_flow.auto_substitution':
             result = dict()
-            safe_eval(self.executor_ref.expression.strip(), dict(record=self), result, mode="exec", nocopy=True)
-            executor = result.get('result', True)
+            safe_eval(self.executor_ref.expression.strip(), dict(record=self.process_id.parent_obj_ref), result,
+                      mode="exec", nocopy=True)
+            executor = result.get('result', False)
+            if not executor:
+                raise ValueError(
+                    _("Could not be determined '%s'. Check the route or settings project office",
+                      self.executor_ref.name))
             task_data['user_ids'] = [Command.link(executor.id)]
         res = self.env['task.task'].with_user(self.create_uid).sudo().create(task_data)
         self.process_id._put_task_to_history(res)
