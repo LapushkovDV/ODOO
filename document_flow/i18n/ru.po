@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-14 20:47+0000\n"
-"PO-Revision-Date: 2023-11-14 20:47+0000\n"
+"POT-Creation-Date: 2023-11-15 13:11+0000\n"
+"PO-Revision-Date: 2023-11-15 13:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -420,10 +420,9 @@ msgstr "Копия_%s"
 #. odoo-python
 #: code:addons/document_flow/models/document_flow_process.py:0
 #, python-format
-msgid ""
-"Could not be determined '%s'. Check the route or settings project office"
+msgid "Could not be determined '%s'. Check the route or settings."
 msgstr ""
-"Не удалось определить '%s'. Проверьте маршрут согласования или настройки проектного офиса"
+"Не удалось определить '%s'. Проверьте маршрут согласования или настройки."
 
 #. module: document_flow
 #. odoo-javascript
@@ -1963,6 +1962,13 @@ msgstr "В течение (дней)"
 #: model:ir.model.fields.selection,name:document_flow.selection__document_flow_event_decision__repeat_interval__year
 msgid "Years"
 msgstr "Ежегодно"
+
+#. module: document_flow
+#. odoo-python
+#: code:addons/document_flow/models/document_flow_document.py:0
+#, python-format
+msgid "You cannot delete this document because some tasks were closed."
+msgstr "Вы не можете удалить данный документ, т.к. по нему присутствуют закрытые задачи."
 
 #. module: document_flow
 #: model:ir.model,name:document_flow.model_report_document_flow_document_approval_form

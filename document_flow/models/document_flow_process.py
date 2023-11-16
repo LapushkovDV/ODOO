@@ -194,12 +194,17 @@ class Process(models.Model):
         if not self._check_recursion():
             raise ValidationError(_('Error! You cannot create a recursive hierarchy of process.'))
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals_list):
-        if vals_list.get('code', _('New')) == _('New'):
-            vals_list['code'] = self.env['ir.sequence'].next_by_code('document_flow.process') or _('New')
-        res = super(Process, self).create(vals_list)
-        return res
+        for vals in vals_list:
+            if vals.get('code', _('New')) == _('New'):
+                vals['code'] = self.env['ir.sequence'].next_by_code('document_flow.process') or _('New')
+        records = super(Process, self).create(vals_list)
+        return records
+
+    # def unlink(self):
+    #     result = super(Process, self).unlink()
+    #     return result
 
     def _compute_parent_obj(self):
         for process in self:
@@ -248,10 +253,6 @@ class Process(models.Model):
     def write(self, vals):
         res = super(Process, self).write(vals)
         return res
-
-    def unlink(self):
-        self.task_ids.unlink()
-        return super(Process, self).unlink()
 
     def _put_task_to_history(self, task):
         return self.env['document_flow.task.history'].create({
@@ -580,7 +581,7 @@ class ProcessExecutor(models.Model):
             executor = result.get('result', False)
             if not executor:
                 raise ValueError(
-                    _("Could not be determined '%s'. Check the route or settings project office",
+                    _("Could not be determined '%s'. Check the route or settings.",
                       self.executor_ref.name))
             task_data['user_ids'] = [Command.link(executor.id)]
         res = self.env['task.task'].with_user(self.create_uid).sudo().create(task_data)
