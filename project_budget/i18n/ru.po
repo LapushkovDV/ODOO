@@ -4763,7 +4763,7 @@ msgstr "Сумма выручки"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__total_amount_of_revenue_with_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__total_amount_of_revenue_with_vat
 msgid "total_amount_of_revenue_with_vat"
-msgstr "Сумма выручки с НДС"
+msgstr "Сумма контрактования"
 
 #. module: project_budget
 #. odoo-python
