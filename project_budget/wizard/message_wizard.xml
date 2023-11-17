@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="project_budget_projects_report_print_form" model="ir.ui.view">
+        <field name="name">project_budget.projects.report.wizard.form</field>
+        <field name="model">project_budget.projects.report.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group col ="4">
+                        <group>
+                            <field name="type_report"/>
+                        </group>
+                        <group>
+                        </group>
+                        <group>
+                            <field name="use_koeff_reserve" attrs="{'invisible': [('type_report', 'not in', ('forecast', 'management_committee', 'pds_weekly'))]}"/>
+                            <field name="pds_accept" attrs="{'invisible': [('type_report', 'not in', ('pds_acceptance_by_date'))]}"/>
+                        </group>
+                        <group>
+                            <field name="koeff_reserve" attrs="{'invisible': ['|',('type_report', 'not in', ('forecast', 'management_committee', 'pds_weekly')),('use_koeff_reserve','=',False)]}"/>
+                            <field name="koeff_potential" attrs="{'invisible': ['|',('type_report', 'not in', ('forecast', 'management_committee', 'pds_weekly')),('use_koeff_reserve','=',False)]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="commercial_budget_id"/>
+                    </group>
+                    <group col = "4" string="report period">
+                        <group>
+                            <field string="year from" name="year" attrs="{'invisible': [('type_report', 'in', ('raw_data','overdue','pds_acceptance_by_date'))]}"/>
+                            <field string="from date" name="date_start" attrs="{'invisible': [('type_report', 'not in', ('pds_acceptance_by_date'))]}"/>
+                        </group>
+                        <group>
+                            <field string="year to" name="year_end" attrs="{'invisible': [('type_report', 'in', ('raw_data','overdue','management_committee','pds_acceptance_by_date', 'pds_weekly'))]}"/>
+                            <field string="to date" name="date_end" attrs="{'invisible': [('type_report', 'not in', ('pds_acceptance_by_date'))]}"/>
+                        </group>
+                        <group></group>
+                        <group></group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Print" name="action_print_report" class="btn-success" type="object"/>
+                    <button string="Cancel" class="btn-danger" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_projects_print_report" model="ir.actions.act_window">
+        <field name="name">Projects report</field>
+        <field name="res_model">project_budget.projects.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <report id="action_projects_list_report_xlsx_kb"
+            string="Projects Report kb"
+            model="project_budget.projects.report.wizard"
+            report_type="xlsx"
+            name="project_budget.report_budget_excel"
+            menu="False"
+            file = "project_budget.report_budget_excel"
+    />
+
+    <report id="action_projects_list_report_xlsx_kb_fin"
+            string="Projects Report kb fin"
+            model="project_budget.projects.report.wizard"
+            report_type="xlsx"
+            name="project_budget.report_budget_fin_excel"
+            menu="False"
+            file = "project_budget.report_budget_fin_excel"
+    />
+
+    <report id="action_projects_list_report_xlsx_forecast"
+            string="Projects Report forecast"
+            model="project_budget.projects.report.wizard"
+            report_type="xlsx"
+            name="project_budget.report_budget_forecast_excel"
+            menu="False"
+            file = "project_budget.report_budget_forecast_excel"
+    />
+
+    <report id="action_projects_list_report_xlsx_svod"
+            string="Projects Report svod"
+            model="project_budget.projects.report.wizard"
+            report_type="xlsx"
+            name="project_budget.report_svod_excel"
+            menu="False"
+            file = "project_budget.report_svod_excel"
+    />
+
+    <report id="action_projects_list_report_xlsx_raw_data"
+            string="Projects Report raw data"
+            model="project_budget.projects.report.wizard"
+            report_type="xlsx"
+            name="project_budget.report_projects_rawdata_excel"
+            menu="False"
+            file = "project_budget.report_projects_rawdata_excel"
+    />
+
+    <report id="action_projects_list_report_xlsx_overdue"
+            string="Projects Report overdue"
+            model="project_budget.projects.report.wizard"
+            report_type="xlsx"
+            name="project_budget.report_projects_overdue_excel"
+            menu="False"
+            file = "project_budget.report_projects_overdue_excel"
+    />
+
+    <report id="action_projects_list_report_xlsx_management_committee"
+            string="Projects Report Management Committee"
+            model="project_budget.projects.report.wizard"
+            report_type="xlsx"
+            name="project_budget.report_management_committee_excel"
+            menu="False"
+            file="project_budget.report_management_committee_excel"
+    />
+
+    <report id="action_projects_list_report_xlsx_pds_acceptance_by_date"
+            string="Projects Report PDS, Acceptance"
+            model="project_budget.projects.report.wizard"
+            report_type="xlsx"
+            name="project_budget.report_pds_acceptance_by_date_excel"
+            menu="False"
+            file="project_budget.report_pds_acceptance_by_date_excel"
+    />
+    <report id="action_projects_list_report_xlsx_pds_weekly"
+            string="Projects Report PDS by week"
+            model="project_budget.projects.report.wizard"
+            report_type="xlsx"
+            name="project_budget.report_pds_weekly_excel"
+            menu="False"
+            file="project_budget.report_pds_weekly_excel"
+    />
+</odoo>
