@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-15 13:11+0000\n"
-"PO-Revision-Date: 2023-11-15 13:11+0000\n"
+"POT-Creation-Date: 2023-11-17 09:04+0000\n"
+"PO-Revision-Date: 2023-11-17 09:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -99,6 +99,7 @@ msgstr "Действия"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_auto_substitution__active
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document__active
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__active
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_role_executor__active
 msgid "Active"
@@ -261,6 +262,7 @@ msgstr "Согласовано"
 
 #. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.document_flow_auto_substitution_view_form
+#: model_terms:ir.ui.view,arch_db:document_flow.document_view_form
 #: model_terms:ir.ui.view,arch_db:document_flow.process_template_view_form
 #: model_terms:ir.ui.view,arch_db:document_flow.role_executor_view_form
 msgid "Archived"
@@ -439,13 +441,6 @@ msgid "Created By Me Overdue"
 msgstr "Созданные мной (просроченные)"
 
 #. module: document_flow
-#. odoo-javascript
-#: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
-#, python-format
-msgid "Created By Me:"
-msgstr "Созданные мной:"
-
-#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action_executor__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_auto_substitution__create_uid
@@ -465,6 +460,13 @@ msgstr "Созданные мной:"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__create_uid
 msgid "Created by"
 msgstr "Автор"
+
+#. module: document_flow
+#. odoo-javascript
+#: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
+#, python-format
+msgid "Created by me:"
+msgstr "Созданные мной:"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action__create_date
@@ -721,6 +723,11 @@ msgid "Email cc"
 msgstr "Копия"
 
 #. module: document_flow
+#: model:ir.model,name:document_flow.model_hr_employee
+msgid "Employee"
+msgstr "Сотрудник"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__date_end
 msgid "End Date"
 msgstr "Дата окончания"
@@ -918,16 +925,16 @@ msgid "Group Overdue"
 msgstr "Просроченные"
 
 #. module: document_flow
-#. odoo-javascript
-#: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
-#, python-format
-msgid "Group Tasks:"
-msgstr "Назначенные на группу:"
-
-#. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.document_flow_task_history_view_search
 msgid "Group by..."
 msgstr "Группировать по..."
+
+#. module: document_flow
+#. odoo-javascript
+#: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
+#, python-format
+msgid "Group tasks:"
+msgstr "Назначенные на группу:"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__has_message
@@ -1156,7 +1163,7 @@ msgstr "Срок исполнения моей активности"
 #. odoo-javascript
 #: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
 #, python-format
-msgid "My Tasks:"
+msgid "My tasks:"
 msgstr "Мои задачи:"
 
 #. module: document_flow
@@ -1174,8 +1181,8 @@ msgid "Name"
 msgstr "Содержание"
 
 #. module: document_flow
-#. odoo-javascript
 #. odoo-python
+#. odoo-javascript
 #: code:addons/document_flow/models/document_flow_document.py:0
 #: code:addons/document_flow/models/document_flow_document.py:0
 #: code:addons/document_flow/models/document_flow_document.py:0
@@ -1185,6 +1192,7 @@ msgstr "Содержание"
 #: code:addons/document_flow/models/document_flow_process.py:0
 #: code:addons/document_flow/models/document_flow_process.py:0
 #: code:addons/document_flow/models/document_flow_process.py:0
+#: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
 #: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
 #: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
 #: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
@@ -1347,9 +1355,17 @@ msgstr "Организатор"
 #: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
 #: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
 #: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
+#: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
 #, python-format
 msgid "Overdue"
 msgstr "Назначенные мне (просроченные)"
+
+#. module: document_flow
+#. odoo-javascript
+#: code:addons/document_flow/static/src/js/dashboard_view.js:0
+#, python-format
+msgid "Overdue tasks of subordinates"
+msgstr "Просроченные задачи подчиненных"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action__parent_ref
@@ -1854,6 +1870,20 @@ msgid "Tasks"
 msgstr "Задачи"
 
 #. module: document_flow
+#. odoo-javascript
+#: code:addons/document_flow/static/src/js/dashboard_view.js:0
+#, python-format
+msgid "Tasks of subordinates"
+msgstr "Задачи подчиненных"
+
+#. module: document_flow
+#. odoo-javascript
+#: code:addons/document_flow/static/src/xml/dashboard_view.xml:0
+#, python-format
+msgid "Tasks of subordinates:"
+msgstr "Задачи подчиненных:"
+
+#. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/models/document_flow_process.py:0
 #, python-format
@@ -1968,7 +1998,9 @@ msgstr "Ежегодно"
 #: code:addons/document_flow/models/document_flow_document.py:0
 #, python-format
 msgid "You cannot delete this document because some tasks were closed."
-msgstr "Вы не можете удалить данный документ, т.к. по нему присутствуют закрытые задачи."
+msgstr ""
+"Вы не можете удалить данный документ, т.к. по нему присутствуют закрытые "
+"задачи."
 
 #. module: document_flow
 #: model:ir.model,name:document_flow.model_report_document_flow_document_approval_form

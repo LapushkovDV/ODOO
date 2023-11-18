@@ -7,7 +7,7 @@
               action="action_document_flow_dashboard"/>
 
     <menuitem id="document_flow_menu_document" parent="document_flow.document_flow_menu" name="Documents" sequence="1"
-              action="action_view_all_documents" groups="document_flow.group_document_flow_worker_with_document"/>
+              action="action_document_flow_documents_form" groups="document_flow.group_document_flow_worker_with_document"/>
 
     <menuitem id="menu_task_management" parent="document_flow_menu" name="Tasks" sequence="10"
               action="action_view_all_task"/>
