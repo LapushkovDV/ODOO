@@ -2428,9 +2428,13 @@ msgstr "Актирование 6+6"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__acceptance_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__cash_id
 msgid "acceptance_id"
-msgstr "актирование"
+msgstr ""
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__cash_id
+msgid "cash_id"
+msgstr ""
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__amount_spec_ids
@@ -4763,7 +4767,7 @@ msgstr "Сумма выручки"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__total_amount_of_revenue_with_vat
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__total_amount_of_revenue_with_vat
 msgid "total_amount_of_revenue_with_vat"
-msgstr "Сумма выручки с НДС"
+msgstr "Сумма контрактования"
 
 #. module: project_budget
 #. odoo-python
