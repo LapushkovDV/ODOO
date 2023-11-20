@@ -32,6 +32,7 @@ class Document(models.Model):
                                  string='Partner', copy=False, readonly=True, required=True)
     sum = fields.Monetary(string='Sum', copy=False, tracking=True)
     description = fields.Html(string='Description', copy=False)
+    active = fields.Boolean(copy=False, default=True, index=True)
 
     process_id = fields.Many2one('document_flow.process', string='Process', compute='_compute_process_id')
     process_state = fields.Selection(string='State', related='process_id.state', readonly=True)
@@ -69,6 +70,16 @@ class Document(models.Model):
 
         result = super(Document, self).unlink()
         return result
+
+    def toggle_active(self):
+        res = super(Document, self).toggle_active()
+        unarchived_documents = self.filtered(lambda document: document.active and document.process_id)
+        for task in unarchived_documents.process_id.task_ids.filtered(lambda t: not t.active and not t.is_closed):
+            task.write({'active': True})
+        archived_documents = self.filtered(lambda document: not document.active and document.process_id)
+        for task in archived_documents.process_id.active_task_ids.filtered(lambda t: t.active and not t.is_closed):
+            task.write({'active': False})
+        return res
 
     def _compute_process_id(self):
         for document in self:

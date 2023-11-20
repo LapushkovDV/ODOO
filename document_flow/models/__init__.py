@@ -6,4 +6,5 @@ from . import document_flow_process
 from . import document_flow_processing
 from . import document_flow_document
 from . import document_flow_task_history
+from . import hr_employee
 from . import task_task
