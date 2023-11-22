@@ -21,7 +21,7 @@ class report_pds_acceptance_by_date_excel(models.AbstractModel):
                 if step:
                     if pds.project_steps_id.id != step.id:
                         continue
-                if date_start <= pds.date_cash <= date_end:
+                if date_start <= pds.date_cash <= date_end and pds.forecast in ('commitment', 'reserve', 'from_project'):
                     sum_cash += pds.distribution_sum_with_vat_ostatok
 
         return sum_cash
@@ -37,7 +37,7 @@ class report_pds_acceptance_by_date_excel(models.AbstractModel):
                 if step:
                     if acceptance.project_steps_id.id != step.id:
                         continue
-                if date_start <= acceptance.date_cash <= date_end:
+                if date_start <= acceptance.date_cash <= date_end and acceptance.forecast in ('commitment', 'reserve', 'from_project'):
                     sum_cash += acceptance.distribution_sum_without_vat_ostatok
 
         return sum_cash
@@ -232,7 +232,7 @@ class report_pds_acceptance_by_date_excel(models.AbstractModel):
 
         row += 1
         sheet.merge_range(row, 0, row, 9, 'ИТОГО', total_format)
-        sheet.write_formula(row, column, '=sum({0}{1}:{0}{2})'.format(xl_col_to_name(column), 3, row - 1), total_num_format)
+        sheet.write_formula(row, column, '=sum({0}{1}:{0}{2})'.format(xl_col_to_name(column), 3, row), total_num_format)
 
     def generate_xlsx_report(self, workbook, data, budgets):
 
