@@ -1,6 +1,6 @@
 import json
+import html2text
 
-from html2text import html2text
 from odoo import api, Command, exceptions, fields, models, _
 from odoo.exceptions import ValidationError
 
@@ -191,10 +191,12 @@ class Task(models.Model):
 
     @api.depends('description')
     def _compute_description_kanban(self):
+        parser = html2text.HTML2Text()
+        parser.ignore_images = True
         for task in self:
             result = []
             if task.description:
-                lst = html2text(task.description).splitlines()
+                lst = parser.handle(task.description).splitlines()
                 while len(result) <= DESCRIPTION_KANBAN_MAX_LINES and lst:
                     line = lst.pop(0)
                     line = line.lstrip('#').strip()
@@ -205,8 +207,10 @@ class Task(models.Model):
 
     @api.depends('execution_result')
     def _compute_execution_result(self):
+        parser = html2text.HTML2Text()
+        parser.ignore_images = True
         for task in self:
-            task.execution_result_text = html2text(task.execution_result)
+            task.execution_result_text = parser.handle(task.description)
 
     def _message_auto_subscribe_followers(self, updated_values, default_subtype_ids):
         return []
@@ -358,6 +362,14 @@ class Task(models.Model):
             self.parent_ref.sudo().process_task_result(date_closed, result_type=result_type,
                                                        feedback=self.execution_result)
         self.write({'date_closed': date_closed, 'actual_executor_id': self.env.user})
+
+    def _close_task_forcibly(self, result_type):
+        self.ensure_one()
+        closing_stage = self.type_id.stage_ids.filtered(
+            lambda stage: stage.is_closed and stage.result_type == result_type)
+        if len(closing_stage) == 1:
+            self.write({'stage_id': closing_stage[0].id})
+            self.close_task(result_type)
 
     def action_open_task(self):
         return {

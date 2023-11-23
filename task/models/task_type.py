@@ -2,8 +2,8 @@ from odoo import models, fields, api, _
 
 
 class TaskType(models.Model):
-    _name = "task.type"
-    _description = "Task Type"
+    _name = 'task.type'
+    _description = 'Task Type'
     _order = 'name, id'
 
     name = fields.Char(required=True, copy=True, translate=True)
