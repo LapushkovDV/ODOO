@@ -580,6 +580,8 @@
                                             <field name="industry_id"  options="{'no_open': True,}" optional="hide" readonly="1"/>
                                             <field name="customer_organization_id" widget="many2one_avatar"  options="{'no_open': True,}" optional="show" readonly="1"/>
                                             <field name="essence_project" optional="show" readonly="1"/>
+                                            <field name="end_presale_project_month" optional="show" readonly="1"/>
+                                            <field name="end_sale_project_month" optional="show" readonly="1"/>
                                             <field name="end_presale_project_quarter"  optional="show" readonly="1"/>
                                             <field name="end_sale_project_quarter"  optional="show" readonly="1"/>
                                             <field name="total_amount_of_revenue" optional="show" readonly="1"/>
@@ -789,6 +791,8 @@
 <!--                    <field name="customer_status_id" force_save="1" options="{'no_open': True,}"  optional="hide" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>-->
                     <field name="customer_organization_id" widget="many2one_avatar" force_save="1" options="{'no_open': True,}" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
                     <field name="essence_project" optional="show" attrs="{'readonly': [('budget_state', '=', 'fixed')]}"/>
+                    <field name="end_presale_project_month"  optional="show" readonly="1"/>
+                    <field name="end_sale_project_month"  optional="show" readonly="1"/>
                     <field name="end_presale_project_quarter"  optional="show"/>
                     <field name="end_sale_project_quarter"  optional="show"/>
                     <field name="total_amount_of_revenue" optional="show"/>
