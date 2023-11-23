@@ -59,14 +59,16 @@ class Task(models.Model):
             ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '>=', fields.Datetime.now()),
-            ('user_ids', 'in', self.env.uid),
+            '|', ('user_ids', '=', self.env.uid),
+            ('user_ids', 'in', self.env.user.employee_ids.get_replaceable_user_ids()),
             '|', ('company_ids', '=', False), ('company_ids', 'in', allowed_company_ids)
         ])
         my_tasks_overdue_count = self.env['task.task'].search_count([
             ('parent_ref_type', 'like', 'document_flow.%'),
             ('is_closed', '=', False),
             ('date_deadline', '<', fields.Datetime.now()),
-            ('user_ids', 'in', self.env.uid),
+            '|', ('user_ids', '=', self.env.uid),
+            ('user_ids', 'in', self.env.user.employee_ids.get_replaceable_user_ids()),
             '|', ('company_ids', '=', False), ('company_ids', 'in', allowed_company_ids)
         ])
         by_me_tasks_to_do_count = self.env['task.task'].search_count([

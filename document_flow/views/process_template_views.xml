@@ -138,7 +138,7 @@
                                     <field name="sequence" widget="handle"
                                            attrs="{'column_invisible': ['|', ('parent.type', 'in', ('review')), ('parent.task_sequence', '=', 'all_at_once')]}"/>
                                     <field name="visible_sequence" width="5%"/>
-                                    <field name="executor_ref"/>
+                                    <field name="executor_ref" options="{'no_create': True}"/>
                                     <field name="type_sequence"
                                            attrs="{'column_invisible': ['|', ('parent.type', 'in', ('review')), ('parent.task_sequence', '!=', 'mixed')]}"/>
                                     <field name="period"/>

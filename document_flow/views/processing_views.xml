@@ -10,7 +10,8 @@
                             attrs="{'invisible': [('process_id', '!=', False)]}"/>
                     <button string="Break processing" type="object" name="break_processing" class="oe_highlight"
                             attrs="{'invisible': ['|', ('process_id', '=', False), ('state', '!=', 'started')]}"/>
-                    <button string="Resume processing" type="object" name="resume_processing_from_last_stage" class="oe_highlight"
+                    <button string="Resume processing" type="action" name="%(action_document_flow_processing_wizard_resume)d" class="oe_highlight"
+                            context="{'default_process_id': process_id}"
                             attrs="{'invisible': ['|', ('process_id', '=', False), ('state', '!=', 'break')]}"/>
                 </header>
                 <sheet string="Processing">

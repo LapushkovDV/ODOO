@@ -90,7 +90,6 @@ class Event(models.Model):
                     'type': 'agreement',
                     'sequence': 0,
                     'description': self.description,
-                    'parent_ref': '%s,%d' % (type(processing).__name__, processing.id),
                     'parent_ref_type': type(processing).__name__,
                     'parent_ref_id': processing.id,
                     'type_sequence': 'together_with_the_previous'
@@ -106,7 +105,6 @@ class Event(models.Model):
                 'type': 'review',
                 'sequence': 1,
                 'description': self.description,
-                'parent_ref': '%s,%d' % (type(processing).__name__, processing.id),
                 'parent_ref_type': type(processing).__name__,
                 'parent_ref_id': processing.id,
                 'type_sequence': 'after_the_previous'
@@ -124,7 +122,6 @@ class Event(models.Model):
                 'type': 'complex',
                 'sequence': 1,
                 'description': self.description,
-                'parent_ref': '%s,%d' % (type(processing).__name__, processing.id),
                 'parent_ref_type': type(processing).__name__,
                 'parent_ref_id': processing.id,
                 'type_sequence': 'together_with_the_previous'

@@ -18,8 +18,8 @@ class Processing(models.Model):
     state = fields.Selection(string='State', related='process_id.state', readonly=True)
     parent_ref = fields.Reference(string='Parent', selection='_selection_parent_model', ondelete='restrict',
                                   required=True, readonly=True)
-    parent_ref_id = fields.Integer(string='Parent Id', index=True)
-    parent_ref_type = fields.Char(string='Parent Type', index=True)
+    parent_ref_id = fields.Integer(string='Parent Id', compute='_compute_parent_ref', index=True, store=True)
+    parent_ref_type = fields.Char(string='Parent Type', compute='_compute_parent_ref', index=True, store=True)
 
     document_type_id = fields.Many2one('document_flow.document.type', string='Document Type')
 
@@ -30,12 +30,14 @@ class Processing(models.Model):
     task_history_ids = fields.One2many('document_flow.task.history', related='process_id.task_history_ids',
                                        string='Processing History')
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals_list):
-        if any(vals_list.get('action_ids', [])):
-            recompute_sequence_actions(self.env['document_flow.action'], vals_list.get('action_ids'))
-        res = super(Processing, self).create(vals_list)
-        return res
+        for vals in vals_list:
+            if any(vals.get('action_ids', [])):
+                recompute_sequence_actions(self.env['document_flow.action'], vals.get('action_ids'))
+
+        records = super(Processing, self).create(vals_list)
+        return records
 
     def write(self, vals):
         if any(vals.get('action_ids', [])):
@@ -43,13 +45,18 @@ class Processing(models.Model):
         res = super(Processing, self).write(vals)
         return res
 
+    @api.depends('parent_ref')
+    def _compute_parent_ref(self):
+        for processing in self:
+            processing.parent_ref_type = type(processing.parent_ref).__name__
+            processing.parent_ref_id = processing.parent_ref.id
+
     def fill_by_template(self):
         if self.template_id:
             if self.action_ids:
                 self.action_ids.unlink()
             for action in self.template_id.action_ids:
                 action.copy({
-                    'parent_ref': '%s,%s' % (self._name, self.id),
                     'parent_ref_type': self._name,
                     'parent_ref_id': self.id
                 })

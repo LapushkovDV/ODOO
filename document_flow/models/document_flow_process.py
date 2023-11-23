@@ -119,6 +119,7 @@ def recompute_sequence_actions(model, actions):
             i += 1
 
 
+# TODO: необходимо пересмотреть архитектуру процесса. Продумать вызов методов родителей (фасад?)
 class Process(models.Model):
     _name = 'document_flow.process'
     _description = 'Process'
@@ -202,10 +203,6 @@ class Process(models.Model):
         records = super(Process, self).create(vals_list)
         return records
 
-    # def unlink(self):
-    #     result = super(Process, self).unlink()
-    #     return result
-
     def _compute_parent_obj(self):
         for process in self:
             process.parent_obj_ref = self.env['document_flow.processing'].search([
@@ -259,6 +256,20 @@ class Process(models.Model):
             'process_id': self.id,
             'task_id': task.id
         })
+
+    def _issue_rights(self, user_ids):
+        result = False
+        if type(self.parent_obj_ref).__name__ == 'document_flow.document':
+            new_users = []
+            if type(user_ids).__name__ == 'res.users':
+                new_users = set(user_ids.ids) - set(self.parent_obj_ref.access_ids.user_id.ids)
+            elif type(user_ids).__name__ == 'document_flow.role_executor':
+                new_users = set(user_ids.ids) - set(self.parent_obj_ref.access_ids.role_executor_id.ids)
+            result = self.env['document_flow.document.access'].create([{
+                'document_id': self.parent_obj_ref.id,
+                'user_ref': '%s,%d' % (type(user_ids).__name__, usr)
+            } for usr in list(new_users)])
+        return result
 
     def _get_mainprocess_id_by_process_id(self):
         if not self:
@@ -421,11 +432,12 @@ class Process(models.Model):
             process._break_execution(date_break)
         self.write({'state': 'break', 'date_end': date_break})
 
-    def resume_from_last_stage(self):
+    def resume_from_last_stage(self, description=False):
         processes = self.child_ids.filtered(lambda pr: pr.state == 'break') if self.type == 'complex' else [self]
         for process in processes:
             for decline_task in process.active_task_ids.filtered(lambda t: t.stage_id.result_type == 'error'):
-                task = self.env['task.task'].browse(decline_task.id).copy()
+                task = self.env['task.task'].browse(decline_task.id).copy(
+                    {'description': decline_task.description if not description else description})
                 process._put_task_to_history(task)
                 decline_task.write({'active': False})
             for task in process.task_ids.filtered(lambda t: not t.active and t.stage_id.result_type != 'error'):
@@ -447,7 +459,7 @@ class Process(models.Model):
                         ('code', '=', MAPPING_PROCESS_TASK_TYPES.get(self.type))
                     ], limit=1).id,
                     description=self.description,
-                    parent_ref='%s,%s' % (self._name, self.id),
+                    parent_ref='%s,%d' % (self._name, self.id),
                     parent_ref_type=self._name,
                     parent_ref_id=self.id,
                     user_ids=[Command.link(executor.executor_ref.id) for executor in self.executor_ids],
@@ -455,6 +467,7 @@ class Process(models.Model):
                 )
                 res = self.env['task.task'].with_user(self.create_uid).sudo().create(task_data)
                 self._put_task_to_history(res)
+                self._issue_rights(res.user_ids)
             else:
                 min_sequence = min(self.executor_ids, key=lambda pr: pr.sequence).sequence or 0
                 for executor in self.executor_ids.filtered(lambda ex: ex.sequence == min_sequence):
@@ -586,6 +599,7 @@ class ProcessExecutor(models.Model):
             task_data['user_ids'] = [Command.link(executor.id)]
         res = self.env['task.task'].with_user(self.create_uid).sudo().create(task_data)
         self.process_id._put_task_to_history(res)
+        self.process_id._issue_rights(res.user_ids if not res.role_executor_id else res.role_executor_id)
         return res
 
 
@@ -642,20 +656,12 @@ class Action(models.Model):
     _order = 'sequence, id'
 
     @api.model
-    def _selection_parent_model(self):
-        return [
-            ('document_flow.process.template', _('Process Template')),
-            ('document_flow.processing', _('Processing'))
-        ]
-
-    @api.model
     def _selection_executor_model(self):
         return selection_executor_model()
 
     name = fields.Char(string='Name', copy=True, required=True)
     description = fields.Html(string='Description', copy=False)
     type = fields.Selection(PROCESS_TYPES, string='Type', copy=True, index=True, required=True, default='review')
-    parent_ref = fields.Reference(string='Parent', selection='_selection_parent_model', ondelete='restrict')
     parent_ref_type = fields.Char(string='Parent Type', index=True)
     parent_ref_id = fields.Integer(string='Parent Id', index=True)
     executor_ids = fields.One2many('document_flow.action.executor', 'action_id', string='Executors', copy=True)
