@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-17 09:04+0000\n"
-"PO-Revision-Date: 2023-11-17 09:04+0000\n"
+"POT-Creation-Date: 2023-11-21 20:41+0000\n"
+"PO-Revision-Date: 2023-11-21 20:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -45,6 +45,19 @@ msgid ""
 msgstr ""
 "<span class=\"fa fa-refresh\"/>\n"
 "                                    <span>Заполнить по шаблону</span>"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document__access_ids
+#: model_terms:ir.ui.view,arch_db:document_flow.document_flow_document_access_view_tree
+#: model_terms:ir.ui.view,arch_db:document_flow.document_view_form
+msgid "Access"
+msgstr "Доступ"
+
+#. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type__access_setting_ids
+#: model_terms:ir.ui.view,arch_db:document_flow.document_flow_document_type_view_form
+msgid "Accessibility Settings"
+msgstr ""
 
 #. module: document_flow
 #. odoo-python
@@ -136,6 +149,7 @@ msgstr "Фактический исполнитель"
 
 #. module: document_flow
 #. odoo-python
+#: code:addons/document_flow/report/approval_form.py:0
 #: code:addons/document_flow/report/decisions_list.py:0
 #, python-format
 msgid "Actual executor"
@@ -263,6 +277,7 @@ msgstr "Согласовано"
 #. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.document_flow_auto_substitution_view_form
 #: model_terms:ir.ui.view,arch_db:document_flow.document_view_form
+#: model_terms:ir.ui.view,arch_db:document_flow.document_view_search
 #: model_terms:ir.ui.view,arch_db:document_flow.process_template_view_form
 #: model_terms:ir.ui.view,arch_db:document_flow.role_executor_view_form
 msgid "Archived"
@@ -336,6 +351,11 @@ msgid "Break processing"
 msgstr "Прервать обработку"
 
 #. module: document_flow
+#: model_terms:ir.ui.view,arch_db:document_flow.document_flow_processing_wizard_resume_view_form
+msgid "Cancel"
+msgstr "Отмена"
+
+#. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__code
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process__code
 msgid "Code"
@@ -346,10 +366,17 @@ msgstr "Код"
 #: code:addons/document_flow/report/acknowledgement_form.py:0
 #: code:addons/document_flow/report/approval_form.py:0
 #: code:addons/document_flow/report/decisions_list.py:0
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_processing_wizard_resume__comment
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__comment
+#: model_terms:ir.ui.view,arch_db:document_flow.document_flow_processing_wizard_resume_view_form
 #, python-format
 msgid "Comment"
 msgstr "Комментарий"
+
+#. module: document_flow
+#: model_terms:ir.ui.view,arch_db:document_flow.document_flow_processing_wizard_resume_view_form
+msgid "Comment..."
+msgstr "Комментарий..."
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__company_ids
@@ -359,6 +386,7 @@ msgstr "Компании"
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__company_id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting__company_id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__company_id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_role_executor__company_id
 msgid "Company"
@@ -420,6 +448,7 @@ msgstr "Копия_%s"
 
 #. module: document_flow
 #. odoo-python
+#: code:addons/document_flow/models/document_flow_document.py:0
 #: code:addons/document_flow/models/document_flow_process.py:0
 #, python-format
 msgid "Could not be determined '%s'. Check the route or settings."
@@ -445,7 +474,9 @@ msgstr "Созданные мной (просроченные)"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action_executor__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_auto_substitution__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__create_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type__create_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_annex__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__create_uid
@@ -456,6 +487,7 @@ msgstr "Созданные мной (просроченные)"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_parent_object__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__create_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_processing_wizard_resume__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_role_executor__create_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__create_uid
 msgid "Created by"
@@ -473,7 +505,9 @@ msgstr "Созданные мной:"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action_executor__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_auto_substitution__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__create_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type__create_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_annex__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__create_date
@@ -484,6 +518,7 @@ msgstr "Созданные мной:"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_parent_object__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__create_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_processing_wizard_resume__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_role_executor__create_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__create_date
 msgid "Created on"
@@ -618,7 +653,9 @@ msgstr "Описание..."
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action_executor__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_auto_substitution__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__display_name
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type__display_name
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_annex__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__display_name
@@ -629,6 +666,7 @@ msgstr "Описание..."
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_parent_object__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__display_name
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_processing_wizard_resume__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_role_executor__display_name
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__display_name
 msgid "Display Name"
@@ -638,6 +676,7 @@ msgstr "Наименование"
 #. odoo-python
 #: code:addons/document_flow/models/document_flow_process.py:0
 #: model:ir.model,name:document_flow.model_document_flow_document
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__document_id
 #: model_terms:ir.ui.view,arch_db:document_flow.document_view_form
 #, python-format
 msgid "Document"
@@ -651,6 +690,11 @@ msgid "Document \"%s\" from %s"
 msgstr "Документ \"%s\" от %s"
 
 #. module: document_flow
+#: model:ir.model,name:document_flow.model_document_flow_document_access
+msgid "Document Access"
+msgstr "Доступ к документу"
+
+#. module: document_flow
 #: model:ir.actions.client,name:document_flow.action_document_flow_dashboard
 #: model:ir.ui.menu,name:document_flow.document_flow_menu
 msgid "Document Flow"
@@ -662,17 +706,28 @@ msgid "Document Flow Management"
 msgstr "Документооборот"
 
 #. module: document_flow
+#: model:ir.model,name:document_flow.model_document_flow_processing_wizard_resume
+msgid "Document Flow Processing Wizard: Resume"
+msgstr ""
+
+#. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.document_view_form
 msgid "Document Title..."
 msgstr "Заголовок..."
 
 #. module: document_flow
 #: model:ir.model,name:document_flow.model_document_flow_document_type
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting__document_type_id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__document_type_id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__document_type_id
 #: model_terms:ir.ui.view,arch_db:document_flow.document_flow_document_type_view_form
 msgid "Document Type"
 msgstr "Вид документа"
+
+#. module: document_flow
+#: model:ir.model,name:document_flow.model_document_flow_document_type_accessibility_setting
+msgid "Document Type Accessibility Setting"
+msgstr ""
 
 #. module: document_flow
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type__sequence_id
@@ -687,6 +742,7 @@ msgstr "Заголовок вида документа..."
 #. module: document_flow
 #: model:ir.actions.act_window,name:document_flow.action_document_flow_document_type_view_all_types
 #: model:ir.ui.menu,name:document_flow.document_flow_menu_document_type
+#: model_terms:ir.ui.view,arch_db:document_flow.document_flow_document_type_accessibility_setting_view_tree
 #: model_terms:ir.ui.view,arch_db:document_flow.document_flow_document_type_view_tree
 msgid "Document Types"
 msgstr "Виды документов"
@@ -697,8 +753,9 @@ msgid "Document description..."
 msgstr "Описание документа..."
 
 #. module: document_flow
-#: model:ir.actions.act_window,name:document_flow.action_view_all_documents
+#: model:ir.actions.act_window,name:document_flow.action_document_flow_documents_form
 #: model:ir.ui.menu,name:document_flow.document_flow_menu_document
+#: model_terms:ir.ui.view,arch_db:document_flow.document_view_search
 #: model_terms:ir.ui.view,arch_db:document_flow.document_view_tree
 msgid "Documents"
 msgstr "Документы"
@@ -913,6 +970,7 @@ msgid "Full name"
 msgstr "ФИО"
 
 #. module: document_flow
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__role_executor_id
 #: model:ir.model.fields,field_description:document_flow.field_task_task__role_executor_id
 msgid "Group"
 msgstr "Группа исполнителей"
@@ -957,7 +1015,9 @@ msgstr "Поможет управлять документами"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action_executor__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_auto_substitution__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type__id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_annex__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__id
@@ -968,6 +1028,7 @@ msgstr "Поможет управлять документами"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_parent_object__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_processing_wizard_resume__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_role_executor__id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__id
 msgid "ID"
@@ -1027,7 +1088,9 @@ msgstr "Подписчик"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action_executor____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_auto_substitution____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document____last_update
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type____last_update
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_annex____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision____last_update
@@ -1038,6 +1101,7 @@ msgstr "Подписчик"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_parent_object____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing____last_update
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_processing_wizard_resume____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_role_executor____last_update
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history____last_update
 msgid "Last Modified on"
@@ -1048,7 +1112,9 @@ msgstr "Дата последнего изменения"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action_executor__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_auto_substitution__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__write_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type__write_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_annex__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__write_uid
@@ -1059,6 +1125,7 @@ msgstr "Дата последнего изменения"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_parent_object__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__write_uid
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_processing_wizard_resume__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_role_executor__write_uid
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__write_uid
 msgid "Last Updated by"
@@ -1069,7 +1136,9 @@ msgstr "Автор последнего изменения"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_action_executor__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_auto_substitution__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document__write_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type__write_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_annex__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event_decision__write_date
@@ -1080,6 +1149,7 @@ msgstr "Автор последнего изменения"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_parent_object__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_template__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__write_date
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_processing_wizard_resume__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_role_executor__write_date
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__write_date
 msgid "Last Updated on"
@@ -1095,11 +1165,6 @@ msgstr "Место"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_event__message_main_attachment_id
 msgid "Main Attachment"
 msgstr "Основное вложение"
-
-#. module: document_flow
-#: model:res.groups,name:document_flow.group_document_flow_worker_with_document
-msgid "Manage Documents"
-msgstr "Работа с документами"
 
 #. module: document_flow
 #: model:ir.model,name:document_flow.model_document_flow_management_committee
@@ -1235,7 +1300,7 @@ msgid "No document types found. Let's create one!"
 msgstr "Виды документов не найдены. Давайте создадим первый!"
 
 #. module: document_flow
-#: model_terms:ir.actions.act_window,help:document_flow.action_view_all_documents
+#: model_terms:ir.actions.act_window,help:document_flow.action_document_flow_documents_form
 msgid "No documents found. Let's create one!"
 msgstr "Документы не найдены. Давайте создадим первый!"
 
@@ -1432,6 +1497,7 @@ msgstr "Срок (дней)"
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_executor__process_id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_process_parent_object__process_id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_processing__process_id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_processing_wizard_resume__process_id
 #: model:ir.model.fields,field_description:document_flow.field_document_flow_task_history__process_id
 #: model_terms:ir.ui.view,arch_db:document_flow.document_flow_task_history_view_search
 #: model_terms:ir.ui.view,arch_db:document_flow.process_view_form
@@ -1623,6 +1689,12 @@ msgstr "Ответственный: %s"
 #, python-format
 msgid "Result"
 msgstr "Результат"
+
+#. module: document_flow
+#: model:ir.actions.act_window,name:document_flow.action_document_flow_processing_wizard_resume
+#: model_terms:ir.ui.view,arch_db:document_flow.document_flow_processing_wizard_resume_view_form
+msgid "Resume"
+msgstr "Возобновить обработку"
 
 #. module: document_flow
 #: model_terms:ir.ui.view,arch_db:document_flow.document_flow_processing_view_form
@@ -1954,6 +2026,9 @@ msgstr ""
 #. module: document_flow
 #. odoo-python
 #: code:addons/document_flow/models/document_flow_process.py:0
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__user_id
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_access__user_ref
+#: model:ir.model.fields,field_description:document_flow.field_document_flow_document_type_accessibility_setting__user_ref
 #: model:res.groups,name:document_flow.group_document_flow_user
 #, python-format
 msgid "User"

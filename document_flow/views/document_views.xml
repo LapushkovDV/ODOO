@@ -33,6 +33,11 @@
                 <field name="date" widget="date"/>
                 <field name="sum" widget="monetary"/>
                 <field name="description"/>
+                <field name="process_state" widget="badge"
+                       decoration-muted="process_state == 'on_registration'"
+                       decoration-info="process_state == 'started'"
+                       decoration-success="process_state == 'finished'"
+                       decoration-danger="process_state == 'break'"/>
             </tree>
         </field>
     </record>
@@ -91,11 +96,17 @@
                         <field name="sum" widget="monetary"
                                attrs="{'readonly': [('process_id', '!=', False), ('process_state', 'not in', ('on_registration', 'break'))]}"/>
                     </group>
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
                     <notebook>
                         <page name="description_page" string="Description">
                             <field name="description" type="html" options="{'collaborative': true, 'resizable': false}"
                                    placeholder="Document description..."
                                    attrs="{'readonly': [('process_id', '!=', False), ('process_state', 'not in', ('on_registration', 'break'))]}"/>
+                        </page>
+                        <page name="access_page" string="Access">
+                            <field name="access_ids" mode="tree"/>
                         </page>
                     </notebook>
                 </sheet>

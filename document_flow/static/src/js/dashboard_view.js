@@ -30,7 +30,14 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                     }).then(function(result) {
                         self.has_subordinates = result;
                     });
-                    return $.when(has_subordinates);
+
+                    var replaceable_ids  = self._rpc({
+                        model: "hr.employee",
+                        method: "get_replaceable_user_ids",
+                    }).then(function (result) {
+                        self.replaceable_ids = result;
+                    });
+                    return $.when(has_subordinates, replaceable_ids);
             });
         },
 
@@ -120,7 +127,7 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 domain: [
                     ['parent_ref_type', 'like', 'document_flow.%'],
                     ['is_closed', '=', false],
-                    ['user_ids', 'in', require('web.session').user_id],
+                    '|', ['user_ids', '=', require('web.session').user_id], ['user_ids', 'in', self.replaceable_ids],
                     ['date_deadline', '>=', new Date()]
                 ],
                 context: {'default_parent_ref_type': 'document_flow.'},
@@ -141,7 +148,7 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 domain: [
                     ['parent_ref_type', 'like', 'document_flow.%'],
                     ['is_closed', '=', false],
-                    ['user_ids', 'in', require('web.session').user_id],
+                    '|', ['user_ids', '=', require('web.session').user_id], ['user_ids', 'in', self.replaceable_ids],
                     ['date_deadline', '<', new Date()]
                 ],
                 context: {'default_parent_ref_type': 'document_flow.'},
@@ -162,7 +169,7 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 domain: [
                     ['parent_ref_type', 'like', 'document_flow.%'],
                     ['is_closed', '=', false],
-                    ['author_id', 'in', require('web.session').user_id],
+                    ['author_id', '=', require('web.session').user_id],
                     ['date_deadline', '>=', new Date()]
                 ],
                 context: {'default_parent_ref_type': 'document_flow.'},
@@ -183,7 +190,7 @@ odoo.define("document_flow_dashboard.dashboard_view", function (require) {
                 domain: [
                     ['parent_ref_type', 'like', 'document_flow.%'],
                     ['is_closed', '=', false],
-                    ['author_id', 'in', require('web.session').user_id],
+                    ['author_id', '=', require('web.session').user_id],
                     ['date_deadline', '<', new Date()]
                 ],
                 context: {'default_parent_ref_type': 'document_flow.'},

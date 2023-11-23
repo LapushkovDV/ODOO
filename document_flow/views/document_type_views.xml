@@ -32,12 +32,29 @@
                         <h1 class="d-flex flex-row">
                             <field name="name" class="o_text_overflow" placeholder="Document Type Title..."/>
                         </h1>
-                        <group>
-                            <field name="sequence_id"/>
-                        </group>
                     </div>
+                    <group>
+                        <field name="sequence_id"/>
+                    </group>
+                    <notebook>
+                        <page name="access_settings_page" string="Accessibility Settings">
+                            <field name="access_setting_ids" mode="tree"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
+        </field>
+    </record>
+
+    <record id="document_flow_document_type_accessibility_setting_view_tree" model="ir.ui.view">
+        <field name="name">document_flow.document.type.accessibility.setting.tree</field>
+        <field name="model">document_flow.document.type.accessibility.setting</field>
+        <field name="arch" type="xml">
+            <tree string="Document Types" editable="bottom">
+                <field name="document_type_id" invisible="1"/>
+                <field name="user_ref"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
         </field>
     </record>
 </odoo>
