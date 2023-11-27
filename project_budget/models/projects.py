@@ -813,6 +813,18 @@ class projects(models.Model):
             return False
         else: return True
 
+    @api.constrains('estimated_probability_id', 'total_amount_of_revenue', 'cost_price')
+    def _check_financial_data_is_present(self):
+        for project in self:
+            if (project.estimated_probability_id.name in ('50', '75', '100')
+                    and project.total_amount_of_revenue == 0
+                    and project.cost_price == 0
+                    and not project.project_have_steps
+                    and not project.is_parent_project):
+                raisetext = _("Please enter financial data to project {0}")
+                raisetext = raisetext.format(project.project_id)
+                raise ValidationError(raisetext)
+
     def check_overdue_date(self, vals_list):
         for project in self:
 
