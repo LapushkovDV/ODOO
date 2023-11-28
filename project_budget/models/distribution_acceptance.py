@@ -10,7 +10,6 @@ class distribution_acceptance(models.Model):
     def _compute_default_sum(self):
         if self.planned_acceptance_flow_id.ids:
             distribution = {}
-            print(self.fact_acceptance_flow_id.distribution_acceptance_ids)
             distr_list = [distribution for distribution in self.fact_acceptance_flow_id.distribution_acceptance_ids if
                           hasattr(distribution.id, 'origin') and distribution.id.origin is not False]
             for distr in distr_list[:-1]:
@@ -54,13 +53,12 @@ class distribution_acceptance(models.Model):
         string="distribution_sum_with_vat_ostatok", readonly=True)
 
     sum_cash_without_vat = fields.Monetary(string="fact sum_cash_without_vat", required=True, copy=True, default=_compute_default_sum)
-    sum_cash = fields.Monetary(string="fact sum_cash", required=True, copy=True,compute='_compute_sum', readonly=True)
+    sum_cash = fields.Monetary(string="fact sum_cash", required=True, copy=True, compute='_compute_sum')
 
     @api.depends("sum_cash_without_vat")
     def _compute_sum(self):
         for row in self:
             if row.fact_acceptance_flow_id.project_steps_id:
-                row.write({'sum_cash': row.sum_cash_without_vat * (1+row.fact_acceptance_flow_id.project_steps_id.vat_attribute_id.percent / 100)})
-
+                row.sum_cash = row.sum_cash_without_vat * (1 + row.fact_acceptance_flow_id.project_steps_id.vat_attribute_id.percent / 100)
             else:
-                row.write({'sum_cash': row.sum_cash_without_vat * (1 + row.fact_acceptance_flow_id.projects_id.vat_attribute_id.percent / 100)})
+                row.sum_cash = row.sum_cash_without_vat * (1 + row.fact_acceptance_flow_id.projects_id.vat_attribute_id.percent / 100)
