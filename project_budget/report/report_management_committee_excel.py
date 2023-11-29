@@ -96,6 +96,8 @@ class report_management_committee_excel(models.AbstractModel):
 
     def get_estimated_probability_name_forecast(self, name):
         result = name
+        return result
+        # сказали не надо словами
         if name == '0': result = 'Отменен'
         if name == '30': result = 'Идентификация проекта'
         if name == '50': result = 'Подготовка ТКП'
@@ -2635,7 +2637,7 @@ class report_management_committee_excel(models.AbstractModel):
 
                 # посмотрим на распределение, по идее все с него надо брать, но пока оставляем 2 ветки: если нет распределения идем по старому: в рамках одного месяца сравниваем суммы факта и плаан
                 sum_distribution_acceptance = 0
-                sum_ostatok_acceptance = {'acceptance': 0, 'reserve': 0, 'potential': 0}
+                sum_ostatok_acceptance = {'commitment': 0, 'reserve': 0, 'potential': 0}
                 for planned_acceptance_flow in project.planned_acceptance_flow_ids:
                     if planned_acceptance_flow.date_cash.year == YEARint + 2:
                         sum_distribution_acceptance += planned_acceptance_flow.distribution_sum_without_vat
@@ -4554,6 +4556,7 @@ class report_management_committee_excel(models.AbstractModel):
         else:
             sheet.merge_range(row + 1, 0, row + 2, 0, "БЮ/Проектный офис", head_format_1)
         sheet.set_column(column, column, 40)
+
         if params['report_with_projects']:
             sheet.merge_range(row - 1, 1, row, 10, "", head_format)
             column += 1
@@ -4588,9 +4591,16 @@ class report_management_committee_excel(models.AbstractModel):
             sheet.merge_range(row + 1, column, row + 2, column, "", head_format_1)
             sheet.set_column(column, column, 2)
 
-        sheet.freeze_panes(5, 1)
+        if params['report_with_projects']: sheet.freeze_panes(5, 3)
+        else : sheet.freeze_panes(5, 1)
+
+
+
         column += 1
         column = self.print_quater_head(workbook, sheet, row, column, strYEAR)
+
+        sheet.autofilter(4, 0, 4, column)
+
         row += 2
 
         cur_budget_projects = self.env['project_budget.projects'].search([
