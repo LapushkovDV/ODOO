@@ -20,7 +20,8 @@ class AccountAnalyticLine(models.Model):
         return []
 
     task_id = fields.Many2one('task.task', string='Task', compute='_compute_task_id', index='btree_not_null',
-                              readonly=False, store=True)
+                              readonly=False, store=True,
+                              domain="[('parent_ref_type', '=', 'project_budget.projects')]")
     project_id = fields.Many2one('project_budget.projects', string='Project', compute='_compute_project_id',
                                  domain="[('budget_state', '=', 'work')]", index=True, store=True)
     user_id = fields.Many2one('res.users', compute='_compute_user_id', store=True, readonly=False)
