@@ -25,7 +25,7 @@ class ScheduledReport(models.Model):
 
         report_name = self.with_context(
             lang=self.env.user.lang).report_id.print_report_name if self.report_id.print_report_name else self.with_context(
-            lang=self.env.user.lang).report_id.name + '_'+self.company_id.name
+            lang=self.env.user.lang).report_id.name
         ext = '.' + report_format
         if not report_name.endswith(ext):
             report_name += ext
@@ -66,7 +66,8 @@ class ScheduledReport(models.Model):
             ], limit=1).id,
             koeff_reserve=1,
             koeff_potential=1,
-            pds_accept='pds'
+            pds_accept='pds',
+            report_with_projects=True,
         )
         schedule_reports = self.env['project_budget.scheduled.report'].search([])
         for sr in schedule_reports:
