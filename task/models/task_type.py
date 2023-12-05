@@ -1,4 +1,4 @@
-from odoo import models, fields, api, _
+from odoo import api, fields, models, _
 
 
 class TaskType(models.Model):
@@ -21,7 +21,10 @@ class TaskType(models.Model):
     route_count = fields.Integer(string='Routes', compute='_compute_route_count', readonly=True)
 
     model_id = fields.Many2one('ir.model', string='Model')
-
+    access_group_ids = fields.Many2many('res.groups', relation='task_type_group_rel', column1='task_type_id',
+                                        column2='group_id', string='Access groups',
+                                        help="""If user belongs to one of groups specified in this field,
+                                        then he will be able to select this type during task creation.""")
     _sql_constraints = [
         ('code_uniq',
          'UNIQUE (code)',
