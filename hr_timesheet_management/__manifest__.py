@@ -1,6 +1,6 @@
 {
     'name': 'Task Timesheets',
-    'version': '1.0.0',
+    'version': '1.0.1',
     'category': 'Services/Timesheets',
     'summary': 'Track employee time on tasks',
     'description': """This module implements a timesheet system.""",

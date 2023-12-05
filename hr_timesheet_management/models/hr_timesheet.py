@@ -15,9 +15,11 @@ class AccountAnalyticLine(models.Model):
         return result
 
     def _domain_employee_id(self):
+        domain = [
+            '|', ('company_id', '=', False), ('company_id', 'in', self.env.context.get('allowed_company_ids', []))]
         if not self.user_has_groups('hr_timesheet_management.group_hr_timesheet_manager'):
-            return [('user_id', '=', self.env.user.id)]
-        return []
+            domain.append(('user_id', '=', self.env.user.id))
+        return domain
 
     task_id = fields.Many2one('task.task', string='Task', compute='_compute_task_id', index='btree_not_null',
                               readonly=False, store=True,
