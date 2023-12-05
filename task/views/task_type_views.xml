@@ -147,6 +147,10 @@
                         </group>
                     </group>
                     <group>
+                        <field name="access_group_ids" widget="many2many_tags"
+                               options="{'no_create': true, 'no_quick_create': true}"/>
+                    </group>
+                    <group>
                         <field name="color" widget="color"/>
                     </group>
                     <notebook>
