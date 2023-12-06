@@ -1,6 +1,6 @@
 {
     'name': 'Customize ODOO',
-    'version': '16.0.1.0.1',
+    'version': '1.0.2',
     'depends': ['base', 'web'],
     'category': 'Productivity',
     'description': """
@@ -12,6 +12,7 @@
             'base_custom_app/static/src/scss/change_color.scss',
             'base_custom_app/static/src/js/set_width.js',
             'base_custom_app/static/src/js/set_title.js',
+            'base_custom_app/static/src/js/user_menu.js',
             'base_custom_app/static/src/scss/form_view_extra.scss',
             'base_custom_app/static/src/scss/sticky_header.scss'
         ]

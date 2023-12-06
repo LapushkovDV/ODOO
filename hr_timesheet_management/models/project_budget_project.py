@@ -9,7 +9,7 @@ class Project(models.Model):
         ('customer_organization_id.partner_id', '=?', partner_id)""")
 
     timesheet_ids = fields.One2many('account.analytic.line', 'project_id', string='Timesheets')
-    total_hours_spent = fields.Float(compute='_compute_total_hours_spent', string='Timesheets')
+    total_hours_spent = fields.Float(compute='_compute_total_hours_spent', string='Hours')
 
     @api.depends('timesheet_ids')
     def _compute_total_hours_spent(self):
@@ -45,7 +45,8 @@ class Project(models.Model):
             'company_id') else self.env.company
         org = self.env['project_budget.customer_organization'].browse(
             values.get('customer_organization_id')) if values.get('company_id') else False
-        analytic_account = self.env['account.analytic.account'].create({
+        # TODO: Подумать над необходимостью sudo
+        analytic_account = self.env['account.analytic.account'].sudo().create({
             'name': values.get('essence_project', _('Unknown Analytic Account')),
             'company_id': company.id,
             'partner_id': org.partner_id.id if org else False,
@@ -55,7 +56,8 @@ class Project(models.Model):
 
     def _create_analytic_account(self):
         for project in self:
-            analytic_account = self.env['account.analytic.account'].create({
+            # TODO: Подумать над необходимостью sudo
+            analytic_account = self.env['account.analytic.account'].sudo().create({
                 'name': project.essence_project,
                 'company_id': project.company_id.id,
                 'partner_id': project.customer_organization_id.partner_id.id,
