@@ -21,7 +21,7 @@
         </record>
 
         <record id="task_type_access_group_rule" model="ir.rule">
-            <field name="name">Request Types for Access Groups</field>
+            <field name="name">Task types for access groups</field>
             <field name="model_id" ref="model_task_type"/>
             <field name="domain_force">['|', ('access_group_ids', '=', False), ('access_group_ids.users.id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>

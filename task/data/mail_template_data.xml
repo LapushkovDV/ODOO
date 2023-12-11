@@ -102,6 +102,91 @@
             </field>
         </record>
 
+        <record id="mail_template_task_deadline_reminder" model="mail.template">
+            <field name="name">Task: Deadline Reminder</field>
+            <field name="email_to">{{ ctx['user_id'].email }}</field>
+            <field name="lang">{{ ctx['user_id'].lang }}</field>
+            <field name="subject">Reminder email for tasks deadline</field>
+            <field name="description">Template to automate email when tasks were overdue or expiration soon</field>
+            <field name="model_id" ref="task.model_task_type"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; font-size: 13px;">
+                    <br/>
+                    Dear <t t-out="ctx['user_id'].name or ''">user</t>,
+                    <br/>
+                    <br/>
+                    <div>
+                        The Deadline for tasks is coming up soon. Please submit your work by the Deadline.
+                        <br/>
+                        <br/>
+                        <table border="0" cellpadding="0" cellspacing="0" style="border: 1pt solid black; border-collapse: collapse; margin:5pt; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1pt solid black; border-collapse: collapse; border-radius:8pt; text-align:center; width: 70%">Task</th>
+                                    <th style="border: 1pt solid black; border-collapse: collapse; text-align:center; width: 15%">Deadline</th>
+                                    <th style="border: 1pt solid black; border-collapse: collapse; border-radius:8pt; text-align:center; width: 15%">Link</th>
+                                </tr>
+                           </thead>
+                           <tbody>
+                               <t t-if="len(ctx['expiration_tasks']) > 0">
+                                   <th colspan="3" style="background-color: yellow; text-align: center;">Expiration tasks</th>
+                                   <t t-foreach="ctx['expiration_tasks']" t-as="task">
+                                       <tr>
+                                           <td style="border: 1pt solid black; border-collapse: collapse;">
+                                               <span>
+                                                   <t t-out="task.name"/>
+                                               </span>
+                                           </td>
+                                           <td style="border: 1pt solid black; border-collapse: collapse; text-align:center;">
+                                               <span>
+                                                   <t t-out="task.date_deadline"/>
+                                               </span>
+                                           </td>
+                                           <td style="border: 1pt solid black; border-collapse: collapse; text-align:center; padding: 7px;">
+                                               <a t-att-href="(task._compute_url())" style="background-color: #0f5f8b; height:18px;
+                                               width:80px; color: white; padding-top:1px;
+                                               border: none; border-radius: 5px;
+                                               text-align: center; text-decoration: none;
+                                               display: inline-block; font-size: 12px;">View Task
+                                               </a>
+                                           </td>
+                                       </tr>
+                                   </t>
+                               </t>
+                               <t t-if="len(ctx['overdue_tasks']) > 0">
+                                   <th colspan="3" style="background-color: red; text-align:center;">Overdue tasks</th>
+                                   <t t-foreach="ctx['overdue_tasks']" t-as="task">
+                                       <tr>
+                                           <td style="border: 1pt solid black; border-collapse: collapse;">
+                                               <span>
+                                                   <t t-out="task.name"/>
+                                               </span>
+                                           </td>
+                                           <td style="border: 1pt solid black; border-collapse: collapse; text-align:center;">
+                                               <span>
+                                                   <t t-out="task.date_deadline"/>
+                                               </span>
+                                           </td>
+                                           <td style="border: 1pt solid black; border-collapse: collapse; text-align:center; padding: 7px;">
+                                               <a t-att-href="(task._compute_url())" style="background-color: #0f5f8b; height:18px;
+                                               width:80px; color: white; padding-top:1px;
+                                               border: none; border-radius: 5px;
+                                               text-align: center; text-decoration: none;
+                                               display: inline-block; font-size: 12px;">View Task
+                                               </a>
+                                           </td>
+                                       </tr>
+                                   </t>
+                               </t>
+                           </tbody>
+                       </table>
+                    </div>
+                    <p style="margin:0px 0 12px 0;box-sizing:border-box;"></p>
+                </div>
+            </field>
+        </record>
+
         <template id="mail.mail_notification_layout" name="Mail: mail notification layout template">
             <html t-att-lang="lang">
                 <header>
