@@ -30,7 +30,7 @@ class Task(models.Model):
     def _selection_parent_model(self):
         return []
 
-    def _get_type_domain(self):
+    def _get_type_id_domain(self):
         if self.parent_ref:
             return [('model_id.model', '=', type(self.parent_ref).__name__)]
         elif self.parent_ref_type:
@@ -38,7 +38,15 @@ class Task(models.Model):
         else:
             return [('model_id', '=', False)]
 
-    def _get_stage_domain(self):
+    def _get_user_id_domain(self):
+        domain = [
+            '|', ('company_id', '=', False), ('company_id', 'in', self.env.context.get('allowed_company_ids', []))]
+        if self.env['ir.config_parameter'].sudo().get_param('task.assign_task_only_to_subordinates', False):
+            domain += ['|', ('id', '=', self.env.user.id),
+                       ('id', 'in', self.env.user.employee_ids.subordinate_ids.user_id.ids)]
+        return domain
+
+    def _get_stage_id_domain(self):
         return [('task_type_id', '=', self.type_id)]
 
     code = fields.Char(string='Code', copy=False, required=True, readonly=True, default=lambda self: _('New'))
@@ -53,9 +61,9 @@ class Task(models.Model):
     company_ids = fields.Many2many('res.company', string='Companies', required=True,
                                    default=lambda self: self.env.company)
     type_id = fields.Many2one('task.type', string='Type', ondelete='restrict', copy=True, depends=['parent_ref'],
-                              index=True, required=True, tracking=True, domain=_get_type_domain)
+                              index=True, required=True, tracking=True, domain=_get_type_id_domain)
     stage_id = fields.Many2one('task.stage', string='Stage', ondelete='restrict', copy=False, required=True, index=True,
-                               tracking=True, group_expand='_read_group_stage_ids', domain=_get_stage_domain)
+                               tracking=True, group_expand='_read_group_stage_ids', domain=_get_stage_id_domain)
     stage_type_id = fields.Many2one('task.stage.type', related="stage_id.type_id", string="Stage Type",
                                     index=True, readonly=True, store=True)
     stage_routes = fields.Char(compute='_compute_stage_routes', readonly=True)
@@ -63,8 +71,8 @@ class Task(models.Model):
 
     user_id = fields.Many2one('res.users', string='Assigned', copy=True, tracking=True)
     user_ids = fields.Many2many('res.users', relation='task_user_rel', column1='task_id', column2='user_id',
-                                string='Assignees', copy=True, context={'active_test': False}, tracking=True,
-                                domain="['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]")
+                                string='Assignees', copy=True, context={'active_test': False},
+                                domain=_get_user_id_domain)
     actual_executor_id = fields.Many2one('res.users', string='Executor', copy=False, readonly=True)
     parent_ref = fields.Reference(string='Parent', selection="_selection_parent_model", ondelete='restrict',
                                   copy=True, compute="_compute_parent_ref", inverse='_inverse_parent_ref', store=True)
@@ -97,27 +105,6 @@ class Task(models.Model):
             search_domain = ['task_type_id', 'in', list(set(stages.task_type_id.ids))]
 
         return self.env['task.stage'].search([search_domain] if any(search_domain) else [], order=order)
-
-    # @api.model
-    # def get_view(self, view_id=None, view_type='form', **options):
-    #     if view_type == 'form' and 'edit' not in self.env.context['params']:
-    #         ctx = dict(self.env.context)
-    #         ctx['params']['edit'] = '0'
-    #         return super().with_context(ctx).get_view(view_id, view_type, **options)
-    #     return super().get_view(view_id, view_type, **options)
-
-    # @api.model
-    # def fields_get(self, allfields=None, attributes=None):
-    #     fields = super().fields_get(allfields=allfields, attributes=attributes)
-    #
-    #     public_fields = {field_name: description for field_name, description in fields.items()}
-    #
-    #     for field_name, description in public_fields.items():
-    #         if field_name == 'description' and not description.get('readonly', False):
-    #             # If the field is not in Writable fields and it is not readonly then we force the readonly to True
-    #             description['readonly'] = True
-    #
-    #     return public_fields
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -233,7 +220,6 @@ class Task(models.Model):
                 task.parent_ref = '%s,%d' % (task.parent_ref_type, task.parent_ref_id or 0)
             else:
                 task.parent_ref = None
-            # return {'domain': {'type_id': task._get_type_domain()}}
 
     @api.depends('parent_ref')
     def _inverse_parent_ref(self):
