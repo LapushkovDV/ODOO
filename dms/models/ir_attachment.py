@@ -12,6 +12,11 @@ class IrAttachment(models.Model):
                                   string='Previous Versions', context={'active_test': False})
     version_count = fields.Integer(string='Version Count', compute='_compute_version_count')
 
+    def _read_group_allowed_fields(self):
+        allowed_fields = super()._read_group_allowed_fields()
+        allowed_fields.append('version')
+        return allowed_fields
+
     @api.depends('version')
     def _compute_version_ids(self):
         for attachment in self:

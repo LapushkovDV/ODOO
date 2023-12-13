@@ -1,7 +1,7 @@
 {
     "name": "Document Management System",
     "summary": """Document Management System""",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "category": "Document Management",
     "license": "LGPL-3",
     "website": "",
