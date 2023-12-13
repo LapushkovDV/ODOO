@@ -22,8 +22,8 @@ DESCRIPTION_KANBAN_MAX_LINES = 3
 
 
 class Task(models.Model):
-    _name = "task.task"
-    _description = "Task"
+    _name = 'task.task'
+    _description = 'Task'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     @api.model
@@ -136,14 +136,17 @@ class Task(models.Model):
 
         old_user_ids = {t: t.user_ids for t in self}
         res = super(Task, self.with_context(mail_create_nolog=False)).write(vals)
-        new_user_ids = self.user_ids - old_user_ids[self] - self.env.user
-        if new_user_ids:
-            self._send_message_notify(self.env.ref('task.mail_template_task_assigned_notify', raise_if_not_found=False),
-                                      new_user_ids)
-        elif new_stage and new_stage.mail_template_id:
-            self._send_message_notify(self.env.ref('task.mail_template_task_change_stage', raise_if_not_found=False),
-                                      self.author_id)
-        return res
+        for task in self:
+            new_user_ids = self.user_ids - old_user_ids[task] - self.env.user
+            if new_user_ids:
+                self._send_message_notify(
+                    self.env.ref('task.mail_template_task_assigned_notify', raise_if_not_found=False),
+                    new_user_ids)
+            elif new_stage and new_stage.mail_template_id:
+                self._send_message_notify(
+                    self.env.ref('task.mail_template_task_change_stage', raise_if_not_found=False),
+                    self.author_id)
+            return res
 
     def _compute_attachment_count(self):
         self.env.cr.execute(
@@ -266,7 +269,7 @@ class Task(models.Model):
     @api.onchange('parent_ref')
     def _onchange_parent_ref(self):
         for task in self:
-            return {'domain': {'type_id': task._get_type_domain()}}
+            return {'domain': {'type_id': task._get_type_id_domain()}}
 
     @api.onchange('type_id')
     def _onchange_type_id(self):
