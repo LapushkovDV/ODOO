@@ -5,9 +5,6 @@
         <field name="model">document_flow.processing.wizard.resume</field>
         <field name="arch" type="xml">
             <form>
-                <group invisible="1">
-                    <field name="process_id"/>
-                </group>
                 <sheet>
                     <group>
                         <field name="comment" string="Comment" type="html" class="text_high"
@@ -16,7 +13,9 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Resume" name="action_resume_processing" class="btn-success" type="object"/>
+                    <button string="Resume" name="action_resume_processing" class="btn-success" type="object"
+                            attrs="{'invisible': 1}"/>
+                    <button string="Start Again" name="action_start_processing_again" class="btn-success" type="object"/>
                     <button string="Cancel" class="btn-danger" special="cancel"/>
                 </footer>
             </form>

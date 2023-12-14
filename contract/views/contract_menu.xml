@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <menuitem id="menu_contract_management" name="Contracts" sequence="14"/>
+
+    <menuitem id="menu_contract_contract" name="Contract Management" parent="menu_contract_management" sequence="5">
+        <menuitem id="menu_contacts" name="Contracts" sequence="1" action="action_contract_form"/>
+        <menuitem id="menu_contract_types" name="Contract Types" sequence="2" action="action_contract_type_form"
+                  groups="base.group_system"/>
+    </menuitem>
+</odoo>

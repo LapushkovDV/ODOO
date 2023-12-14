@@ -14,38 +14,56 @@ class Document(models.Model):
             (0, 0, {'user_ref': 'res.users,%d' % self.env.user.id})
         ]
 
+    def _default_employee_id(self):
+        employee = self.env['hr.employee'].search([
+            ('user_id', '=', self.env.user.id),
+            ('company_id', '=', self.env.company.id)
+        ], limit=1)
+        return employee.id
+
     code = fields.Char(string='Code', copy=False, readonly=True, required=True, default=lambda self: _('New'))
     name = fields.Char(string='Name', copy=True, required=True, tracking=True)
     date = fields.Date(string='Date', copy=False, required=True, tracking=True, default=fields.Date.context_today)
     company_id = fields.Many2one('res.company', string='Company', copy=False, required=True,
                                  default=lambda self: self.env.company)
-    type_id = fields.Many2one('document_flow.document.type', string='Type', copy=True, required=True, tracking=True)
-    currency_id = fields.Many2one('res.currency', string='Currency', copy=False, required=True, tracking=True,
-                                  default=lambda self: self.env.ref('base.RUB').id)
-    project_id = fields.Many2one('project_budget.projects', string='Project', copy=True, required=True, tracking=True,
-                                 domain="[('budget_state', '=', 'work')]")
-    partner_id = fields.Many2one('res.partner', related='project_id.customer_organization_id.partner_id',
-                                 string='Partner', copy=False, readonly=True, required=True)
-    sum = fields.Monetary(string='Sum', copy=False, tracking=True)
+    author_id = fields.Many2one('hr.employee', string='Author', check_company=True, default=_default_employee_id,
+                                required=True)
+    kind_id = fields.Many2one('document_flow.document.kind', string='Kind', copy=True, ondelete='restrict',
+                              required=True, tracking=True)
+    template_id = fields.Many2one(related='kind_id.template_id', string='Template', copy=False, readonly=True)
     description = fields.Html(string='Description', copy=False)
     active = fields.Boolean(copy=False, default=True, index=True)
     access_ids = fields.One2many('document_flow.document.access', 'document_id', string='Access', copy=False,
                                  required=True, default=_default_access_ids)
+    properties = fields.Properties('Properties', definition='kind_id.properties_definition', copy=True)
 
     process_id = fields.Many2one('document_flow.process', string='Process', compute='_compute_process_id')
     process_state = fields.Selection(related='process_id.state', string='State', readonly=True)
     attachment_ids = fields.One2many('ir.attachment', string='Attachments', compute='_compute_attachment_ids')
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Attachment Count')
 
+    # @api.model
+    # def fields_get(self, allfields=None, attributes=None):
+    #     fields = super().fields_get(allfields=allfields, attributes=attributes)
+    #
+    #     public_fields = {field_name: description for field_name, description in fields.items()}
+    #
+    #     for field_name, description in public_fields.items():
+    #         if field_name == 'properties' and not description.get('readonly', False) and not self.env.user.has_group(
+    #                 'document_flow.group_document_flow_manager'):
+    #             description['readonly'] = True
+    #
+    #     return public_fields
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('code', _('New')) == _('New'):
                 next_code = False
-                if vals.get('type_id', False):
-                    document_type = self.env['document_flow.document.type'].browse(vals.get('type_id'))
-                    if document_type and document_type.sequence_id:
-                        next_code = document_type.sequence_id.next_by_code('document_flow.document.type') or _('New')
+                if vals.get('kind_id', False):
+                    k_id = self.env['document_flow.document.kind'].browse(vals.get('kind_id'))
+                    if k_id and k_id.sequence_id:
+                        next_code = k_id.sequence_id.next_by_code('document_flow.document.kind.template') or _('New')
                 vals['code'] = self.env['ir.sequence'].next_by_code('document_flow.document') or _(
                     'New') if not next_code else next_code
 
@@ -84,7 +102,7 @@ class Document(models.Model):
         for document in self:
             document.process_id = self.env['document_flow.processing'].search([
                 ('parent_ref', '=', '%s,%d' % (document._name, document.id))
-            ]).process_id
+            ]).process_ids[-1:]
 
     def _compute_attachment_ids(self):
         for document in self:
@@ -133,6 +151,6 @@ class Document(models.Model):
             'res_id': processing.id,
             'context': {
                 'default_parent_ref': '%s,%d' % (self._name, self.id),
-                'default_document_type_id': self.type_id.id
+                'default_document_kind_id': self.kind_id.id
             }
         }

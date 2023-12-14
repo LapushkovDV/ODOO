@@ -34,14 +34,9 @@ class Task(models.Model):
         for task in self:
             parent_ref = False
             if task.parent_ref_type and task.parent_ref_type.startswith('document_flow.') and task.parent_ref:
-                parent_ref = self.env['document_flow.process.parent_object'].search([
-                    ('process_id', '=', task.parent_ref.id)
+                parent_ref = self.env['document_flow.processing'].search([
+                    ('process_ids', 'in', task.parent_ref._get_mainprocess_id_by_process_id().get(task.parent_ref.id, None))
                 ]).parent_ref
-                if not parent_ref:
-                    parent_ref = self.env['document_flow.processing'].search([
-                        ('process_id', '=', task.parent_ref._get_mainprocess_id_by_process_id().get(task.parent_ref.id, None))
-                    ]).parent_ref
-                task.parent_obj_ref = parent_ref
             task.parent_obj_ref = parent_ref
 
     @api.model
