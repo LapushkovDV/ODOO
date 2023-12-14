@@ -5,7 +5,7 @@
     "license": "LGPL-3",
     "website": "",
     "author": "",
-    "depends": ['base', 'hr', 'project_budget'],
+    "depends": ['base', 'hr'],
     "data": [
         'data/contract_data.xml',
         'security/contract_security.xml',
