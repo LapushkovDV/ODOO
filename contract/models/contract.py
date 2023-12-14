@@ -28,9 +28,6 @@ class Contract(models.Model):
                                  required=True)
     partner_id = fields.Many2one('res.partner', string='Partner', copy=False, domain="[('is_company', '=', True)]",
                                  ondelete='restrict', required=True)
-    #TODO: нужен ли здесь проект? Или отдельный модуль? Ради одного поля - некомильфо
-    project_id = fields.Many2one('project_budget.projects', string='Project', copy=False,
-                                 domain="[('budget_state', '=', 'work')]", tracking=True)
     author_id = fields.Many2one('hr.employee', string='Author', check_company=True, copy=False,
                                 default=_get_default_employee_id, readonly=True, required=True)
     responsible_id = fields.Many2one('hr.employee', string='Responsible', check_company=True, copy=False,

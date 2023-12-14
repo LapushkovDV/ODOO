@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-13 10:35+0000\n"
-"PO-Revision-Date: 2023-12-13 10:35+0000\n"
+"POT-Creation-Date: 2023-12-14 14:51+0000\n"
+"PO-Revision-Date: 2023-12-14 14:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -103,6 +103,11 @@ msgid "Company"
 msgstr "Компания"
 
 #. module: contract
+#: model:ir.ui.menu,name:contract.menu_contract_configuration
+msgid "Configuration"
+msgstr "Настройки"
+
+#. module: contract
 #: model:ir.model,name:contract.model_res_partner
 msgid "Contact"
 msgstr ""
@@ -138,6 +143,11 @@ msgstr "Наименование договора"
 #: model:ir.model.fields,field_description:contract.field_contract_type__properties_definition
 msgid "Contract Properties"
 msgstr ""
+
+#. module: contract
+#: model:ir.actions.act_window,name:contract.action_contract_template_form
+msgid "Contract Templates"
+msgstr "Шаблоны договоров"
 
 #. module: contract
 #: model:ir.model,name:contract.model_contract_type
@@ -413,11 +423,6 @@ msgid "Period"
 msgstr "Период"
 
 #. module: contract
-#: model:ir.model.fields,field_description:contract.field_contract_contract__project_id
-msgid "Project"
-msgstr "Проект"
-
-#. module: contract
 #: model:ir.model.fields,field_description:contract.field_contract_contract__responsible_id
 msgid "Responsible"
 msgstr "Ответственный"
@@ -445,6 +450,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:contract.field_contract_contract__sum
 msgid "Sum"
 msgstr "Сумма"
+
+#. module: contract
+#: model:ir.ui.menu,name:contract.menu_contract_templates
+msgid "Templates"
+msgstr "Шаблоны"
 
 #. module: contract
 #: model:ir.model.fields,field_description:contract.field_contract_contract__type_id
