@@ -1,6 +1,6 @@
 {
     'name': 'Document Flow',
-    'version': '1.5.0',
+    'version': '1.5.1',
     'category': '',
     'depends': ['base', 'mail', 'task', 'dms', 'hr', 'project_budget'],
     'external_dependencies': {'python': ['htmldocx', 'html2text']},
@@ -39,7 +39,7 @@
         'views/management_committee_views.xml',
         'views/process_views.xml',
         'views/process_template_views.xml',
-        'views/document_type_views.xml',
+        'views/document_kind_template_views.xml',
         'views/document_views.xml',
         'views/document_access_views.xml',
         'wizard/document_flow_processing_wizard_resume.xml',

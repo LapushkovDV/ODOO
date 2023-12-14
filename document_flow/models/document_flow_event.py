@@ -67,7 +67,7 @@ class Event(models.Model):
         for event in self:
             event.process_id = self.env['document_flow.processing'].search([
                 ('parent_ref', '=', '%s,%d' % (type(event).__name__, event.id))
-            ]).process_id
+            ]).process_ids[-1:]
 
     def action_send_for_approving(self):
         self.ensure_one()
@@ -294,7 +294,7 @@ class EventDecision(models.Model):
         ('year', 'Years'),
     ], required=False, string='Repeat Interval')
 
-    action_id = fields.Many2one('document_flow.action', string='Action')
+    action_id = fields.Many2one('document_flow.action', string='Action', copy=False)
 
     def name_get(self):
         decisions = []
