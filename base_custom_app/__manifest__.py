@@ -1,6 +1,6 @@
 {
     'name': 'Customize ODOO',
-    'version': '1.0.2',
+    'version': '1.0.3',
     'depends': ['base', 'web'],
     'category': 'Productivity',
     'description': """
@@ -17,7 +17,9 @@
             'base_custom_app/static/src/scss/sticky_header.scss'
         ]
     },
-
+    'data': [
+        'views/webclient_templates.xml'
+    ],
     'application': True,
     'installable': True,
     'auto_install': False,
