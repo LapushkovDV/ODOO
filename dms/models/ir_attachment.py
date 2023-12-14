@@ -40,7 +40,7 @@ class IrAttachment(models.Model):
         return records
 
     def write(self, vals):
-        model = self.res_model or self.env.context.get('active_model')
+        model = vals.get('res_model') or self.env.context.get('active_model')
         if self.env['dms.version.config'].search([('model_id', '=', model)]):
             copy = self.copy({'active': False, 'current_version_id': self.id})
             self.env.cr.execute(
