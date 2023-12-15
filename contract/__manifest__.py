@@ -5,14 +5,14 @@
     "license": "LGPL-3",
     "website": "",
     "author": "",
-    "depends": ['base', 'hr', 'project_budget'],
+    "depends": ['base', 'hr'],
     "data": [
         'data/contract_data.xml',
         'security/contract_security.xml',
         'security/ir.model.access.csv',
         'views/contract_views.xml',
         'views/contract_type_views.xml',
-        'views/res_partner.xml',
+        'views/res_partner_views.xml',
         'views/contract_menu.xml'
     ],
     "assets": {

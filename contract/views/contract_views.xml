@@ -108,10 +108,6 @@
                                    attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                     </group>
-                    <group>
-                        <field name="project_id" options="{'no_create_edit': True, 'no_open': True}"
-                               attrs="{'readonly': [('can_edit', '=', False)]}"/>
-                    </group>
                     <separator string="Contracting Parties" name="contracting_parties"/>
                     <group col="2">
                         <group>
