@@ -23,7 +23,7 @@ class Contract(models.Model):
     def unlink(self):
         if self.process_id:
             if any(self.process_id.task_ids.filtered(lambda task: task.is_closed)):
-                raise UserError(_('You cannot delete this document because some tasks were closed.'))
+                raise UserError(_('You cannot delete this contract because some tasks were closed.'))
 
             self.process_id.mapped('task_history_ids').unlink()
             self.process_id.mapped('task_ids').unlink()
@@ -50,10 +50,13 @@ class Contract(models.Model):
 
     def _compute_attachment_ids(self):
         for contract in self:
+            processing = self.env['document_flow.processing'].search([
+                ('parent_ref', '=', '%s,%d' % (contract._name, contract.id))
+            ])
             contract.attachment_ids = self.env['ir.attachment'].search([
                 '|',
                 '&', ('res_model', '=', self._name), ('res_id', 'in', [contract.id]),
-                '&', ('res_model', '=', 'task.task'), ('res_id', 'in', contract.process_id.task_ids.ids)
+                '&', ('res_model', '=', 'task.task'), ('res_id', 'in', processing.process_ids.task_ids.ids)
             ])
 
     def _compute_process_id(self):
@@ -76,11 +79,3 @@ class Contract(models.Model):
                 'default_parent_ref': '%s,%d' % (self._name, self.id)
             }
         }
-
-    def action_open_attachments(self):
-        self.ensure_one()
-        action_vals = super().action_open_attachments()
-        action_vals['domain'] = ['|',
-                                 '&', ('res_model', '=', self._name), ('res_id', 'in', [self.id]),
-                                 '&', ('res_model', '=', 'task.task'), ('res_id', 'in', self.process_id.task_ids.ids)]
-        return action_vals
