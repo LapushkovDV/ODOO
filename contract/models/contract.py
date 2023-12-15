@@ -38,6 +38,7 @@ class Contract(models.Model):
     description = fields.Html(string='Description', copy=False)
     active = fields.Boolean(copy=False, default=True, index=True)
     can_edit = fields.Boolean(compute='_compute_can_edit', default=True)
+    properties = fields.Properties('Properties', definition='type_id.properties_definition', copy=True)
 
     attachment_ids = fields.One2many('ir.attachment', string='Attachments', compute='_compute_attachment_ids')
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Attachment Count')

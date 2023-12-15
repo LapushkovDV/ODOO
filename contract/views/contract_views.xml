@@ -129,6 +129,8 @@
                             <field name="currency_id" attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                     </group>
+                    <field name="properties" nolabel="1" columns="2" hideKanbanOption="1"
+                           attrs="{'readonly': [('can_edit', '=', False)], 'invisible': [('type_id', '=', False)]}"/>
                     <notebook>
                         <page name="description_page" string="Description">
                             <field name="description" type="html" options="{'collaborative': true, 'resizable': false}"
