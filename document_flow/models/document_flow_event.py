@@ -311,12 +311,7 @@ class EventDecision(models.Model):
     @api.depends('process_id')
     def _compute_process_id(self):
         for decision in self:
-            decision.process_id = self.env['document_flow.process.parent_object'].sudo().search([
-                ('parent_ref_type', '=', self._name),
-                ('parent_ref_id', '=', decision.id),
-                ('process_id', '!=', False),
-                ('process_id.state', '!=', 'break')
-            ], limit=1).process_id
+            decision.process_id = False
 
     @api.onchange('deadline_type', 'after_decision_id', 'number_days')
     def onchange_date_deadline(self):
