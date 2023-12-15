@@ -68,7 +68,7 @@
                                 attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                         <group>
-                            <field name="code" string="Internal Number"/>
+                            <field name="code" string="Internal Number" attrs="{'invisible': [('id', '=', False)]}"/>
                         </group>
                     </group>
                     <group>

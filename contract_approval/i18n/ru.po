@@ -181,9 +181,9 @@ msgstr "Пользователь"
 #. odoo-python
 #: code:addons/contract_approval/models/contract_contract.py:0
 #, python-format
-msgid "You cannot delete this document because some tasks were closed."
+msgid "You cannot delete this contract because some tasks were closed."
 msgstr ""
-"Вы не можете удалить данный документ, т.к. по нему есть закрытые задачи."
+"Вы не можете удалить данный договор, т.к. по нему есть закрытые задачи."
 
 #. module: contract_approval
 #: model:ir.model,name:contract_approval.model_report_contract_contract_approval_form

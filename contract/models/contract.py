@@ -81,7 +81,7 @@ class Contract(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'ir.attachment',
             'view_mode': 'kanban,tree,form',
-            'domain': [('res_model', '=', self._name), ('res_id', '=', self.id)],
+            'domain': [('id', 'in', self.attachment_ids.ids)],
             'context': "{'default_res_model': '%s','default_res_id': %d, 'search_default_group_by_res_model': True, 'create': %s, 'edit': %s 'delete': %s}" % (
                 self._name, self.id, self.can_edit, self.can_edit, self.can_edit),
             'help': """
