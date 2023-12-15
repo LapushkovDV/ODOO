@@ -44,6 +44,9 @@
             <xpath expr="//field[@name='file_size']" position="before">
                 <field name="version"/>
             </xpath>
+			<xpath expr="//field[@name='create_date']" position="after">
+                <field name="description" class="text-wrap"/>
+            </xpath>
         </field>
     </record>
 

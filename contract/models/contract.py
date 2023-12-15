@@ -39,6 +39,7 @@ class Contract(models.Model):
     active = fields.Boolean(copy=False, default=True, index=True)
     can_edit = fields.Boolean(compute='_compute_can_edit', default=True)
     properties = fields.Properties('Properties', definition='type_id.properties_definition', copy=True)
+    property_count = fields.Integer(compute='_compute_property_count')
 
     attachment_ids = fields.One2many('ir.attachment', string='Attachments', compute='_compute_attachment_ids')
     attachment_count = fields.Integer(compute='_compute_attachment_count', string='Attachment Count')
@@ -65,8 +66,13 @@ class Contract(models.Model):
 
     @api.depends('attachment_ids')
     def _compute_attachment_count(self):
-        for document in self:
-            document.attachment_count = len(document.attachment_ids)
+        for contract in self:
+            contract.attachment_count = len(contract.attachment_ids)
+
+    @api.depends('properties')
+    def _compute_property_count(self):
+        for contract in self:
+            contract.property_count = len(contract.properties)
 
     def action_open_attachments(self):
         self.ensure_one()
