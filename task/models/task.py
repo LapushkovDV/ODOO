@@ -200,7 +200,7 @@ class Task(models.Model):
         parser = html2text.HTML2Text()
         parser.ignore_images = True
         for task in self:
-            task.execution_result_text = parser.handle(task.description)
+            task.execution_result_text = parser.handle(task.execution_result)
 
     def _message_auto_subscribe_followers(self, updated_values, default_subtype_ids):
         return []

@@ -57,6 +57,7 @@
                     <group invisible="1">
                         <field name="active"/>
                         <field name="can_edit"/>
+                        <field name="property_count"/>
                     </group>
                     <widget name="web_ribbon" title="Archived"
                             bg_color="bg-danger"
@@ -129,6 +130,10 @@
                             <field name="currency_id" attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                     </group>
+                    <separator string="Additional Properties" name="additional_properties"
+                               attrs="{'invisible': ['|', ('type_id', '=', False), ('property_count', '=', 0)]}"/>
+                    <field name="properties" nolabel="1" columns="2" hideKanbanOption="1"
+                           attrs="{'readonly': [('can_edit', '=', False)], 'invisible': [('type_id', '=', False)]}"/>
                     <notebook>
                         <page name="description_page" string="Description">
                             <field name="description" type="html" options="{'collaborative': true, 'resizable': false}"
