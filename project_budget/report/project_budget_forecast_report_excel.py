@@ -623,9 +623,9 @@ class report_budget_forecast_excel(models.AbstractModel):
                 sheet.write_number(row, column + 2, sum100tmp, row_format_number_color_fact)
 
             sum = self.get_sum_plan_pds_project_step_month(project, step, month)
-            # print('----- project.id=',project.id)
-            # print('sum100tmp = ',sum100tmp)
-            # print('sum = ', sum)
+            print('----- project.id=',project.id)
+            print('sum100tmp = ',sum100tmp)
+            print('sum = ', sum)
 
             if not project.is_correction_project:
                 if sum100tmp >= sum.get('commitment', 0):
@@ -813,6 +813,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             if sum:
                 for key in sum:
                     margin_plan[key] = sum[key] * profitability / 100
+                    margin_sum[key] = sum[key] * profitability / 100
 
             if not project.is_correction_project:
 
