@@ -21,7 +21,7 @@ class AccountAnalyticLine(models.Model):
             domain.append(('user_id', '=', self.env.user.id))
         return domain
 
-    task_id = fields.Many2one('task.task', string='Task', compute='_compute_task_id', index='btree_not_null',
+    task_id = fields.Many2one('task.task', string='Task', index='btree_not_null',
                               readonly=False, store=True,
                               domain="[('parent_ref_type', '=', 'project_budget.projects')]")
     project_id = fields.Many2one('project_budget.projects', string='Project', compute='_compute_project_id',
