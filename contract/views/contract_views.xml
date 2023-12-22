@@ -34,6 +34,7 @@
                 <field name="num"/>
                 <field name="type_id" options="{'no_create_edit': True, 'no_open': True}"/>
                 <field name="name"/>
+                <field name="partner_id"/>
                 <field name="date_begin" string="Date Start" widget="date"/>
                 <field name="date_end" string="Date End" widget="date"/>
                 <field name="responsible_id" widget="many2one_avatar_employee" options="{'no_create_edit': True}"/>
