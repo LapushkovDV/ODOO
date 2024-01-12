@@ -457,7 +457,7 @@ class projects(models.Model):
                 row.specification_state = 'cancel'
                 if row.project_steps_ids:
                     for step in row.project_steps_ids:
-                        if step.estimated_probability_id.name in ['100', '100(done)']:
+                        if step.estimated_probability_id.name in ('100', '100(done)'):
                             raisetext = _("Can't 'cancel' project with step {0} in {1} state")
                             raisetext = raisetext.format(step.step_id, step.estimated_probability_id.name)
                             raise ValidationError(raisetext)
