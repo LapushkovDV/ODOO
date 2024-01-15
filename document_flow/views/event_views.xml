@@ -166,7 +166,7 @@
                         </page>
                     </notebook>
                 </sheet>
-<!-- Гайдаш попросила убрать.....                <div class="oe_chatter">-->
+                <!-- Гайдаш попросила убрать.....                <div class="oe_chatter">-->
 <!--                    <field name="message_ids" widget="mail_thread"/>-->
 <!--                </div>-->
             </form>

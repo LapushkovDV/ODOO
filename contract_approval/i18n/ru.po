@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-13 14:23+0000\n"
-"PO-Revision-Date: 2023-12-13 14:23+0000\n"
+"POT-Creation-Date: 2024-01-14 16:28+0000\n"
+"PO-Revision-Date: 2024-01-14 16:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,6 +26,13 @@ msgstr "'Лист согласования \"%s\"' % object.name"
 #: model_terms:ir.ui.view,arch_db:contract_approval.contract_contract_view_form_inherit_contract_approval
 msgid "Access"
 msgstr "Доступ"
+
+#. module: contract_approval
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type__access_setting_ids
+#: model_terms:ir.ui.view,arch_db:contract_approval.contract_type_accessibility_setting_view_tree
+#: model_terms:ir.ui.view,arch_db:contract_approval.contract_type_view_form_inherit_contract_approval
+msgid "Accessibility Settings"
+msgstr "Настройки доступности"
 
 #. module: contract_approval
 #. odoo-python
@@ -83,12 +90,33 @@ msgid "Contract Access"
 msgstr ""
 
 #. module: contract_approval
+#: model:ir.model.fields,field_description:contract_approval.field_document_flow_process_template__contract_kind_id
+#: model:ir.model.fields,field_description:contract_approval.field_document_flow_processing__contract_kind_id
+msgid "Contract Kind"
+msgstr "Тип договора"
+
+#. module: contract_approval
+#: model:ir.model,name:contract_approval.model_contract_type
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__type_id
+#: model:ir.model.fields,field_description:contract_approval.field_document_flow_process_template__contract_type_id
+#: model:ir.model.fields,field_description:contract_approval.field_document_flow_processing__contract_type_id
+msgid "Contract Type"
+msgstr "Вид договора"
+
+#. module: contract_approval
+#: model:ir.model,name:contract_approval.model_contract_type_accessibility_setting
+msgid "Contract Type Accessibility Setting"
+msgstr ""
+
+#. module: contract_approval
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access__create_uid
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__create_uid
 msgid "Created by"
 msgstr ""
 
 #. module: contract_approval
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access__create_date
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__create_date
 msgid "Created on"
 msgstr ""
 
@@ -101,6 +129,7 @@ msgstr "Дата"
 
 #. module: contract_approval
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access__display_name
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__display_name
 msgid "Display Name"
 msgstr ""
 
@@ -113,26 +142,31 @@ msgstr "ФИО"
 
 #. module: contract_approval
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access__role_executor_id
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__role_executor_id
 msgid "Group"
 msgstr "Группа"
 
 #. module: contract_approval
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access__id
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__id
 msgid "ID"
 msgstr ""
 
 #. module: contract_approval
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access____last_update
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting____last_update
 msgid "Last Modified on"
 msgstr ""
 
 #. module: contract_approval
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access__write_uid
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__write_uid
 msgid "Last Updated by"
 msgstr ""
 
 #. module: contract_approval
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access__write_date
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__write_date
 msgid "Last Updated on"
 msgstr ""
 
@@ -149,6 +183,11 @@ msgid "Process"
 msgstr ""
 
 #. module: contract_approval
+#: model:ir.model,name:contract_approval.model_document_flow_process_template
+msgid "Process Template"
+msgstr "Шаблон процесса"
+
+#. module: contract_approval
 #: model:ir.model,name:contract_approval.model_document_flow_processing
 #: model_terms:ir.ui.view,arch_db:contract_approval.contract_contract_view_form_inherit_contract_approval
 msgid "Processing"
@@ -162,6 +201,13 @@ msgid "Result"
 msgstr "Результат"
 
 #. module: contract_approval
+#. odoo-python
+#: code:addons/contract_approval/models/contract_contract_type.py:0
+#, python-format
+msgid "Role"
+msgstr "Роль"
+
+#. module: contract_approval
 #: model:ir.model.fields,field_description:contract_approval.field_contract_contract__process_state
 msgid "State"
 msgstr "Статус"
@@ -172,8 +218,13 @@ msgid "Task"
 msgstr "Задача"
 
 #. module: contract_approval
+#. odoo-python
+#: code:addons/contract_approval/models/contract_contract_type.py:0
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access__user_id
 #: model:ir.model.fields,field_description:contract_approval.field_contract_access__user_ref
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__user_id
+#: model:ir.model.fields,field_description:contract_approval.field_contract_type_accessibility_setting__user_ref
+#, python-format
 msgid "User"
 msgstr "Пользователь"
 

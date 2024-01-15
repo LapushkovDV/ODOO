@@ -21,6 +21,7 @@
                         <field name="parent_ref_id"/>
                         <field name="document_kind_id"/>
                         <field name="action_count"/>
+                        <field name="template_id_domain"/>
                     </group>
                     <div id="o_process_container" class="d-lg-flex">
                         <div id="o_processing_main" class="flex-grow-1">
@@ -29,7 +30,8 @@
                             </group>
                             <div col="2" class="o_row">
                                 <group>
-                                    <field name="template_id" attrs="{'readonly': [('state', '!=', False)]}"/>
+                                    <field name="template_id" domain="template_id_domain"
+                                           attrs="{'readonly': [('state', '!=', False)]}"/>
                                 </group>
                                 <button name="fill_by_template" type="object" class="btn btn-link"
                                         attrs="{'invisible': [('state', '!=', False)]}">

@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _
+from odoo import api, Command, fields, models, _
 from odoo.exceptions import UserError
 
 
@@ -65,6 +65,26 @@ class Contract(models.Model):
                 ('parent_ref', '=', '%s,%d' % (contract._name, contract.id))
             ]).process_ids[-1:]
 
+    @api.onchange('project_id')
+    def _onchange_project_id(self):
+        if self._origin:
+            access_delete = [self._origin.project_id.project_manager_id.user_id,
+                             self._origin.project_id.project_supervisor_id.user_id,
+                             self._origin.project_id.rukovoditel_project_id.user_id]
+            if self._origin.project_id != self.project_id:
+                self.access_ids = [Command.delete(usr.id) for usr in
+                                   self.access_ids.filtered(lambda usr: usr.user_id in set(access_delete))]
+        access_insert = [self.author_id.user_id,
+                         self.project_id.project_manager_id.user_id,
+                         self.project_id.project_supervisor_id.user_id,
+                         self.project_id.rukovoditel_project_id.user_id]
+        self.access_ids = [
+            Command.create({
+                'user_ref': 'res.users,%d' % usr.id
+            })
+            for usr in filter(lambda usr: usr.id and usr.id not in self.access_ids.user_id.ids, set(access_insert))
+        ]
+
     def action_open_processing(self):
         self.ensure_one()
         processing = self.env['document_flow.processing'].search([
@@ -76,6 +96,8 @@ class Contract(models.Model):
             'type': 'ir.actions.act_window',
             'res_id': processing.id,
             'context': {
-                'default_parent_ref': '%s,%d' % (self._name, self.id)
+                'default_parent_ref': '%s,%d' % (self._name, self.id),
+                'default_contract_type_id': self.type_id.id,
+                'default_contract_kind_id': self.kind_id.id
             }
         }
