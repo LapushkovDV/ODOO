@@ -642,6 +642,7 @@ class ProcessTemplate(models.Model):
     company_id = fields.Many2one('res.company', string='Company', required=True,
                                  default=lambda self: self.env.company)
     model_id = fields.Many2one('ir.model', string='Model')
+    model = fields.Char(related='model_id.model', readonly=True)
     document_kind_id = fields.Many2one('document_flow.document.kind', string='Document Kind', ondelete='set null')
 
     action_ids = fields.One2many('document_flow.action', 'parent_ref_id', string='Actions',

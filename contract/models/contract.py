@@ -24,6 +24,7 @@ class Contract(models.Model):
                            tracking=True)
     name = fields.Char(string='Name', copy=True, required=True, tracking=True)
     type_id = fields.Many2one('contract.type', string='Type', copy=True, required=True, tracking=True)
+    kind_id = fields.Many2one('contract.kind', string='Kind', copy=True, tracking=True)
     company_id = fields.Many2one('res.company', string='Company', copy=False, default=lambda self: self.env.company,
                                  required=True)
     partner_id = fields.Many2one('res.partner', string='Partner', copy=False, domain="[('is_company', '=', True)]",

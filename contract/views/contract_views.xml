@@ -33,8 +33,9 @@
                 <field name="code" string="Internal Number"/>
                 <field name="num"/>
                 <field name="type_id" options="{'no_create_edit': True, 'no_open': True}"/>
+                <field name="kind_id" options="{'no_create_edit': True, 'no_open': True}"/>
                 <field name="name"/>
-                <field name="partner_id"/>
+                <field name="partner_id" options="{'no_create_edit': True}"/>
                 <field name="date_begin" string="Date Start" widget="date"/>
                 <field name="date_end" string="Date End" widget="date"/>
                 <field name="responsible_id" widget="many2one_avatar_employee" options="{'no_create_edit': True}"/>
@@ -63,13 +64,17 @@
                     <widget name="web_ribbon" title="Archived"
                             bg_color="bg-danger"
                             attrs="{'invisible': [('active', '=', True)]}"/>
+                    <group>
+                        <field name="code" string="Internal Number" attrs="{'invisible': [('id', '=', False)]}"/>
+                    </group>
                     <group col="2">
                         <group>
                             <field name="type_id" options="{'no_create_edit': True, 'no_open': True}"
                                 attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                         <group>
-                            <field name="code" string="Internal Number" attrs="{'invisible': [('id', '=', False)]}"/>
+                            <field name="kind_id" options="{'no_create_edit': True, 'no_open': True}"
+                                attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                     </group>
                     <group>
