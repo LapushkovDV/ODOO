@@ -19,9 +19,9 @@ class report_budget_forecast_excel(models.AbstractModel):
     def isStepinYear(self, project, step):
         global YEARint
         global year_end
-
         if project:
             if step:
+
                 if step.estimated_probability_id.name == '0':  # проверяем последний зафиксированный бюджет в предыдущих годах
                     last_fixed_step = self.env['project_budget.project_steps'].search(
                         [('date_actual', '<', datetime.date(YEARint,1,1)),
@@ -1275,22 +1275,33 @@ class report_budget_forecast_excel(models.AbstractModel):
 
                 #  Потенциал валовой выручки
                 year_acceptance_30 = 0
-                if (step and YEARint <= step.end_sale_project_month.year <= year_end):
-                    potential_acceptances = self.env['project_budget.planned_acceptance_flow'].search(
-                        [('project_steps_id', '=', step.id), ('forecast', '=', 'potential')])
-                    if potential_acceptances:
-                        for acceptance in potential_acceptances:
-                            year_acceptance_30 += acceptancese.sum_cash_without_vat
-                    elif step.estimated_probability_id.name == '30':
-                        year_acceptance_30 = step.total_amount_of_revenue
-
-                elif (not step and YEARint <= project.end_sale_project_month.year <= year_end):
-                    potential_acceptances = self.env['project_budget.planned_acceptance_flow'].search(
-                        [('projects_id', '=', project.id), ('forecast', '=', 'potential')])
+                if step:
+                    potential_acceptances = self.env['project_budget.planned_acceptance_flow'].search(['&', '&', '&',
+                        ('project_steps_id', '=', step.id),
+                        ('date_cash', '>=', datetime.date(YEARint, 1, 1)),
+                        ('date_cash', '<=', datetime.date(year_end, 12, 31)),
+                        '|', ('forecast', '=', 'potential'),
+                        '&', ('forecast', '=', 'from_project'),
+                        ('project_steps_id.estimated_probability_id.name', '=', '30'),
+                        ])
                     if potential_acceptances:
                         for acceptance in potential_acceptances:
                             year_acceptance_30 += acceptance.sum_cash_without_vat
-                    elif project.estimated_probability_id.name == '30':
+                    elif step.estimated_probability_id.name == '30' and YEARint <= step.end_sale_project_month.year <= year_end:
+                        year_acceptance_30 = step.total_amount_of_revenue
+                else:
+                    potential_acceptances = self.env['project_budget.planned_acceptance_flow'].search(['&', '&', '&',
+                        ('projects_id', '=', project.id),
+                        ('date_cash', '>=', datetime.date(YEARint, 1, 1)),
+                        ('date_cash', '<=', datetime.date(year_end, 12, 31)),
+                        '|', ('forecast', '=', 'potential'),
+                        '&', ('forecast', '=', 'from_project'),
+                        ('projects_id.estimated_probability_id.name', '=', '30'),
+                        ])
+                    if potential_acceptances:
+                        for acceptance in potential_acceptances:
+                            year_acceptance_30 += acceptance.sum_cash_without_vat
+                    elif project.estimated_probability_id.name == '30' and YEARint <= project.end_sale_project_month.year <= year_end:
                         year_acceptance_30 = project.total_amount_of_revenue
 
                 sheet.write_number(row, column + 5, year_acceptance_30, row_format_number)
