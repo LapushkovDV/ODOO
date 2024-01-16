@@ -1006,12 +1006,6 @@ msgid "Forecast"
 msgstr "Прогноз"
 
 #. module: project_budget
-#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__forecast_star
-#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
-msgid "Forecast*"
-msgstr "Прогноз*"
-
-#. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_planned_acceptance_flow__forecast__from_project
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_planned_cash_flow__forecast__from_project
 msgid "From project/step"
@@ -1927,11 +1921,6 @@ msgid "Projects Report forecast"
 msgstr "Прогноз"
 
 #. module: project_budget
-#: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_forecast_star
-msgid "Projects Report forecast star"
-msgstr "Прогноз_звездочка"
-
-#. module: project_budget
 #: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_kb
 msgid "Projects Report kb"
 msgstr "КБ"
@@ -2710,8 +2699,8 @@ msgstr "Статус"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_customer_organization
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__customer_organization_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__customer_organization_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__partner_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__partner_id
 #: model:ir.ui.menu,name:project_budget.project_budget_catalogs_customer_organization
 #: model_terms:ir.ui.view,arch_db:project_budget.show_customer_organization_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_customer_organization_tree
@@ -2741,7 +2730,7 @@ msgstr "Наименование"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
-msgid "customer_organization_id"
+msgid "partner_id"
 msgstr "Организация"
 
 #. module: project_budget
@@ -2752,6 +2741,11 @@ msgstr "Организация"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_customer_status_tree
 msgid "customer_status"
 msgstr "Статус заказчика"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.partners_tree_action
+msgid "partners_tree_action"
+msgstr "Контакты"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_status__code
@@ -3629,13 +3623,6 @@ msgstr "'Комплексный' проект должен иметь этапн
 #. odoo-python
 #: code:addons/project_budget/models/projects.py:0
 #, python-format
-msgid "Can't 'cancel' project with step {0} in {1} state"
-msgstr "Нельзя перевести проект в статус 'Отменен', этап {0} в статусе '{1}'"
-
-#. module: project_budget
-#. odoo-python
-#: code:addons/project_budget/models/projects.py:0
-#, python-format
 msgid ""
 "only project admin or supervisor or project office manager can reopen "
 "projects"
@@ -3678,7 +3665,7 @@ msgid "organization"
 msgstr "Заказчик"
 
 #. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__organizer_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__organizer_partner_id
 #: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
 msgid "organizer"
 msgstr "Организатор"
