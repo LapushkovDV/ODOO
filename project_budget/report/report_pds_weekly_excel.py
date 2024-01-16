@@ -27,15 +27,6 @@ class report_pds_weekly_excel(models.AbstractModel):
 
         if project:
             if step:
-                if step.estimated_probability_id.name == '0':  # проверяем последний зафиксированный бюджет в предыдущих годах
-                    last_fixed_step = self.env['project_budget.project_steps'].search(
-                        [('date_actual', '<', datetime.date(YEARint,1,1)),
-                         ('budget_state', '=', 'fixed'),
-                         ('step_id', '=', step.step_id),
-                         ], limit=1, order='date_actual desc')
-                    if last_fixed_step and last_fixed_step.estimated_probability_id.name == '0':
-                        return False
-
                 if step.end_presale_project_month.year in years or step.end_sale_project_month.year in years:
                     return True
                 for pds in project.planned_cash_flow_ids:
@@ -70,15 +61,6 @@ class report_pds_weekly_excel(models.AbstractModel):
         years = (YEARint, YEARint + 1, YEARint + 2)
 
         if project:
-            if project.estimated_probability_id.name == '0':  # проверяем последний зафиксированный бюджет в предыдущих годах
-                last_fixed_project = self.env['project_budget.projects'].search(
-                    [('date_actual', '<', datetime.date(YEARint,1,1)),
-                     ('budget_state', '=', 'fixed'),
-                     ('project_id', '=', project.project_id),
-                     ], limit=1, order='date_actual desc')
-                if last_fixed_project and last_fixed_project.estimated_probability_id.name == '0':
-                    return False
-
             if not project.project_have_steps:
                 if project.end_presale_project_month.year in years or project.end_sale_project_month.year in years:
                     return True
@@ -303,7 +285,7 @@ class report_pds_weekly_excel(models.AbstractModel):
         for pds in pds_list:
             if step:
                 if pds.project_steps_id.id != step.id: continue
-            if pds.date_cash.isocalendar()[1] == week_number and pds.date_cash.isocalendar()[0] == YEARint:
+            if pds.date_cash.isocalendar()[1] == week_number and pds.date_cash.year == YEARint:
                 sum_cash += pds.sum_cash
 
         return sum_cash
@@ -375,7 +357,7 @@ class report_pds_weekly_excel(models.AbstractModel):
         for pds in pds_list:
             if step:
                 if pds.project_steps_id.id != step.id: continue
-            if pds.date_cash.isocalendar()[1] == week_number and pds.date_cash.isocalendar()[0] == YEARint:
+            if pds.date_cash.isocalendar()[1] == week_number and pds.date_cash.year == YEARint:
                 if pds.forecast == 'from_project':
                     if step:
                         if step.estimated_probability_id.name in ('100(done)', '100', '75'):
@@ -853,7 +835,7 @@ class report_pds_weekly_excel(models.AbstractModel):
         for planned_cash_flow in project.planned_cash_flow_ids:
             if step:
                 if planned_cash_flow.project_steps_id.id != step.id: continue
-            if planned_cash_flow.date_cash.isocalendar()[1] == week_number and planned_cash_flow.date_cash.isocalendar()[0] == YEARint:
+            if planned_cash_flow.date_cash.isocalendar()[1] == week_number and planned_cash_flow.date_cash.year == YEARint:
                 if planned_cash_flow.forecast == 'from_project':
                     if step:
                         if step.estimated_probability_id.name in ('100(done)', '100', '75'):
@@ -1208,7 +1190,7 @@ class report_pds_weekly_excel(models.AbstractModel):
                     for planned_cash_flow in project.planned_cash_flow_ids:
                         if (planned_cash_flow.project_steps_id.id == step.id
                                 and planned_cash_flow.date_cash.isocalendar()[1] == week_number
-                                and planned_cash_flow.date_cash.isocalendar()[0] == YEARint):
+                                and planned_cash_flow.date_cash.year == YEARint):
                             sum_distribution_pds += planned_cash_flow.distribution_sum_without_vat
                             if planned_cash_flow.forecast == 'from_project':
                                 if step.estimated_probability_id.name in ('100(done)', '100', '75'):
@@ -1242,7 +1224,7 @@ class report_pds_weekly_excel(models.AbstractModel):
             sum_distribution_pds = 0
             sum_ostatok_pds = {'commitment': 0, 'reserve': 0, 'potential': 0}
             for planned_cash_flow in project.planned_cash_flow_ids:
-                if planned_cash_flow.date_cash.isocalendar()[1] == week_number and planned_cash_flow.date_cash.isocalendar()[0] == YEARint:
+                if planned_cash_flow.date_cash.isocalendar()[1] == week_number and planned_cash_flow.date_cash.year == YEARint:
                     sum_distribution_pds += planned_cash_flow.distribution_sum_without_vat
                     if planned_cash_flow.forecast == 'from_project':
                         if project.estimated_probability_id.name in ('100(done)', '100', '75'):
