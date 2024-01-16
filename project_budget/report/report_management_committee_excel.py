@@ -3845,7 +3845,7 @@ class report_management_committee_excel(models.AbstractModel):
                                     # column += 1
                                     # sheet.write_string(row, column, spec.project_manager_id.name, cur_row_format)
                                     # column += 1
-                                    # sheet.write_string(row, column, spec.customer_organization_id.name, cur_row_format)
+                                    # sheet.write_string(row, column, spec.partner_id.name, cur_row_format)
                                     # column += 1
                                     # sheet.write_string(row, column, step.essence_project, cur_row_format)
                                     # column += 1
@@ -3886,7 +3886,7 @@ class report_management_committee_excel(models.AbstractModel):
                                 # column += 1
                                 # sheet.write_string(row, column, spec.project_manager_id.name, cur_row_format)
                                 # column += 1
-                                # sheet.write_string(row, column, spec.customer_organization_id.name, cur_row_format)
+                                # sheet.write_string(row, column, spec.partner_id.name, cur_row_format)
                                 # column += 1
                                 # sheet.write_string(row, column, spec.essence_project, cur_row_format)
                                 # column += 1
@@ -4045,7 +4045,7 @@ class report_management_committee_excel(models.AbstractModel):
                                             column = 0
                                             sheet.write_string(row, column, '       ' * max_level + spec.project_manager_id.name, cur_row_format)
                                             column += 1
-                                            sheet.write_string(row, column, spec.customer_organization_id.name,
+                                            sheet.write_string(row, column, spec.partner_id.name,
                                                                cur_row_format)
                                             column += 1
                                             sheet.write_string(row, column, step.essence_project, cur_row_format)
@@ -4089,7 +4089,7 @@ class report_management_committee_excel(models.AbstractModel):
                                         column = 0
                                         sheet.write_string(row, column, '       ' * max_level + spec.project_manager_id.name, cur_row_format)
                                         column += 1
-                                        sheet.write_string(row, column, spec.customer_organization_id.name, cur_row_format)
+                                        sheet.write_string(row, column, spec.partner_id.name, cur_row_format)
                                         column += 1
                                         sheet.write_string(row, column, spec.essence_project, cur_row_format)
                                         column += 1

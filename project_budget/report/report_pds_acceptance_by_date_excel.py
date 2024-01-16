@@ -207,7 +207,7 @@ class report_pds_acceptance_by_date_excel(models.AbstractModel):
                     column += 1
                     sheet.write_string(row, column, step.estimated_probability_id.name, row_format)
                     column += 1
-                    sheet.write_string(row, column, project.customer_organization_id.name, row_format)
+                    sheet.write_string(row, column, project.partner_id.name, row_format)
                     column += 1
                     sheet.write_string(row, column, project.project_id, row_format)
                     column += 1
@@ -249,7 +249,7 @@ class report_pds_acceptance_by_date_excel(models.AbstractModel):
                 column += 1
                 sheet.write_string(row, column, project.estimated_probability_id.name, row_format)
                 column += 1
-                sheet.write_string(row, column, project.customer_organization_id.name, row_format)
+                sheet.write_string(row, column, project.partner_id.name, row_format)
                 column += 1
                 sheet.write_string(row, column, project.project_id, row_format)
                 column += 1
@@ -268,7 +268,8 @@ class report_pds_acceptance_by_date_excel(models.AbstractModel):
         row += 1
         sheet.merge_range(row, 0, row, 9, 'ИТОГО', total_format)
         for shift in range(len(legal_entity_shift)):
-            sheet.write_formula(row, 10 + shift, '=sum({0}{1}:{0}{2})'.format(xl_col_to_name(10 + shift), 3, row), total_num_format)
+            sheet.write_formula(row, 10 + shift, '=sum({0}{1}:{0}{2})'.format(xl_col_to_name(10 + shift), 3, row),
+                                total_num_format)
 
         sheet.autofilter(1, 0, 1, 9)
 
