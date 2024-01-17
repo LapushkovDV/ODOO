@@ -1283,7 +1283,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                         '|', ('forecast', '=', 'potential'),
                         '&', ('forecast', '=', 'from_project'),
                         ('project_steps_id.estimated_probability_id.name', '=', '30'),
-                    ])
+                        ])
                     if potential_acceptances:
                         for acceptance in potential_acceptances:
                             year_acceptance_30 += acceptance.sum_cash_without_vat
@@ -1297,7 +1297,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                         '|', ('forecast', '=', 'potential'),
                         '&', ('forecast', '=', 'from_project'),
                         ('projects_id.estimated_probability_id.name', '=', '30'),
-                    ])
+                        ])
                     if potential_acceptances:
                         for acceptance in potential_acceptances:
                             year_acceptance_30 += acceptance.sum_cash_without_vat
@@ -1429,6 +1429,7 @@ class report_budget_forecast_excel(models.AbstractModel):
         cur_budget_projects = self.env['project_budget.projects'].search([
             ('commercial_budget_id', '=', budget.id),
         ])
+
         # cur_project_offices = project_offices.filtered(lambda r: r in cur_budget_projects.project_office_id or r in {office.parent_id for office in cur_budget_projects.project_office_id if office.parent_id in project_offices})
         cur_project_offices = project_offices
         cur_project_managers = project_managers.filtered(lambda r: r in cur_budget_projects.project_manager_id)
@@ -1539,7 +1540,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                                             column += 1
                                             sheet.write_string(row, column, spec.project_manager_id.name, cur_row_format)
                                             column += 1
-                                            sheet.write_string(row, column, spec.customer_organization_id.name, cur_row_format)
+                                            sheet.write_string(row, column, spec.partner_id.name, cur_row_format)
                                             column += 1
                                             sheet.write_string(row, column, (step.essence_project or ''), cur_row_format)
                                             column += 1
@@ -1584,7 +1585,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                                     column += 1
                                     sheet.write_string(row, column, spec.project_manager_id.name, cur_row_format)
                                     column += 1
-                                    sheet.write_string(row, column, spec.customer_organization_id.name, cur_row_format)
+                                    sheet.write_string(row, column, spec.partner_id.name, cur_row_format)
                                     column += 1
                                     sheet.write_string(row, column, (spec.essence_project or ''), cur_row_format)
                                     column += 1
