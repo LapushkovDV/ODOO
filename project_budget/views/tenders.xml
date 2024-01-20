@@ -183,7 +183,7 @@
             <field name="name">project_budget.tenders.tree</field>
             <field name="model">project_budget.tenders</field>
             <field name="arch" type="xml">
-                <tree string="tenders">
+                <tree string="tenders" default_order="date_of_filling_in desc">
                     <field name="tender_id" optional="hide"/>
                     <field name="projects_id" optional="show"/>
 <!--                    <field name="currency_id" optional="show"/>-->
