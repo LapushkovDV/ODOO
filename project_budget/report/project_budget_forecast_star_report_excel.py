@@ -381,7 +381,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             'valign': 'vcenter',
             "bold" : True,
             "fg_color" : y[1],
-            "font_size" : 11,
+            "font_size" : 10,
         })
         head_format_month_itogo = workbook.add_format({
             'border': 1,
@@ -390,7 +390,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             'valign': 'vcenter',
             "bold": True,
             "fg_color": '#DCE6F1',
-            "font_size": 12,
+            "font_size": 10,
         })
         head_format_month_detail = workbook.add_format({
             'border': 1,
@@ -472,7 +472,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             'valign': 'vcenter',
             "bold" : True,
             "fg_color" : y[1],
-            "font_size" : 11,
+            "font_size" : 10,
         })
         head_format_month_itogo = workbook.add_format({
             'border': 1,
@@ -480,8 +480,8 @@ class report_budget_forecast_excel(models.AbstractModel):
             'align': 'center',
             'valign': 'vcenter',
             "bold": True,
-            "fg_color": '#D9E1F2',
-            "font_size": 12,
+            "fg_color": '#DCE6F1',
+            "font_size": 10,
         })
         head_format_month_detail = workbook.add_format({
             'border': 1,
@@ -490,7 +490,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             'valign': 'vcenter',
             "bold": False,
             "fg_color": '#E2EFDA',
-            "font_size": 8,
+            "font_size": 10,
         })
         head_format_month_detail_fact = workbook.add_format({
             'border': 1,
@@ -499,7 +499,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             'valign': 'vcenter',
             "bold": True,
             "fg_color": '#C6E0B4',
-            "font_size": 8,
+            "font_size": 10,
         })
 
         colbeg = column
@@ -568,7 +568,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                 'align': 'center',
                 'valign': 'vcenter',
                 "bold": True,
-                "fg_color": '#D9E1F2',
+                "fg_color": '#DCE6F1',
                 "font_size": 12,
             })
             head_format_month_detail = workbook.add_format({
@@ -1400,7 +1400,7 @@ class report_budget_forecast_excel(models.AbstractModel):
         })
         head_format_month_itogo = workbook.add_format({
             'border': 1,
-            "fg_color": '#D9E1F2',
+            "fg_color": '#DCE6F1',
             'diag_type': 3,
         })
 
@@ -1957,12 +1957,12 @@ class report_budget_forecast_excel(models.AbstractModel):
         })
         row_format_date_month = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
         })
 
         row_format_manager = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
             "bold": True,
             "fg_color": '#D9D9D9',
         })
@@ -1970,7 +1970,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         row_format_manager_estimated_plan = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
             "bold": True,
             "fg_color": '#FDE9D9',
             "num_format": '#,##0',
@@ -1979,7 +1979,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         row_format_manager_estimated_plan_cross = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
             "bold": True,
             "fg_color": '#FDE9D9',
             "num_format": '#,##0',
@@ -1990,7 +1990,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         row_format_office = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
             "bold": True,
             "fg_color": '#8DB4E2',
         })
@@ -1998,7 +1998,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         row_format_office_estimated_plan = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
             "bold": True,
             "fg_color": '#CCC0DA',
             "num_format": '#,##0',
@@ -2007,7 +2007,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         row_format_office_estimated_plan_cross = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
             "bold": True,
             "fg_color": '#CCC0DA',
             "num_format": '#,##0',
@@ -2017,7 +2017,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         row_format_plan = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
             "bold": True,
             "fg_color": '#DCE6F1',
             "num_format": '#,##0',
@@ -2025,7 +2025,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         row_format_probability = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
             "bold": True,
             "fg_color": '#F2DCDB',
             "num_format": '#,##0',
@@ -2035,37 +2035,37 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         row_format = workbook.add_format({
             'border': 1,
-            'font_size': 9
+            'font_size': 10
         })
 
         row_format_canceled_project = workbook.add_format({
             'border': 1,
-            'font_size': 9
+            'font_size': 10
         })
         row_format_canceled_project.set_font_color('red')
 
         row_format_number = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
         })
         row_format_number.set_num_format('#,##0')
 
         row_format_date = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
         })
         row_format_date.set_num_format('dd.mm.yyyy')
 
         row_format_number_canceled_project = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
         })
         row_format_number_canceled_project.set_num_format('#,##0')
         row_format_number_canceled_project.set_font_color('red')
 
         row_format_date_canceled_project = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
         })
         row_format_date_canceled_project.set_num_format('dd.mm.yyyy')
         row_format_date_canceled_project.set_font_color('red')
@@ -2073,7 +2073,7 @@ class report_budget_forecast_excel(models.AbstractModel):
 
         row_format_number_itogo = workbook.add_format({
             'border': 1,
-            'font_size': 9,
+            'font_size': 10,
             "bold": True,
             "fg_color": '#A9D08E',
 
@@ -2086,8 +2086,8 @@ class report_budget_forecast_excel(models.AbstractModel):
             'align': 'center',
             'valign': 'vcenter',
             "bold": True,
-            "fg_color": '#D9E1F2',
-            "font_size": 9,
+            "fg_color": '#DCE6F1',
+            "font_size": 10,
         })
         head_format_month_itogo.set_num_format('#,##0')
 
@@ -2677,7 +2677,7 @@ class report_budget_forecast_excel(models.AbstractModel):
         summary_format = workbook.add_format({
             'bold': True,
             'border': 1,
-            'font_size': 12,
+            'font_size': 10,
             'text_wrap': True,
             'valign': 'vcenter',
             "num_format": '#,##0',
@@ -2685,7 +2685,7 @@ class report_budget_forecast_excel(models.AbstractModel):
         summary_format_percent = workbook.add_format({
             'bold': True,
             'border': 1,
-            'font_size': 12,
+            'font_size': 10,
             'text_wrap': True,
             'valign': 'vcenter',
             "num_format": '0%',
@@ -2761,7 +2761,7 @@ class report_budget_forecast_excel(models.AbstractModel):
             'align': 'center',
             'valign': 'vcenter',
             "bold": True,
-            "fg_color": '#D9E1F2',
+            "fg_color": '#DCE6F1',
             "font_size": 9,
         })
         head_format_month_itogo.set_num_format('#,##0')
