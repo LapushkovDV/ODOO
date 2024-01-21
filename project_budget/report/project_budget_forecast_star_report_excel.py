@@ -1872,7 +1872,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                 for element in range(len(self.month_rus_name_contract_pds)):
                     if element in [3, 7, 8, 12, 16, 17, 18]:  # учитываем колонки планов
                         shift += 1
-                    formula = '=({1}{0}+{2}{0})*D1+{3}{0}*D2'.format(
+                    formula = '={1}{0}+{2}{0}*D1+{3}{0}*D2'.format(
                         row,
                         xl_col_to_name(start_column + shift + element * width),
                         xl_col_to_name(start_column + shift + element * width + 1),
@@ -1900,7 +1900,7 @@ class report_budget_forecast_excel(models.AbstractModel):
                 for element in range(len(self.month_rus_name_revenue_margin)):
                     if element in [5]:  # учитываем колонки планов
                         shift += 1
-                    formula = '=({1}{0}+{2}{0})*D1+{3}{0}*D2'.format(
+                    formula = '={1}{0}+{2}{0}*D1+{3}{0}*D2'.format(
                         row,
                         xl_col_to_name(start_column + shift + element * width),
                         xl_col_to_name(start_column + shift + element * width + 1),
