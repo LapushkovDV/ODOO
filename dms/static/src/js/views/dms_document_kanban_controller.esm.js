@@ -11,8 +11,10 @@ export class DocumentKanbanController extends KanbanController {
         const ctx = this.props.context;
         if (this.props.domain.length === 1) {
             ctx.default_parent_id = this.props.domain[0][2];
-        } else {
+        } else if (this.props.domain.length === 3) {
             ctx.default_parent_id = this.props.domain[2][2];
+        } else if (this.props.domain.length === 7) {
+            ctx.default_parent_id = this.props.domain[6][2];
         }
 
         this.orm.call(
@@ -25,7 +27,7 @@ export class DocumentKanbanController extends KanbanController {
                 name: this.env._t("Directory"),
                 type: "ir.actions.act_window",
                 res_model: "dms.directory",
-                views: [[formViewId[0]["id"], 'form']],
+                views: [[formViewId[0]["id"], "form"]],
                 view_mode: "form",
                 context: ctx,
                 target: "new"

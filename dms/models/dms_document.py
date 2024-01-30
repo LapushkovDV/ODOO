@@ -112,14 +112,23 @@ class DmsDocument(models.Model):
 
     @api.model
     def _get_search_domain(self, **kwargs):
+        result = []
         search_domain = kwargs.get('search_domain', [])
+        res_model = False
+        res_id = False
         if search_domain and len(search_domain):
             for domain in search_domain:
-                if domain[0] == 'directory_id':
-                    search_domain = [['parent_id', domain[1], domain[2]]]
-                    if domain[1] == 'child_of':
-                        search_domain = ['|'] + search_domain + [['parent_id', 'parent_of', domain[2]]]
-        return search_domain
+                if domain[0] == 'res_model':
+                    res_model = domain[2]
+                elif domain[0] == 'res_id':
+                    res_id = domain[2]
+        if res_model and res_id:
+            rec = self.env[res_model].search([
+                ('id', '=', res_id)
+            ])
+            if rec and rec.directory_id:
+                result = ['|', ['id', 'child_of', rec.directory_id.id], ['id', 'parent_of', rec.directory_id.id]]
+        return result
 
     @api.model
     def search_panel_select_range(self, field_name, **kwargs):

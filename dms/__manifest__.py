@@ -1,7 +1,7 @@
 {
     "name": "DMS",
     "summary": """Document Management System""",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "category": "Document Management",
     "license": "LGPL-3",
     "website": "",
