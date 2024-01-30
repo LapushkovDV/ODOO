@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="action_dms_project_directory" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">dms.document</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">
+            [
+                ('res_model', '=', 'project_budget.projects'),
+                ('res_id', '=', active_id),
+                ('is_hidden', '=', False)
+            ]
+        </field>
+        <field name="context">
+            {
+                'default_res_model': 'project_budget.projects',
+                'default_res_id': active_id
+            }
+        </field>
+    </record>
+
     <record id="project_budget_project_view_form_inherit_dms" model="ir.ui.view">
         <field name="name">project_budget.project.view.form.inherit.dms</field>
         <field name="model">project_budget.projects</field>
@@ -9,7 +28,8 @@
                 <attribute name="attrs">{'invisible': 1}</attribute>
             </xpath>
             <xpath expr="//div[@name='button_box']/button[@name='action_open_attachments']" position="after">
-                <button name="action_open_documents" type="object" icon="fa-files-o">
+                <button name="%(action_dms_project_directory)d" type="action" class="oe_stat_button"
+                        icon="fa-files-o">
                     <field name="document_count" string="Documents" widget="statinfo"/>
                 </button>
             </xpath>

@@ -33,19 +33,6 @@ class Project(models.Model):
              self.filtered(lambda pr: not pr.directory_id and pr.budget_state == 'work')]
         return super(Project, self).write(values)
 
-    def action_open_documents(self):
-        self.ensure_one()
-        action = self.env.ref('dms.action_dms_document_form')
-        result = action.sudo().read()[0]
-        result['domain'] = [
-            ('directory_id', 'child_of', self.directory_id.id)
-        ]
-        result['context'] = dict(
-            default_res_model=self._name,
-            default_res_id=self.id
-        )
-        return result
-
     def _create_project_directory(self):
         for project in self:
             # TODO: сделать настройку с дефолтным каталогом в модуле?

@@ -33,8 +33,9 @@ class IrAttachment(models.Model):
                 vals['version'] = 1
 
         records = super().create(vals_list)
-        if not self._context.get('without_document') and not records.res_field:
-            records.sudo()._create_document(dict(vals, res_model=records.res_model, res_id=records.res_id))
+        if not self._context.get('without_document'):
+            for record in records.filtered(lambda r: not r.res_field):
+                record.sudo()._create_document(dict(vals, res_model=record.res_model, res_id=record.res_id))
         return records
 
     def write(self, vals):
