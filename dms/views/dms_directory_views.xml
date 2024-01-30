@@ -1,5 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+    <record id="action_dms_directory_documents" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">dms.document</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">
+            [
+                ('is_hidden', '=', False)
+            ]
+        </field>
+        <field name="context">
+            {
+                'default_directory_id': active_id,
+                'searchpanel_default_directory_id': active_id
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a new document.
+            </p>
+            <p>
+                Documents are used to save content.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_dms_directory_subdirectories" model="ir.actions.act_window">
+        <field name="name">Subdirectories</field>
+        <field name="res_model">dms.directory</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">
+            [
+                ('parent_id', 'child_of', active_id),
+                ('is_hidden', '=', False),
+                ('id', '!=', active_id)
+            ]
+        </field>
+        <field name="context">
+            {
+                'default_parent_id': active_id,
+                'searchpanel_default_parent_id': active_id
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a new directory.
+            </p>
+            <p>
+                Directories can be used to structure and organize documents.
+            </p>
+        </field>
+    </record>
+
     <record id="dms_directory_search_view" model="ir.ui.view">
         <field name="name">dms.directory.search</field>
         <field name="model">dms.directory</field>
@@ -315,58 +367,6 @@
     </record>
 
     <!-- Actions -->
-
-    <record id="action_dms_directory_documents" model="ir.actions.act_window">
-        <field name="name">Documents</field>
-        <field name="res_model">dms.document</field>
-        <field name="view_mode">kanban,tree,form</field>
-        <field name="domain">
-            [
-                ('is_hidden', '=', False)
-            ]
-        </field>
-        <field name="context">
-            {
-                'default_directory_id': active_id,
-                'searchpanel_default_directory_id': active_id
-            }
-        </field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Click to add a new document.
-            </p>
-            <p>
-                Documents are used to save content.
-            </p>
-        </field>
-    </record>
-
-    <record id="action_dms_directory_subdirectories" model="ir.actions.act_window">
-        <field name="name">Subdirectories</field>
-        <field name="res_model">dms.directory</field>
-        <field name="view_mode">kanban,tree,form</field>
-        <field name="domain">
-            [
-                ('parent_id', 'child_of', active_id),
-                ('is_hidden', '=', False),
-                ('id', '!=', active_id)
-            ]
-        </field>
-        <field name="context">
-            {
-                'default_parent_id': active_id,
-                'searchpanel_default_parent_id': active_id
-            }
-        </field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Click to add a new directory.
-            </p>
-            <p>
-                Directories can be used to structure and organize documents.
-            </p>
-        </field>
-    </record>
 
     <record id="action_dms_directory_quick_create" model="ir.actions.act_window">
         <field name="name">New Directory</field>
