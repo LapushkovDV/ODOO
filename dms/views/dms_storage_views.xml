@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <record id="action_dms_storage_directories" model="ir.actions.act_window">
+        <field name="name">Directories</field>
+        <field name="res_model">dms.directory</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">
+            [
+                ("storage_id", "=", active_id),
+                ("is_hidden", "=", False)
+            ]
+        </field>
+        <field name="context">{'default_storage_id': active_id}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a new directory.
+            </p>
+            <p>
+                Directories can be used to structure and organize documents.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_dms_storage_documents" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">dms.document</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">
+            [
+                ("storage_id", "=", active_id),
+                ("is_hidden", "=", False)
+            ]
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a new document.
+            </p>
+            <p>
+                Documents are used to save content.
+            </p>
+        </field>
+    </record>
+
     <record id="dms_storage_view_search" model="ir.ui.view">
         <field name="name">dms.storage.search</field>
         <field name="model">dms.storage</field>
@@ -69,47 +110,6 @@
     </record>
 
     <!-- Actions -->
-
-    <record id="action_dms_storage_directories" model="ir.actions.act_window">
-        <field name="name">Directories</field>
-        <field name="res_model">dms.directory</field>
-        <field name="view_mode">kanban,tree,form</field>
-        <field name="domain">
-            [
-                ("storage_id", "=", active_id),
-                ("is_hidden", "=", False)
-            ]
-        </field>
-        <field name="context">{'default_storage_id': active_id}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Click to add a new directory.
-            </p>
-            <p>
-                Directories can be used to structure and organize documents.
-            </p>
-        </field>
-    </record>
-
-    <record id="action_dms_storage_documents" model="ir.actions.act_window">
-        <field name="name">Documents</field>
-        <field name="res_model">dms.document</field>
-        <field name="view_mode">kanban,tree,form</field>
-        <field name="domain">
-            [
-                ("storage_id", "=", active_id),
-                ("is_hidden", "=", False)
-            ]
-        </field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Click to add a new document.
-            </p>
-            <p>
-                Documents are used to save content.
-            </p>
-        </field>
-    </record>
 
     <record id="action_dms_storage_form" model="ir.actions.act_window">
         <field name="name">Storages</field>
