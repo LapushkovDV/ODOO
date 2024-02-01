@@ -113,8 +113,10 @@ export const FileUpload = {
 
         if (this.props.domain.length === 1) {
             ctx.default_directory_id = this.props.domain[0][2];
-        } else {
+        } else if (this.props.domain.length === 3) {
             ctx.default_directory_id = this.props.domain[2][2];
+        } else if (this.props.domain.length === 7) {
+            ctx.default_directory_id = this.props.domain[6][2];
         }
 
         if (ctx.default_directory_id === false) {
