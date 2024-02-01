@@ -3333,6 +3333,11 @@ msgid "is_report_for_management"
 msgstr "Отчет для руководства"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_report_wizard__include_old_open_tenders
+msgid "include_old_open_tenders"
+msgstr "Включать все предыдущие тендеры 'в работе'"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__is_representation_expenses
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps_type__is_representation_expenses
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__is_representation_expenses
@@ -4639,10 +4644,6 @@ msgstr ""
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__step_project_number
-#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_tree
-#: model_terms:ir.ui.view,arch_db:project_budget.show_project_office_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_project_office_tree
-#: model_terms:ir.ui.view,arch_db:project_budget.view_projects_search
 msgid "step project number"
 msgstr "Номер этапа проекта"
 
