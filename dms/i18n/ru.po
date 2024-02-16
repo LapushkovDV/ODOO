@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-30 20:13+0000\n"
-"PO-Revision-Date: 2024-01-30 20:13+0000\n"
+"POT-Creation-Date: 2024-02-16 11:32+0000\n"
+"PO-Revision-Date: 2024-02-16 11:32+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -204,6 +204,11 @@ msgid "Configuration"
 msgstr "Настройки"
 
 #. module: dms
+#: model:ir.model,name:dms.model_res_partner
+msgid "Contact"
+msgstr ""
+
+#. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_storage__directory_count
 msgid "Count Directories"
 msgstr "Количество каталогов"
@@ -328,6 +333,12 @@ msgid "Document"
 msgstr "Документ"
 
 #. module: dms
+#: model:ir.model.fields,field_description:dms.field_res_partner__document_count
+#: model:ir.model.fields,field_description:dms.field_res_users__document_count
+msgid "Document Count"
+msgstr ""
+
+#. module: dms
 #: model_terms:ir.ui.view,arch_db:dms.dms_document_view_form
 msgid "Document Name"
 msgstr ""
@@ -340,9 +351,12 @@ msgstr "Управление версиями документов"
 #. module: dms
 #: model:ir.actions.act_window,name:dms.action_dms_directory_documents
 #: model:ir.actions.act_window,name:dms.action_dms_document_form
+#: model:ir.actions.act_window,name:dms.action_dms_partner_documents
 #: model:ir.actions.act_window,name:dms.action_dms_storage_documents
 #: model:ir.model.fields,field_description:dms.field_dms_directory__document_ids
 #: model:ir.model.fields,field_description:dms.field_dms_storage__document_ids
+#: model:ir.model.fields,field_description:dms.field_res_partner__document_ids
+#: model:ir.model.fields,field_description:dms.field_res_users__document_ids
 #: model:ir.module.category,name:dms.category_dms_security
 #: model:ir.ui.menu,name:dms.menu_dms
 #: model:ir.ui.menu,name:dms.menu_dms_document
@@ -350,6 +364,7 @@ msgstr "Управление версиями документов"
 #: model_terms:ir.ui.view,arch_db:dms.dms_directory_view_tree
 #: model_terms:ir.ui.view,arch_db:dms.dms_document_view_search
 #: model_terms:ir.ui.view,arch_db:dms.dms_storage_view_form
+#: model_terms:ir.ui.view,arch_db:dms.res_partner_view_form_inherit_dms
 msgid "Documents"
 msgstr "Документы"
 
@@ -499,13 +514,6 @@ msgstr ""
 #: model:dms.storage,name:dms.dms_storage_internal_storage
 msgid "Internal"
 msgstr "Внутреннее"
-
-#. module: dms
-#. odoo-python
-#: code:addons/dms/models/dms_document.py:0
-#, python-format
-msgid "Invalid attachments!"
-msgstr "Некорректные вложения!"
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__message_is_follower
@@ -698,6 +706,11 @@ msgstr "PDF/Документ"
 #: model:ir.model.fields,field_description:dms.field_dms_directory__parent_id
 msgid "Parent Directory"
 msgstr "Родительский каталог"
+
+#. module: dms
+#: model:ir.model.fields,field_description:dms.field_dms_document__partner_id
+msgid "Partner"
+msgstr "Контрагент"
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_ir_attachment__version_ids

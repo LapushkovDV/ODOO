@@ -1,6 +1,6 @@
 {
     'name': 'DMS: Project Budget',
-    'version': '1.0.1',
+    'version': '1.0.2',
     'category': 'Document Management',
     'depends': ['dms', 'project_budget'],
     'description': """
