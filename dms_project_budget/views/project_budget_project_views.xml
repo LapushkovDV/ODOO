@@ -14,7 +14,8 @@
         <field name="context">
             {
                 'default_res_model': 'project_budget.projects',
-                'default_res_id': active_id
+                'default_res_id': active_id,
+                'searchpanel_default_res_model': 'project_budget.projects'
             }
         </field>
     </record>

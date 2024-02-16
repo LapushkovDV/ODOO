@@ -7,6 +7,8 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
+#TODO: реализовать контроллер для загрузки документа
+# Необходимо отказаться от стандартного контроллера по загрузке вложения
 class DmsDocument(models.Model):
     _name = 'dms.document'
     _description = 'DMS Document'
@@ -27,6 +29,7 @@ class DmsDocument(models.Model):
     description = fields.Text(related='attachment_id.description', string='Description', readonly=False)
 
     name = fields.Char(string='Name', compute='_compute_name', inverse='_inverse_name', copy=True, store=True)
+    partner_id = fields.Many2one('res.partner', string='Partner', tracking=True)
     active = fields.Boolean(string='Archived', default=True,
                             help='If a document is set to archived, it is not displayed, but still exists.')
 
@@ -105,8 +108,8 @@ class DmsDocument(models.Model):
 
         attachments = self.env['ir.attachment'].browse(attachment_ids)
 
-        if any(attachment.res_id or attachment.res_model != 'dms.document' for attachment in attachments):
-            raise UserError(_('Invalid attachments!'))
+        # if any(attachment.res_id or attachment.res_model != 'dms.document' for attachment in attachments):
+        #     raise UserError(_('Invalid attachments!'))
 
         return [self.get_attachment_object(attachment) for attachment in attachments]
 

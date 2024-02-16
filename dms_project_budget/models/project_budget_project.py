@@ -5,13 +5,16 @@ class Project(models.Model):
     _name = 'project_budget.projects'
     _inherit = ['project_budget.projects', 'dms.document.mixin']
 
-    directory_id = fields.Many2one('dms.directory', string='Directory', ondelete='set null')
+    directory_id = fields.Many2one('dms.directory', string='Directory', copy=False, ondelete='set null')
     document_count = fields.Integer(related='directory_id.document_total_count', string='Documents Count',
                                     readonly=True)
 
     # TODO: сделать настройку с дефолтным каталогом в модуле?
     def _get_document_directory(self):
         return self.directory_id or self.env.ref('dms_project_budget.dms_directory_project_directory')
+
+    def _get_document_partner(self):
+        return self.partner_id
 
     @api.model
     def _init_project_document_directory(self):
@@ -27,11 +30,19 @@ class Project(models.Model):
 
         return records
 
-    def write(self, values):
-        if not values.get('directory_id'):
+    def write(self, vals):
+        if not vals.get('directory_id'):
             [project._create_project_directory() for project in
              self.filtered(lambda pr: not pr.directory_id and pr.budget_state == 'work')]
-        return super(Project, self).write(values)
+
+        res = super(Project, self).write(vals)
+        if res and vals.get('partner_id'):
+            [project._move_documents_to_partner() for project in self]
+        return res
+
+    # ------------------------------------------------------
+    # PRIVATE METHODS
+    # ------------------------------------------------------
 
     def _create_project_directory(self):
         for project in self:
@@ -41,3 +52,12 @@ class Project(models.Model):
                 'parent_id': self.env.ref('dms_project_budget.dms_directory_project_directory').id
             })
             project.with_context(form_fix_budget=True).write({'directory_id': directory.id})
+
+    def _move_documents_to_partner(self):
+        documents = self.env['dms.document'].sudo().search([
+            ('res_model', '=', self._name),
+            ('res_id', '=', self.id),
+            ('partner_id', '!=', self.partner_id.id)
+        ])
+        if documents:
+            documents.write({'partner_id': self.partner_id.id})

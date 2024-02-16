@@ -80,11 +80,15 @@ export const FileUpload = {
     },
 
     async onChangeFileInput() {
+        const ctx = this.props.context;
+        let res_model = ctx.default_res_model ? ctx.default_res_model : "dms.document";
+        let res_id = ctx.default_res_model ? ctx.default_res_id : 0;
+
         const params = {
             csrf_token: odoo.csrf_token,
             ufile: [...this.fileInput.el.files],
-            model: "dms.document",
-            id: 0,
+            model: res_model,
+            id: res_id
         };
 
         const fileData = await this.http.post(
