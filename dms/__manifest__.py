@@ -1,7 +1,7 @@
 {
     "name": "DMS",
     "summary": """Document Management System""",
-    "version": "2.0.2",
+    "version": "2.1.0",
     "category": "Document Management",
     "license": "LGPL-3",
     "website": "",
@@ -10,8 +10,8 @@
     "assets": {
         "web.assets_backend": [
             "dms/static/src/scss/*",
-            "dms/static/src/js/views/*.esm.js",
-            "dms/static/src/js/views/*.xml"
+            "dms/static/src/js/views/**/*.js",
+            "dms/static/src/js/views/**/*.xml"
         ],
     },
     "data": [

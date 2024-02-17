@@ -6,8 +6,8 @@
         <field name="view_mode">kanban,tree,form</field>
         <field name="domain">[("is_hidden", "=", False)]</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Add a new Document.
+            <p class="o_view_nocontent_smiling_face">Upload <span class="fw-normal">a file or</span> drag
+                <span class="fw-normal">it here.</span>
             </p>
         </field>
     </record>
@@ -19,6 +19,7 @@
             <search string="Documents">
                 <field name="name" string="Document"/>
                 <field name="create_uid" string="Created by"/>
+                <field name="partner_id"/>
                 <filter name="filter_my_documents" string="My Documents" domain="[('create_uid', '=', uid)]"/>
                 <separator/>
                 <filter name="filter_pdf_doc" string="PDF/Document" domain="['|', ('mimetype', 'ilike', 'pdf'), ('name', 'ilike', '.doc')]"/>
@@ -28,6 +29,7 @@
                 <separator/>
                 <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
                 <group expand="0" string="Group By">
+                    <filter name="partner_id" string="Partner" domain="[]" context="{'group_by': 'partner_id'}"/>
                     <filter name="by_model" string="Model" domain="[]" context="{'group_by': 'res_model'}"/>
                     <filter name="creation_month" string="Creation Date" domain="[]" context="{'group_by':'create_date'}"/>
                 </group>
@@ -57,15 +59,9 @@
                     <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_global_click">
                             <div class="o_dropdown_kanban dropdown">
-                                <a
-                                    class="dropdown-toggle o-no-caret btn"
-                                    href="#"
-                                    role="button"
-                                    data-toggle="dropdown"
-                                    aria-label="Dropdown menu"
-                                    title="Dropdown menu"
-                                >
-                                    <span class="fa fa-ellipsis-v" />
+                                <a class="dropdown-toggle o-no-caret btn" href="#" role="button"
+                                   data-toggle="dropdown" aria-label="Dropdown menu" title="Dropdown menu">
+                                    <span class="fa fa-ellipsis-v"/>
                                 </a>
                                 <div class="dropdown-menu" role="menu">
                                     <div class="row">
@@ -93,65 +89,39 @@
 <!--                                                <i class="fa fa-unlock-alt" />-->
 <!--                                                Unlock-->
 <!--                                            </a>-->
-<!--                                            <a-->
-<!--                                                t-if="record.permission_write.raw_value and record.active.raw_value"-->
-<!--                                                role="menuitem"-->
-<!--                                                name="toggle_active"-->
-<!--                                                type="object"-->
-<!--                                                class="dropdown-item"-->
-<!--                                            >-->
-<!--                                                <i class="fa fa-archive" />-->
-<!--                                                Archive-->
-<!--                                            </a>-->
-<!--                                            <a-->
-<!--                                                t-if="record.permission_write.raw_value and !record.active.raw_value"-->
-<!--                                                role="menuitem"-->
-<!--                                                name="toggle_active"-->
-<!--                                                type="object"-->
-<!--                                                class="dropdown-item"-->
-<!--                                            >-->
-<!--                                                <i class="fa fa-archive" />-->
-<!--                                                Unarchive-->
-<!--                                            </a>-->
-                                            <a role="menuitem" class="dropdown-item"
+                                            <a t-if="record.active.raw_value" class="dropdown-item" name="toggle_active"
+                                               role="menuitem" type="object">
+                                                <i class="fa fa-archive"/>
+                                                Archive
+                                            </a>
+                                            <a t-if="!record.active.raw_value" class="dropdown-item"
+                                               name="toggle_active" role="menuitem" type="object">
+                                                <i class="fa fa-archive"/>
+                                                Unarchive
+                                            </a>
+                                            <a class="dropdown-item" role="menuitem"
                                                t-attf-href="/web/content?id=#{record.id.raw_value}&amp;field=datas&amp;model=dms.document&amp;filename_field=name&amp;download=true">
                                                 <i class="fa fa-download"/>
                                                 Download
                                             </a>
                                         </div>
-<!--                                        <div-->
-<!--                                            class="col-6 border-left mk_file_kanban_actions"-->
-<!--                                        >-->
-<!--                                            <h6 class="dropdown-header">-->
-<!--                                                Actions-->
-<!--                                            </h6>-->
-<!--                                            <a-->
-<!--                                                role="menuitem"-->
-<!--                                                type="open"-->
-<!--                                                class="dropdown-item"-->
-<!--                                            >-->
-<!--                                                <i class="fa fa-external-link" />-->
-<!--                                                Open-->
-<!--                                            </a>-->
-<!--                                            <a-->
-<!--                                                t-if="record.permission_write.raw_value"-->
-<!--                                                role="menuitem"-->
-<!--                                                type="edit"-->
-<!--                                                class="dropdown-item"-->
-<!--                                            >-->
-<!--                                                <i class="fa fa-pencil-square-o" />-->
-<!--                                                Edit-->
-<!--                                            </a>-->
-<!--                                            <a-->
-<!--                                                t-if="record.permission_unlink.raw_value"-->
-<!--                                                role="menuitem"-->
-<!--                                                type="delete"-->
-<!--                                                class="dropdown-item"-->
-<!--                                            >-->
-<!--                                                <i class="fa fa-trash-o" />-->
-<!--                                                Delete-->
-<!--                                            </a>-->
-<!--                                        </div>-->
+                                        <div class="col-6 border-left dms_document_kanban_actions">
+                                            <h6 class="dropdown-header">
+                                                Actions
+                                            </h6>
+                                            <a class="dropdown-item" role="menuitem" type="open">
+                                                <i class="fa fa-external-link"/>
+                                                Open
+                                            </a>
+                                            <a class="dropdown-item" role="menuitem" type="edit">
+                                                <i class="fa fa-pencil-square-o"/>
+                                                Edit
+                                            </a>
+                                            <a class="dropdown-item" role="menuitem" type="delete">
+                                                <i class="fa fa-trash-o"/>
+                                                Delete
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -230,6 +200,8 @@
                     </div>
                     <group name="content">
                         <field name="datas" filename="name" mimetype="mimetype" widget="preview_binary"/>
+                        <field name="directory_id" attrs="{'readonly': [('is_locked', '=', True)]}"/>
+                        <field name="partner_id"/>
                     </group>
                     <group>
                         <group>
@@ -267,6 +239,7 @@
             <tree>
                 <field name="id" optional="hide" groups="base.group_no_one"/>
                 <field name="name" string="Document" required="True"/>
+                <field name="partner_id"/>
                 <field name="locker_id" optional="hide"/>
                 <field name="create_date" widget="datetime"/>
             </tree>

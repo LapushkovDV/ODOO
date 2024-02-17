@@ -7,8 +7,6 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-#TODO: реализовать контроллер для загрузки документа
-# Необходимо отказаться от стандартного контроллера по загрузке вложения
 class DmsDocument(models.Model):
     _name = 'dms.document'
     _description = 'DMS Document'
@@ -42,7 +40,7 @@ class DmsDocument(models.Model):
     is_hidden = fields.Boolean(related='storage_id.is_hidden', readonly=True, store=True)
     thumbnail = fields.Binary(compute='_compute_thumbnail', attachment=True, readonly=1, store=True)
     locker_id = fields.Many2one('res.users', string='Locked by')
-    is_locked = fields.Boolean(compute='_compute_is_locked', string='Locked')
+    is_locked = fields.Boolean(string='Locked', compute='_compute_is_locked')
 
     @api.depends('attachment_id.name')
     def _compute_name(self):
@@ -87,6 +85,12 @@ class DmsDocument(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        for vals in vals_list:
+            if 'attachment_id' not in vals:
+                self._create_ir_attachment(vals)
+            if 'partner_id' not in vals:
+                self._get_partner_id(vals)
+
         records = super(DmsDocument, self).create(vals_list)
 
         for record in records:
@@ -102,16 +106,9 @@ class DmsDocument(models.Model):
         res = attachments.unlink()
         return res
 
-    def get_dms_documents_from_attachments(self, attachment_ids=None):
-        if not attachment_ids:
-            raise UserError(_('No attachment was provided'))
-
-        attachments = self.env['ir.attachment'].browse(attachment_ids)
-
-        # if any(attachment.res_id or attachment.res_model != 'dms.document' for attachment in attachments):
-        #     raise UserError(_('Invalid attachments!'))
-
-        return [self.get_attachment_object(attachment) for attachment in attachments]
+    # ------------------------------------------------------
+    # SEARCH PANEL
+    # ------------------------------------------------------
 
     @api.model
     def _get_search_domain(self, **kwargs):
@@ -163,6 +160,10 @@ class DmsDocument(models.Model):
             }
         return super(DmsDocument, self).search_panel_select_range(field_name, **kwargs)
 
+    # ------------------------------------------------------
+    # ACTIONS
+    # ------------------------------------------------------
+
     def open_resource(self):
         self.ensure_one()
         if self.res_model and self.res_id:
@@ -175,10 +176,24 @@ class DmsDocument(models.Model):
                 'target': 'current'
             }
 
-    def get_attachment_object(self, attachment):
-        return {
-            'attachment_id': attachment.id
-            # 'name': attachment.name,
-            # 'datas': attachment.datas,
-            # 'res_model': attachment.res_model
-        }
+    # ------------------------------------------------------
+    # PRIVATE METHODS
+    # ------------------------------------------------------
+
+    def _create_ir_attachment(self, vals):
+        attachment_vals = vals.copy()
+        attachment_fields = [key for key in vals if key in self.env['ir.attachment']._fields]
+        attachment_vals = {key: attachment_vals.pop(key) for key in vals if key in attachment_fields}
+        attachment = self.env['ir.attachment'].with_context(without_document=True).create(attachment_vals)
+        vals['attachment_id'] = attachment.id
+        return vals
+
+    # TODO: прям попахивает костылем, но как обойти - хз
+    def _get_partner_id(self, vals):
+        if 'res_model' in vals and 'res_id' in vals:
+            model = self.env[vals['res_model']]
+            if model is not None and issubclass(type(model), self.pool['dms.document.mixin']):
+                res_ref = model.browse(int(vals.get('res_id', 0)))
+                if res_ref:
+                    vals['partner_id'] = res_ref._get_document_partner().id
+

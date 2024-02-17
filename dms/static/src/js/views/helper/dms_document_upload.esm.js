@@ -1,5 +1,6 @@
 /** @odoo-module */
 
+import { SearchModel } from "@web/search/search_model";
 import {useBus, useService} from "@web/core/utils/hooks";
 import rpc from "web.rpc";
 import {_t} from "web.core";
@@ -14,6 +15,8 @@ export const FileDropZone = {
         });
         this.root = useRef("root");
         this.rpc = useService("rpc");
+        this.actionService = useService("action");
+        this.notification = useService("notification");
 
         useEffect(
             (el) => {
@@ -50,9 +53,19 @@ export const FileDropZone = {
     },
 
     async onDrop(ev) {
+        const controllerID = this.actionService.currentController.jsId;
+        if (!this.env.searchModel.getSelectedDirectoryId()) {
+            this.actionService.restore(controllerID);
+            return this.notification.add(
+                this.env._t("You must select a directory first"),
+                {
+                    type: "danger",
+                }
+            );
+        }
         ev.preventDefault();
         await this.env.bus.trigger("change_file_input", {
-            files: ev.dataTransfer.files,
+            files: ev.dataTransfer.files
         });
     },
 };
@@ -80,6 +93,8 @@ export const FileUpload = {
     },
 
     async onChangeFileInput() {
+        const controllerID = this.actionService.currentController.jsId;
+
         const ctx = this.props.context;
         let res_model = ctx.default_res_model ? ctx.default_res_model : "dms.document";
         let res_id = ctx.default_res_model ? ctx.default_res_id : 0;
@@ -87,12 +102,13 @@ export const FileUpload = {
         const params = {
             csrf_token: odoo.csrf_token,
             ufile: [...this.fileInput.el.files],
-            model: res_model,
-            id: res_id
+            directory_id: this.env.searchModel.getSelectedDirectoryId(),
+            res_model: res_model,
+            res_id: res_id
         };
 
         const fileData = await this.http.post(
-            "/web/binary/upload_attachment",
+            "/dms/upload_attachment",
             params,
             "text"
         );
@@ -100,72 +116,12 @@ export const FileUpload = {
         if (attachments.error) {
             throw new Error(attachments.error);
         }
-
-        this.onUpload(attachments);
-    },
-
-    async onUpload(attachments) {
-        const self = this;
-        const attachmentIds = attachments.map((a) => a.id);
-        const ctx = this.props.context;
-        const controllerID = this.actionService.currentController.jsId;
-
-        if (!attachmentIds.length) {
-            this.notification.add(_t("An error occurred during the upload"));
-            return;
-        }
-
-        if (this.props.domain.length === 1) {
-            ctx.default_directory_id = this.props.domain[0][2];
-        } else if (this.props.domain.length === 3) {
-            ctx.default_directory_id = this.props.domain[2][2];
-        } else if (this.props.domain.length === 7) {
-            ctx.default_directory_id = this.props.domain[6][2];
-        }
-
-        if (ctx.default_directory_id === false) {
-            self.actionService.restore(controllerID);
-            return self.notification.add(
-                this.env._t("You must select a directory first"),
-                {
-                    type: "danger",
-                }
-            );
-        }
-
-        const attachment_datas = await this.orm.call(
-            "dms.document",
-            "get_dms_documents_from_attachments",
-            ["", attachmentIds]
+        this.notification.add(
+            attachments.success ? attachments.success : this.env._t("All files uploaded"),
+            {
+                type: "success",
+            }
         );
-
-        const attachments_args = [];
-
-        attachment_datas.forEach((attachment_data) => {
-            attachments_args.push({
-                attachment_id: attachment_data.attachment_id
-            });
-        });
-
-        rpc.query({
-            model: "dms.document",
-            method: "create",
-            args: [attachments_args],
-            kwargs: {
-                context: ctx,
-            },
-        }).then(() => {
-            self.actionService.restore(controllerID);
-        })
-        .catch((error) => {
-            console.log(error);
-            self.notification.add(
-                this.env._t("A document with the same name already exists"),
-                {
-                    type: "danger",
-                }
-            );
-            self.actionService.restore(controllerID);
-        });
+        this.actionService.restore(controllerID);
     }
 };
