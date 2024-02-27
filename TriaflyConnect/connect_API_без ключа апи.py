@@ -214,7 +214,7 @@ for index, row in excel_file_df.iterrows():
                     ]
         # print(listvalue)
         lpull_list_values.append(listvalue)
-        if len(lpull_list_values) > 2000:
+        if len(lpull_list_values) > 10000:
             #print(lpull_list_values)
             print(datetime.datetime.now(),'Inserting values')
             triafly_conn.put(lpull_list_values, triaflyRegistr_Fact)
