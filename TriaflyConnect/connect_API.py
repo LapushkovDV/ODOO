@@ -188,6 +188,18 @@ for index, row in excel_file_df.iterrows():
         tp_id = get_id_catalog_by_value(rspTP_ID, TPTransfInfo[3])
         nasPunkt_ID = get_id_catalog_by_value(rspNasPunkt_ID, TPTransfInfo[2])
 
+        MoreThenP09 = 0
+        MoreThenP = 0
+        dogovor_power_int = 0
+        if dogovor_power != '' :
+            dogovor_power_int = int(dogovor_power)
+        if fact_value >= 0:
+            if dogovor_power_int > 0:
+                if (fact_value >= dogovor_power_int*0.9) and (fact_value <= dogovor_power_int):
+                    MoreThenP09 = 1
+                if (fact_value >= dogovor_power_int):
+                    MoreThenP = 1
+
         listvalue = [ nasPunkt_ID
                     , tp_id
                     , transf_ID
@@ -200,10 +212,12 @@ for index, row in excel_file_df.iterrows():
                     , strdate
                     , poluChasy_id
                     , fact_value if fact_value >= 0 else ''
+                    , MoreThenP09
+                    , MoreThenP
                     ]
         # print(listvalue)
         lpull_list_values.append(listvalue)
-        if len(lpull_list_values) > 2000:
+        if len(lpull_list_values) > 10000:
             #print(lpull_list_values)
             print(datetime.datetime.now(),'Inserting values')
             triafly_conn.put(lpull_list_values, triaflyRegistr_Fact)
