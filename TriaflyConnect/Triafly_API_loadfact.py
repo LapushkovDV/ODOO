@@ -1,4 +1,8 @@
+from netdbclient import Connection
 import pandas as pd
+from IPython.display import display
+import ssl
+
 import datetime
 
 
@@ -10,10 +14,6 @@ triafly_set_time_indicator_id = 123    # id показателя "Время п�
 triafly_set_element_id = 123         # id элемента (строки) справочника, соответствующего нужной сессии
 
 # Определим время последней загрузки данных
-from netdbclient import Connection
-import pandas as pd
-from IPython.display import display
-import ssl
 
 
 def get_id_catalog_by_value(catalog, value):
@@ -106,7 +106,7 @@ rspLineAV_ID = triafly_conn.get(triaflyReportLineAV)     # API Э_АВ лини�
 print(datetime.datetime.now(),"Получен отчет API Э_АВ линии (автоматический выключатель/рубильник) ID")
 rspTransfAV_ID = triafly_conn.get(triaflyReportTransfAV) # API Э_АВ трансформатора (автоматический выключатель/рубильник) ID
 print(datetime.datetime.now(),"Получен отчет API Э_АВ трансформатора (автоматический выключатель/рубильник) ID")
-
+excel_file_df=''
 #display(rspSerPU_ID)
 
 #triafly_conn.put([['29.01.2024', '593' ,999]],498058)
@@ -116,7 +116,7 @@ print(datetime.datetime.now(),"Получен отчет API Э_АВ транс�
 #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\TEst.xlsx', skiprows=range(4), dtype='object')
 
 #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_24.xlsx', skiprows=range(4), dtype='object')
-excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_25 (2).xlsx', skiprows=range(4), dtype='object')
+#excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_25 (2).xlsx', skiprows=range(4), dtype='object')
 #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_25.xlsx', skiprows=range(4), dtype='object')
 #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_26.xlsx', skiprows=range(4), dtype='object')
 
