@@ -25,22 +25,38 @@ def get_id_catalog_by_value(catalog, value):
     return ''
 
 def get_info_elem_from_registry( _registry, serial, npp, strdate):
-    for one_Abon_PU in _registry:
+    for one_elem in _registry:
         #print("'",one_Abon_PU[0],"'",type(one_Abon_PU[0]),"'", serial,"'", type(serial))#
         # print('strdate = ', strdate)
         # print('one_Abon_PU[0] =', one_Abon_PU[0])
         # print('one_Abon_PU[1] =', one_Abon_PU[1])
         curDate = datetime.datetime.strptime(strdate, "%d.%m.%Y").date()
-        begDate = datetime.datetime.strptime(one_Abon_PU[0], "%d.%m.%Y").date()
-        endDate = datetime.datetime.strptime(one_Abon_PU[1], "%d.%m.%Y").date()
+        begDate = datetime.datetime.strptime(one_elem[0], "%d.%m.%Y").date()
+        endDate = datetime.datetime.strptime(one_elem[1], "%d.%m.%Y").date()
 
-        if ( (str(one_Abon_PU[npp]) == str(serial)) and (curDate >= begDate) and (curDate <= endDate)):
+        if ( (str(one_elem[npp]) == str(serial)) and (curDate >= begDate) and (curDate <= endDate)):
             #print('EQUAL')
-            return one_Abon_PU
+            return one_elem
+
+def get_info_elem_from_registry( _registry, serial, npp, strdate):
+    for one_elem in _registry:
+        #print("'",one_Abon_PU[0],"'",type(one_Abon_PU[0]),"'", serial,"'", type(serial))#
+        # print('strdate = ', strdate)
+        # print('one_Abon_PU[0] =', one_Abon_PU[0])
+        # print('one_Abon_PU[1] =', one_Abon_PU[1])
+        curDate = datetime.datetime.strptime(strdate, "%d.%m.%Y").date()
+        begDate = datetime.datetime.strptime(one_elem[0], "%d.%m.%Y").date()
+        endDate = datetime.datetime.strptime(one_elem[1], "%d.%m.%Y").date()
+
+        if ( (str(one_elem[npp]) == str(serial)) and (curDate >= begDate) and (curDate <= endDate)):
+            #print('EQUAL')
+            return one_elem
 
 ssl._create_default_https_context = ssl._create_unverified_context
 triafly_conn = Connection(triafly_url, triafly_api_key)
 
+
+triaflyRegistr_PU = 1320709 #это реестр серийных номеров приборов учета
 triaflyRegistr_Fact = 497982 #этот реестр заполняем Э_фактические показания приборов учета
 triaflyRegistr_Abon_PU = 864199 # реестр Э_Реестр: абонент + прибор учёта (ПУ). /0 серийный номер ПУ/1 Абонент/2 Э_с (дата)/ Э_по (дата)/4 трансформатор
 triaflyRegistr_LineAbonent = 472220 # реестр Э_Реестр: линия + абонент
@@ -58,6 +74,10 @@ triaflyReportLineAV = 876586      # API Э_АВ линии (автоматиче
 triaflyReportTransfAV = 876613    # API Э_АВ трансформатора (автоматический выключатель/рубильник) ID
 
 print(datetime.datetime.now(),"Данные для загрузки") # Название таблицы
+
+
+rspn_registry_PU = triafly_conn.get(triaflyRegistr_PU) ##это реестр серийных номеров приборов учета
+print(datetime.datetime.now(),"Получен реестр реестр серийных номеров приборов учета") # Название таблицы
 
 rspn_registry_Abon_PU = triafly_conn.get(triaflyRegistr_Abon_PU) # реестр пересечения абонентов и приборов учета по времени
 print(datetime.datetime.now(),"Получен реестр пересечения абонентов и приборов учета по времени") # Название таблицы
@@ -92,7 +112,13 @@ print(datetime.datetime.now(),"Получен отчет API Э_АВ транс�
 #triafly_conn.put([['29.01.2024', '593' ,999]],498058)
 
 #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\06_2_ТУ_на_ПС_с_показаниями,_30_минут_24_11216.xlsx', skiprows=range(4), dtype='object')
-excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\06_2_ТУ_на_ПС_с_показаниями,_30_минут_24_11082.xlsx', skiprows=range(4), dtype='object')
+#excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\06_2_ТУ_на_ПС_с_показаниями,_30_минут_24_11082.xlsx', skiprows=range(4), dtype='object')
+#excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\TEst.xlsx', skiprows=range(4), dtype='object')
+
+#excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_24.xlsx', skiprows=range(4), dtype='object')
+excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_25 (2).xlsx', skiprows=range(4), dtype='object')
+#excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_25.xlsx', skiprows=range(4), dtype='object')
+#excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_26.xlsx', skiprows=range(4), dtype='object')
 
 print(datetime.datetime.now(),"Прочитан EXCEL-файл")
 #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\test_transf.xlsx', skiprows=range(4), dtype='object')
@@ -117,104 +143,144 @@ for index, row in excel_file_df.iterrows():
         fact_value = row[column]
         # print(row['Серийный номер ПУ'])
         abonInfo = get_info_elem_from_registry(rspn_registry_Abon_PU, str(row['Серийный номер ПУ']), 2, strdate)
-
-        LineAbonentInfo = []
-        # print('Серийный номер ПУ = ', str(row['Серийный номер ПУ']))
-        # print('abonInfo = ', abonInfo)
-        if abonInfo[3]:
-            LineAbonentInfo = get_info_elem_from_registry(rspn_registry_LineAbonent, abonInfo[3],3, strdate)  # реестр пересечения абонентов и приборов учета по времени
-            TransfLineInfo = get_info_elem_from_registry(rspn_registry_TransfLine, LineAbonentInfo[2],3, strdate)  # реестр
-            TPTransfInfo = get_info_elem_from_registry(rspn_registry_TPTransf, TransfLineInfo[2], 4, strdate)  # реестр
-        else:
-            TPTransfInfo = get_info_elem_from_registry(rspn_registry_TPTransf, abonInfo[4],4, strdate)  # реестр пересечения абонентов и приборов учета по времени
-            # print('abonInfo[4] = ', abonInfo[4])
-            # print('TransfLineInfo = ', TransfLineInfo)
-        # print(TransfLineInfo)
-
-        # print('LineAbonentInfo =',LineAbonentInfo)
-        # print('TransfLineInfo =', TransfLineInfo)
-        # print('TPTransfInfo =', TPTransfInfo)
-        # print(datetime.datetime.now(), abonInfo[0])
-
-        # abonInfo[0] Э_с Дата
-        # abonInfo[1] Э_по Дата
-        # abonInfo[2] серийный номер прибора учета
-        # abonInfo[3] абонент
-        # abonInfo[4] Э_Трансформатор
-
-        # LineAbonentInfo[0] Э_с Дата
-        # LineAbonentInfo[1] Э_по Дата
-        # LineAbonentInfo[2] Э_Линия
-        # LineAbonentInfo[3] Э_Абонент
-        # LineAbonentInfo[4] Мощность по договору
-
-        # TransfLineInfo[0] Э_с Дата
-        # TransfLineInfo[1] Э_по Дата
-        # TransfLineInfo[2] Э_Трансформатор
-        # TransfLineInfo[3] Э_Линия
-        # TransfLineInfo[4] Э_АВ линии (автоматический выключатель/рубильник)
-        # TransfLineInfo[5] макс. ток, А
-
-        # TPTransfInfo[0] Э_с Дата
-        # TPTransfInfo[1] Э_по Дата
-        # TPTransfInfo[2] Э_Населенный пункт
-        # TPTransfInfo[3] Э_ТП (трансформаторная подстанция)
-        # TPTransfInfo[4] Э_Трансформатор
-        # TPTransfInfo[5] Э_АВ трансформатора (автоматический выключатель/рубильник)
-        # TPTransfInfo[6] макс. ток, А
-
-        # strdate
-        # strtime
-        # type(fact_value))
-        abonent_id = get_id_catalog_by_value(rspAbonentID, abonInfo[3]) # для трансформаторов это поле пустое
-        serialPU_id = get_id_catalog_by_value(rspSerPU_ID, abonInfo[2])
         poluChasy_id = get_id_catalog_by_value(rspPoluchasyID, strtime)
-        transf_ID = ''
-        line_ID = ''
-        dogovor_power = ''
-        if abonent_id != '':
-            line_ID = get_id_catalog_by_value(rspLine_ID, LineAbonentInfo[2])
-            transf_ID = get_id_catalog_by_value(rspTransf_ID, TransfLineInfo[2])
-            dogovor_power = LineAbonentInfo[4]
+        if not abonInfo:
+            print('нет пересечения абонента и в периоде "Серийный номер ПУ"', str(row['Серийный номер ПУ']))
+            serialPU_id = get_id_catalog_by_value(rspSerPU_ID, str(row['Серийный номер ПУ']))
+            if not serialPU_id:
+                print('вставляем новый ПУ', str(row['Серийный номер ПУ']))
+                triafly_conn.put([[str(row['Серийный номер ПУ']),'','']], triaflyRegistr_PU)
+                rspSerPU_ID = triafly_conn.get(triaflyReportSerPU_ID)  # заново запрашиваем сериынйе номера
+                serialPU_id = get_id_catalog_by_value(rspSerPU_ID, str(row['Серийный номер ПУ']))
+                if serialPU_id:
+                    print('вставляем пересечение абонента и нового ПУ', str(row['Серийный номер ПУ']))
+                    triafly_conn.put([[strdate,'31.12.2099',serialPU_id, '', '']], triaflyRegistr_Abon_PU)
+                    rspn_registry_Abon_PU = triafly_conn.get(triaflyRegistr_Abon_PU)  # заново запрашиваем реестр пересечения абонентов и приборов учета по времени
+            if serialPU_id:
+                listvalue = [''
+                            , ''
+                            , ''
+                            , ''
+                            , ''
+                            , ''
+                            , ''
+                            , ''
+                            , serialPU_id
+                            , strdate
+                            , poluChasy_id
+                            , fact_value if fact_value >= 0 else ''
+                            , 0
+                            , 0
+                             ]
         else:
-            transf_ID = get_id_catalog_by_value(rspTransf_ID, abonInfo[4])
-        #print(' abonInfo[5] = ',  abonInfo[5])
-        #print('transf_ID = ', transf_ID)
-        #print('abonInfo[0]=',abonInfo[0])
+            LineAbonentInfo = []
+            listvalue=[]
+            TransfLineInfo=[]
+            TPTransfInfo=[]
+            # print('Серийный номер ПУ = ', str(row['Серийный номер ПУ']))
+            # print('abonInfo = ', abonInfo)
+            if abonInfo[3]:
+                LineAbonentInfo = get_info_elem_from_registry(rspn_registry_LineAbonent, abonInfo[3],3, strdate)  # реестр пересечения абонентов и приборов учета по времени
+                if LineAbonentInfo:
+                    TransfLineInfo = get_info_elem_from_registry(rspn_registry_TransfLine, LineAbonentInfo[2],3, strdate)  # реестр
+                if TransfLineInfo:
+                    TPTransfInfo = get_info_elem_from_registry(rspn_registry_TPTransf, TransfLineInfo[2], 4, strdate)  # реестр
+            else:
+                TPTransfInfo = get_info_elem_from_registry(rspn_registry_TPTransf, abonInfo[4],4, strdate)  # реестр пересечения абонентов и приборов учета по времени
+                # print('abonInfo[4] = ', abonInfo[4])
+                # print('TransfLineInfo = ', TransfLineInfo)
+            # print(TransfLineInfo)
 
-        TransfAV_ID = get_id_catalog_by_value(rspTransfAV_ID, TPTransfInfo[5])
-        LineAV_ID = get_id_catalog_by_value(rspLineAV_ID, TransfLineInfo[4])
+            # print('LineAbonentInfo =',LineAbonentInfo)
+            # print('TransfLineInfo =', TransfLineInfo)
+            # print('TPTransfInfo =', TPTransfInfo)
+            # print(datetime.datetime.now(), abonInfo[0])
 
-        tp_id = get_id_catalog_by_value(rspTP_ID, TPTransfInfo[3])
-        nasPunkt_ID = get_id_catalog_by_value(rspNasPunkt_ID, TPTransfInfo[2])
+            # abonInfo[0] Э_с Дата
+            # abonInfo[1] Э_по Дата
+            # abonInfo[2] серийный номер прибора учета
+            # abonInfo[3] абонент
+            # abonInfo[4] Э_Трансформатор
 
-        MoreThenP09 = 0
-        MoreThenP = 0
-        dogovor_power_int = 0
-        if dogovor_power != '' :
-            dogovor_power_int = int(dogovor_power)
-        if fact_value >= 0:
-            if dogovor_power_int > 0:
-                if (fact_value >= dogovor_power_int*0.9) and (fact_value <= dogovor_power_int):
-                    MoreThenP09 = 1
-                if (fact_value >= dogovor_power_int):
-                    MoreThenP = 1
+            # LineAbonentInfo[0] Э_с Дата
+            # LineAbonentInfo[1] Э_по Дата
+            # LineAbonentInfo[2] Э_Линия
+            # LineAbonentInfo[3] Э_Абонент
+            # LineAbonentInfo[4] Мощность по договору
 
-        listvalue = [ nasPunkt_ID
-                    , tp_id
-                    , transf_ID
-                    , TransfAV_ID
-                    , line_ID
-                    , LineAV_ID
-                    , abonent_id
-                    , dogovor_power
-                    , serialPU_id
-                    , strdate
-                    , poluChasy_id
-                    , fact_value if fact_value >= 0 else ''
-                    , MoreThenP09
-                    , MoreThenP
-                    ]
+            # TransfLineInfo[0] Э_с Дата
+            # TransfLineInfo[1] Э_по Дата
+            # TransfLineInfo[2] Э_Трансформатор
+            # TransfLineInfo[3] Э_Линия
+            # TransfLineInfo[4] Э_АВ линии (автоматический выключатель/рубильник)
+            # TransfLineInfo[5] макс. ток, А
+
+            # TPTransfInfo[0] Э_с Дата
+            # TPTransfInfo[1] Э_по Дата
+            # TPTransfInfo[2] Э_Населенный пункт
+            # TPTransfInfo[3] Э_ТП (трансформаторная подстанция)
+            # TPTransfInfo[4] Э_Трансформатор
+            # TPTransfInfo[5] Э_АВ трансформатора (автоматический выключатель/рубильник)
+            # TPTransfInfo[6] макс. ток, А
+
+            # strdate
+            # strtime
+            # type(fact_value))
+            abonent_id = get_id_catalog_by_value(rspAbonentID, abonInfo[3]) # для трансформаторов это поле пустое
+            serialPU_id = get_id_catalog_by_value(rspSerPU_ID, abonInfo[2])
+            transf_ID = ''
+            line_ID = ''
+            dogovor_power = ''
+            if abonent_id != '':
+                line_ID = get_id_catalog_by_value(rspLine_ID, LineAbonentInfo[2])
+                transf_ID = get_id_catalog_by_value(rspTransf_ID, TransfLineInfo[2])
+                dogovor_power = LineAbonentInfo[4]
+            else:
+                transf_ID = get_id_catalog_by_value(rspTransf_ID, abonInfo[4])
+            #print(' abonInfo[5] = ',  abonInfo[5])
+            #print('transf_ID = ', transf_ID)
+            #print('abonInfo[0]=',abonInfo[0])
+
+            TransfAV_ID = ''
+            tp_id = ''
+            nasPunkt_ID = ''
+            if TPTransfInfo:
+                TransfAV_ID = get_id_catalog_by_value(rspTransfAV_ID, TPTransfInfo[5])
+                tp_id = get_id_catalog_by_value(rspTP_ID, TPTransfInfo[3])
+                nasPunkt_ID = get_id_catalog_by_value(rspNasPunkt_ID, TPTransfInfo[2])
+
+            LineAV_ID = ''
+            if TransfLineInfo:
+                LineAV_ID = get_id_catalog_by_value(rspLineAV_ID, TransfLineInfo[4])
+
+
+            MoreThenP09 = 0
+            MoreThenP = 0
+            dogovor_power_int = 0
+            if dogovor_power != '' :
+                dogovor_power_int = int(dogovor_power)
+            if fact_value >= 0:
+                if dogovor_power_int > 0:
+                    if (fact_value >= dogovor_power_int*0.9) and (fact_value <= dogovor_power_int):
+                        MoreThenP09 = 1
+                    if (fact_value >= dogovor_power_int):
+                        MoreThenP = 1
+
+            listvalue = [ nasPunkt_ID
+                        , tp_id
+                        , transf_ID
+                        , TransfAV_ID
+                        , line_ID
+                        , LineAV_ID
+                        , abonent_id
+                        , dogovor_power
+                        , serialPU_id
+                        , strdate
+                        , poluChasy_id
+                        , fact_value if fact_value >= 0 else ''
+                        , MoreThenP09
+                        , MoreThenP
+                        ]
         # print(listvalue)
         lpull_list_values.append(listvalue)
         if len(lpull_list_values) > 10000:
