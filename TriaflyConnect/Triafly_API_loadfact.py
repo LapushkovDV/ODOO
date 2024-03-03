@@ -313,6 +313,7 @@ def _load_excel_toTriafly(excel_file):
         print(datetime.datetime.now(), 'end Inserting values')
     print('Запуск удалений дублей',strdate_list)
     for strdateone in strdate_list:
+        print('Запуск удалений дублей',strdate_list)
         Triafly_API_DeleteDuplicates.delete_duplicates(datetime.datetime.strptime(strdateone, "%d.%m.%Y").date().strftime("%Y-%m-%d"), triafly_conn)
     #print(column_list_date_time)
     #display(rspn_registry_Abon_PU)
