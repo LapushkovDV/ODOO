@@ -14,6 +14,20 @@ imap_server = "imap.yandex.ru"
 imap = imaplib.IMAP4_SSL(imap_server)
 imap.login(username, mail_pass)
 imap.select("INBOX")
+
+def from_subj_decode(msg_from_subj):
+    if msg_from_subj:
+        encoding = decode_header(msg_from_subj)[0][1]
+        msg_from_subj = decode_header(msg_from_subj)[0][0]
+        if isinstance(msg_from_subj, bytes):
+            msg_from_subj = msg_from_subj.decode(encoding)
+        if isinstance(msg_from_subj, str):
+            pass
+        msg_from_subj = str(msg_from_subj).strip("<>").replace("<", "")
+        return msg_from_subj
+    else:
+        return None
+
 print('Проверка почты')
 unread_letters_obj = imap.uid('search', "UNSEEN", "ALL")
 
@@ -35,12 +49,14 @@ for letter in unread_letters_uids_list:
     letter_date = email.utils.parsedate_tz(msg["Date"]) # дата получения, приходит в виде строки, дальше надо её парсить в формат datetime
     letter_id = msg["Message-ID"] #айди письма
     letter_from = msg["Return-path"] # e-mail отправителя
-    subject_rus = decode_header(msg["Subject"])[0][0].decode()
+    # subject_rus = decode_header(msg["Subject"])[0][0].decode()
+    subject_rus = from_subj_decode(msg["Subject"])
+
     print(letter_id, letter_from, subject_rus)
 
     for part in msg.walk():
         if part.get_content_disposition() == 'attachment':
-            fileName = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S.%f_")+decode_header(part.get_filename())[0][0].decode()
+            fileName = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S.%f_")+from_subj_decode(part.get_filename())
             print(fileName)
             if bool(fileName):
                 filePath = os.path.join(detach_dir, 'attachments', fileName)
@@ -51,3 +67,4 @@ for letter in unread_letters_uids_list:
                     fp.close()
                     print('Скачали вложение. запускаем загрузку в триафлай')
                     Triafly_API_loadfact._load_excel_toTriafly(filePath)
+# imap.logout()

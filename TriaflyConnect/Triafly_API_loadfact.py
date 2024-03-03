@@ -136,7 +136,7 @@ def _load_excel_toTriafly(excel_file):
     for index, row in excel_file_df.iterrows():
         for column in column_list_date_time:
             strdate = column[:5] + '.' + str(datetime.datetime.now().year)
-            if(strdate in strdate_list == False):
+            if not (strdate in strdate_list):
                 strdate_list.append(strdate)
             strtime = column[-5:]
             fact_value = row[column]
@@ -289,13 +289,14 @@ def _load_excel_toTriafly(excel_file):
                 print(datetime.datetime.now(), 'end Inserting values')
                 lpull_list_values = []
         #print(row[column])
-    print(lpull_list_values)
+    # print(lpull_list_values)
     if len(lpull_list_values) > 0 :
         print(datetime.datetime.now(), 'Inserting values')
         triafly_conn.put(lpull_list_values, triaflyRegistr_Fact)
         print(datetime.datetime.now(), 'end Inserting values')
 
     for strdateone in strdate_list:
+        print('Запуск удалений дублей',strdate_list)
         Triafly_API_DeleteDuplicates.delete_duplicates(datetime.datetime.strptime(strdateone, "%d.%m.%Y").date().strftime("%Y-%m-%d"), triafly_conn)
     #print(column_list_date_time)
     #display(rspn_registry_Abon_PU)
