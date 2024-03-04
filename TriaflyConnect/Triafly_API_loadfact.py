@@ -57,6 +57,8 @@ def _load_excel_toTriafly(excel_file):
     triaflyRegistr_TransfLine = 472890 # реестр Э_Трансформатор+линия+мощность рубильника линии
     triaflyRegistr_TPTransf = 473239 # реестр Э_ТП+трансформатор+мощность рубильника трансформатора
 
+    pokazatelTransformatorEmpty = 1857859  # трансформатор "--не привязанные ПУ--"
+
     triaflyReportPoluchasyID = 498110 # отчет Э_Получасы ID
     triaflyReportAbonentID = 498223   # отчет Э_Абоненты ID
     triaflyReportSerPU_ID = 498250    # отчет Э_Серийный номер ПУ ID
@@ -114,7 +116,7 @@ def _load_excel_toTriafly(excel_file):
     #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_25 (2).xlsx', skiprows=range(4), dtype='object')
     #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_25.xlsx', skiprows=range(4), dtype='object')
     #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\06_2_ТУ_на_ПС_с_показаниями,_30_минут_26.xlsx', skiprows=range(4), dtype='object')
-    print(datetime.datetime.now(),"Входной EXCEL-файл",excel_file)
+    # print(datetime.datetime.now(),"Входной EXCEL-файл",excel_file)
     excel_file_df=pd.read_excel(excel_file, skiprows=range(4), dtype='object')
     print(datetime.datetime.now(),"Прочитан EXCEL-файл",excel_file)
     #excel_file_df = pd.read_excel(r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\test_transf.xlsx', skiprows=range(4), dtype='object')
@@ -152,13 +154,13 @@ def _load_excel_toTriafly(excel_file):
                     rspSerPU_ID = triafly_conn.get(triaflyReportSerPU_ID)  # заново запрашиваем сериынйе номера
                     serialPU_id = get_id_catalog_by_value(rspSerPU_ID, str(row['Серийный номер ПУ']))
                     if serialPU_id:
-                        print('вставляем пересечение абонента и нового ПУ', str(row['Серийный номер ПУ']))
-                        triafly_conn.put([[strdate,'31.12.2099',serialPU_id, '', '']], triaflyRegistr_Abon_PU)
+                        print('вставляем пустое пересечение абонента и нового ПУ', str(row['Серийный номер ПУ']))
+                        triafly_conn.put([[strdate,'31.12.2099',serialPU_id, '', pokazatelTransformatorEmpty]], triaflyRegistr_Abon_PU)
                         rspn_registry_Abon_PU = triafly_conn.get(triaflyRegistr_Abon_PU)  # заново запрашиваем реестр пересечения абонентов и приборов учета по времени
                 if serialPU_id:
-                    listvalue = [''
+                    listvalue = [ ''
                                 , ''
-                                , ''
+                                , pokazatelTransformatorEmpty
                                 , ''
                                 , ''
                                 , ''
@@ -294,9 +296,8 @@ def _load_excel_toTriafly(excel_file):
         print(datetime.datetime.now(), 'Inserting values')
         triafly_conn.put(lpull_list_values, triaflyRegistr_Fact)
         print(datetime.datetime.now(), 'end Inserting values')
-
+    print('Запуск удалений дублей',strdate_list)
     for strdateone in strdate_list:
-        print('Запуск удалений дублей',strdate_list)
         Triafly_API_DeleteDuplicates.delete_duplicates(datetime.datetime.strptime(strdateone, "%d.%m.%Y").date().strftime("%Y-%m-%d"), triafly_conn)
     #print(column_list_date_time)
     #display(rspn_registry_Abon_PU)

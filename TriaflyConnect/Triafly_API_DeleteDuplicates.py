@@ -49,7 +49,7 @@ def delete_duplicates(_strdate, triafly_conn_delete):
     #
     list_to_delete = []
     for index, row in duplicateRows.iterrows():
-            list_to_delete.append(index)
+        list_to_delete.append(index)
 
     if list_to_delete:
         print(datetime.datetime.now(),'Удялем дубликаты за',_strdate )
