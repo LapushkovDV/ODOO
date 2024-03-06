@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <record id="res_config_settings_view_form_inherit_task" model="ir.ui.view">
-        <field name="name">res.config.settings.view.form.inherit.task</field>
+    <record id="res_config_settings_view_form_inherit_project_budget" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.project_budget</field>
         <field name="model">res.config.settings</field>
         <field name="priority" eval="50"/>
         <field name="inherit_id" ref="base.res_config_settings_view_form" />
         <field name="arch" type="xml">
             <xpath expr="//div[hasclass('settings')]" position="inside">
-                <div class="app_settings_block" data-string="Task Management" string="Task Management" data-key="task"
+                <div class="app_settings_block" data-string="project budget" string="project budget" data-key="task"
                      groups="base.group_system">
-                    <div name="task_settings">
-                        <h2>Tasks Management</h2>
-                        <div class="row mt16 o_settings_container" name="tasks_management">
+                    <div name="project_budget_settings">
+                        <h2>project budget</h2>
+                        <div class="row mt16 o_settings_container" name="project_budget">
                             <div class="col-12 col-lg-6 o_setting_box">
                                 <div class="o_setting_left_pane">
-                                    <field name="assign_task_only_to_subordinates"/>
+                                    <field name="tender_department_id"/>
                                 </div>
                                 <div class="o_setting_right_pane">
-                                    <label for="assign_task_only_to_subordinates"/>
+                                    <label for="tender_department_id"/>
                                     <div class="text-muted">
-                                        Allows the user assign task only for subordinates
+                                        select tener department
                                     </div>
                                 </div>
                             </div>
@@ -30,12 +30,12 @@
         </field>
     </record>
 
-    <record id="action_task_config_settings" model="ir.actions.act_window">
+    <record id="action_project_budget_config_settings" model="ir.actions.act_window">
         <field name="name">Settings</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
         <field name="target">inline</field>
-        <field name="context">{'module' : 'task'}</field>
+        <field name="context">{'module' : 'project_budget'}</field>
     </record>
 </odoo>

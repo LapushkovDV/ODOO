@@ -48,6 +48,7 @@
         'views/dashboard_view.xml',
         'views/project_budget_menu.xml',
         'views/res_company.xml',
+        # 'views/res_config_settings.xml',
     ],
     'demo': [
     ],

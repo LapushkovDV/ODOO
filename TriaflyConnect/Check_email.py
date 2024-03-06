@@ -8,9 +8,14 @@ import base64
 from bs4 import BeautifulSoup
 import re
 
-mail_pass = "qsrjenykhjlempbg"
-username = "askuetestoviy@yandex.ru"
-imap_server = "imap.yandex.ru"
+# mail_pass = "qsrjenykhjlempbg"
+# username = "askuetestoviy@yandex.ru"
+# imap_server = "imap.yandex.ru"
+
+mail_pass = "3rHj2O27LYE6"
+username = "mail@smartwatt.energy"
+imap_server = "mail.nic.ru"
+
 imap = imaplib.IMAP4_SSL(imap_server)
 imap.login(username, mail_pass)
 imap.select("INBOX")
@@ -66,5 +71,5 @@ for letter in unread_letters_uids_list:
                     fp.write(part.get_payload(decode=True))
                     fp.close()
                     print('Скачали вложение. запускаем загрузку в триафлай')
-                    Triafly_API_loadfact._load_excel_toTriafly(filePath)
+                    #Triafly_API_loadfact._load_excel_toTriafly(filePath)
 # imap.logout()

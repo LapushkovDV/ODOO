@@ -55,7 +55,7 @@ def _load_excel_toTriafly(excel_file):
     triaflyRegistr_Abon_PU = 864199 # реестр Э_Реестр: абонент + прибор учёта (ПУ). /0 серийный номер ПУ/1 Абонент/2 Э_с (дата)/ Э_по (дата)/4 трансформатор
     triaflyRegistr_LineAbonent = 472220 # реестр Э_Реестр: линия + абонент
     triaflyRegistr_TransfLine = 472890 # реестр Э_Трансформатор+линия+мощность рубильника линии
-    triaflyRegistr_TPTransf = 473239 # реестр Э_ТП+трансформатор+мощность рубильника трансформатора
+    triaflyRegistr_TPTransf = 2256636 # реестр Э_ТП+трансформатор+мощность рубильника трансформатора
 
     pokazatelTransformatorEmpty = 1857859  # трансформатор "--не привязанные ПУ--"
 
@@ -69,11 +69,15 @@ def _load_excel_toTriafly(excel_file):
     triaflyReportLineAV = 876586      # API Э_АВ линии (автоматический выключатель/рубильник) ID
     triaflyReportTransfAV = 876613    # API Э_АВ трансформатора (автоматический выключатель/рубильник) ID
 
-    print(datetime.datetime.now(),"Данные для загрузки") # Название таблицы
+    print(datetime.datetime.now(),"Подготоавливаем для загрузки") # Название таблицы
 
 
     rspn_registry_PU = triafly_conn.get(triaflyRegistr_PU) ##это реестр серийных номеров приборов учета
     print(datetime.datetime.now(),"Получен реестр реестр серийных номеров приборов учета") # Название таблицы
+    rspn_registry_TPTransf = triafly_conn.get(triaflyRegistr_TPTransf) # реестр Э_ТП+трансформатор+мощность рубильника трансформатора
+    print(datetime.datetime.now(),"Получен реестр Э_ТП+трансформатор+мощность рубильника трансформатора")
+    rspPoluchasyID = triafly_conn.get(triaflyReportPoluchasyID) # тут список получасов с их ID
+    print(datetime.datetime.now(),"Получен отчет список получасов с их ID")
 
     rspn_registry_Abon_PU = triafly_conn.get(triaflyRegistr_Abon_PU) # реестр пересечения абонентов и приборов учета по времени
     print(datetime.datetime.now(),"Получен реестр пересечения абонентов и приборов учета по времени") # Название таблицы
@@ -82,9 +86,6 @@ def _load_excel_toTriafly(excel_file):
     print(datetime.datetime.now(),"Получен реестр Э_Реестр: линия + абонент + мощность")
     rspn_registry_TransfLine = triafly_conn.get(triaflyRegistr_TransfLine) # реестр Э_Трансформатор+линия+мощность рубильника линии
     print(datetime.datetime.now(),"Получен реестр Э_Трансформатор+линия+мощность рубильника линии")
-    #display(rspn_registry_TransfLine)
-    rspn_registry_TPTransf = triafly_conn.get(triaflyRegistr_TPTransf) # реестр Э_ТП+трансформатор+мощность рубильника трансформатора
-    print(datetime.datetime.now(),"Получен реестр Э_ТП+трансформатор+мощность рубильника трансформатора")
     rspPoluchasyID = triafly_conn.get(triaflyReportPoluchasyID) # тут список получасов с их ID
     print(datetime.datetime.now(),"Получен отчет список получасов с их ID")
     rspAbonentID  = triafly_conn.get(triaflyReportAbonentID) # список абонентов с ID
@@ -166,6 +167,8 @@ def _load_excel_toTriafly(excel_file):
                                 , ''
                                 , ''
                                 , ''
+                                , ''
+                                , ''
                                 , serialPU_id
                                 , strdate
                                 , poluChasy_id
@@ -202,6 +205,7 @@ def _load_excel_toTriafly(excel_file):
                 # abonInfo[2] серийный номер прибора учета
                 # abonInfo[3] абонент
                 # abonInfo[4] Э_Трансформатор
+                # abonInfo[5] Э_Количество фаз по типу ПУ
 
                 # LineAbonentInfo[0] Э_с Дата
                 # LineAbonentInfo[1] Э_по Дата
@@ -222,7 +226,9 @@ def _load_excel_toTriafly(excel_file):
                 # TPTransfInfo[3] Э_ТП (трансформаторная подстанция)
                 # TPTransfInfo[4] Э_Трансформатор
                 # TPTransfInfo[5] Э_АВ трансформатора (автоматический выключатель/рубильник)
-                # TPTransfInfo[6] макс. ток, А
+                # TPTransfInfo[6] Э_АВ трансформатора максимальный ток АВ/рубильника, А
+                # TPTransfInfo[7] Э_Пропускная способность сил.тр-та, кВт
+
 
                 # strdate
                 # strtime
@@ -235,7 +241,8 @@ def _load_excel_toTriafly(excel_file):
                 if abonent_id != '':
                     line_ID = get_id_catalog_by_value(rspLine_ID, LineAbonentInfo[2])
                     transf_ID = get_id_catalog_by_value(rspTransf_ID, TransfLineInfo[2])
-                    dogovor_power = LineAbonentInfo[4]
+                    if abonInfo[5] != '':
+                        dogovor_power = abonInfo[5]*5
                 else:
                     transf_ID = get_id_catalog_by_value(rspTransf_ID, abonInfo[4])
                 #print(' abonInfo[5] = ',  abonInfo[5])
@@ -245,10 +252,14 @@ def _load_excel_toTriafly(excel_file):
                 TransfAV_ID = ''
                 tp_id = ''
                 nasPunkt_ID = ''
+                maxI_AV = ''
+                transf_Power = ''
                 if TPTransfInfo:
                     TransfAV_ID = get_id_catalog_by_value(rspTransfAV_ID, TPTransfInfo[5])
                     tp_id = get_id_catalog_by_value(rspTP_ID, TPTransfInfo[3])
                     nasPunkt_ID = get_id_catalog_by_value(rspNasPunkt_ID, TPTransfInfo[2])
+                    maxI_AV = TPTransfInfo[6] # TPTransfInfo[6] Э_АВ трансформатора максимальный ток АВ/рубильника, А
+                    transf_Power = TPTransfInfo[7]# TPTransfInfo[7] Э_Пропускная способность сил.тр-та, кВт
 
                 LineAV_ID = ''
                 if TransfLineInfo:
@@ -270,7 +281,9 @@ def _load_excel_toTriafly(excel_file):
                 listvalue = [ nasPunkt_ID
                             , tp_id
                             , transf_ID
+                            , transf_Power
                             , TransfAV_ID
+                            , maxI_AV
                             , line_ID
                             , LineAV_ID
                             , abonent_id
@@ -288,6 +301,7 @@ def _load_excel_toTriafly(excel_file):
                 #print(lpull_list_values)
                 print(datetime.datetime.now(),'Inserting values')
                 triafly_conn.put(lpull_list_values, triaflyRegistr_Fact)
+                #triafly_conn.create_objects(lpull_list_values)
                 print(datetime.datetime.now(), 'end Inserting values')
                 lpull_list_values = []
         #print(row[column])
@@ -295,6 +309,7 @@ def _load_excel_toTriafly(excel_file):
     if len(lpull_list_values) > 0 :
         print(datetime.datetime.now(), 'Inserting values')
         triafly_conn.put(lpull_list_values, triaflyRegistr_Fact)
+        #triafly_conn.create_objects(lpull_list_values)
         print(datetime.datetime.now(), 'end Inserting values')
     print('Запуск удалений дублей',strdate_list)
     for strdateone in strdate_list:
@@ -311,5 +326,5 @@ def _load_excel_toTriafly(excel_file):
 
 
 # Произведем новую сессию загрузки данных
-# file =r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\TEst.xlsx'
-# _load_excel_toTriafly(file)
+#file =r'C:\Users\Дмитрий\YandexDisk\Work\Систематика\Энсис АСКУЭ\20240227\TEst.xlsx'
+#_load_excel_toTriafly(file)
