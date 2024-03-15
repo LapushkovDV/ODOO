@@ -498,7 +498,7 @@ class Process(models.Model):
     def process_task_result(self, date_closed, result_type='ok', feedback=False, return_on_process_id=False):
         if result_type == 'ok':
             open_tasks = self.active_task_ids.filtered(lambda t: not t.parent_id and not t.is_closed)
-            if not any(open_tasks):
+            if len(open_tasks) - 1 == 0:
                 next_executors = self.executor_ids.filtered(lambda ex: ex.sequence > self.sequence).sorted(
                     lambda pr: pr.sequence and pr.id)
                 next_sequence = False if not any(next_executors) else next_executors[0].sequence

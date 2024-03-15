@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <record id="task_wizard_done_view_form" model="ir.ui.view">
-        <field name="name">task.wizard.done.form</field>
-        <field name="model">task.wizard.done</field>
+    <record id="task_close_wizard_view_form" model="ir.ui.view">
+        <field name="name">task.close.wizard.form</field>
+        <field name="model">task.close.wizard</field>
         <field name="arch" type="xml">
             <form>
                 <group invisible="1">
@@ -18,16 +18,16 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Done" name="action_done_task" class="btn-success" type="object"/>
+                    <button string="Done" name="action_close_task" class="btn-success" type="object"/>
                     <button string="Cancel" class="btn-danger" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
 
-    <record id="action_task_wizard_done" model="ir.actions.act_window">
-        <field name="name">Done</field>
-        <field name="res_model">task.wizard.done</field>
+    <record id="action_task_close_wizard" model="ir.actions.act_window">
+        <field name="name">Close</field>
+        <field name="res_model">task.close.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

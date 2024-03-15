@@ -1,6 +1,6 @@
 {
     'name': 'Document Flow',
-    'version': '1.5.2',
+    'version': '1.5.3',
     'category': '',
     'depends': ['base', 'mail', 'task', 'dms', 'hr', 'project_budget'],
     'external_dependencies': {'python': ['htmldocx', 'html2text']},
@@ -14,7 +14,7 @@
     'images': ['static/description/icon.png'],
     'assets': {
         'web.assets_backend': [
-            'document_flow/static/src/css/html_fields.css',
+            # 'document_flow/static/src/css/html_fields.css',
             'document_flow/static/src/css/dashboard.css',
             'document_flow/static/src/js/lib/Chart.bundle.js',
             'document_flow/static/src/xml/dashboard_view.xml',

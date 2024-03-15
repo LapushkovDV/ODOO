@@ -1,15 +1,9 @@
-from odoo import _, models, fields, api
+from odoo import api, fields, models
 from .document_flow_process import selection_parent_model
 
 
 class Task(models.Model):
     _inherit = 'task.task'
-
-    @api.model
-    def _selection_parent_model(self):
-        types = super(Task, self)._selection_parent_model()
-        types.append(('document_flow.process', _('Process')))
-        return types
 
     @api.model
     def _selection_parent_obj_model(self):
@@ -24,9 +18,8 @@ class Task(models.Model):
         records = super(Task, self).create(vals_list)
         for record in records:
             if record.role_executor_id and not record.user_ids:
-                record._send_message_notify(
-                    self.env.ref('task.mail_template_task_assigned_notify', raise_if_not_found=False),
-                    record.role_executor_id.member_ids)
+                record._send_message_notify('task.mail_template_task_assigned_notify',
+                                            record.role_executor_id.member_ids)
         return records
 
     # TODO: Принять решение об архитектуре предметов согласования
