@@ -1,8 +1,9 @@
-import logging
-
 from odoo import api, fields, models, _
 from odoo.tools import image_process
 from odoo.exceptions import UserError
+
+import logging
+import base64
 
 _logger = logging.getLogger(__name__)
 
@@ -20,6 +21,7 @@ class DmsDocument(models.Model):
     res_id = fields.Integer(string='Resource ID', compute='_compute_res_record', inverse='_inverse_res_model',
                             store=True)
     datas = fields.Binary(related='attachment_id.datas', related_sudo=True, readonly=False)
+    raw = fields.Binary(related='attachment_id.raw', related_sudo=True, readonly=False)
     size = fields.Integer(related='attachment_id.file_size', store=True)
     checksum = fields.Char(related='attachment_id.checksum', store=True)
     mimetype = fields.Char(related='attachment_id.mimetype')
@@ -30,6 +32,11 @@ class DmsDocument(models.Model):
     partner_id = fields.Many2one('res.partner', string='Partner', tracking=True)
     active = fields.Boolean(string='Archived', default=True,
                             help='If a document is set to archived, it is not displayed, but still exists.')
+    version = fields.Integer('Version', readonly=True)
+    version_ids = fields.One2many('dms.document.version', 'document_id', string='Previous Versions')
+    version_count = fields.Integer(string='Version Count', compute='_compute_version_count')
+    favorited_ids = fields.Many2many('res.users', string='Favorite of')
+    is_favorited = fields.Boolean(compute='_compute_is_favorited', inverse='_inverse_is_favorited')
 
     directory_id = fields.Many2one('dms.directory', string='Directory', index='btree', ondelete='restrict',
                                    required=True)
@@ -65,15 +72,13 @@ class DmsDocument(models.Model):
         for record in self:
             attachment = record.attachment_id.with_context(without_document=True)
             if attachment:
-                attachment.res_id = False
-                attachment.res_model = record.res_model
-                attachment.res_id = record.res_id
+                attachment.write({'res_model': record.res_model, 'res_id': record.res_id})
 
     @api.depends('checksum')
     def _compute_thumbnail(self):
         for record in self:
             try:
-                record.thumbnail = image_process(record.datas, size=(80, 80), crop='center')
+                record.thumbnail = base64.b64encode(image_process(record.raw, size=(200, 140), crop='center'))
             except UserError:
                 record.thumbnail = False
 
@@ -83,9 +88,38 @@ class DmsDocument(models.Model):
                     self.env.user == record.locker_id or self.env.is_admin() or self.user_has_groups(
                         'dms.group_document_manager'))
 
+    @api.depends('favorited_ids')
+    @api.depends_context('uid')
+    def _compute_is_favorited(self):
+        favorited = self.filtered(lambda doc: self.env.user in doc.favorited_ids)
+        favorited.is_favorited = True
+        (self - favorited).is_favorited = False
+
+    def _inverse_is_favorited(self):
+        unfavorited = favorited = self.env['dms.document'].sudo()
+        for record in self:
+            if self.env.user in record.favorited_ids:
+                unfavorited |= record
+            else:
+                favorited |= record
+        favorited.write({'favorited_ids': [(4, self.env.uid)]})
+        unfavorited.write({'favorited_ids': [(3, self.env.uid)]})
+
+    @api.depends('version_ids')
+    def _compute_version_count(self):
+        for record in self:
+            record.version_count = len(record.version_ids)
+
+    # ------------------------------------------------------
+    # CRUD
+    # ------------------------------------------------------
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            res_model = vals.get('res_model') or self.env.context.get('active_model') or 'dms.document'
+            if self._is_versioning(res_model) and not vals.get('version', False):
+                vals['version'] = 1
             if 'attachment_id' not in vals:
                 self._create_ir_attachment(vals)
             if 'partner_id' not in vals:
@@ -100,9 +134,26 @@ class DmsDocument(models.Model):
                     {'res_model': self._name, 'res_id': record.id})
         return records
 
-    #TODO: не уверен, что при удалении документа нужно удалять и вложение
+    def write(self, vals):
+        for record in self:
+            res_model = vals.get('res_model',
+                                 record.res_model or self.env.context.get('active_model') or 'dms.document')
+            if record._is_versioning(res_model):
+                if 'datas' in vals:
+                    old_attachment = record.attachment_id.with_context(without_document=True).copy({
+                        'res_model': 'dms.document',
+                        'res_id': record.id,
+                    })
+                    record._create_document_version(old_attachment)
+                    vals['version'] = record.version + 1
+        res = super().write(vals)
+        return res
+
     def unlink(self):
+        # не уверен, что при удалении документа нужно удалять и вложение
         attachments = self.mapped('attachment_id')
+        if self.version_ids:
+            attachments = attachments | self.version_ids.mapped('attachment_id')
         res = attachments.unlink()
         return res
 
@@ -180,6 +231,21 @@ class DmsDocument(models.Model):
     # PRIVATE METHODS
     # ------------------------------------------------------
 
+    def _is_versioning(self, model):
+        return self.env['dms.version.config'].search([('model_id', '=', model)])
+
+    def _create_document_version(self, attachment):
+        version = self.env['dms.document.version'].create({
+            'document_id': self.id,
+            'version': self.version,
+            'attachment_id': attachment.id
+        })
+        self.env.cr.execute(
+            "UPDATE ir_attachment SET create_date='%s', create_uid=%s WHERE id=%s" %
+            (self.create_date, self.create_uid.id, attachment.id)
+        )
+        return version
+
     def _create_ir_attachment(self, vals):
         attachment_vals = vals.copy()
         attachment_fields = [key for key in vals if key in self.env['ir.attachment']._fields]
@@ -196,4 +262,3 @@ class DmsDocument(models.Model):
                 res_ref = model.browse(int(vals.get('res_id', 0)))
                 if res_ref:
                     vals['partner_id'] = res_ref._get_document_partner().id
-

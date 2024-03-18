@@ -13,7 +13,6 @@
         'views/contract_views.xml',
         'views/contract_kind_views.xml',
         'views/contract_type_views.xml',
-        'views/res_partner_views.xml',
         'views/contract_menu.xml'
     ],
     "assets": {

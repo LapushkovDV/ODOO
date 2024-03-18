@@ -1,13 +1,21 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 
 
 class Project(models.Model):
     _name = 'project_budget.projects'
     _inherit = ['project_budget.projects', 'dms.document.mixin']
 
+    @api.model
+    def _init_project_document_directory(self):
+        self.search([('directory_id', '=', False), ('budget_state', '=', 'work')])._create_project_directory()
+
     directory_id = fields.Many2one('dms.directory', string='Directory', copy=False, ondelete='set null')
     document_count = fields.Integer(related='directory_id.document_total_count', string='Documents Count',
                                     readonly=True)
+
+    # ------------------------------------------------------
+    # DMS.DOCUMENT.MIXIN
+    # ------------------------------------------------------
 
     # TODO: сделать настройку с дефолтным каталогом в модуле?
     def _get_document_directory(self):
@@ -16,9 +24,9 @@ class Project(models.Model):
     def _get_document_partner(self):
         return self.partner_id
 
-    @api.model
-    def _init_project_document_directory(self):
-        self.search([('directory_id', '=', False), ('budget_state', '=', 'work')])._create_project_directory()
+    # ------------------------------------------------------
+    # CRUD
+    # ------------------------------------------------------
 
     @api.model_create_multi
     def create(self, vals_list):

@@ -6,7 +6,7 @@
         <field name="view_mode">kanban,tree,form</field>
         <field name="domain">[("is_hidden", "=", False)]</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">Upload <span class="fw-normal">a file or</span> drag
+            <p class="o_view_nocontent_empty_folder">Upload <span class="fw-normal">a file or</span> drag
                 <span class="fw-normal">it here.</span>
             </p>
         </field>
@@ -19,8 +19,9 @@
             <search string="Documents">
                 <field name="name" string="Document"/>
                 <field name="create_uid" string="Created by"/>
-                <field name="partner_id"/>
+                <field name="partner_id" string="Partner"/>
                 <filter name="filter_my_documents" string="My Documents" domain="[('create_uid', '=', uid)]"/>
+                <filter name="filter_my_favorites" string="My Favorites" domain="[('favorited_ids', 'in', uid)]"/>
                 <separator/>
                 <filter name="filter_pdf_doc" string="PDF/Document" domain="['|', ('mimetype', 'ilike', 'pdf'), ('name', 'ilike', '.doc')]"/>
                 <filter name="filter_img_video" string="Image/Video" domain="['|', ('mimetype', 'ilike', 'image'), ('mimetype', 'ilike', 'video')]"/>
@@ -48,16 +49,19 @@
             <kanban js_class="document_kanban"
                     class="dms_document_kanban_view o_kanban_small_column align-content-start" create="false">
                 <field name="id"/>
+                <field name="attachment_id"/>
                 <field name="name"/>
                 <field name="active"/>
                 <field name="mimetype"/>
+                <field name="checksum"/>
                 <field name="create_uid"/>
                 <field name="write_date"/>
                 <field name="locker_id"/>
                 <field name="is_locked"/>
+                <field name="favorited_ids"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_global_click">
+                        <div t-attf-class="oe_kanban_global_click" t-att-data-id="record.id.raw_value">
                             <div class="o_dropdown_kanban dropdown">
                                 <a class="dropdown-toggle o-no-caret btn" href="#" role="button"
                                    data-toggle="dropdown" aria-label="Dropdown menu" title="Dropdown menu">
@@ -89,13 +93,13 @@
 <!--                                                <i class="fa fa-unlock-alt" />-->
 <!--                                                Unlock-->
 <!--                                            </a>-->
-                                            <a t-if="record.active.raw_value" class="dropdown-item" name="toggle_active"
-                                               role="menuitem" type="object">
+                                            <a t-if="widget.editable and record.active.raw_value"
+                                               class="dropdown-item" name="toggle_active" role="menuitem" type="object">
                                                 <i class="fa fa-archive"/>
                                                 Archive
                                             </a>
-                                            <a t-if="!record.active.raw_value" class="dropdown-item"
-                                               name="toggle_active" role="menuitem" type="object">
+                                            <a t-if="widget.editable and !record.active.raw_value"
+                                               class="dropdown-item" name="toggle_active" role="menuitem" type="object">
                                                 <i class="fa fa-archive"/>
                                                 Unarchive
                                             </a>
@@ -113,11 +117,13 @@
                                                 <i class="fa fa-external-link"/>
                                                 Open
                                             </a>
-                                            <a class="dropdown-item" role="menuitem" type="edit">
+                                            <a t-if="widget.editable"
+                                               class="dropdown-item" role="menuitem" type="edit">
                                                 <i class="fa fa-pencil-square-o"/>
                                                 Edit
                                             </a>
-                                            <a class="dropdown-item" role="menuitem" type="delete">
+                                            <a t-if="widget.deletable"
+                                               class="dropdown-item" role="menuitem" type="delete">
                                                 <i class="fa fa-trash-o"/>
                                                 Delete
                                             </a>
@@ -127,9 +133,10 @@
                             </div>
                             <div class="oe_kanban_content">
                                 <div class="o_kanban_image">
-                                    <div class="o_kanban_image_wrapper">
+                                    <t t-set="binaryPreviewable" t-value="new RegExp('(image|video|application/pdf|text)').test(record.mimetype.value)"/>
+                                    <div t-attf-class="o_kanban_image_wrapper #{(webimage or binaryPreviewable) ? 'o_kanban_previewer' : ''}">
                                         <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>
-                                        <img t-if="webimage" t-attf-src="/web/image/#{record.id.raw_value}" width="60" height="60" alt="Document" class="o_attachment_image"/>
+                                        <img t-if="webimage" t-attf-src="/dms/image/#{record.id.raw_value}" width="100" height="100" alt="Document" class="o_attachment_image"/>
                                         <div t-else="!webimage" class="o_image o_image_thumbnail" t-att-data-mimetype="record.mimetype.value"/>
                                     </div>
                                 </div>
@@ -138,20 +145,26 @@
                                         <div class="o_kanban_record_title o_text_overflow">
                                             <field name="name"/>
                                         </div>
+                                        <div class="o_kanban_record_body">
+                                            <t t-if="record.version.raw_value != '0'">
+                                                <a>Version:
+                                                    <field name="version"/>
+                                                </a>
+                                            </t>
+                                        </div>
                                         <div class="o_kanban_record_bottom">
-                                            <div class="oe_kanban_bottom_left">
+                                            <time class="oe_kanban_bottom_left">
                                                 <field name="write_date" widget="datetime"/>
-                                            </div>
+                                            </time>
                                             <div class="oe_kanban_bottom_right">
                                                 <span t-if="record.is_locked.raw_value" class="dms_document_kanban_lock">
                                                     <i t-attf-class="fa #{(record.is_locked.raw_value and !record.is_lock_editor.raw_value) ? 'fa-lock' : ''} #{((record.is_locked.raw_value and record.is_locker_editor.raw_value)) ? 'fa-unlock-alt' : ''}"
                                                        t-att-title="record.locker_id.value"/>
                                                 </span>
-                                                <img
-                                                    t-att-src="kanban_image('res.users', 'image_128', record.create_uid.raw_value)"
-                                                    t-att-alt="record.create_uid.value"
-                                                    class="oe_kanban_avatar"
-                                                />
+                                                <field name="is_favorited" nolabel="1" widget="boolean_favorite"/>
+                                                <div class="oe_kanban_bottom_right">
+                                                    <field name="create_uid" widget="many2one_avatar_user"/>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -172,10 +185,11 @@
             <form create="false">
                 <sheet>
                     <group invisible="1">
-                        <field name="is_locked" invisible="1"/>
-                        <field name="active" invisible="1"/>
-                        <field name="res_id" invisible="1"/>
-                        <field name="res_model" invisible="1"/>
+                        <field name="is_locked"/>
+                        <field name="active"/>
+                        <field name="res_id"/>
+                        <field name="res_model"/>
+                        <field name="version_count"/>
                     </group>
                     <div class="oe_button_box" name="button_box">
                         <button name="open_resource" type="object" class="oe_stat_button" icon="fa-external-link"
@@ -199,7 +213,7 @@
                         </h1>
                     </div>
                     <group name="content">
-                        <field name="datas" filename="name" mimetype="mimetype" widget="preview_binary"/>
+                        <field name="datas" filename="name" mimetype="mimetype"/>
                         <field name="directory_id" attrs="{'readonly': [('is_locked', '=', True)]}"/>
                         <field name="partner_id"/>
                     </group>
@@ -222,6 +236,12 @@
                         <field name="size"/>
                         <field name="mimetype"/>
                     </group>
+                    <notebook>
+                        <page name="page_previous_versions" string="Previous Versions"
+                              attrs="{'invisible': [('version_count', '=', 0)]}">
+                            <field name="version_ids" mode="tree" widget="section_and_note_one2many" readonly="1"/>
+                        </page>
+                    </notebook>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>

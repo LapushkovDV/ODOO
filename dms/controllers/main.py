@@ -60,3 +60,15 @@ class DmsController(http.Controller):
             documents = request.env['dms.document'].create(vals_list)
             result['ids'] = documents.ids
         return json.dumps(result)
+
+    @http.route([
+        '/dms/image/<int:res_id>',
+        '/dms/image/<int:res_id>/<int:width>x<int:height>',
+    ], type='http', auth='user')
+    def content_image(self, res_id=None, field='datas', width=0, height=0, crop=False, **kwargs):
+        record = request.env['dms.document'].browse(int(res_id))
+        if not record or not record.exists():
+            raise request.not_found()
+
+        return request.env['ir.binary']._get_image_stream_from(record, field, width=int(width), height=int(height),
+                                                               crop=crop).get_response()

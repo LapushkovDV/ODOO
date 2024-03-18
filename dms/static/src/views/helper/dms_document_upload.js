@@ -15,8 +15,6 @@ export const FileDropZone = {
         });
         this.root = useRef("root");
         this.rpc = useService("rpc");
-        this.actionService = useService("action");
-        this.notification = useService("notification");
 
         useEffect(
             (el) => {
@@ -53,16 +51,6 @@ export const FileDropZone = {
     },
 
     async onDrop(ev) {
-        const controllerID = this.actionService.currentController.jsId;
-        if (!this.env.searchModel.getSelectedDirectoryId()) {
-            this.actionService.restore(controllerID);
-            return this.notification.add(
-                this.env._t("You must select a directory first"),
-                {
-                    type: "danger",
-                }
-            );
-        }
         ev.preventDefault();
         await this.env.bus.trigger("change_file_input", {
             files: ev.dataTransfer.files
@@ -94,6 +82,16 @@ export const FileUpload = {
 
     async onChangeFileInput() {
         const controllerID = this.actionService.currentController.jsId;
+
+        if (!this.env.searchModel.getSelectedDirectoryId()) {
+            this.actionService.restore(controllerID);
+            return this.notification.add(
+                this.env._t("You must select a directory first"),
+                {
+                    type: "danger",
+                }
+            );
+        }
 
         const ctx = this.props.context;
         let res_model = ctx.default_res_model ? ctx.default_res_model : "dms.document";

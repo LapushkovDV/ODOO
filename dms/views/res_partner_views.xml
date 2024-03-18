@@ -15,6 +15,11 @@
                 'default_partner_id': active_id
             }
         </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Upload <span class="fw-normal">a file or</span> drag
+                <span class="fw-normal">it here.</span>
+            </p>
+        </field>
     </record>
 
     <record id="res_partner_view_form_inherit_dms" model="ir.ui.view">
@@ -23,10 +28,10 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="%(action_dms_partner_documents)d" type="action" class="oe_stat_button"
-                        icon="fa-files-o">
-                    <field name="document_count" string="Documents" widget="statinfo"/>
-                </button>
+<!--                <button name="%(action_dms_partner_documents)d" type="action" class="oe_stat_button"-->
+<!--                        icon="fa-files-o">-->
+<!--                    <field name="document_count" string="Documents" widget="statinfo"/>-->
+<!--                </button>-->
             </xpath>
         </field>
     </record>
