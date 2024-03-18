@@ -1,4 +1,4 @@
-from odoo import models
+from odoo import models, _
 
 
 class DmsDocumentMixin(models.AbstractModel):
@@ -25,3 +25,25 @@ class DmsDocumentMixin(models.AbstractModel):
 
     def _check_create_documents(self):
         return bool(self and self._get_document_directory())
+
+    def action_open_documents(self):
+        self.ensure_one()
+        action_vals = {
+            'name': _('Documents'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'dms.document',
+            'view_mode': 'kanban,tree,form',
+            'domain': [
+                ('res_model', '=', self._name),
+                ('res_id', '=', self.id)
+            ],
+            'context': {
+                'default_res_model': self._name,
+                'default_res_id': self.id,
+                'searchpanel_default_directory_id': self._get_document_directory().id
+            },
+            'help': """
+                <p class="o_view_nocontent_empty_folder">%s</p>
+            """ % _("Upload <span class=""fw-normal"">a file or</span> drag <span class=""fw-normal"">it here.</span>")
+        }
+        return action_vals

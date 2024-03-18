@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="contract_type_view_form_inherit_contract_approval" model="ir.ui.view">
-        <field name="name">contract.type.view.form.inherit.contract_approval</field>
+        <field name="name">contract.type.view.form.inherit.contract.approval</field>
         <field name="model">contract.type</field>
         <field name="inherit_id" ref="contract.contract_type_view_form"/>
         <field name="arch" type="xml">

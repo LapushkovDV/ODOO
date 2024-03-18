@@ -9,13 +9,7 @@ export class DocumentKanbanController extends KanbanController {
 
     createDirectory() {
         const ctx = this.props.context;
-        if (this.props.domain.length === 1) {
-            ctx.default_parent_id = this.props.domain[0][2];
-        } else if (this.props.domain.length === 3) {
-            ctx.default_parent_id = this.props.domain[2][2];
-        } else if (this.props.domain.length === 7) {
-            ctx.default_parent_id = this.props.domain[6][2];
-        }
+        ctx.default_parent_id = this.env.searchModel.getSelectedDirectoryId();
 
         this.orm.call(
             "ir.ui.view",
@@ -33,5 +27,5 @@ export class DocumentKanbanController extends KanbanController {
                 target: "new"
             });
         });
-    }
+    };
 }

@@ -1,3 +1,5 @@
+$o-kanban-attachment-image-size: 80px;
+
 .dms_document_kanban_view {
     height: 100%;
     .o_kanban_record {
@@ -6,10 +8,32 @@
         }
 
         padding: 0;
-        max-height: $o-kanban-image-width + 1;
         .o_kanban_image {
-            width: $o-kanban-image-width + 1;
-            border-right: solid 1px $gray-400;
+            width: $o-kanban-attachment-image-size;
+
+            + div {
+                padding-left: $o-kanban-attachment-image-size + $o-kanban-inside-hgutter;
+                @include media-breakpoint-down(md) {
+                    padding-left:  $o-kanban-attachment-image-size + $o-kanban-inside-hgutter-mobile;
+                }
+            }
+
+            .o_kanban_image_wrapper {
+                min-height: $o-kanban-attachment-image-size;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .o_attachment_image {
+                width: $o-kanban-attachment-image-size;
+                height: $o-kanban-attachment-image-size;
+            }
+
+            .o_image {
+                width: $o-kanban-attachment-image-size*0.7;
+                height: $o-kanban-attachment-image-size*0.7;
+            }
         }
         .o_kanban_details .o_kanban_details_wrapper {
             padding: 4px 4px 4px 0;

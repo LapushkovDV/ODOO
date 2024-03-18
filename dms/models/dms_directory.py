@@ -118,6 +118,10 @@ class DmsDirectory(models.Model):
             self.child_ids.unlink()
         return super().unlink()
 
+    # ------------------------------------------------------
+    # SEARCH PANEL
+    # ------------------------------------------------------
+
     @api.model
     def _search_panel_domain_image(self, field_name, domain, set_count=False, limit=False):
         if field_name == 'parent_id':
@@ -131,3 +135,14 @@ class DmsDirectory(models.Model):
             return res
         return super()._search_panel_domain_image(field_name=field_name, domain=domain, set_count=set_count,
                                                   limit=limit)
+
+    # ------------------------------------------------------
+    # PRIVATE METHODS
+    # ------------------------------------------------------
+
+    def _get_root_directories(self):
+        res = self.env['dms.directory'].search_read([
+            ('is_hidden', '=', False),
+            ('parent_id', '=', False)
+        ])
+        return [value['id'] for value in res]

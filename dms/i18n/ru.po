@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-17 14:53+0000\n"
-"PO-Revision-Date: 2024-02-17 14:53+0000\n"
+"POT-Creation-Date: 2024-03-11 10:54+0000\n"
+"PO-Revision-Date: 2024-03-11 10:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -161,7 +161,7 @@ msgstr "Добавьте новый каталог."
 #. odoo-javascript
 #. odoo-python
 #: code:addons/dms/controllers/main.py:0
-#: code:addons/dms/static/src/js/views/helper/dms_document_upload.esm.js:0
+#: code:addons/dms/static/src/views/helper/dms_document_upload.js:0
 #, python-format
 msgid "All files uploaded"
 msgstr "Все файлы загружены"
@@ -194,6 +194,7 @@ msgstr ""
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__attachment_id
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__attachment_id
 msgid "Attachment File"
 msgstr ""
 
@@ -201,17 +202,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:dms.field_dms_document__attachment_name
 msgid "Attachment Name"
 msgstr ""
-
-#. module: dms
-#: model_terms:ir.ui.view,arch_db:dms.ir_attachment_view_form_inherit_dms
-msgid "Attachments"
-msgstr "Вложения"
-
-#. module: dms
-#: model:ir.ui.menu,name:dms.menu_attachment_version_config
-#: model_terms:ir.ui.view,arch_db:dms.dms_version_config_view_tree
-msgid "Attachments Version Config"
-msgstr "Настройки версионности вложений"
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__checksum
@@ -233,6 +223,7 @@ msgstr "Нажмите для добавления нового документ
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__company_id
 #: model:ir.model.fields,field_description:dms.field_dms_document__company_id
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__company_id
 #: model:ir.model.fields,field_description:dms.field_dms_storage__company_id
 #: model:ir.model.fields,field_description:dms.field_dms_version_config__company_id
 msgid "Company"
@@ -246,7 +237,7 @@ msgstr "Настройки"
 #. module: dms
 #: model:ir.model,name:dms.model_res_partner
 msgid "Contact"
-msgstr "Контакт"
+msgstr ""
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_storage__directory_count
@@ -260,7 +251,7 @@ msgstr "Количество документов"
 
 #. module: dms
 #. odoo-javascript
-#: code:addons/dms/static/src/js/views/kanban/dms_document_kanban_renderer.xml:0
+#: code:addons/dms/static/src/views/kanban/dms_document_kanban_renderer.xml:0
 #, python-format
 msgid "Create Directory"
 msgstr "Создать каталог"
@@ -273,6 +264,8 @@ msgstr "Создайте новое хранилище."
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__create_uid
 #: model:ir.model.fields,field_description:dms.field_dms_document__create_uid
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__author_id
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__create_uid
 #: model:ir.model.fields,field_description:dms.field_dms_storage__create_uid
 #: model:ir.model.fields,field_description:dms.field_dms_version_config__create_uid
 #: model_terms:ir.ui.view,arch_db:dms.dms_document_view_search
@@ -282,6 +275,8 @@ msgstr "Автор"
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__create_date
 #: model:ir.model.fields,field_description:dms.field_dms_document__create_date
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__create_date
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__creation_date
 #: model:ir.model.fields,field_description:dms.field_dms_storage__create_date
 #: model:ir.model.fields,field_description:dms.field_dms_version_config__create_date
 msgid "Created on"
@@ -301,12 +296,17 @@ msgstr "Актуальная версия"
 #. module: dms
 #: model:ir.model,name:dms.model_dms_directory
 msgid "DMS Directory"
-msgstr ""
+msgstr "Каталог"
 
 #. module: dms
 #: model:ir.model,name:dms.model_dms_document
 msgid "DMS Document"
-msgstr ""
+msgstr "Документ"
+
+#. module: dms
+#: model:ir.model,name:dms.model_dms_document_version
+msgid "DMS Document Version"
+msgstr "Версия документа"
 
 #. module: dms
 #: model:ir.model,name:dms.model_dms_document_mixin
@@ -316,7 +316,7 @@ msgstr ""
 #. module: dms
 #: model:ir.model,name:dms.model_dms_storage
 msgid "DMS Storage"
-msgstr ""
+msgstr "Хранилище"
 
 #. module: dms
 #: model:ir.model,name:dms.model_dms_version_config
@@ -325,6 +325,7 @@ msgstr "Система управления версиями: настройка
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__description
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__description
 #: model_terms:ir.ui.view,arch_db:dms.dms_document_view_form
 msgid "Description"
 msgstr "Описание"
@@ -351,7 +352,7 @@ msgstr ""
 
 #. module: dms
 #. odoo-javascript
-#: code:addons/dms/static/src/js/views/kanban/dms_document_kanban_controller.esm.js:0
+#: code:addons/dms/static/src/views/kanban/dms_document_kanban_controller.js:0
 #: model:ir.model.fields,field_description:dms.field_dms_document__directory_id
 #, python-format
 msgid "Directory"
@@ -360,12 +361,14 @@ msgstr "Каталог"
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__display_name
 #: model:ir.model.fields,field_description:dms.field_dms_document__display_name
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__display_name
 #: model:ir.model.fields,field_description:dms.field_dms_storage__display_name
 #: model:ir.model.fields,field_description:dms.field_dms_version_config__display_name
 msgid "Display Name"
 msgstr ""
 
 #. module: dms
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__document_id
 #: model_terms:ir.ui.view,arch_db:dms.dms_document_view_kanban
 #: model_terms:ir.ui.view,arch_db:dms.dms_document_view_search
 #: model_terms:ir.ui.view,arch_db:dms.dms_document_view_tree
@@ -384,11 +387,13 @@ msgid "Document Name"
 msgstr ""
 
 #. module: dms
-#: model:ir.ui.menu,name:dms.menu_technical_document_versioning
+#: model:ir.ui.menu,name:dms.menu_dms_document_versioning
 msgid "Document Versioning"
-msgstr "Управление версиями документов"
+msgstr "Версионность документов"
 
 #. module: dms
+#. odoo-python
+#: code:addons/dms/models/dms_document_mixin.py:0
 #: model:ir.actions.act_window,name:dms.action_dms_directory_documents
 #: model:ir.actions.act_window,name:dms.action_dms_document_form
 #: model:ir.actions.act_window,name:dms.action_dms_partner_documents
@@ -404,7 +409,7 @@ msgstr "Управление версиями документов"
 #: model_terms:ir.ui.view,arch_db:dms.dms_directory_view_tree
 #: model_terms:ir.ui.view,arch_db:dms.dms_document_view_search
 #: model_terms:ir.ui.view,arch_db:dms.dms_storage_view_form
-#: model_terms:ir.ui.view,arch_db:dms.res_partner_view_form_inherit_dms
+#, python-format
 msgid "Documents"
 msgstr "Документы"
 
@@ -412,6 +417,11 @@ msgstr "Документы"
 #: model:ir.model.fields,field_description:dms.field_dms_directory__document_count
 msgid "Documents Count"
 msgstr "Количество документов"
+
+#. module: dms
+#: model_terms:ir.ui.view,arch_db:dms.dms_version_config_view_tree
+msgid "Documents Version Config"
+msgstr "Настройки версионности документов"
 
 #. module: dms
 #: model_terms:ir.actions.act_window,help:dms.action_dms_directory_documents
@@ -438,12 +448,23 @@ msgid "Error! You cannot create a recursive hierarchy of directories."
 msgstr "Ошибка! Вы не можете создать рекурсивную иерархию каталогов."
 
 #. module: dms
+#: model:ir.model.fields,field_description:dms.field_dms_document__favorited_ids
+msgid "Favorite of"
+msgstr "Избранное"
+
+#. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__datas
 msgid "File Content (base64)"
 msgstr "Содержимое файла (base64)"
 
 #. module: dms
+#: model:ir.model.fields,field_description:dms.field_dms_document__raw
+msgid "File Content (raw)"
+msgstr ""
+
+#. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__size
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__file_size
 msgid "File Size"
 msgstr "Размер файла"
 
@@ -489,6 +510,7 @@ msgstr ""
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__id
 #: model:ir.model.fields,field_description:dms.field_dms_document__id
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__id
 #: model:ir.model.fields,field_description:dms.field_dms_storage__id
 #: model:ir.model.fields,field_description:dms.field_dms_version_config__id
 msgid "ID"
@@ -519,6 +541,7 @@ msgstr ""
 
 #. module: dms
 #: model:ir.model.fields,help:dms.field_dms_document__message_has_error
+#: model:ir.model.fields,help:dms.field_dms_document__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr ""
 
@@ -556,6 +579,11 @@ msgid "Internal"
 msgstr "Внутреннее"
 
 #. module: dms
+#: model:ir.model.fields,field_description:dms.field_dms_document__is_favorited
+msgid "Is Favorited"
+msgstr "Избранное"
+
+#. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__message_is_follower
 msgid "Is Follower"
 msgstr ""
@@ -577,6 +605,7 @@ msgstr ""
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory____last_update
 #: model:ir.model.fields,field_description:dms.field_dms_document____last_update
+#: model:ir.model.fields,field_description:dms.field_dms_document_version____last_update
 #: model:ir.model.fields,field_description:dms.field_dms_storage____last_update
 #: model:ir.model.fields,field_description:dms.field_dms_version_config____last_update
 msgid "Last Modified on"
@@ -585,6 +614,7 @@ msgstr ""
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__write_uid
 #: model:ir.model.fields,field_description:dms.field_dms_document__write_uid
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__write_uid
 #: model:ir.model.fields,field_description:dms.field_dms_storage__write_uid
 #: model:ir.model.fields,field_description:dms.field_dms_version_config__write_uid
 msgid "Last Updated by"
@@ -593,6 +623,7 @@ msgstr "Автор последнего изменения"
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__write_date
 #: model:ir.model.fields,field_description:dms.field_dms_document__write_date
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__write_date
 #: model:ir.model.fields,field_description:dms.field_dms_storage__write_date
 #: model:ir.model.fields,field_description:dms.field_dms_version_config__write_date
 msgid "Last Updated on"
@@ -647,7 +678,7 @@ msgstr "Модель"
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_version_config__model_name
-msgid "Model Description"
+msgid "Model Name"
 msgstr "Описание"
 
 #. module: dms
@@ -672,11 +703,21 @@ msgid "My Documents"
 msgstr "Мои документы"
 
 #. module: dms
+#: model_terms:ir.ui.view,arch_db:dms.dms_document_view_search
+msgid "My Favorites"
+msgstr "Избранные"
+
+#. module: dms
+#. odoo-python
+#: code:addons/dms/controllers/portal.py:0
+#: code:addons/dms/controllers/portal.py:0
 #: model:ir.model.fields,field_description:dms.field_dms_directory__name
 #: model:ir.model.fields,field_description:dms.field_dms_document__name
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__name
 #: model:ir.model.fields,field_description:dms.field_dms_storage__name
 #: model_terms:ir.ui.view,arch_db:dms.dms_directory_search_view
 #: model_terms:ir.ui.view,arch_db:dms.dms_document_view_form
+#, python-format
 msgid "Name"
 msgstr "Наименование"
 
@@ -747,8 +788,9 @@ msgid "Partner"
 msgstr "Контрагент"
 
 #. module: dms
+#: model:ir.model.fields,field_description:dms.field_dms_document__version_ids
 #: model:ir.model.fields,field_description:dms.field_ir_attachment__version_ids
-#: model_terms:ir.ui.view,arch_db:dms.ir_attachment_view_form_inherit_dms
+#: model_terms:ir.ui.view,arch_db:dms.dms_document_view_form
 msgid "Previous Versions"
 msgstr "Предыдущие версии"
 
@@ -765,11 +807,10 @@ msgstr "Группы"
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__res_id
 msgid "Resource ID"
-msgstr ""
+msgstr "ID связанной записи"
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__res_model
-#: model_terms:ir.ui.view,arch_db:dms.ir_attachment_view_search_inherit_dms
 msgid "Resource Model"
 msgstr "Модель ресурса"
 
@@ -783,6 +824,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:dms.dms_directory_search_view
 msgid "Root Directories"
 msgstr "Корневые каталоги"
+
+#. module: dms
+#: model:ir.model.fields,field_description:dms.field_dms_document__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__storage_id_save_type
@@ -859,7 +905,7 @@ msgstr ""
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_document__thumbnail
 msgid "Thumbnail"
-msgstr ""
+msgstr "Миниатюра"
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__document_total_count
@@ -873,13 +919,14 @@ msgstr ""
 
 #. module: dms
 #. odoo-javascript
-#: code:addons/dms/static/src/js/views/kanban/dms_document_kanban_renderer.xml:0
+#: code:addons/dms/static/src/views/kanban/dms_document_kanban_renderer.xml:0
 #, python-format
 msgid "Upload"
 msgstr "Загрузить"
 
 #. module: dms
 #: model_terms:ir.actions.act_window,help:dms.action_dms_document_form
+#: model_terms:ir.actions.act_window,help:dms.action_dms_partner_documents
 msgid ""
 "Upload <span class=\"fw-normal\">a file or</span> drag\n"
 "                <span class=\"fw-normal\">it here.</span>"
@@ -888,35 +935,63 @@ msgstr ""
 "                <span class=\"fw-normal\">его сюда.</span>"
 
 #. module: dms
+#. odoo-python
+#: code:addons/dms/models/dms_document_mixin.py:0
+#, python-format
+msgid ""
+"Upload <span class=fw-normal>a file or</span> drag <span class=fw-normal>it "
+"here.</span>"
+msgstr ""
+"Загрузите <span class=fw-normal>файл или</span> перетащите <span class=fw-normal>его "
+"сюда.</span>"
+
+#. module: dms
 #: model:res.groups,name:dms.group_dms_user
 msgid "User"
 msgstr "Пользователь"
 
 #. module: dms
+#: model:ir.model.fields,field_description:dms.field_dms_document__version
+#: model:ir.model.fields,field_description:dms.field_dms_document_version__version
 #: model:ir.model.fields,field_description:dms.field_ir_attachment__version
-#: model_terms:ir.ui.view,arch_db:dms.ir_attachment_view_form_inherit_dms
 msgid "Version"
 msgstr "Версия"
 
 #. module: dms
-#: model:ir.actions.act_window,name:dms.action_dms_version_config_form
+#: model:ir.actions.act_window,name:dms.action_dms_version_config_main
+#: model:ir.ui.menu,name:dms.menu_dms_version_config
 msgid "Version Config"
-msgstr "Настройка версионности"
+msgstr ""
 
 #. module: dms
-#: model:ir.model.fields,field_description:dms.field_ir_attachment__version_count
+#: model:ir.model.fields,field_description:dms.field_dms_document__version_count
 msgid "Version Count"
-msgstr "Количество версий"
+msgstr ""
 
 #. module: dms
-#: model_terms:ir.ui.view,arch_db:dms.ir_attachment_view_kanban_inherit_dms
+#: model_terms:ir.ui.view,arch_db:dms.dms_document_view_kanban
 msgid "Version:"
 msgstr "Версия:"
+
+#. module: dms
+#: model_terms:ir.ui.view,arch_db:dms.dms_document_version_view_tree
+msgid "Versions"
+msgstr "Версии"
 
 #. module: dms
 #: model_terms:ir.ui.view,arch_db:dms.dms_directory_view_kanban
 msgid "Views"
 msgstr "Просмотреть"
+
+#. module: dms
+#: model:ir.model.fields,field_description:dms.field_dms_document__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: dms
+#: model:ir.model.fields,help:dms.field_dms_document__website_message_ids
+msgid "Website communication history"
+msgstr ""
 
 #. module: dms
 #: model_terms:ir.ui.view,arch_db:dms.dms_directory_view_form
@@ -930,8 +1005,7 @@ msgstr "Группы"
 
 #. module: dms
 #. odoo-javascript
-#: code:addons/dms/static/src/js/views/helper/dms_document_upload.esm.js:0
-#: code:addons/dms/static/src/js/views/helper/many_drop_target.js:0
+#: code:addons/dms/static/src/views/helper/dms_document_upload.js:0
 #, python-format
 msgid "You must select a directory first"
 msgstr "Сначала необходимо выбрать каталог"
