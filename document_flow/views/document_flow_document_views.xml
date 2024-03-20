@@ -13,7 +13,7 @@
     </record>
 
     <record id="document_view_search" model="ir.ui.view">
-        <field name="name">document_flow.document.search</field>
+        <field name="name">document.flow.document.search</field>
         <field name="model">document_flow.document</field>
         <field name="arch" type="xml">
             <search string="Documents">
@@ -25,7 +25,7 @@
     </record>
 
     <record id="document_view_tree" model="ir.ui.view">
-        <field name="name">document_flow.document.tree</field>
+        <field name="name">document.flow.document.tree</field>
         <field name="model">document_flow.document</field>
         <field name="arch" type="xml">
             <tree string="Documents">
@@ -35,80 +35,61 @@
                 <field name="date" widget="date"/>
                 <field name="author_id" widget="many2one_avatar_employee" options="{'no_create_edit': True}"/>
                 <field name="description" optional="hide"/>
-                <field name="process_state" widget="badge"
-                       decoration-muted="process_state == 'on_registration'"
-                       decoration-info="process_state == 'started'"
-                       decoration-success="process_state == 'finished'"
-                       decoration-danger="process_state == 'break'"/>
             </tree>
         </field>
     </record>
 
     <record id="document_view_form" model="ir.ui.view">
-        <field name="name">document_flow.document.form</field>
+        <field name="name">document.flow.document.form</field>
         <field name="model">document_flow.document</field>
         <field name="arch" type="xml">
             <form string="Document">
                 <sheet string="Document">
-                    <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" type="object" name="action_open_processing"
-                                icon="fa-spinner" string="Processing">
-                        </button>
-                        <button class="oe_stat_button" type="object" name="action_open_attachments"
-                                icon="fa-files-o">
-                            <field string="Attachments" name="attachment_count" widget="statinfo"/>
-                        </button>
-                    </div>
+                    <div class="oe_button_box" name="button_box"/>
                     <group invisible="1">
-                        <field name="process_state"/>
                         <field name="active"/>
+                        <field name="can_edit"/>
                     </group>
                     <widget name="web_ribbon" title="Archived"
                             bg_color="bg-danger"
                             attrs="{'invisible': [('active', '=', True)]}"/>
-                    <field name="process_id" class="position-relative" widget="processingbar" readonly="1" nolabel="1"
-                           style="width:100%" attrs="{'invisible': [('process_id', '=', False)]}"/>
                     <group>
                         <field name="company_id" invisible="1" groups="!base.group_multi_company"/>
                         <field name="company_id" groups="base.group_multi_company"
-                               attrs="{'readonly': [('process_id', '!=', False), ('process_state', 'not in', ('on_registration', 'break'))]}"/>
+                               attrs="{'readonly': [('can_edit', '=', False)]}"/>
                     </group>
                     <group col="2">
                         <group>
-                            <field name="code" string="Registration Number" attrs="{'invisible': [('id', '=', False)]}"/>
+                            <field name="code" string="Registration Number"
+                                   attrs="{'invisible': [('id', '=', False)], 'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                         <group>
-                            <field name="date" widget="date"
-                                   attrs="{'readonly': [('process_id', '!=', False), ('process_state', 'not in', ('on_registration', 'break'))]}"/>
+                            <field name="date" widget="date" attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                     </group>
                     <div class="oe_title">
                         <h1 class="d-flex flex-row">
                             <field name="name" class="o_text_overflow" placeholder="Document Title..."
-                                   attrs="{'readonly': [('process_id', '!=', False), ('process_state', 'not in', ('on_registration', 'break'))]}"/>
+                                   attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </h1>
                     </div>
                     <group col="2">
                         <group>
-                            <field name="kind_id"
-                                   attrs="{'readonly': [('process_id', '!=', False), ('process_state', 'not in', ('on_registration', 'break'))]}"/>
+                            <field name="kind_id" attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                         <group>
-                            <field name="author_id"
-                                   attrs="{'readonly': [('process_id', '!=', False), ('process_state', 'not in', ('on_registration', 'break'))]}"/>
+                            <field name="author_id" widget="many2one_avatar_employee"
+                                   options="{'no_create_edit': True, 'no_open': True}"
+                                   attrs="{'readonly': [('can_edit', '=', False)]}"/>
                         </group>
                     </group>
                     <field name="properties" nolabel="1" columns="2" hideKanbanOption="1"
-                           attrs="{'readonly': [('process_id', '!=', False), ('process_state', 'not in', ('on_registration', 'break'))],
-                           'invisible': [('kind_id', '=', False)]}"/>
+                           attrs="{'invisible': [('kind_id', '=', False)], 'readonly': [('can_edit', '=', False)]}"/>
                     <notebook>
                         <page name="description_page" string="Description">
                             <field name="description" type="html" options="{'collaborative': true, 'resizable': false}"
-                                   placeholder="Document description..."
-                                   attrs="{'readonly': [('process_id', '!=', False), ('process_state', 'not in', ('on_registration', 'break'))]}"/>
-                        </page>
-                        <page name="access_page" string="Access">
-                            <field name="access_ids" mode="tree"/>
+                                   attrs="{'readonly': [('can_edit', '=', False)]}"
+                                   placeholder="Document description..."/>
                         </page>
                     </notebook>
                 </sheet>
@@ -119,16 +100,4 @@
             </form>
         </field>
     </record>
-
-<!--    <record id="document_flow_document_view_form_user" model="ir.ui.view">-->
-<!--        <field name="name">document_flow.document.form.user</field>-->
-<!--        <field name="model">document_flow.document</field>-->
-<!--        <field name="inherit_id" ref="document_flow.document_view_form"/>-->
-<!--        <field name="groups_id" eval="[(6, 0, [ref('document_flow.group_document_flow_user') ])]"/>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <field name="properties" position="attributes">-->
-<!--                <attribute name="attrs">{'readonly': 1}</attribute>-->
-<!--            </field>-->
-<!--        </field>-->
-<!--    </record>-->
 </odoo>
