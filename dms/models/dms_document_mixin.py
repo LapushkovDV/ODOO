@@ -1,30 +1,27 @@
-from odoo import models, _
+from odoo import api, fields, models, _
 
 
 class DmsDocumentMixin(models.AbstractModel):
     _name = 'dms.document.mixin'
-    _description = "DMS Document creation mixin"
+    _description = 'DMS Document creation mixin'
 
-    def _get_document_vals(self, attachment):
-        self.ensure_one()
-        document_vals = {}
-        if self._check_create_documents():
-            document_vals = {
-                'attachment_id': attachment.id,
-                'name': attachment.name or self.display_name,
-                'directory_id': self._get_document_directory().id,
-                'partner_id': self._get_document_partner().id
-            }
-        return document_vals
+    directory_id = fields.Many2one('dms.directory', string='Directory', copy=False, ondelete='set null')
+    document_ids = fields.One2many('dms.document', 'res_id', string='Documents',
+                                   domain=lambda self: [('res_model', '=', self._name)])
+    document_count = fields.Integer(string='Documents Count', compute='_compute_document_count', readonly=True)
 
-    def _get_document_directory(self):
-        return self.env['dms.directory']
+    # ------------------------------------------------------
+    # COMPUTE METHODS
+    # ------------------------------------------------------
 
-    def _get_document_partner(self):
-        return self.env['res.partner']
+    @api.depends('document_ids')
+    def _compute_document_count(self):
+        for document in self:
+            document.document_count = len(document.document_ids)
 
-    def _check_create_documents(self):
-        return bool(self and self._get_document_directory())
+    # ------------------------------------------------------
+    # ACTIONS
+    # ------------------------------------------------------
 
     def action_open_documents(self):
         self.ensure_one()
@@ -47,3 +44,28 @@ class DmsDocumentMixin(models.AbstractModel):
             """ % _("Upload <span class=""fw-normal"">a file or</span> drag <span class=""fw-normal"">it here.</span>")
         }
         return action_vals
+
+    # ------------------------------------------------------
+    # PRIVATE METHODS
+    # ------------------------------------------------------
+
+    def _get_document_vals(self, attachment):
+        self.ensure_one()
+        document_vals = {}
+        if self._check_create_documents():
+            document_vals = {
+                'attachment_id': attachment.id,
+                'name': attachment.name or self.display_name,
+                'directory_id': self._get_document_directory().id,
+                'partner_id': self._get_document_partner().id
+            }
+        return document_vals
+
+    def _get_document_directory(self):
+        return self.env['dms.directory']
+
+    def _get_document_partner(self):
+        return self.env['res.partner']
+
+    def _check_create_documents(self):
+        return bool(self and self._get_document_directory())

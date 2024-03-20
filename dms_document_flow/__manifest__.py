@@ -1,8 +1,8 @@
 {
-    'name': 'DMS: Task',
+    'name': 'DMS: Document Flow',
     'version': '1.0.0',
     'category': 'Document Management',
-    'depends': ['dms', 'task'],
+    'depends': ['dms', 'document_flow'],
     'description': """
     """,
     'author': '',
@@ -10,7 +10,8 @@
     'installable': True,
     'auto_install': True,
     'data': [
-        'views/task_task_views.xml'
+        'data/dms_data.xml',
+        'views/document_flow_document_views.xml'
     ],
     'license': 'LGPL-3'
 }

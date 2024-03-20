@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-18 13:30+0000\n"
-"PO-Revision-Date: 2024-02-18 13:30+0000\n"
+"POT-Creation-Date: 2024-03-19 19:36+0000\n"
+"PO-Revision-Date: 2024-03-19 19:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgid "Directory"
 msgstr "Каталог"
 
 #. module: dms_project_budget
-#: model:ir.actions.act_window,name:dms_project_budget.action_dms_project_directory
+#: model:ir.model.fields,field_description:dms_project_budget.field_project_budget_projects__document_ids
 #: model_terms:ir.ui.view,arch_db:dms_project_budget.project_budget_project_view_form_inherit_dms
 msgid "Documents"
 msgstr "Документы"
@@ -35,15 +35,6 @@ msgstr "Количество документов"
 #: model:dms.directory,name:dms_project_budget.dms_directory_project_directory
 msgid "Projects"
 msgstr "Проекты"
-
-#. module: dms_project_budget
-#: model_terms:ir.actions.act_window,help:dms_project_budget.action_dms_project_directory
-msgid ""
-"Upload <span class=\"fw-normal\">a file or</span> drag\n"
-"                <span class=\"fw-normal\">it here.</span>"
-msgstr ""
-"Загрузите <span class=\"fw-normal\">файл или</span> перетащите\n"
-"                <span class=\"fw-normal\">его сюда.</span>"
 
 #. module: dms_project_budget
 #: model:ir.model,name:dms_project_budget.model_project_budget_projects
