@@ -71,7 +71,7 @@ class Contract(models.Model):
     def unlink(self):
         processes = self.env['workflow.process'].search([
             ('res_model', '=', self._name),
-            ('res_id', '=', self.ids)
+            ('res_id', 'in', self.ids)
         ])
         processes.unlink()
         result = super(Contract, self).unlink()

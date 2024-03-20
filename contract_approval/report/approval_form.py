@@ -2,17 +2,20 @@ from odoo import _, models
 from docx.shared import Pt, Mm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
+import pytz
+
 
 class ApprovalForm(models.AbstractModel):
     _name = 'report.contract.contract.approval.form'
     _description = 'contract.contract.approval.form'
-    _inherit = "report.report_docx.abstract"
+    _inherit = 'report.report_docx.abstract'
 
     def generate_docx_report(self, doc, data, objs):
         contract = objs[0]
         if contract and contract.workflow_process_id:
             activities = contract.workflow_process_id.activity_ids.filtered(
-                lambda act: not act.flow_start and not act.flow_stop)
+                lambda act: not act.flow_start and not act.flow_stop and
+                            act.activity_id.task_type_id.code == 'sys_df_agreement')
             if any(activities):
                 style = doc.styles['Normal']
                 style.font.name = 'Calibri'
@@ -35,7 +38,7 @@ class ApprovalForm(models.AbstractModel):
                     p.add_run(item).bold = True
                     p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
-                tasks = self.env['task.task'].search([
+                tasks = self.env['task.task'].sudo().search([
                     ('activity_id', 'in', activities.ids)
                 ])
 
@@ -52,5 +55,7 @@ class ApprovalForm(models.AbstractModel):
                     row[0].text = full_name
                     row[1].text = task.actual_executor_id.name if task and task.actual_executor_id else ''
                     row[2].text = _('Agreed') if task and task.is_closed else _('Not agreed')
-                    row[3].text = task.date_closed.strftime('%d.%m.%Y %H:%M:%S') if task and task.is_closed else ''
+                    row[3].text = pytz.utc.localize(task.date_closed).astimezone(
+                        pytz.timezone(self.env.user.tz) or pytz.utc).strftime(
+                        '%d.%m.%Y') if task and task.is_closed else ''
                     row[4].text = task.execution_result_text if task and task.execution_result else ''
