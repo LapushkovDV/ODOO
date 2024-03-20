@@ -38,6 +38,7 @@ class WorkflowProcess(models.Model):
     duration = fields.Float(string='Duration', compute='_compute_duration', copy=False)
 
     activity_ids = fields.One2many('workflow.process.activity', 'workflow_process_id', string='Activities', copy=True)
+    last_activity_id = fields.Many2one('workflow.process.activity', string='Last Activity', copy=False, readonly=True)
     activity_history_ids = fields.One2many('workflow.process.activity.history', 'workflow_process_id', string='History',
                                            readonly=True)
     task_ids = fields.One2many('task.task', string='Tasks', compute='_compute_task_ids', compute_sudo=True)
@@ -98,6 +99,13 @@ class WorkflowProcess(models.Model):
         if not activity:
             raise UserError(_('Workflow process must have at least one start activity.'))
         activity.process()
+
+    def run_from_last_activity(self):
+        for process in self:
+            copy_activity = process.last_activity_id.copy()
+            process.last_activity_id.write({'active': False})
+            copy_activity.process()
+            process.write({'state': 'in_progress'})
 
     def pause(self):
         pass

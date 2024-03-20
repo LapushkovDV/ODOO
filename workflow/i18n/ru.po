@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-13 09:09+0000\n"
-"PO-Revision-Date: 2024-03-13 09:09+0000\n"
+"POT-Creation-Date: 2024-03-19 19:41+0000\n"
+"PO-Revision-Date: 2024-03-19 19:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -45,6 +45,7 @@ msgstr "Доступ"
 #: model:ir.model.fields,field_description:workflow.field_workflow_activity__active
 #: model:ir.model.fields,field_description:workflow.field_workflow_auto_substitution__active
 #: model:ir.model.fields,field_description:workflow.field_workflow_group_executors__active
+#: model:ir.model.fields,field_description:workflow.field_workflow_process_activity__active
 #: model:ir.model.fields,field_description:workflow.field_workflow_workflow__active
 msgid "Active"
 msgstr "Активна"
@@ -447,6 +448,11 @@ msgid "Join Mode"
 msgstr ""
 
 #. module: workflow
+#: model:ir.model.fields,field_description:workflow.field_workflow_process__last_activity_id
+msgid "Last Activity"
+msgstr ""
+
+#. module: workflow
 #: model:ir.model.fields,field_description:workflow.field_workflow_activity____last_update
 #: model:ir.model.fields,field_description:workflow.field_workflow_auto_substitution____last_update
 #: model:ir.model.fields,field_description:workflow.field_workflow_group_executors____last_update
@@ -589,8 +595,8 @@ msgstr "Процессы"
 #. odoo-python
 #: code:addons/workflow/models/workflow.py:0
 #, python-format
-msgid "Processing"
-msgstr "Обработка"
+msgid "Processing \"%s\""
+msgstr "Обработка \"%s\""
 
 #. module: workflow
 #: model_terms:ir.ui.view,arch_db:workflow.workflow_process_activity_history_view_tree
@@ -669,7 +675,7 @@ msgstr ""
 #. module: workflow
 #: model_terms:ir.ui.view,arch_db:workflow.workflow_process_view_form
 msgid "Resume processing"
-msgstr ""
+msgstr "Возобновить обработку"
 
 #. module: workflow
 #: model:ir.model.fields,field_description:workflow.field_workflow_activity__sequence
@@ -926,7 +932,8 @@ msgstr ""
 #: code:addons/workflow/models/workflow_process.py:0
 #, python-format
 msgid "You cannot delete this process because some activities were completed."
-msgstr "Вы не можете удалить данный процесс, т.к. некоторые задачи были завершены."
+msgstr ""
+"Вы не можете удалить данный процесс, т.к. некоторые задачи были завершены."
 
 #. module: workflow
 #: model_terms:ir.ui.view,arch_db:workflow.workflow_activity_view_form

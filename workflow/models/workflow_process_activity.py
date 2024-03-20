@@ -21,19 +21,22 @@ class WorkflowProcessActivity(models.Model):
     _description = 'Workflow Process Activity'
     _order = 'sequence'
 
-    workflow_process_id = fields.Many2one('workflow.process', string='Workflow Process', index=True, ondelete='cascade',
-                                          required=True)
-    workflow_id = fields.Many2one(related='workflow_process_id.workflow_id', string='Workflow', readonly=True)
-    res_ref = fields.Reference(related='workflow_process_id.res_ref', readonly=True)
-    res_model = fields.Char(related='workflow_process_id.res_model', readonly=True)
-    res_id = fields.Integer(related='workflow_process_id.res_id', readonly=True)
-    activity_id = fields.Many2one('workflow.activity', string='Activity', index=True, ondelete='restrict')
-    activity_name = fields.Char(related='activity_id.name', readonly=True)
-    type = fields.Selection(related='activity_id.type', string='Type', readonly=True)
-    flow_start = fields.Boolean(related='activity_id.flow_start', string='Flow Start', readonly=True, store=True)
-    flow_stop = fields.Boolean(related='activity_id.flow_stop', string='Flow Stop', readonly=True, store=True)
+    workflow_process_id = fields.Many2one('workflow.process', string='Workflow Process', copy=True, index=True,
+                                          ondelete='cascade', required=True)
+    workflow_id = fields.Many2one(related='workflow_process_id.workflow_id', string='Workflow', copy=False,
+                                  readonly=True)
+    res_ref = fields.Reference(related='workflow_process_id.res_ref', copy=False, readonly=True)
+    res_model = fields.Char(related='workflow_process_id.res_model', copy=False, readonly=True)
+    res_id = fields.Integer(related='workflow_process_id.res_id', copy=False, readonly=True)
+    activity_id = fields.Many2one('workflow.activity', string='Activity', copy=True, index=True, ondelete='restrict')
+    activity_name = fields.Char(related='activity_id.name', copy=False, readonly=True)
+    type = fields.Selection(related='activity_id.type', string='Type', copy=True, readonly=True)
+    flow_start = fields.Boolean(related='activity_id.flow_start', string='Flow Start', copy=False, readonly=True,
+                                store=True)
+    flow_stop = fields.Boolean(related='activity_id.flow_stop', string='Flow Stop', copy=False, readonly=True,
+                               store=True)
     sequence = fields.Integer(copy=True, default=0, index=True)
-
+    active = fields.Boolean(default=True, index=True)
     state = fields.Selection(ACTIVITY_STATES, string='State', copy=False, readonly=True)
     date_start = fields.Datetime(string='Date Start', copy=False, readonly=True)
     date_end = fields.Datetime(string='Date End', copy=False, readonly=True)
@@ -111,6 +114,7 @@ class WorkflowProcessActivity(models.Model):
                 else:
                     self.write({'state': 'completed', 'date_end': fields.datetime.now()})
                     self._put_activity_to_history()
+                self.workflow_process_id.write({'last_activity_id': self.id})
         return result
 
     # TODO: как православно передать результат обработки задачи (согласовали/отклонили)? Нужен ли сигнал?

@@ -13,9 +13,10 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Start from the beginning" name="action_start_processing" class="btn-info" type="object"/>
-                    <button string="Resume from last stage" name="action_resume_processing" class="btn-info" type="object"
-                            attrs="{'invisible': 1}"/>
+                    <button string="Start from the beginning" name="action_start_processing" class="btn-info"
+                            type="object"/>
+                    <button string="Resume from last stage" name="action_resume_processing" class="btn-info"
+                            type="object" attrs="{'invisible':1}"/>
                     <button string="Cancel" class="btn btn-secondary" special="cancel"/>
                 </footer>
             </form>
