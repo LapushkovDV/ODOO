@@ -9,13 +9,6 @@
     'support': '',
     'installable': True,
     'auto_install': True,
-    'assets': {
-        'web.assets_backend': [
-            'dms/static/src/scss/*',
-            'dms/static/src/views/**/*.js',
-            'dms/static/src/views/**/*.xml'
-        ],
-    },
     'data': [
         'views/task_task_views.xml'
     ],

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-11 10:54+0000\n"
-"PO-Revision-Date: 2024-03-11 10:54+0000\n"
+"POT-Creation-Date: 2024-03-19 14:40+0000\n"
+"PO-Revision-Date: 2024-03-19 14:40+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -354,6 +354,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/dms/static/src/views/kanban/dms_document_kanban_controller.js:0
 #: model:ir.model.fields,field_description:dms.field_dms_document__directory_id
+#: model:ir.model.fields,field_description:dms.field_dms_document_mixin__directory_id
 #, python-format
 msgid "Directory"
 msgstr "Каталог"
@@ -399,6 +400,7 @@ msgstr "Версионность документов"
 #: model:ir.actions.act_window,name:dms.action_dms_partner_documents
 #: model:ir.actions.act_window,name:dms.action_dms_storage_documents
 #: model:ir.model.fields,field_description:dms.field_dms_directory__document_ids
+#: model:ir.model.fields,field_description:dms.field_dms_document_mixin__document_ids
 #: model:ir.model.fields,field_description:dms.field_dms_storage__document_ids
 #: model:ir.model.fields,field_description:dms.field_res_partner__document_ids
 #: model:ir.model.fields,field_description:dms.field_res_users__document_ids
@@ -415,6 +417,7 @@ msgstr "Документы"
 
 #. module: dms
 #: model:ir.model.fields,field_description:dms.field_dms_directory__document_count
+#: model:ir.model.fields,field_description:dms.field_dms_document_mixin__document_count
 msgid "Documents Count"
 msgstr "Количество документов"
 
@@ -942,8 +945,8 @@ msgid ""
 "Upload <span class=fw-normal>a file or</span> drag <span class=fw-normal>it "
 "here.</span>"
 msgstr ""
-"Загрузите <span class=fw-normal>файл или</span> перетащите <span class=fw-normal>его "
-"сюда.</span>"
+"Загрузите <span class=fw-normal>файл или</span> перетащите <span class=fw-"
+"normal>его сюда.</span>"
 
 #. module: dms
 #: model:res.groups,name:dms.group_dms_user

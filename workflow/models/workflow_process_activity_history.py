@@ -17,6 +17,7 @@ MAPPING_ACTIVITY_HISTORY_STATES = {
 class WorkflowProcessActivity(models.Model):
     _name = 'workflow.process.activity.history'
     _description = 'Workflow Process Activity History'
+    _order = 'date_start'
 
     name = fields.Char(string='Name', compute='_compute_name', readonly=True)
     activity_id = fields.Many2one('workflow.process.activity', string='Activity', ondelete='restrict', readonly=True,

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-06 10:44+0000\n"
-"PO-Revision-Date: 2024-03-06 10:44+0000\n"
+"POT-Creation-Date: 2024-03-19 19:33+0000\n"
+"PO-Revision-Date: 2024-03-19 19:33+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,6 @@ msgid "Directory"
 msgstr "Каталог"
 
 #. module: dms_contract
-#: model:ir.actions.act_window,name:dms_contract.action_dms_contract_directory
 #: model:ir.model.fields,field_description:dms_contract.field_contract_contract__document_ids
 #: model_terms:ir.ui.view,arch_db:dms_contract.contract_contract_view_form_inherit_dms
 msgid "Documents"
@@ -40,13 +39,4 @@ msgstr "Документы"
 #. module: dms_contract
 #: model:ir.model.fields,field_description:dms_contract.field_contract_contract__document_count
 msgid "Documents Count"
-msgstr ""
-
-#. module: dms_contract
-#: model_terms:ir.actions.act_window,help:dms_contract.action_dms_contract_directory
-msgid ""
-"Upload <span class=\"fw-normal\">a file or</span> drag\n"
-"                <span class=\"fw-normal\">it here.</span>"
-msgstr ""
-"Загрузите <span class=\"fw-normal\">файл или</span> перетащите\n"
-"                <span class=\"fw-normal\">его сюда.</span>"
+msgstr "Количество документов"

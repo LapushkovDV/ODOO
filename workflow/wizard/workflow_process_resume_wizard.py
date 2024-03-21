@@ -19,5 +19,8 @@ class WorkflowProcessResume(models.TransientModel):
 
     def action_resume_processing(self):
         self.ensure_one()
-
+        self.with_context(description=self.comment).process_id.run_from_last_activity()
+        if self.comment:
+            self.process_id.res_ref.message_post(body=self.comment, message_type='comment',
+                                                 subtype_xmlid='mail.mt_note')
         return {'type': 'ir.actions.act_window_close'}

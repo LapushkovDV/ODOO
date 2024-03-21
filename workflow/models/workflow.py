@@ -97,7 +97,7 @@ class Workflow(models.Model):
         res_ref = self.env[res_model].browse(res_id)
         process_vals = dict(
             workflow_id=self.id,
-            name=_('Processing') + ' ' + res_ref.name,
+            name=_('Processing "%s"') % res_ref.name,
             description=self.env.context.get('default_description', False) or res_ref.description,
             res_model=res_model,
             res_id=res_id,

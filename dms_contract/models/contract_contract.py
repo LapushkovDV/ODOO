@@ -9,12 +9,6 @@ class Contract(models.Model):
     def _init_contract_document_directory(self):
         self.search([('directory_id', '=', False)])._create_contract_directory()
 
-    directory_id = fields.Many2one('dms.directory', string='Directory', copy=False, ondelete='set null')
-    document_ids = fields.One2many('dms.document', 'res_id', string='Documents',
-                                   domain="[('res_model', '=', 'contract.contract')]")
-    document_count = fields.Integer(related='directory_id.document_total_count', string='Documents Count',
-                                    readonly=True)
-
     # ------------------------------------------------------
     # DMS.DOCUMENT.MIXIN
     # ------------------------------------------------------

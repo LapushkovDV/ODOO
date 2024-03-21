@@ -9,10 +9,6 @@ class Project(models.Model):
     def _init_project_document_directory(self):
         self.search([('directory_id', '=', False), ('budget_state', '=', 'work')])._create_project_directory()
 
-    directory_id = fields.Many2one('dms.directory', string='Directory', copy=False, ondelete='set null')
-    document_count = fields.Integer(related='directory_id.document_total_count', string='Documents Count',
-                                    readonly=True)
-
     # ------------------------------------------------------
     # DMS.DOCUMENT.MIXIN
     # ------------------------------------------------------
