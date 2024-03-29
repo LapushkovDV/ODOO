@@ -1398,10 +1398,6 @@ class projects(models.Model):
                 """ % _("Add tenders for this project")
         }
 
-
-    def process_task_result(self, date_closed, result_type='ok', feedback=False):
-        pass
-
     def _monetary_format(self, amount):
         return '{:,.0f}'.format(amount).replace(',', ' ')
 

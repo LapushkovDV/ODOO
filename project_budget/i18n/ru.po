@@ -1614,6 +1614,11 @@ msgid "Next Activity Type"
 msgstr "Тип следующей активности"
 
 #. module: project_budget
+#: model_terms:ir.actions.act_window,help:project_budget.action_project_budget_partner_projects
+msgid "No projects found. Let's create one!"
+msgstr "Проекты не найдены. Давайте создадим первый!"
+
+#. module: project_budget
 #: model_terms:ir.actions.act_window,help:project_budget.action_view_project_budget_scheduled_reports
 msgid "No scheduled reports found. Let's create one!"
 msgstr "Автоматические отчеты не найдены. Давайте создадим первый!"
@@ -1777,6 +1782,11 @@ msgstr "Вышестоящий проектный офис"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_customer_organization__partner_id
 msgid "Partner"
 msgstr "Организация"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.res_partner_view_form_inherit_project_budget
+msgid "Partner Projects"
+msgstr "Проекты"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__plan_supervisor_id
