@@ -1,6 +1,6 @@
 <odoo>
     <data>
-        <menuitem id="project_budget_menu" name="Project budget" sequence="0"/>
+        <menuitem id="project_budget_menu" name="Project budget" sequence="1"/>
         <menuitem id="project_budget_budgets" parent ="project_budget_menu" name = "Budgets/Projects"/>
 <!--        <menuitem id="project_budget_budgets_comercial_budget_kandan" parent ="project_budget_budgets" name = "project_budget_estimated_probability_action" action="project_budget_estimated_probability_action" sequence="1"/>-->
         <menuitem id="project_budget_menu_dashboard" parent="project_budget.project_budget_menu" name="work place" sequence="1"

@@ -20,3 +20,4 @@ from . import project_amount_specifications
 from . import project_currency_rates
 from . import project_step_amount_specifications
 from . import res_config_settings
+from . import res_partner
