@@ -9,7 +9,10 @@ class ResPartner(models.Model):
 
     @api.depends('project_ids')
     def _compute_project_count(self):
-        domain = [('partner_id', 'in', self.ids)]
+        domain = [
+            ('budget_state', '=', 'work'),
+            ('partner_id', 'in', self.ids)
+        ]
         res = self.env['project_budget.projects'].read_group(
             domain=domain, fields=['partner_id'], groupby=['partner_id']
         )

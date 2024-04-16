@@ -13,6 +13,7 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">
             [
+                ('budget_state', '=', 'work'),
                 ('partner_id', '=', active_id)
             ]
         </field>
