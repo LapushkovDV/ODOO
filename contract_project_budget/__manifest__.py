@@ -17,7 +17,7 @@
     'data': [
         'views/contract_contract_views.xml',
         'views/project_budget_project_views.xml',
-        'views/res_company_reseller_views.xml'
+        'views/res_company_partner_views.xml'
     ],
     'demo': [
     ],
