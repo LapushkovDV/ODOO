@@ -290,7 +290,7 @@ class Project(models.Model):
     own_works_fot = fields.Monetary(string='own_works_fot',tracking=True)
     taxes_fot_premiums = fields.Monetary(string='taxes_FOT and premiums', store=True, tracking=True)
 
-    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True,required = True,
+    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True,required = False,
                 help = "*The estimated probability of project implementation is selected from the following categories:"
                        "\n"
                        "\n30% The Customer's need for supply/services has been identified, the technical and commercial feasibility of their implementation has been determined, financing mechanisms are available/identified."
