@@ -41,13 +41,6 @@ class project_steps(models.Model):
         print('_get_current_amount_spec_type value = ', value)
         self.current_amount_spec_type = value
 
-    def _getesimated_probability_fromProject(self):
-        for row in self:
-            project = self.env['project_budget.projects'].search(['id','=',row.projects_id])
-            print(project)
-            print(project.estimated_probability_id.id)
-            return project.estimated_probability_id
-
     def _get_domainamount_spec(self):
         domain = []
         context = self.env.context
@@ -274,8 +267,6 @@ class project_steps(models.Model):
     dogovor_number = fields.Char(string='Dogovor number', store=True, tracking=True)
     stage_id = fields.Many2one('project_budget.project.stage', string='Stage', copy=True, default=_get_default_stage_id,
                                required=True, tracking=True)
-    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True
-                        ,required = False, default = _getesimated_probability_fromProject)
     currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
     project_office_id = fields.Many2one('project_budget.project_office', string='project office',

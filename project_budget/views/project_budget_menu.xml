@@ -10,7 +10,7 @@
               name="Projects all budgets" action="show_comercial_budget_spec_all" sequence="3"
               groups="project_budget.project_budget_admin"/>
     <menuitem id="project_budget_budgets_comercial_budget" parent="project_budget_budgets" name="Comercial budgets"
-              action="show_comercial_budgets" sequence="5" groups="project_budget.project_budget_admin"/>
+              action="show_comercial_budgets" sequence="4" groups="project_budget.project_budget_admin"/>
     <menuitem id="project_budget_catalogs_budget_plan_supervisor" parent="project_budget_budgets"
               name="budget_plan_supervisor" action="show_budget_plan_supervisor"/>
     <menuitem id="project_budget_catalogs_budget_plan_kam" parent="project_budget_budgets" name="budget_plan_kam"
@@ -22,8 +22,6 @@
     <menuitem id="project_budget_catalogs" parent="project_budget_menu" name="Catalogs"/>
     <menuitem id="project_budget_catalogs_project_supervisor" parent="project_budget_catalogs" name="project_supervisor"
               action="show_project_supervisor"/>
-    <menuitem id="project_budget_catalogs_project_office" parent="project_budget_catalogs" name="project_office"
-              action="show_project_office"/>
     <menuitem id="project_budget_catalogs_project_manager" parent="project_budget_catalogs" name="project_manager"
               action="show_project_manager"/>
     <menuitem id="project_budget_catalogs_rukovoditel_project" parent="project_budget_catalogs"
@@ -73,10 +71,14 @@
 
     <menuitem id="menu_project_budget_configuration" parent="project_budget_menu" name="Configuration"
               sequence="100">
+        <menuitem id="menu_project_budget_project_offices" name="Project Offices" sequence="1"
+                  action="action_project_budget_project_offices"/>
+
         <menuitem id="menu_project_budget_pipeline" name="Pipeline" sequence="10" groups="project_budget_admin">
-            <menuitem id="menu_project_budget_pipeline_stages" name="Stages" sequence="1"
+            <menuitem id="menu_project_budget_pipeline_stages" name="Stages" sequence="10"
                       action="action_project_budget_project_stages"/>
         </menuitem>
+
         <menuitem id="menu_project_budget_partners" name="Company Partners" sequence="40"
                   groups="base.group_partner_manager">
             <menuitem id="menu_project_budget_partner_types" name="Partner Types" sequence="1"
@@ -86,10 +88,12 @@
             <menuitem id="menu_project_budget_company_partners" name="Company Partners" sequence="3"
                       action="action_res_company_partners"/>
         </menuitem>
+
         <menuitem id="menu_project_budget_account" name="Accounting" sequence="50">
             <menuitem id="menu_action_currency_form" name="Currencies" sequence="1"
                       action="base.action_currency_form" groups="base.group_system"/>
         </menuitem>
+
         <menuitem id="menu_project_budget_report" name="Reporting" sequence="60" groups="project_budget_admin">
             <menuitem id="menu_action_scheduled_report_form" name="Scheduled Reports" sequence="1"
                       action="action_view_project_budget_scheduled_reports"/>
