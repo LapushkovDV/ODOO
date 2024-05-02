@@ -21,24 +21,6 @@ class Project(models.Model):
     def _get_default_stage_id(self):
         return self.env['project_budget.project.stage'].search([('fold', '=', False)], limit=1)
 
-    @api.model
-    def fields_get(self, allfields=None, attributes=None):
-        res = super().fields_get(allfields=allfields, attributes=attributes)
-        stages = self.env['project_budget.project.stage'].search([
-            ('required_field_ids', '!=', False)
-        ])
-
-        required_fields = defaultdict(list)
-        for stage in stages:
-            for required_field in stage.required_field_ids:
-                required_fields[required_field.name].append(stage.id)
-
-        for field_name, description in res.items():
-            if required_fields.get(field_name) and not description.get('required', False):
-                description['required'] = [('stage_id', 'in', required_fields.get(field_name))]
-
-        return res
-
     def _get_current_amount_spec_type(self):
         context = self.env.context
         print('_get_current_amount_spec_type context',context)
@@ -202,8 +184,6 @@ class Project(models.Model):
                                       compute='_compute_project_status', index=True, readonly=True, tracking=True,
                                       store=True)
     color = fields.Integer(related='stage_id.color', readonly=True)
-    specification_state = fields.Selection([('prepare', 'Prepare'), ('production', 'Production'), ('cancel','Canceled'),('done','Done'),('lead','Lead')], required=True,
-                                           index=True, default='prepare', store=True, copy=True, tracking=True, compute="_compute_specification_state")
     approve_state = fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor'
                                      , 'need supervisors approve'), ('approved','approved'),('-','-')],
                                      required=True, index=True, default='need_approve_manager', store=True, copy=True, tracking=True)
@@ -289,22 +269,6 @@ class Project(models.Model):
     awards_on_results_project = fields.Monetary(string='Awards based on the results of the project',tracking=True)
     own_works_fot = fields.Monetary(string='own_works_fot',tracking=True)
     taxes_fot_premiums = fields.Monetary(string='taxes_FOT and premiums', store=True, tracking=True)
-
-    estimated_probability_id = fields.Many2one('project_budget.estimated_probability', string='estimated_probability',  copy = True, tracking=True,required = False,
-                help = "*The estimated probability of project implementation is selected from the following categories:"
-                       "\n"
-                       "\n30% The Customer's need for supply/services has been identified, the technical and commercial feasibility of their implementation has been determined, financing mechanisms are available/identified."
-                       "\n Financing mechanisms are being/identified. Proactive creation of a new need for the Customer by the efforts of the seller, for which the Customer will organize or provide subsequent financing of the project."
-                       "\n"
-                       "\n50% of the Customer's requirements, financing and procurement deadlines are determined in a specific financial period, there is a TAP from the Vendor / Supplier, there is Customer support"
-                       "\n at the same time, it is necessary to finalize the terms of interaction according to the project, both with the Vendor / Supplier and with the Customer, there is a clear understanding of how to do this."
-                       "\n financing of the presale is allowed only after the creation of the presale"
-                       "\n 75% Meets the formed requirements of the CD/ TOR for the implementation of the project, protection from the Vendor / Supplier has been received,"
-                       "\n the project budget has been approved by the Director of the Software or CD, the timing of procurement procedures from the Customer does not interfere with the implementation of the project."
-                       "\n"
-                       "\n 100% The project has moved to the production budget."
-            )
-                                            # ,default=lambda self: self.env['project_budget.estimated_probability'].search([('name', '=', '30')], limit=1)
 
     # TODO: необходимо мигрировать на signer_id
     legal_entity_signing_id = fields.Many2one('project_budget.legal_entity_signing', string='legal_entity_signing a contract from the NCC', required=True, copy=True,tracking=True)
@@ -475,37 +439,6 @@ class Project(models.Model):
                     for step in rec.project_steps_ids:
                         if step.stage_id.code != '0':
                             step.stage_id = rec.stage_id
-
-    @api.depends('estimated_probability_id')
-    def _compute_specification_state(self):
-        pass
-        # for row in self:
-        #     if row.estimated_probability_id.name == '0':
-        #         row.specification_state = 'cancel'
-        #         if row.project_steps_ids:
-        #             for step in row.project_steps_ids:
-        #                 if step.estimated_probability_id.name in ('100', '100(done)'):
-        #                     raisetext = _("Can't 'cancel' project with step {0} in {1} state")
-        #                     raisetext = raisetext.format(step.step_id, step.estimated_probability_id.name)
-        #                     raise ValidationError(raisetext)
-        #                 step.estimated_probability_id = row.estimated_probability_id
-        #     if row.estimated_probability_id.name == '10':
-        #         row.specification_state = 'lead'
-        #     if row.estimated_probability_id.name == '30':
-        #         row.specification_state = 'prepare'
-        #     if row.estimated_probability_id.name == '50':
-        #         row.specification_state = 'prepare'
-        #     if row.estimated_probability_id.name == '75':
-        #         row.specification_state = 'prepare'
-        #     if row.estimated_probability_id.name == '100':
-        #         row.specification_state = 'production'
-        #     if row.estimated_probability_id.name == '100(done)':
-        #         row.specification_state = 'done'
-        #         if row.project_steps_ids:
-        #             for step in row.project_steps_ids:
-        #                 if step.estimated_probability_id.name != '0':
-        #                     step.estimated_probability_id = row.estimated_probability_id
-
 
     @api.onchange('project_office_id','project_status','currency_id','project_supervisor_id','project_manager_id',
                   'industry_id','essence_project','end_presale_project_month','end_sale_project_month','vat_attribute_id','total_amount_of_revenue',
@@ -1208,49 +1141,6 @@ class Project(models.Model):
         for rows in self:
             print()
 
-
-    @api.returns('self', lambda value: value.id)
-    def copy(self, default=None):
-        self.ensure_one()
-        print('default = ',default)
-        if self.date_actual: # сделка в зафиксированном бюджете
-            raisetext = _("This project is in fixed budget. Copy deny")
-            raise (ValidationError(raisetext))
-
-        if default is None:
-            default = {}
-        if self.env.context.get('form_fix_budget'):
-            f =  1
-        else:
-            default['project_id'] = 'ID'
-            default['essence_project'] = '__КОПИЯ__ ' +self.project_id+ '__'+self.essence_project
-            default['planned_acceptance_flow_ids'] = []
-            default['planned_cash_flow_ids'] = []
-            default['fact_cash_flow_ids'] = []
-            default['fact_acceptance_flow_ids'] = []
-            print('2 default = ', default)
-        return super(Project, self).copy(default=default)
-
-
-    def write(self, vals_list):
-        print('self.env.context = ',self.env.context)
-        print('vals_list = ',vals_list)
-        for row in self:
-            if row.env.context.get('form_fix_budget'):
-            # TODO не проверять проекты при добавлении их в качестве дочерних
-                # or self.env.context.get('form_view_projects'): ##из коммерческих бюджетов фиксация идет или  дублируем сделку из формы
-                f = 1
-                print('form_fix_budget')
-
-            else:
-                if row.approve_state == 'need_approve_manager':
-                    isok, raisetext,emptydict = row.check_overdue_date(vals_list)
-                    if isok == False:
-                        raise ValidationError(raisetext)
-
-        res = super().write(vals_list)
-        return res
-
     def set_approve_manager(self):
         for rows in self:
             # if rows.estimated_probability_id.name in ('50','75','100'):
@@ -1419,13 +1309,6 @@ class Project(models.Model):
     def _monetary_format(self, amount):
         return '{:,.0f}'.format(amount).replace(',', ' ')
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            if not vals.get('project_id') or vals['project_id'] == 'ID':
-                vals['project_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.projects')
-        return super().create(vals_list)
-
     def reopen(self):
         """
         return not fixed project from '-' to 'need_approve_manager' status.
@@ -1451,20 +1334,66 @@ class Project(models.Model):
                 raise ValidationError(raise_text)
 
             record.approve_state = 'need_approve_manager'
-    # def unlink(self):
-    #     """ dont delete.
-    #     Set specification_state to 'cancel'
-    #     """
-    #     for record in self:
-    #         if record.approve_state == 'need_approve_manager' :
-    #             record.write({
-    #                         'specification_state': "cancel"
-    #                     })
-    #         else:
-    #             raisetext = _("only in state 'need approve manager' project can be canceled")
-    #             raise ValidationError(raisetext)
-    #
-    #     return False
+
+    def action_open_settings(self):
+        self.ensure_one()
+        return {
+            'name': _('Settings'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'project_budget.projects',
+            'view_id': self.env.ref('project_budget.project_budget_project_settings_view_form').id,
+            'res_id': self.id,
+            'target': 'new'
+        }
+
+    # ------------------------------------------------------
+    # CRUD
+    # ------------------------------------------------------
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            self._check_required_fields(vals)
+            if not vals.get('project_id') or vals['project_id'] == 'ID':
+                vals['project_id'] = self.env['ir.sequence'].sudo().next_by_code('project_budget.projects')
+        return super().create(vals_list)
+
+    def write(self, vals):
+        self._check_required_fields(vals)
+        for row in self:
+            if row.env.context.get('form_fix_budget'):
+            # TODO не проверять проекты при добавлении их в качестве дочерних
+                # or self.env.context.get('form_view_projects'): ##из коммерческих бюджетов фиксация идет или  дублируем сделку из формы
+                f = 1
+                print('form_fix_budget')
+            else:
+                if row.approve_state == 'need_approve_manager':
+                    isok, raisetext,emptydict = row.check_overdue_date(vals)
+                    if isok == False:
+                        raise ValidationError(raisetext)
+
+        res = super().write(vals)
+        return res
+
+    @api.returns('self', lambda value: value.id)
+    def copy(self, default=None):
+        self.ensure_one()
+        if default is None:
+            default = {}
+
+        if self.date_actual:  # сделка в зафиксированном бюджете
+            raise ValidationError(_('This project is in fixed budget. Copy deny'))
+
+        if not self.env.context.get('form_fix_budget', False):
+            default['project_id'] = 'ID'
+            default['essence_project'] = _('__COPY__ ') + self.project_id + '__' + self.essence_project
+            default['planned_acceptance_flow_ids'] = []
+            default['planned_cash_flow_ids'] = []
+            default['fact_cash_flow_ids'] = []
+            default['fact_acceptance_flow_ids'] = []
+            print('2 default = ', default)
+        return super(Project, self).copy(default=default)
 
     def unlink(self):
         """
@@ -1493,14 +1422,29 @@ class Project(models.Model):
             res['target'] = 'main'
             return res
 
-    def action_open_settings(self):
-        self.ensure_one()
-        return {
-            'name': _('Settings'),
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'project_budget.projects',
-            'view_id': self.env.ref('project_budget.project_budget_project_settings_view_form').id,
-            'res_id': self.id,
-            'target': 'new'
-        }
+    # ------------------------------------------------------
+    # PRIVATE METHODS
+    # ------------------------------------------------------
+
+    def _get_stage_required_fields(self, stage):
+        required_fields = []
+        for required_field in stage.required_field_ids:
+            required_fields.append(required_field.name)
+
+        return required_fields
+
+    def _check_required_fields(self, changed_fields):
+        for rec in self:
+            stage = rec.stage_id
+            if changed_fields.get('stage_id', False):
+                stage = self.env['project_budget.project.stage'].browse(changed_fields.get('stage_id', 0))
+
+            required_fields = self._get_stage_required_fields(stage)
+            empty_fields = []
+            for required_field in required_fields:
+                if not rec[required_field] or not changed_fields.get(required_field, False):
+                    empty_fields.append(required_field)
+
+            if empty_fields:
+                raise ValidationError(
+                    _("Fields '%s' are required at the stage '%s'!") % (', '.join(empty_fields), stage.name))

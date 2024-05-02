@@ -8,11 +8,10 @@
     'author': 'lapus',
     'support': 'lapushkov@yandex.ru',
     'assets': {
-        'web._assets_primary_variables': [
-            'web/static/src/scss/primary_variables.scss',
-        ],
         'web.assets_backend': [
-            'project_budget/static/src/scss/change_color.css',
+            'project_budget/static/src/views/**/*.js',
+            'project_budget/static/src/views/**/*.xml',
+            'project_budget/static/src/scss/change_color.css'
         ],
     },
     'data': [
@@ -31,6 +30,7 @@
         'views/project_budget_project_steps.xml',
         'views/project_amount_specifications.xml',
         'views/project_step_amount_specifications.xml',
+        'views/project_budget_project_office_views.xml',
         'views/project_budget_project_stage_views.xml',
         'views/project_budget_project_views.xml',
         'views/project_budget_comercial_budget.xml',
