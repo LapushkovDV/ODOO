@@ -5,10 +5,10 @@
             <div class="row row-cols-1 row-cols-md-12 mt-1">
                 <div class="col-2 employee-info">
                     <div class="card border-0">
-                        <img t-attf-src="/web/image/hr.employee.public/{{state.employeeInfo.id}}/avatar_1024/"
+                        <img t-attf-src="/web/image/res.users/{{session.user_id}}/avatar_1024/"
                              class="card-img-top" alt=""/>
                         <div class="card-body">
-                            <h5 class="card-title" t-esc="state.employeeInfo.name"/>
+                            <h5 class="card-title" t-esc="session.name"/>
                             <t t-if="state.employeeInfo.job_id">
                                 <p class="card-text" t-esc="state.employeeInfo.job_id[1]"/>
                             </t>

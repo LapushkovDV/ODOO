@@ -10,6 +10,7 @@ export class WorkplaceEmployeeDashboard extends Component {
     setup() {
         this.action = useService("action");
         this.orm = useService("orm");
+        this.session = session;
         this.state = useState({
             employeeInfo: null,
         });
