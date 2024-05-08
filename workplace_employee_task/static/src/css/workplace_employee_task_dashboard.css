@@ -2,7 +2,7 @@
     overflow: auto !important;
 }
 
-.card {
+.tasks-info .card {
     padding: 0px;
     margin-bottom: 1.5rem;
     border-radius: 0px;
@@ -13,25 +13,25 @@
     text-align: center;
 }
 
-.card:hover {
+.tasks-info .card:hover {
     transform: translateY(-2px) translateZ(0) !important;
 }
 
-.card-header {
+.tasks-info .card-header {
     padding: 0.5px;
 }
 
-.card .card-icon {
+.tasks-info .card-icon {
     font-size: 30px;
     font-weight: 900;
     display: inline-block;
 }
 
-.card .tasks-title {
+.tasks-info .tasks-title {
     font-size: 10px;
 }
 
-.card .tasks-count {
+.tasks-info .tasks-count {
     font-size: 20px;
 }
 
