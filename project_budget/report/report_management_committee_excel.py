@@ -1526,9 +1526,10 @@ class report_management_committee_excel(models.AbstractModel):
 
         return sum_cash
 
-    def get_sum_planned_acceptance_project_step_year_quarter(self, project, step, year, quarter):
+    def get_sum_planned_acceptance_project_step_year_quarter(self, project, step, year, quarter, profitability):
 
         sum_acceptance = {'commitment': 0, 'reserve': 0, 'potential': 0}
+        sum_margin = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
         if quarter:
             months = self.get_months_from_quarter(quarter)
@@ -1553,7 +1554,19 @@ class report_management_committee_excel(models.AbstractModel):
                     else:
                         if stage_id_code != '0':
                             sum_acceptance[acceptance.forecast] += acceptance.sum_cash_without_vat
-        return sum_acceptance
+                    if not any(distribution.fact_acceptance_flow_id.margin_manual_input for distribution in
+                           acceptance.distribution_acceptance_ids):  # если нет ручной маржи - добавляем
+                        if acceptance.forecast == 'from_project':
+                            if stage_id_code in ('75', '100', '100(done)'):
+                                sum_margin['commitment'] += acceptance.sum_cash_without_vat * profitability / 100
+                            elif stage_id_code == '50':
+                                sum_margin['reserve'] += acceptance.sum_cash_without_vat * profitability / 100
+                            elif stage_id_code == '30':
+                                sum_margin['potential'] += acceptance.sum_cash_without_vat * profitability / 100
+                        else:
+                            if stage_id_code != '0':
+                                sum_margin[acceptance.forecast] += acceptance.sum_cash_without_vat * profitability / 100
+        return sum_acceptance, sum_margin
 
     def get_act_margin_forecast_from_distributions(self, sum, margin_sum, margin_plan, project, step, year, months):
 
@@ -1649,15 +1662,12 @@ class report_management_committee_excel(models.AbstractModel):
                     sum100tmp += sum100tmp_step
                     prof100tmp += prof100tmp_step
 
-                    sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint, element)
+                    sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint, element, profitability)
 
                     margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                    margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                    if sum:
-                        for key in sum:
-                            margin_plan[key] = sum[key] * profitability / 100
-                            margin_sum[key] = sum[key] * profitability / 100
+                    if margin_sum:
+                        margin_plan = margin_sum.copy()
 
                     if not project.is_correction_project:
                         if sum100tmp_step >= sum['commitment']:
@@ -1701,15 +1711,12 @@ class report_management_committee_excel(models.AbstractModel):
                 sum100tmp += sum100tmp_proj
                 prof100tmp += prof100tmp_proj
 
-                sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint, element)
+                sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint, element, profitability)
 
                 margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                if sum:
-                    for key in sum:
-                        margin_plan[key] = sum[key] * profitability / 100
-                        margin_sum[key] = sum[key] * profitability / 100
+                if margin_sum:
+                    margin_plan = margin_sum.copy()
 
                 if not project.is_correction_project:
                     if sum100tmp >= sum['commitment']:
@@ -1761,23 +1768,17 @@ class report_management_committee_excel(models.AbstractModel):
                     sum100tmp += sum100tmp_step
                     prof100tmp += prof100tmp_step
 
-                    sum_q1 = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 1, 'Q1')
-                    sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 1, False)
+                    sum_q1, margin_sum_q1 = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 1, 'Q1', profitability)
+                    sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 1, False, profitability)
 
                     margin_plan_q1 = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                    margin_sum_q1 = {'commitment': 0, 'reserve': 0, 'potential': 0}
                     margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                    margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                    if sum:
-                        for key in sum:
-                            margin_plan[key] = sum[key] * profitability / 100
-                            margin_sum[key] = sum[key] * profitability / 100
+                    if margin_sum:
+                        margin_plan = margin_sum.copy()
 
-                    if sum_q1:
-                        for key in sum_q1:
-                            margin_plan_q1[key] = sum_q1[key] * profitability / 100
-                            margin_sum_q1[key] = sum_q1[key] * profitability / 100
+                    if margin_sum_q1:
+                        margin_plan_q1 = margin_sum_q1.copy()
 
                     if not project.is_correction_project:
                         if sum100tmp_q1_step >= sum_q1['commitment']:
@@ -1892,23 +1893,17 @@ class report_management_committee_excel(models.AbstractModel):
                 sum100tmp += sum100tmp_proj
                 prof100tmp += prof100tmp_proj
 
-                sum_q1 = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 1, 'Q1')
-                sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 1, False)
+                sum_q1, margin_sum_q1 = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 1, 'Q1', profitability)
+                sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 1, False, profitability)
 
                 margin_plan_q1 = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                margin_sum_q1 = {'commitment': 0, 'reserve': 0, 'potential': 0}
                 margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                if sum:
-                    for key in sum:
-                        margin_plan[key] = sum[key] * profitability / 100
-                        margin_sum[key] = sum[key] * profitability / 100
+                if margin_sum:
+                    margin_plan = margin_sum.copy()
 
-                if sum_q1:
-                    for key in sum_q1:
-                        margin_plan_q1[key] = sum_q1[key] * profitability / 100
-                        margin_sum_q1[key] = sum_q1[key] * profitability / 100
+                if margin_sum_q1:
+                    margin_plan_q1 = margin_sum_q1.copy()
 
                 if not project.is_correction_project:
                     if sum100tmp_q1 >= sum_q1['commitment']:
@@ -2029,15 +2024,12 @@ class report_management_committee_excel(models.AbstractModel):
                     sum100tmp += sum100tmp_step
                     prof100tmp += prof100tmp_step
 
-                    sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 2, False)
+                    sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 2, False, profitability)
 
                     margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                    margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                    if sum:
-                        for key in sum:
-                            margin_plan[key] = sum[key] * profitability / 100
-                            margin_sum[key] = sum[key] * profitability / 100
+                    if margin_sum:
+                        margin_plan = margin_sum.copy()
 
                     if not project.is_correction_project:
                         if sum100tmp_step >= sum['commitment']:
@@ -2088,15 +2080,12 @@ class report_management_committee_excel(models.AbstractModel):
                 sum100tmp += sum100tmp_proj
                 prof100tmp += prof100tmp_proj
 
-                sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 2, False)
+                sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 2, False, profitability)
 
                 margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                if sum:
-                    for key in sum:
-                        margin_plan[key] = sum[key] * profitability / 100
-                        margin_sum[key] = sum[key] * profitability / 100
+                if margin_sum:
+                    margin_plan = margin_sum.copy()
 
                 if not project.is_correction_project:
                     if sum100tmp >= sum['commitment']:
@@ -2180,15 +2169,12 @@ class report_management_committee_excel(models.AbstractModel):
                         sum100tmp += sum100tmp_step
                         prof100tmp += prof100tmp_step
 
-                        sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint, element)
+                        sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint, element, profitability)
 
                         margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                        margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                        if sum:
-                            for key in sum:
-                                margin_plan[key] = sum[key] * profitability / 100
-                                margin_sum[key] = sum[key] * profitability / 100
+                        if margin_sum:
+                            margin_plan = margin_sum.copy()
 
                         if not project.is_correction_project:
                             if sum100tmp_step >= sum['commitment']:
@@ -2229,15 +2215,12 @@ class report_management_committee_excel(models.AbstractModel):
                     sum100tmp += sum100tmp_proj
                     prof100tmp += prof100tmp_proj
 
-                    sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint, element)
+                    sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint, element, profitability)
 
                     margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                    margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                    if sum:
-                        for key in sum:
-                            margin_plan[key] = sum[key] * profitability / 100
-                            margin_sum[key] = sum[key] * profitability / 100
+                    if margin_sum:
+                        margin_plan = margin_sum.copy()
 
                     if not project.is_correction_project:
                         if sum100tmp >= sum['commitment']:
@@ -2290,23 +2273,17 @@ class report_management_committee_excel(models.AbstractModel):
                         sum100tmp += sum100tmp_step
                         prof100tmp += prof100tmp_step
 
-                        sum_q1 = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 1, 'Q1')
-                        sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 1, False)
+                        sum_q1, margin_sum_q1 = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 1, 'Q1', profitability)
+                        sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 1, False, profitability)
 
                         margin_plan_q1 = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                        margin_sum_q1 = {'commitment': 0, 'reserve': 0, 'potential': 0}
                         margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                        margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                        if sum:
-                            for key in sum:
-                                margin_plan[key] = sum[key] * profitability / 100
-                                margin_sum[key] = sum[key] * profitability / 100
+                        if margin_sum:
+                            margin_plan = margin_sum.copy()
 
-                        if sum_q1:
-                            for key in sum_q1:
-                                margin_plan_q1[key] = sum_q1[key] * profitability / 100
-                                margin_sum_q1[key] = sum_q1[key] * profitability / 100
+                        if margin_sum_q1:
+                            margin_plan_q1 = margin_sum_q1.copy()
 
                         if not project.is_correction_project:
                             if sum100tmp_q1_step >= sum_q1['commitment']:
@@ -2394,23 +2371,17 @@ class report_management_committee_excel(models.AbstractModel):
                     sum100tmp += sum100tmp_proj
                     prof100tmp += prof100tmp_proj
 
-                    sum_q1 = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 1, 'Q1')
-                    sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 1, False)
+                    sum_q1, margin_sum_q1 = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 1, 'Q1', profitability)
+                    sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 1, False, profitability)
 
                     margin_plan_q1 = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                    margin_sum_q1 = {'commitment': 0, 'reserve': 0, 'potential': 0}
                     margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                    margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                    if sum:
-                        for key in sum:
-                            margin_plan[key] = sum[key] * profitability / 100
-                            margin_sum[key] = sum[key] * profitability / 100
+                    if margin_sum:
+                        margin_plan = margin_sum.copy()
 
-                    if sum_q1:
-                        for key in sum_q1:
-                            margin_plan_q1[key] = sum_q1[key] * profitability / 100
-                            margin_sum_q1[key] = sum_q1[key] * profitability / 100
+                    if margin_sum_q1:
+                        margin_plan_q1 = margin_sum_q1.copy()
 
                     if not project.is_correction_project:
                         if sum100tmp_q1 >= sum_q1['commitment']:
@@ -2500,15 +2471,12 @@ class report_management_committee_excel(models.AbstractModel):
                         sum100tmp += sum100tmp_step
                         prof100tmp += prof100tmp_step
 
-                        sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 2, False)
+                        sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, step, YEARint + 2, False, profitability)
 
                         margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                        margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                        if sum:
-                            for key in sum:
-                                margin_plan[key] = sum[key] * profitability / 100
-                                margin_sum[key] = sum[key] * profitability / 100
+                        if margin_sum:
+                            margin_plan = margin_sum.copy()
 
                         if not project.is_correction_project:
                             if sum100tmp_step >= sum['commitment']:
@@ -2559,15 +2527,12 @@ class report_management_committee_excel(models.AbstractModel):
                     sum100tmp += sum100tmp_proj
                     prof100tmp += prof100tmp_proj
 
-                    sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 2, False)
+                    sum, margin_sum = self.get_sum_planned_acceptance_project_step_year_quarter(project, False, YEARint + 2, False, profitability)
 
                     margin_plan = {'commitment': 0, 'reserve': 0, 'potential': 0}
-                    margin_sum = {'commitment': 0, 'reserve': 0, 'potential': 0}
 
-                    if sum:
-                        for key in sum:
-                            margin_plan[key] = sum[key] * profitability / 100
-                            margin_sum[key] = sum[key] * profitability / 100
+                    if margin_sum:
+                        margin_plan = margin_sum.copy()
 
                     if not project.is_correction_project:
                         if sum100tmp >= sum['commitment']:
@@ -4537,18 +4502,15 @@ class report_management_committee_excel(models.AbstractModel):
                         'Q4_66': str(company_plan_contracting.q4_plan_6_6),
                         'HY1': '=SUM(' + xl_col_to_name(plan_shift['contracting']['Q1']) + '{0} + ' + xl_col_to_name(
                             plan_shift['contracting']['Q2']) + '{0})',
-                        'HY1_66': '=SUM(' + xl_col_to_name(
-                            plan_shift['contracting']['Q1_66']) + '{0} + ' + xl_col_to_name(
+                        'HY1_66': '=SUM(' + xl_col_to_name(plan_shift['contracting']['Q1_66']) + '{0} + ' + xl_col_to_name(
                             plan_shift['contracting']['Q2_66']) + '{0})',
                         'HY2': '=SUM(' + xl_col_to_name(plan_shift['contracting']['Q3']) + '{0} + ' + xl_col_to_name(
                             plan_shift['contracting']['Q4']) + '{0})',
-                        'HY2_66': '=SUM(' + xl_col_to_name(
-                            plan_shift['contracting']['Q3_66']) + '{0} + ' + xl_col_to_name(
+                        'HY2_66': '=SUM(' + xl_col_to_name(plan_shift['contracting']['Q3_66']) + '{0} + ' + xl_col_to_name(
                             plan_shift['contracting']['Q4_66']) + '{0})',
                         'Y': '=SUM(' + xl_col_to_name(plan_shift['contracting']['HY1']) + '{0} + ' + xl_col_to_name(
                             plan_shift['contracting']['HY2']) + '{0})',
-                        'Y_66': '=SUM(' + xl_col_to_name(
-                            plan_shift['contracting']['HY1_66']) + '{0} + ' + xl_col_to_name(
+                        'Y_66': '=SUM(' + xl_col_to_name(plan_shift['contracting']['HY1_66']) + '{0} + ' + xl_col_to_name(
                             plan_shift['contracting']['HY2_66']) + '{0})',
                     },
                     'cash': {

@@ -1035,6 +1035,8 @@ class report_budget_forecast_excel(models.AbstractModel):
             acceptance_list = project.planned_acceptance_flow_ids
             if acceptance_list:
                 for acceptance in acceptance_list:
+                    if any(distribution.fact_acceptance_flow_id.margin_manual_input for distribution in acceptance.distribution_acceptance_ids):  # если есть ручная маржа - пропускаем
+                        continue
                     if step:
                         if acceptance.project_steps_id.id != step.id: continue
                         stage_id_code = step.stage_id.code
@@ -1055,6 +1057,8 @@ class report_budget_forecast_excel(models.AbstractModel):
             acceptance_list = project.planned_acceptance_flow_ids
             if acceptance_list:
                 for acceptance in acceptance_list:
+                    if any(distribution.fact_acceptance_flow_id.margin_manual_input for distribution in acceptance.distribution_acceptance_ids):  # если есть ручная маржа - пропускаем
+                        continue
                     if step:
                         if acceptance.project_steps_id.id != step.id: continue
                         stage_id_code = step.stage_id.code
@@ -1173,6 +1177,9 @@ class report_budget_forecast_excel(models.AbstractModel):
             return margin_plan
         if months:
             for planned_acceptance_flow in project.planned_acceptance_flow_ids:
+                if any(distribution.fact_acceptance_flow_id.margin_manual_input for distribution in
+                       planned_acceptance_flow.distribution_acceptance_ids):  # если есть ручная маржа - пропускаем
+                    continue
                 if step:
                     if planned_acceptance_flow.project_steps_id.id != step.id: continue
                 if planned_acceptance_flow.date_cash.month in months and planned_acceptance_flow.date_cash.year == year:
@@ -1182,6 +1189,9 @@ class report_budget_forecast_excel(models.AbstractModel):
                                                                               step, margin_rate_for_parent)
         if element_name == False:
             for planned_acceptance_flow in project.planned_acceptance_flow_ids:
+                if any(distribution.fact_acceptance_flow_id.margin_manual_input for distribution in
+                       planned_acceptance_flow.distribution_acceptance_ids):  # если есть ручная маржа - пропускаем
+                    continue
                 if step:
                     if planned_acceptance_flow.project_steps_id.id != step.id: continue
                 if planned_acceptance_flow.date_cash.year == year:
@@ -3181,8 +3191,7 @@ class report_budget_forecast_excel(models.AbstractModel):
         if dict_formula['companies_lines']:
             formula_itogo = '=sum(' + ','.join(('{0}' + str(c)) for c in dict_formula['companies_lines']) + ')'
             formula_plan = '=sum(,' + ','.join(('{0}' + str(c + 1)) for c in dict_formula['companies_lines']) + ')'  # увеличиваем все номера строк на 1
-            sheet.set_row(row, False, False, {'hidden': 1, 'level': 0})
-            sheet.set_row(row + 1, False, False, {'hidden': 1, 'level': 0})
+            sheet.set_row(row, False, False, {'hidden': 1, 'level': 1})
         elif dict_formula['offices_lines']:
             formula_itogo = '=sum(' + ','.join(('{0}' + str(c)) for c in dict_formula['offices_lines']) + ')'
             formula_plan = '=sum(' + ','.join(('{0}' + str(c + 1)) for c in dict_formula['offices_lines']) + ')'  # увеличиваем все номера строк на 1
