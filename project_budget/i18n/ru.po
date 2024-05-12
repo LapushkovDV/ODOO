@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-27 11:16+0000\n"
-"PO-Revision-Date: 2024-04-27 11:16+0000\n"
+"POT-Creation-Date: 2024-05-08 12:15+0000\n"
+"PO-Revision-Date: 2024-05-08 12:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -141,6 +141,7 @@ msgid ""
 msgstr ""
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_office_view_kanban
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_kanban
 #: model_terms:ir.ui.view,arch_db:project_budget.res_company_partner_view_kanban
 msgid "<span class=\"bg-danger\">Archived</span>"
@@ -227,6 +228,7 @@ msgid "Action Needed"
 msgstr "Требуется действие"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__active
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_stage__active
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__active
 #: model:ir.model.fields,field_description:project_budget.field_res_company_partner__active
@@ -393,6 +395,8 @@ msgid "Approve project by supervisor"
 msgstr "Утверждение проекта куратором"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_office_view_from
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_office_view_search
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_stage_view_form
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_stage_view_search
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_search
@@ -482,6 +486,11 @@ msgstr "Коммерческая деятельность"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__can_edit
 msgid "Can Edit"
 msgstr ""
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_hr_employee_replacement__kam_function
+msgid "Can See KAM Projects"
+msgstr "Может видеть сделки КАМа"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__can_approve_project
@@ -1171,11 +1180,6 @@ msgid "Forecast_v2"
 msgstr "Прогноз_v2"
 
 #. module: project_budget
-#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__plan_fact
-msgid "Plan-Fact"
-msgstr "План-Факт"
-
-#. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_planned_acceptance_flow__forecast__from_project
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_planned_cash_flow__forecast__from_project
 msgid "From project/step"
@@ -1403,6 +1407,17 @@ msgstr "КБ"
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__kb_fin
 msgid "KB fin"
 msgstr "КБ в финуправление"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__key_account_manager_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__key_account_manager_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__key_account_manager_id
+#: model:res.groups,name:project_budget.group_project_budget_key_account_manager
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_search
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+#: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
+msgid "Key Account Manager"
+msgstr "КАМ"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_amount_spec____last_update
@@ -1994,7 +2009,6 @@ msgstr ""
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.res_company_partner_view_form
-#: model_terms:ir.ui.view,arch_db:project_budget.res_partner_view_form_inherit_project_budget
 msgid "Partner Projects"
 msgstr "Проекты"
 
@@ -2020,6 +2034,11 @@ msgstr "Воронка"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__plan_supervisor_id
 msgid "Plan Supervisor"
 msgstr "Вышестоящий план ПО"
+
+#. module: project_budget
+#: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__type_report__plan_fact
+msgid "Plan-Fact"
+msgstr "План-Факт"
 
 #. module: project_budget
 #. odoo-python
@@ -2153,15 +2172,23 @@ msgid "Project Count"
 msgstr "Количество проектов"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.hr_employee_replacement_view_form_inherit_project_budget
+msgid "Project Management"
+msgstr ""
+
+#. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_project_office
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__project_office_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__project_office_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__project_office_id
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_office_view_from
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_office_view_search
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_search
 msgid "Project Office"
 msgstr "Проектный офис"
 
 #. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.action_project_budget_project_offices
-#: model:ir.ui.menu,name:project_budget.menu_project_budget_project_offices
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_office_view_tree
 msgid "Project Offices"
 msgstr "Проектные офисы"
@@ -2266,6 +2293,7 @@ msgstr "ID проекта"
 #: model:ir.model.fields,field_description:project_budget.field_res_users__project_ids
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_spec
 #: model:ir.ui.menu,name:project_budget.project_budget_projects_report
+#: model_terms:ir.ui.view,arch_db:project_budget.res_partner_view_form_inherit_project_budget
 #, python-format
 msgid "Projects"
 msgstr "Текущие сделки"
@@ -2298,6 +2326,11 @@ msgid "Projects Report PDS, Acceptance"
 msgstr "Прогноз ПДС Валовая выручка"
 
 #. module: project_budget
+#: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_plan_fact
+msgid "Projects Report Plan-Fact"
+msgstr "План-Факт"
+
+#. module: project_budget
 #: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_forecast
 msgid "Projects Report forecast"
 msgstr "Прогноз"
@@ -2306,11 +2339,6 @@ msgstr "Прогноз"
 #: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_forecast_v2
 msgid "Projects Report forecast v2"
 msgstr "Прогноз_v2"
-
-#. module: project_budget
-#: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_plan_fact
-msgid "Plan-Fact"
-msgstr "План-Факт"
 
 #. module: project_budget
 #: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_kb
@@ -2336,6 +2364,11 @@ msgstr ""
 #: model:ir.actions.report,name:project_budget.action_projects_list_report_xlsx_svod
 msgid "Projects Report svod"
 msgstr "Свод"
+
+#. module: project_budget
+#: model:ir.ui.menu,name:project_budget.menu_project_budget_project_offices
+msgid "Projects To Project Offices"
+msgstr "Сделки по проектным офисам"
 
 #. module: project_budget
 #: model:ir.ui.menu,name:project_budget.project_budget_budgets_comercial_budget_spec_all
@@ -2371,6 +2404,11 @@ msgstr "Получатели"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Reopen"
 msgstr "Вернуть в работу"
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_hr_employee_replacement
+msgid "Replacement Employee"
+msgstr "Замещающий сотрудник"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__report_id
@@ -2767,6 +2805,44 @@ msgstr "Видимость полей в этапе"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__warranty_service_costs
 msgid "Warranty service costs"
 msgstr " Расходы на гарант. обслуж."
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_amount_spec__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_commercial_budget__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_acceptance_flow__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_fact_cash_flow__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_acceptance_flow__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_planned_cash_flow__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_currency_rates__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_step_amount_spec__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_comments__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__website_message_ids
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: project_budget
+#: model:ir.model.fields,help:project_budget.field_project_budget_amount_spec__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_budget_plan_kam__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_budget_plan_supervisor__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_commercial_budget__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_fact_acceptance_flow__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_fact_cash_flow__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_planned_acceptance_flow__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_planned_cash_flow__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_project_currency_rates__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_project_steps__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_projects__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_step_amount_spec__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_tender_comments__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_tender_sums__website_message_ids
+#: model:ir.model.fields,help:project_budget.field_project_budget_tenders__website_message_ids
+msgid "Website communication history"
+msgstr ""
 
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_commercial_budget__budget_state__work
@@ -3391,7 +3467,6 @@ msgstr "Введите код проекта из AXAPTA"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__essence_project
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__essence_project
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__essence_project
-#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_office_view_search
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_search
 msgid "essence_project"
 msgstr "Наименование"
@@ -3565,7 +3640,6 @@ msgid "is need comment type "
 msgstr "Указать тип"
 
 #. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__is_prohibit_selection
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_vat_attribute__is_prohibit_selection
 msgid "is prohibit selection in projects"
 msgstr "Запрет выбора в проектах"
@@ -4197,11 +4271,6 @@ msgid "project manager id"
 msgstr "КАМ проекта (все его проекты будут доступны пользователю)"
 
 #. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_steps__project_office_id
-msgid "project office"
-msgstr "Проектный офис"
-
-#. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_project_steps
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__project_steps_ids
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
@@ -4267,6 +4336,11 @@ msgstr "Прогноз (EXCEL)"
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_report_project_budget_report_budget_forecast_v2_excel
 msgid "project_budget.report_budget_forecast_v2_excel"
+msgstr ""
+
+#. module: project_budget
+#: model:ir.model,name:project_budget.model_report_project_budget_report_budget_plan_fact_excel
+msgid "project_budget.report_budget_plan_fact_excel"
 msgstr ""
 
 #. module: project_budget
@@ -4343,9 +4417,7 @@ msgstr "Юрлицо, подписывающее договор"
 #: model:ir.actions.act_window,name:project_budget.show_project_manager
 #: model:ir.model,name:project_budget.model_project_budget_project_manager
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__project_manager_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__project_manager_id
 #: model:ir.ui.menu,name:project_budget.project_budget_catalogs_project_manager
-#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_search
 #: model_terms:ir.ui.view,arch_db:project_budget.show_project_manager_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_project_manager_tree
 msgid "project_manager"
@@ -4380,15 +4452,8 @@ msgid "project_manager_access"
 msgstr "Доступ пользователей по менеджерам проектов"
 
 #. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
-msgid "project_manager_id"
-msgstr "КАМ"
-
-#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__project_office_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__project_office_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__project_office_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__project_office_id
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_search
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budgets_tree
 msgid "project_office"
@@ -4798,11 +4863,6 @@ msgstr "Выберете плановое актирование"
 #: model_terms:ir.ui.view,arch_db:project_budget.show_fact_cash_flow_form
 msgid "select planned cash flow"
 msgstr "Выберете плановую позицию"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
-msgid "select project manager"
-msgstr "Выберите КАМ"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
