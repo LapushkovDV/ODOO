@@ -2,7 +2,7 @@
     'name': 'Project_budget',
     'version': '16.0.1.1.2',
     'category': 'Project',
-    'depends': ['base', 'mail'],
+    'depends': ['base', 'mail', 'hr'],
     'description': """
     """,
     'author': 'lapus',
@@ -39,6 +39,7 @@
         'views/res_partner_views.xml',
         'views/scheduled_report_views.xml',
         'views/res_config_settings.xml',
+        'views/hr_employee_replacement_views.xml',
         'wizard/report_tender_wizard.xml',
         'wizard/report_projects_wizard.xml',
         'views/res_company_partner_type_views.xml',

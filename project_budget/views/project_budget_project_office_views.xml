@@ -5,8 +5,9 @@
         <field name="model">project_budget.project_office</field>
         <field name="arch" type="xml">
             <search string="Search Project Offices">
-                <field name="name" filter_domain="[('name', 'ilike', self)]"
-                       string="essence_project"/>
+                <field name="name" string="Project Office" filter_domain="[('name', 'ilike', self)]"/>
+                <separator/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
                 <group expand="0" string="Group By">
                     <filter name="group_by_company" string="Company" context="{'group_by': 'company_id'}"
                             groups="base.group_multi_company"/>
@@ -20,7 +21,7 @@
         <field name="model">project_budget.project_office</field>
         <field name="arch" type="xml">
             <tree string="Project Offices">
-                <field name="company_id" invisible="True"/>
+                <field name="company_id" invisible="1"/>
                 <field name="company_id" groups="base.group_multi_company"
                        options="{'no_create': True}"/>
                 <field name="parent_id"/>
@@ -48,8 +49,13 @@
         <field name="arch" type="xml">
             <form>
                 <sheet string="Project Office">
+                    <group invisible="1">
+                        <field name="company_id"/>
+                        <field name="active"/>
+                    </group>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"/>
                     <group>
-                        <field name="company_id" invisible="True"/>
                         <field name="company_id" groups="base.group_multi_company"
                                options="{'no_create': True}"/>
                         <field name="parent_id"/>
@@ -97,6 +103,7 @@
             <kanban class="oe_background_grey o_kanban_dashboard o_project_office_kanban"
                     action="%(action_project_budget_project_office_projects)d" type="action"
                     quick_create="false" group_create="false" group_delete="false">
+                <field name="active"/>
                 <field name="name"/>
                 <field name="code"/>
                 <field name="descr"/>
@@ -111,6 +118,9 @@
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="ribbon ribbon-top-right" attrs="{'invisible': [('active', '=', True)]}">
+                                <span class="bg-danger">Archived</span>
+                            </div>
                             <div class="o_dropdown_kanban dropdown" groups="project_budget.project_budget_admin">
                                 <a class="dropdown-toggle o-no-caret btn" href="#" role="button"
                                    data-toggle="dropdown" aria-label="Dropdown menu" title="Dropdown menu">

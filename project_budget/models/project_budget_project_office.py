@@ -5,13 +5,14 @@ class ProjectOffice(models.Model):
     _name = 'project_budget.project_office'
     _description = 'Project Office'
 
+    active = fields.Boolean('Active', copy=False, default=True)
     name = fields.Char(string='Name', required=True, translate=True)
     code = fields.Char(string='Code', required=True)
     descr = fields.Char(string='Description')
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company, required=True)
     currency_id = fields.Many2one(related='company_id.currency_id', string='Currency', readonly=True)
     parent_id = fields.Many2one('project_budget.project_office', string='Parent Project Office', copy=True,
-                                domain="[('id', '!=', id)]", tracking=True)
+                                domain="[('id', '!=', id)]")
     child_ids = fields.One2many('project_budget.project_office', 'parent_id', string='Child Project Offices')
     user_id = fields.Many2one('res.users', string='Office manager')
     avatar_128 = fields.Image(related='user_id.avatar_128', readonly=True)

@@ -23,3 +23,4 @@ from . import res_partner
 from . import res_company_partner_type
 from . import res_company_partner_grade
 from . import res_company_partner
+from . import hr_employee_replacement

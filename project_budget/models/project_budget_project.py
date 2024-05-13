@@ -21,6 +21,17 @@ class Project(models.Model):
     def _get_default_stage_id(self):
         return self.env['project_budget.project.stage'].search([('fold', '=', False)], limit=1)
 
+    def _get_default_key_account_manager_id(self):
+        employee = self.env['hr.employee'].search([
+            ('user_id', '=', self.env.user.id),
+            ('company_id', '=', self.env.company.id)
+        ], limit=1)
+        return employee.id
+
+    def _get_key_account_manager_id_domain(self):
+        return "[('user_id.groups_id', 'in', %s), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"\
+            % self.env.ref('project_budget.group_project_budget_key_account_manager').id
+
     def _get_current_amount_spec_type(self):
         context = self.env.context
         print('_get_current_amount_spec_type context',context)
@@ -203,11 +214,16 @@ class Project(models.Model):
 
     budget_state = fields.Selection(related='commercial_budget_id.budget_state', index=True, readonly=True, store=True)
 
-    project_office_id = fields.Many2one('project_budget.project_office', string='project_office', required=True,
-                                        copy=True,tracking=True,  check_company=True, domain ="[('is_prohibit_selection','=', False)]")
+    # TODO: необходимо убрать домен и перейти на стандартное поле active
+    project_office_id = fields.Many2one('project_budget.project_office', string='Project Office', check_company=True,
+                                        copy=True, domain="[('is_prohibit_selection','=', False)]", required=True,
+                                        tracking=True)
     project_supervisor_id = fields.Many2one('project_budget.project_supervisor', string='project_supervisor',
                                             required=True, copy=True, domain=_get_supervisor_list, tracking=True, check_company=True)
-    project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=True,
+    key_account_manager_id = fields.Many2one('hr.employee', string='Key Account Manager', copy=True,
+                                             default=_get_default_key_account_manager_id,
+                                             domain=_get_key_account_manager_id_domain, required=True, tracking=True)
+    project_manager_id = fields.Many2one('project_budget.project_manager', string='project_manager', required=False,
                                          copy=True, default=_get_first_manager_from_access, domain=_get_manager_list, tracking=True, check_company=True) # на самом деле это КАМ, а вот РП ниже
 
     rukovoditel_project_id = fields.Many2one('project_budget.rukovoditel_project', string='rukovoditel_project',
@@ -440,7 +456,7 @@ class Project(models.Model):
                         if step.stage_id.code != '0':
                             step.stage_id = rec.stage_id
 
-    @api.onchange('project_office_id','project_status','currency_id','project_supervisor_id','project_manager_id',
+    @api.onchange('project_office_id','project_status','currency_id','project_supervisor_id','key_account_manager_id',
                   'industry_id','essence_project','end_presale_project_month','end_sale_project_month','vat_attribute_id','total_amount_of_revenue',
                   'total_amount_of_revenue_with_vat','revenue_from_the_sale_of_works','revenue_from_the_sale_of_goods','cost_price','cost_of_goods','own_works_fot',
                   'third_party_works','awards_on_results_project','transportation_expenses','travel_expenses','representation_expenses','taxes_fot_premiums','warranty_service_costs',
@@ -482,7 +498,7 @@ class Project(models.Model):
         for row in self:
             row.project_supervisor_user_id = row.project_supervisor_id.user_id
 
-    @api.depends('project_manager_id.user_id')
+    @api.depends('key_account_manager_id.user_id')
     def _get_manager_user_id(self):
         for row in self:
             row.project_manager_user_id = row.project_manager_id.user_id
@@ -1249,7 +1265,8 @@ class Project(models.Model):
                         'display_name': _('Supervisor declined project. Change nessesary values and send supervisor for approval'),
                         'summary': _('Supervisor declined project. Change nessesary values and send supervisor for approval'),
                         'date_deadline': fields.datetime.now(),
-                        'user_id': rows.project_manager_id.user_id.id,
+                        'user_id': rows.key_account_manager_id.user_id.id,
+                        # 'user_id': rows.project_manager_id.user_id.id,
                         'res_id': rows.id,
                         'res_model_id': self.env['ir.model'].search([('model', '=', 'project_budget.projects')]).id,
                         'activity_type_id': self.env.ref('project_budget.mail_act_send_project_to_supervisor_for_approval').id
@@ -1305,9 +1322,6 @@ class Project(models.Model):
                 <p class="o_view_nocontent_smiling_face">%s</p>
                 """ % _("Add tenders for this project")
         }
-
-    def _monetary_format(self, amount):
-        return '{:,.0f}'.format(amount).replace(',', ' ')
 
     def reopen(self):
         """
@@ -1442,7 +1456,8 @@ class Project(models.Model):
             required_fields = self._get_stage_required_fields(stage)
             empty_fields = []
             for required_field in required_fields:
-                if not rec[required_field] or not changed_fields.get(required_field, False):
+                if (not rec[required_field] and not changed_fields.get(required_field, False)) or (
+                        rec[required_field] and not changed_fields.get(required_field, True)):
                     empty_fields.append(required_field)
 
             if empty_fields:

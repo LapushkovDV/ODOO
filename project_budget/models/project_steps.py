@@ -4,7 +4,7 @@ from odoo.tools import pytz
 from datetime import timedelta
 
 
-#TODO: убрать все явные привязки к вероятности
+#TODO: убрать все явные привязки к вероятности, объединить с projects???
 class project_steps(models.Model):
     _name = 'project_budget.project_steps'
     _description = "project steps"
@@ -269,10 +269,9 @@ class project_steps(models.Model):
                                required=True, tracking=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', related='projects_id.currency_id', readonly=True)
     project_steps_type_id = fields.Many2one('project_budget.project_steps_type', string='project steps type', required=True, copy=True)
-    project_office_id = fields.Many2one('project_budget.project_office', string='project office',
-                                        copy=True, tracking=True, check_company=True,
-                                        domain="[('is_prohibit_selection','=', False)]",
-                                        )
+    # TODO: необходимо убрать домен и перейти на стандартное поле active
+    project_office_id = fields.Many2one('project_budget.project_office', string='Project Office', copy=True,
+                                        domain="[('is_prohibit_selection','=', False)]", tracking=True)
     planned_cash_flow_sum = fields.Monetary(
         string='planned_cash_flow_sum',
         compute='_compute_planned_cash_flow_sum',
