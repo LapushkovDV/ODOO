@@ -71,6 +71,10 @@
             <menuitem id="menu_project_budget_pipeline_stages" name="Stages" sequence="10"
                       action="action_project_budget_project_stages"/>
         </menuitem>
+        <menuitem id="menu_project_budget_access" name="Access" sequence="20" groups="project_budget_admin">
+            <menuitem id="menu_project_budget_transfer_rights" name="Transfer Rights To The Employee" sequence="1"
+                      action="action_project_budget_project_user_rights"/>
+        </menuitem>
 <!--        TODO: вынести тендеры в отдельное приложение-->
         <menuitem id="menu_project_budget_partners" name="Company Partners" sequence="40"
                   groups="base.group_partner_manager">

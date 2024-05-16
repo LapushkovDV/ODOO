@@ -99,7 +99,8 @@
                 <field name="project_office_id" optional="show"/>
                 <field name="project_supervisor_id" optional="show" widget="many2one_avatar"/>
                 <field name="key_account_manager_id" optional="show" widget="many2one_avatar_employee"/>
-                <field name="rukovoditel_project_id" optional="show" widget="many2one_avatar"/>
+                <field name="project_manager_id" optional="show" widget="many2one_avatar_employee"/>
+<!--                <field name="rukovoditel_project_id" optional="show" widget="many2one_avatar"/>-->
                 <field name="industry_id" optional="hide"/>
                 <field name="partner_id" optional="show" widget="many2one_avatar"/>
                 <field name="company_partner_id" widget="many2one_avatar" optional="hide"/>
@@ -166,8 +167,10 @@
                        options="{'no_open': True}"/>
                 <field name="key_account_manager_id" optional="show" widget="many2one_avatar_employee" readonly="1"
                        options="{'no_open': True}"/>
-                <field name="rukovoditel_project_id" optional="show" widget="many2one_avatar" readonly="1"
+                <field name="project_manager_id" optional="show" widget="many2one_avatar_employee" readonly="1"
                        options="{'no_open': True}"/>
+<!--                <field name="rukovoditel_project_id" optional="show" widget="many2one_avatar" readonly="1"-->
+<!--                       options="{'no_open': True}"/>-->
                 <field name="industry_id" optional="hide" readonly="1" options="{'no_open': True}"/>
                 <field name="partner_id" widget="many2one_avatar" optional="show" readonly="1"
                        options="{'no_open': True}"/>
@@ -210,8 +213,9 @@
                                     icon="fa-files-o">
                                 <field string="Attachments" name="attachment_count" widget="statinfo"/>
                             </button>
-                            <button class="oe_stat_button" type="object" name="action_open_tenders"
-                                    icon="fa-gavel">
+<!--                            TODO: слишком большой список групп, подумать при декомпозиции приложения-->
+                            <button class="oe_stat_button" type="object" name="action_open_tenders" icon="fa-gavel"
+                                    groups="project_budget.project_budget_users,project_budget.project_budget_admin,project_budget.project_budget_tenders_user,project_budget.project_budget_tenders_admin">
                                 <field string="Tenders" name="tenders_count" widget="statinfo"/>
                             </button>
                             <button name="%(action_project_budget_project_child_projects)d" type="action"
@@ -279,45 +283,38 @@
 
                         <group col="6">
                             <group colspan="4">
-                                <field name="essence_project" class='h4' placeholder="type here essence of the project" colspan="1"
-                                               attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="essence_project" class='h4' colspan="1"
+                                       placeholder="type here essence of the project"
+                                       attrs="{'readonly': [('can_edit', '=', False)]}"/>
                             </group>
                             <group colspan="2">
-                                <field name="end_presale_project_month"  attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}" />
-                                <field name="end_sale_project_month" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="end_presale_project_month"
+                                       attrs="{'readonly': [('can_edit', '=', False)]}"/>
+                                <field name="end_sale_project_month" attrs="{'readonly': [('can_edit', '=', False)]}"/>
                             </group>
                         </group>
 
                         <group col="4">
                             <group>
-                                <field name="total_amount_of_revenue"
-                                       decoration-bf="1"
-                                       decoration-success="total_amount_of_revenue &gt; 0"
-                                       class="h5"
-                                />
+                                <field name="total_amount_of_revenue" class="h5"
+                                       decoration-success="total_amount_of_revenue &gt; 0"/>
                             </group>
                             <group>
-                                <field name="total_amount_of_revenue_with_vat"
-                                       decoration-bf="1"
-                                       decoration-success="total_amount_of_revenue_with_vat &gt; 0"
-                                       class="h5"
-                                />
+                                <field name="total_amount_of_revenue_with_vat" class="h5"
+                                       decoration-success="total_amount_of_revenue_with_vat &gt; 0"/>
                             </group>
                             <group>
-                                <field name="cost_price"
-                                       decoration-bf="1"
-                                       decoration-success="cost_price &gt; 0"
-                                       class="h5"
-                                />
+                                <field name="cost_price" class="h5"
+                                       decoration-success="cost_price &gt; 0"/>
                             </group>
                             <group>
                                 <field name="margin_income" class="h5"
-                                       decoration-bf="1"
                                        decoration-success="margin_income &gt; 0"
-                                       decoration-danger="margin_income &lt; 0"
-                                />
-                                <field name="margin_for_parent_project" attrs="{'invisible': [('is_child_project', '!=', True)]}"/>
-                                <field name="total_margin_of_child_projects" attrs="{'invisible': [('is_parent_project', '!=', True)]}"/>
+                                       decoration-danger="margin_income &lt; 0"/>
+                                <field name="margin_for_parent_project"
+                                       attrs="{'invisible': [('is_child_project', '!=', True)]}"/>
+                                <field name="total_margin_of_child_projects"
+                                       attrs="{'invisible': [('is_parent_project', '!=', True)]}"/>
                             </group>
                         </group>
                         <group col="4">
@@ -325,8 +322,7 @@
                                 <group>
                                     <field name="profitability"
                                            decoration-success="margin_income &gt; 0"
-                                           decoration-danger="margin_income &lt; 0"
-                                    />
+                                           decoration-danger="margin_income &lt; 0"/>
                                 </group>
                             </h5>
                             <group>
@@ -334,22 +330,25 @@
                                 <field name="currency_id" attrs="{'readonly': True}" options="{'no_open': True}"/>
                             </group>
                             <group>
-                                <field name="dogovor_number" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                <field name="dogovor_number" attrs="{'readonly': [('can_edit', '=', False)]}"/>
                             </group>
                             <group>
-                                <field name="vat_attribute_id" placeholder="select vat attribute" options="{'no_open': True}"
-                                       attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')],
-                                              'invisible': ['|',('project_have_steps', '=', True),('is_parent_project', '=', True)],'required': ['&amp;',('is_parent_project', '=', False),('project_have_steps', '=', False)]}"/>
+                                <field name="vat_attribute_id" placeholder="select vat attribute"
+                                       options="{'no_open': True}"
+                                       attrs="
+                                       {
+                                            'readonly': [('can_edit', '=', False)],
+                                            'invisible': ['|', ('project_have_steps', '=', True), ('is_parent_project', '=', True)],
+                                            'required': ['&amp;', ('is_parent_project', '=', False), ('project_have_steps', '=', False)]
+                                       }"/>
                             </group>
                         </group>
 
                         <notebook>
                             <page string="General">
                                 <group col="1">
-                                    <field name="commercial_budget_id" required="1"
-                                          options="{'no_open': True}" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
-                                          invisible="1"
-                                    />
+                                    <field name="commercial_budget_id" required="1" invisible="1"
+                                          options="{'no_open': True}" attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                     <field name="is_percent_fot_manual" invisible="1"/>
                                 </group>
                                 <h5>
@@ -357,10 +356,10 @@
                                         <group>
                                             <field class="text-break" name="step_project_number"
                                                    placeholder="enter project code from AXAPTA"
-                                                   attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
-                                            <field class="text-break" name="project_office_id" placeholder="select project office" force_save="1" options="{'no_open': True,}"
-                                                    attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
-                                                    decoration-bf="1"/>
+                                                   attrs="{'readonly': [('can_edit', '=', False)]}"/>
+                                            <field name="project_office_id" class="text-break"
+                                                   placeholder="Project Office" options="{'no_open': True}"
+                                                   attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                         </group>
                                         <group>
                                             <field name="isRukovoditel_required_in_project" invisible="True"/>
@@ -368,18 +367,24 @@
                                                    placeholder="Key Account Manager"
                                                    options="{'no_create_edit': True, 'no_open': True}"
                                                    attrs="{'readonly': [('can_edit', '=', False)]}"/>
-                                            <field name="rukovoditel_project_id" widget="many2one_avatar" force_save="1" placeholder="select rukovoditel_project" options="{'no_open': True,}"
-                                                    attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')], 'required': [('isRukovoditel_required_in_project', '=', True)]}"
-                                                    decoration-bf="1"/>
-                                            <field name="project_type_id" force_save="1" options="{'no_open': True,}" placeholder="select project type"
-                                                   attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                            <field name="project_manager_id" widget="many2one_avatar_employee"
+                                                   placeholder="Project Manager"
+                                                   options="{'no_create_edit': True, 'no_open': True}"
+                                                   attrs="{'readonly': [('can_edit', '=', False)], 'required': [('isRukovoditel_required_in_project', '=', True)]}"/>
+<!--                                            <field name="rukovoditel_project_id" widget="many2one_avatar" force_save="1" placeholder="select rukovoditel_project" options="{'no_open': True,}"-->
+<!--                                                    attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')], 'required': [('isRukovoditel_required_in_project', '=', True)]}"-->
+<!--                                                    decoration-bf="1"/>-->
+                                            <field name="project_type_id" placeholder="Project Type"
+                                                   options="{'no_open': True}"
+                                                   attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                         </group>
                                         <group>
-                                            <field name="project_supervisor_id" widget="many2one_avatar" placeholder="select project supervisor" force_save="1" options="{'no_open': True,}"
-                                                    attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
-                                                    decoration-bf="1"/>
-                                            <field name="technological_direction_id" force_save="1" options="{'no_open': True,}" placeholder="select technological direction"
-                                                   attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                            <field name="project_supervisor_id" widget="many2one_avatar"
+                                                   placeholder="Project Supervisor" options="{'no_open': True}"
+                                                   attrs="{'readonly': [('can_edit', '=', False)]}"/>
+                                            <field name="technological_direction_id" options="{'no_open': True}"
+                                                   placeholder="Technological Direction"
+                                                   attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                         </group>
                                     </group>
                                 </h5>
@@ -387,11 +392,11 @@
                                     <group>
                                         <field name="partner_id" force_save="1" widget="many2one_avatar"
                                                options="{'no_open': True,}" placeholder="select customer/organization"
-                                               attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"
+                                               attrs="{'readonly': [('can_edit', '=', False)]}"
                                                context="{'show_vat': True}"/>
                                         <field name="industry_id" force_save="1" options="{'no_open': True,}"
                                                placeholder="select industry"
-                                               attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                               attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                     </group>
                                     <group>
                                         <field name="company_partner_id" placeholder="Company Partner"
@@ -399,35 +404,35 @@
                                                attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                         <field name="legal_entity_signing_id"
                                                options="{'no_open': True,}" placeholder="select legal entity signing"
-                                               attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}"/>
+                                               attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                     </group>
                                 </group>
                                 <field name="comments" nolabel="1" placeholder="type comments for the project"
                                        attrs="{'readonly': [('can_edit', '=', False)]}"/>
                             </page>
-                            <page string="Financial indicators" >
-                                    <field name="is_revenue_from_the_sale_of_works" invisible="1"/>
-                                    <field name="is_revenue_from_the_sale_of_goods" invisible="1"/>
-                                    <field name="is_cost_of_goods" invisible="1"/>
-                                    <field name="is_own_works_fot" invisible="1"/>
-                                    <field name="is_third_party_works" invisible="1"/>
-                                    <field name="is_awards_on_results_project" invisible="1"/>
-                                    <field name="is_transportation_expenses" invisible="1"/>
-                                    <field name="is_travel_expenses" invisible="1"/>
-                                    <field name="is_representation_expenses" invisible="1"/>
-                                    <field name="is_warranty_service_costs" invisible="1"/>
-                                    <field name="is_rko_other" invisible="1"/>
-                                    <field name="is_other_expenses" invisible="1"/>
-                                    <field name="revenue_from_the_sale_of_works_amount_spec_exist" invisible="1"/>
-                                    <field name="revenue_from_the_sale_of_goods_amount_spec_exist" invisible="1"/>
-                                    <field name="cost_of_goods_amount_spec_exist" invisible="1"/>
-                                    <field name="travel_expenses_amount_spec_exist" invisible="1"/>
-                                    <field name="third_party_works_amount_spec_exist" invisible="1"/>
-                                    <field name="transportation_expenses_amount_spec_exist" invisible="1"/>
-                                    <field name="representation_expenses_amount_spec_exist" invisible="1"/>
-                                    <field name="rko_other_amount_spec_exist" invisible="1"/>
-                                    <field name="warranty_service_costs_amount_spec_exist" invisible="1"/>
-                                    <field name="other_expenses_amount_spec_exist" invisible="1"/>
+                            <page string="Financial indicators" groups="project_budget.project_budget_users,project_budget.project_budget_admin">
+                                <field name="is_revenue_from_the_sale_of_works" invisible="1"/>
+                                <field name="is_revenue_from_the_sale_of_goods" invisible="1"/>
+                                <field name="is_cost_of_goods" invisible="1"/>
+                                <field name="is_own_works_fot" invisible="1"/>
+                                <field name="is_third_party_works" invisible="1"/>
+                                <field name="is_awards_on_results_project" invisible="1"/>
+                                <field name="is_transportation_expenses" invisible="1"/>
+                                <field name="is_travel_expenses" invisible="1"/>
+                                <field name="is_representation_expenses" invisible="1"/>
+                                <field name="is_warranty_service_costs" invisible="1"/>
+                                <field name="is_rko_other" invisible="1"/>
+                                <field name="is_other_expenses" invisible="1"/>
+                                <field name="revenue_from_the_sale_of_works_amount_spec_exist" invisible="1"/>
+                                <field name="revenue_from_the_sale_of_goods_amount_spec_exist" invisible="1"/>
+                                <field name="cost_of_goods_amount_spec_exist" invisible="1"/>
+                                <field name="travel_expenses_amount_spec_exist" invisible="1"/>
+                                <field name="third_party_works_amount_spec_exist" invisible="1"/>
+                                <field name="transportation_expenses_amount_spec_exist" invisible="1"/>
+                                <field name="representation_expenses_amount_spec_exist" invisible="1"/>
+                                <field name="rko_other_amount_spec_exist" invisible="1"/>
+                                <field name="warranty_service_costs_amount_spec_exist" invisible="1"/>
+                                <field name="other_expenses_amount_spec_exist" invisible="1"/>
                                 <h4>
                                     <group col="1" attrs="{'invisible': [('is_parent_project', '=', True)]}">
                                         <group string="Revenue">
@@ -622,31 +627,30 @@
                                     <group>
                                         <field name="own_works_fot"
                                                attrs="{'invisible': [('is_own_works_fot', '=', False),('project_have_steps', '=', False)]}"
-                                               style="text-align:right"
-                                        />
+                                               style="text-align:right"/>
                                     </group>
                                     <group>
                                         <field name="awards_on_results_project"
                                                attrs="{'invisible': [('is_awards_on_results_project', '=', False),('project_have_steps', '=', False)]}"
-                                               style="text-align:right"
-                                        />
+                                               style="text-align:right"/>
                                     </group>
                                     <group>
                                         <field name="taxes_fot_premiums"
                                                attrs="{'invisible': [('is_own_works_fot', '=', False),('is_awards_on_results_project', '=', False),('project_have_steps', '=', False)]}"
-                                               style="text-align:right"
-                                        />
+                                               style="text-align:right"/>
                                     </group>
                                 </group>
                             </page>
-                            <page string="currency rates">
+                            <page string="currency rates"
+                                  groups="project_budget.project_budget_users,project_budget.project_budget_admin">
                                 <field name="project_currency_rates_ids" widget="section_and_note_one2many"
-                                        mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
+                                       mode="tree" attrs="{'readonly': [('can_edit', '=', False)]}">
                                 </field>
                             </page>
-                            <page string="project steps" attrs="{'invisible': [('project_have_steps', '=', False)]}">
+                            <page string="project steps" attrs="{'invisible': [('project_have_steps', '=', False)]}"
+                                  groups="project_budget.project_budget_users,project_budget.project_budget_admin">
                                 <field name="project_steps_ids" widget="section_and_note_one2many"
-                                        mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
+                                       mode="tree" attrs="{'readonly': [('can_edit', '=', False)]}">
                                 </field>
                             </page>
                             <page string="child projects" attrs="{'invisible': [('is_parent_project', '=', False)]}">
@@ -660,30 +664,26 @@
                                        groups="!project_budget.project_budget_admin"
                                        domain="['&amp;','&amp;', ('is_parent_project', '=', False), ('parent_project_id', '=', False), ('budget_state', '!=', 'fixed')]"/>
                             </page>
-                            <page string="Forecast" attrs="{'invisible': [('is_parent_project', '=', True)]}">
+                            <page string="Forecast" attrs="{'invisible': [('is_parent_project', '=', True)]}"
+                                  groups="project_budget.project_budget_users,project_budget.project_budget_admin">
                                 <h4>
-                                <group col="6">
-                                    <group string="planned_acceptance_flow" colspan="2">
+                                    <group col="6">
+                                        <group string="planned_acceptance_flow" colspan="2">
+                                        </group>
+                                        <group colspan="2">
+                                            <field name="planned_acceptance_flow_sum_without_vat"
+                                                   decoration-success="((total_amount_of_revenue - planned_acceptance_flow_sum_without_vat) * (total_amount_of_revenue - planned_acceptance_flow_sum_without_vat)) &lt; 0.1"
+                                                   decoration-danger="((total_amount_of_revenue - planned_acceptance_flow_sum_without_vat) * (total_amount_of_revenue - planned_acceptance_flow_sum_without_vat)) &gt;= 0.1"/>
+                                        </group>
+                                        <group colspan="2">
+                                            <field name="planned_acceptance_flow_sum"
+                                                   decoration-success="((total_amount_of_revenue_with_vat - planned_acceptance_flow_sum) * (total_amount_of_revenue_with_vat - planned_acceptance_flow_sum)) &lt; 0.1"
+                                                   decoration-danger="((total_amount_of_revenue_with_vat - planned_acceptance_flow_sum) * (total_amount_of_revenue_with_vat - planned_acceptance_flow_sum)) &gt;= 0.1"/>
+                                        </group>
                                     </group>
-                                    <group colspan="2">
-                                        <field name="planned_acceptance_flow_sum_without_vat"
-                                        decoration-bf="1"
-                                        decoration-success="((total_amount_of_revenue - planned_acceptance_flow_sum_without_vat) * (total_amount_of_revenue - planned_acceptance_flow_sum_without_vat)) &lt; 0.1"
-                                        decoration-danger="((total_amount_of_revenue - planned_acceptance_flow_sum_without_vat) * (total_amount_of_revenue - planned_acceptance_flow_sum_without_vat)) &gt;= 0.1"
-                                        />
-                                    </group>
-                                    <group colspan="2">
-                                        <field name="planned_acceptance_flow_sum"
-                                        decoration-bf="1"
-                                        decoration-success="((total_amount_of_revenue_with_vat - planned_acceptance_flow_sum) * (total_amount_of_revenue_with_vat - planned_acceptance_flow_sum)) &lt; 0.1"
-                                        decoration-danger="((total_amount_of_revenue_with_vat - planned_acceptance_flow_sum) * (total_amount_of_revenue_with_vat - planned_acceptance_flow_sum)) &gt;= 0.1"
-                                        />
-                                    </group>
-                                </group>
                                 </h4>
-                                <field name="planned_acceptance_flow_ids"
-                                widget="section_and_note_one2many"
-                                mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
+                                <field name="planned_acceptance_flow_ids" widget="section_and_note_one2many"
+                                       mode="tree" attrs="{'readonly': [('can_edit', '=', False)]}">
                                     <tree editable="bottom" default_order="date_cash" limit="100">
                                         <button name="action_copy_planned_acceptance" type="object" title="Copy acceptance" string="Copy acceptance" class="btn btn-link"/>
                                         <field name="acceptance_id"/>
@@ -704,21 +704,18 @@
                                     </tree>
                                 </field>
                                 <h4>
-                                <group>
-                                    <group string="planned_cash_flow">
-                                    </group>
                                     <group>
-                                        <field name="planned_cash_flow_sum"
-                                        decoration-bf="1"
-                                        decoration-success="((total_amount_of_revenue_with_vat - planned_cash_flow_sum) * (total_amount_of_revenue_with_vat - planned_cash_flow_sum)) &lt; 0.1"
-                                        decoration-danger="((total_amount_of_revenue_with_vat - planned_cash_flow_sum) * (total_amount_of_revenue_with_vat - planned_cash_flow_sum)) &gt;= 0.1"
-                                        />
+                                        <group string="planned_cash_flow">
+                                        </group>
+                                        <group>
+                                            <field name="planned_cash_flow_sum"
+                                                   decoration-success="((total_amount_of_revenue_with_vat - planned_cash_flow_sum) * (total_amount_of_revenue_with_vat - planned_cash_flow_sum)) &lt; 0.1"
+                                                   decoration-danger="((total_amount_of_revenue_with_vat - planned_cash_flow_sum) * (total_amount_of_revenue_with_vat - planned_cash_flow_sum)) &gt;= 0.1"/>
+                                        </group>
                                     </group>
-                                </group>
                                 </h4>
-                                <field name="planned_cash_flow_ids"
-                                widget="section_and_note_one2many"
-                                mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
+                                <field name="planned_cash_flow_ids" widget="section_and_note_one2many"
+                                       mode="tree" attrs="{'readonly': [('can_edit', '=', False)]}">
                                     <tree editable="bottom" default_order="date_cash" limit="100">
                                         <button name="action_copy_planned_cash" type="object" title="Copy cash" string="Copy cash" class="btn btn-link"/>
                                         <field name="project_have_steps" invisible="True"/>
@@ -738,50 +735,39 @@
                                                decoration-warning="distribution_sum_with_vat_ostatok != 0"/>
                                     </tree>
                                 </field>
-
                             </page>
-                            <page string="Fact" attrs="{'invisible': [('is_parent_project', '=', True)]}">
+                            <page string="Fact" attrs="{'invisible': [('is_parent_project', '=', True)]}"
+                                  groups="project_budget.project_budget_users,project_budget.project_budget_admin">
                                 <h4>
-                                <group col="6">
-                                    <group string="fact_acceptance_flow" colspan="2">
+                                    <group col="6">
+                                        <group string="fact_acceptance_flow" colspan="2">
+                                        </group>
+                                        <group colspan="2">
+                                            <field name="fact_acceptance_flow_sum_without_vat"
+                                                   decoration-success="((total_amount_of_revenue - fact_acceptance_flow_sum_without_vat) * (total_amount_of_revenue - fact_acceptance_flow_sum_without_vat)) &lt; 0.1"
+                                                   decoration-danger="((total_amount_of_revenue - fact_acceptance_flow_sum_without_vat) * (total_amount_of_revenue - fact_acceptance_flow_sum_without_vat)) &gt;= 0.1"/>
+                                        </group>
+                                        <group colspan="2">
+                                            <field name="fact_acceptance_flow_sum"
+                                                   decoration-success="((total_amount_of_revenue_with_vat - fact_acceptance_flow_sum) * (total_amount_of_revenue_with_vat - fact_acceptance_flow_sum)) &lt; 0.1"
+                                                   decoration-danger="((total_amount_of_revenue_with_vat - fact_acceptance_flow_sum) * (total_amount_of_revenue_with_vat - fact_acceptance_flow_sum)) &gt;= 0.1"/>
+                                        </group>
                                     </group>
-                                    <group colspan="2">
-                                        <field name="fact_acceptance_flow_sum_without_vat"
-                                        decoration-bf="1"
-                                        decoration-success="((total_amount_of_revenue - fact_acceptance_flow_sum_without_vat) * (total_amount_of_revenue - fact_acceptance_flow_sum_without_vat)) &lt; 0.1"
-                                        decoration-danger="((total_amount_of_revenue - fact_acceptance_flow_sum_without_vat) * (total_amount_of_revenue - fact_acceptance_flow_sum_without_vat)) &gt;= 0.1"
-                                        />
-                                    </group>
-                                    <group colspan="2">
-                                        <field name="fact_acceptance_flow_sum"
-                                        decoration-bf="1"
-                                        decoration-success="((total_amount_of_revenue_with_vat - fact_acceptance_flow_sum) * (total_amount_of_revenue_with_vat - fact_acceptance_flow_sum)) &lt; 0.1"
-                                        decoration-danger="((total_amount_of_revenue_with_vat - fact_acceptance_flow_sum) * (total_amount_of_revenue_with_vat - fact_acceptance_flow_sum)) &gt;= 0.1"
-                                        />
-                                    </group>
-                                </group>
                                 </h4>
-                                <field name="fact_acceptance_flow_ids"
-                                widget="section_and_note_one2many"
-                                mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
-                                </field>
+                                <field name="fact_acceptance_flow_ids" widget="section_and_note_one2many"
+                                       mode="tree" attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                 <h4>
-                                <group>
-                                    <group string="fact_cash_flow">
-                                    </group>
                                     <group>
-                                        <field name="fact_cash_flow_sum"
-                                        decoration-bf="1"
-                                        decoration-success="((total_amount_of_revenue_with_vat - fact_cash_flow_sum) * (total_amount_of_revenue_with_vat - fact_cash_flow_sum)) &lt; 0.1"
-                                        decoration-danger="((total_amount_of_revenue_with_vat - fact_cash_flow_sum) * (total_amount_of_revenue_with_vat - fact_cash_flow_sum)) &gt;= 0.1"
-                                        />
+                                        <group string="fact_cash_flow"/>
+                                        <group>
+                                            <field name="fact_cash_flow_sum"
+                                                   decoration-success="((total_amount_of_revenue_with_vat - fact_cash_flow_sum) * (total_amount_of_revenue_with_vat - fact_cash_flow_sum)) &lt; 0.1"
+                                                   decoration-danger="((total_amount_of_revenue_with_vat - fact_cash_flow_sum) * (total_amount_of_revenue_with_vat - fact_cash_flow_sum)) &gt;= 0.1"/>
+                                        </group>
                                     </group>
-                                </group>
                                 </h4>
-                                <field name="fact_cash_flow_ids"
-                                widget="section_and_note_one2many"
-                                mode="tree" attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')]}">
-                                </field>
+                                <field name="fact_cash_flow_ids" widget="section_and_note_one2many"
+                                       mode="tree" attrs="{'readonly': [('can_edit', '=', False)]}"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -802,6 +788,8 @@
             <form>
                 <sheet string="Project Settings">
                     <field name="can_edit" invisible="1"/>
+                    <field name="partner_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
                     <group colspan="2">
                         <field name="project_id" readonly="1" class="h5"/>
                     </group>
@@ -811,7 +799,7 @@
                     </group>
                     <notebook>
                         <page name="page_settings" string="Settings">
-                            <group>
+                            <group name="project_settings">
                                 <group>
                                     <field name="is_correction_project"/>
                                 </group>
@@ -849,7 +837,8 @@
                 <field name="step_project_number"/>
                 <field name="key_account_manager_id"/>
                 <field name="project_supervisor_id"/>
-                <field name="rukovoditel_project_id"/>
+                <field name="project_manager_id"/>
+<!--                <field name="rukovoditel_project_id"/>-->
                 <field name="project_office_id"/>
                 <field name="technological_direction_id"/>
                 <field name="project_type_id"/>
@@ -970,7 +959,8 @@
                 <field name="project_office_id"/>
                 <field name="project_supervisor_id"/>
                 <field name="key_account_manager_id"/>
-                <field name="rukovoditel_project_id"/>
+                <field name="project_manager_id"/>
+<!--                <field name="rukovoditel_project_id"/>-->
                 <field name="industry_id"/>
                 <field name="partner_id"/>
                 <field name="essence_project"/>

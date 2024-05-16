@@ -180,8 +180,8 @@ class Project(models.Model):
     approve_state = fields.Selection([('need_approve_manager', 'need managers approve'), ('need_approve_supervisor'
                                      , 'need supervisors approve'), ('approved','approved'),('-','-')],
                                      required=True, index=True, default='need_approve_manager', store=True, copy=True, tracking=True)
-    currency_id = fields.Many2one('res.currency', string='Account Currency',  required = True, copy = True,
-                                  default=lambda self: self.env.company.currency_id,tracking=True)
+    currency_id = fields.Many2one('res.currency', string='Account Currency', copy=True,
+                                  default=lambda self: self.env.company.currency_id, required=True, tracking=True)
     etalon_budget = fields.Boolean(related='commercial_budget_id.etalon_budget', readonly=True)
     date_actual = fields.Datetime(related='commercial_budget_id.date_actual', readonly=True, store=True)
     isRukovoditel_required_in_project = fields.Boolean(related='project_office_id.isRukovoditel_required_in_project', readonly=True, store=True)
@@ -205,8 +205,8 @@ class Project(models.Model):
     key_account_manager_id = fields.Many2one('hr.employee', string='Key Account Manager', copy=True,
                                              default=_get_default_key_account_manager_id,
                                              domain=_get_key_account_manager_id_domain, required=True, tracking=True)
-    # project_manager_id = fields.Many2one('hr.employee', string='Project Manager', copy=True,
-    #                                      domain=_get_project_manager_id_domain, required=False, tracking=True)
+    project_manager_id = fields.Many2one('hr.employee', string='Project Manager', copy=True,
+                                         domain=_get_project_manager_id_domain, required=False, tracking=True)
 
     rukovoditel_project_id = fields.Many2one('project_budget.rukovoditel_project', string='rukovoditel_project',
                                          copy=True,  tracking=True, check_company=True)
