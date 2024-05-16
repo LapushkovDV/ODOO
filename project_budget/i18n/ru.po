@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-13 11:52+0000\n"
-"PO-Revision-Date: 2024-05-13 11:52+0000\n"
+"POT-Creation-Date: 2024-05-15 11:14+0000\n"
+"PO-Revision-Date: 2024-05-15 11:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -180,6 +180,7 @@ msgid "Acceptance"
 msgstr "Валовая выручка (без НДС)"
 
 #. module: project_budget
+#: model:ir.ui.menu,name:project_budget.menu_project_budget_access
 #: model:ir.ui.menu,name:project_budget.project_budget_access
 msgid "Access"
 msgstr "Доступы"
@@ -489,6 +490,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:project_budget.field_hr_employee_replacement__kam_function
 msgid "Can See KAM Projects"
 msgstr "Может видеть сделки КАМа"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_hr_employee_replacement__project_manager_function
+msgid "Can See Project Manager Projects"
+msgstr "Может видеть сделки руководителя проектов"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__can_approve_project
@@ -2149,7 +2155,10 @@ msgid "Project Management"
 msgstr "Коммерческая деятельность"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__project_manager_id
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__project_manager_id
 #: model:res.groups,name:project_budget.group_project_budget_project_manager
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Project Manager"
 msgstr "Руководитель проекта"
 
@@ -2161,6 +2170,7 @@ msgstr "Руководитель проекта"
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_office_view_from
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_office_view_search
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_search
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Project Office"
 msgstr "Проектный офис"
 
@@ -2194,8 +2204,24 @@ msgstr "Статус проекта"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_search
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Project Supervisor"
 msgstr "Куратор проекта"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+msgid "Project Type"
+msgstr "Тип проекта"
+
+#. module: project_budget
+#: model:res.groups,name:project_budget.project_budget_users
+msgid "Project User"
+msgstr "Пользователи модуля Бюджеты проектов"
+
+#. module: project_budget
+#: model:res.groups,name:project_budget.project_budget_users_readonly
+msgid "Project User: read only"
+msgstr "Бюджеты проектов. Только чтение"
 
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_project_budget_link_project_wizard
@@ -2222,16 +2248,6 @@ msgstr "Список проектов с вероятностью сделки"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__project_office_ids
 msgid "Project offices"
 msgstr "Проектные офисы"
-
-#. module: project_budget
-#: model:res.groups,name:project_budget.project_budget_users
-msgid "Project users"
-msgstr "Пользователи модуля Бюджеты проектов"
-
-#. module: project_budget
-#: model:res.groups,name:project_budget.project_budget_users_readonly
-msgid "Project users read only"
-msgstr "Бюджеты проектов. Только чтение"
 
 #. module: project_budget
 #. odoo-python
@@ -2631,6 +2647,11 @@ msgid "Svod"
 msgstr "Свод"
 
 #. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
+msgid "Technological Direction"
+msgstr "Технологическое направление"
+
+#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__tender_id
 msgid "Tender ID"
 msgstr ""
@@ -2708,6 +2729,12 @@ msgstr "Год должен быть между 2022 и 2030"
 #, python-format
 msgid "This project is in fixed budget. Copy deny"
 msgstr "Копирование запрещено: этот проект в зафиксированном бюджете"
+
+#. module: project_budget
+#: model:ir.actions.act_window,name:project_budget.action_project_budget_project_user_rights
+#: model:ir.ui.menu,name:project_budget.menu_project_budget_transfer_rights
+msgid "Transfer Rights To The Employee"
+msgstr "Передача прав сотруднику"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_amount_spec__type
@@ -4708,7 +4735,6 @@ msgstr "Есть расшифровка РКО прочие"
 #: model:ir.actions.act_window,name:project_budget.show_rukovoditel_project
 #: model:ir.model,name:project_budget.model_project_budget_rukovoditel_project
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__rukovoditel_project_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__rukovoditel_project_id
 #: model:ir.ui.menu,name:project_budget.project_budget_catalogs_rukovoditel_project
 #: model_terms:ir.ui.view,arch_db:project_budget.show_rukovoditel_project_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_rukovoditel_project_tree
@@ -4796,37 +4822,12 @@ msgstr "Выберете плановую позицию"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
-msgid "select project office"
-msgstr "Выберите проектный офис"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_fact_acceptance_flow_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_fact_acceptance_flow_tree
 #: model_terms:ir.ui.view,arch_db:project_budget.show_fact_cash_flow_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_fact_cash_flow_tree
 msgid "select project steps"
 msgstr "Выберите этап проекта"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
-msgid "select project supervisor"
-msgstr "Выберите куратора проекта"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
-msgid "select project type"
-msgstr "Выберите тип проекта"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
-msgid "select rukovoditel_project"
-msgstr "Выберите руководителя проекта"
-
-#. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
-msgid "select technological direction"
-msgstr "Выберите технологиеское направление"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_project_steps_form
