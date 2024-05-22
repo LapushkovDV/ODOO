@@ -36,6 +36,10 @@ class Project(models.Model):
         return "[('user_id.groups_id', 'in', %s), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"\
             % self.env.ref('project_budget.group_project_budget_project_manager').id
 
+    def _get_project_curator_id_domain(self):
+        return "[('user_id.groups_id', 'in', %s), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"\
+            % self.env.ref('project_budget.group_project_budget_project_curator').id
+
     def _get_current_amount_spec_type(self):
         context = self.env.context
         print('_get_current_amount_spec_type context',context)
@@ -207,10 +211,8 @@ class Project(models.Model):
                                              domain=_get_key_account_manager_id_domain, required=True, tracking=True)
     project_manager_id = fields.Many2one('hr.employee', string='Project Manager', copy=True,
                                          domain=_get_project_manager_id_domain, required=False, tracking=True)
-
-    rukovoditel_project_id = fields.Many2one('project_budget.rukovoditel_project', string='rukovoditel_project',
-                                         copy=True,  tracking=True, check_company=True)
-
+    # project_curator_id = fields.Many2one('hr.employee', string='Project Curator', copy=True,
+    #                                      domain=_get_project_curator_id_domain, required=True, tracking=True)
     partner_id = fields.Many2one('res.partner', string='customer_organization', copy=True,
                                  domain="[('is_company', '=', True)]", ondelete='restrict', required=True,
                                  tracking=True)

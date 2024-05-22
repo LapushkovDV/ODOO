@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-15 11:14+0000\n"
-"PO-Revision-Date: 2024-05-15 11:14+0000\n"
+"POT-Creation-Date: 2024-05-21 19:00+0000\n"
+"PO-Revision-Date: 2024-05-21 19:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -324,7 +324,6 @@ msgid "Actuality date"
 msgstr "Дата актуализации"
 
 #. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_rukovoditel_project_access_tree
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_supervisor_access_tree
 msgid "Add a line"
 msgstr "Добавить проект"
@@ -444,7 +443,6 @@ msgstr "Вложения"
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__avatar_128
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__avatar_128
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__avatar_128
 msgid "Avatar 128"
 msgstr "Аватарка 128"
 
@@ -583,7 +581,6 @@ msgstr "Обязательство"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_office__company_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__company_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__company_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__company_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__company_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tenders__company_id
 #: model:ir.model.fields,field_description:project_budget.field_res_company_partner__company_id
@@ -735,11 +732,6 @@ msgid "Create a new project_type"
 msgstr "Добавить тип проекта"
 
 #. module: project_budget
-#: model_terms:ir.actions.act_window,help:project_budget.show_rukovoditel_project
-msgid "Create a new rukovoditel_project"
-msgstr "Создайте нового руководителя проекта"
-
-#. module: project_budget
 #: model_terms:ir.actions.act_window,help:project_budget.show_budget_plan_supervisor
 msgid "Create a new supervisors's plan on year"
 msgstr "Создайте новый план по проектному офису на год"
@@ -805,8 +797,6 @@ msgstr "Создать расшифровку суммы этапа"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__create_uid
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__create_uid
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_step_amount_spec__create_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__create_uid
@@ -849,8 +839,6 @@ msgstr "Создано кем"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__create_date
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__create_date
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_step_amount_spec__create_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__create_date
@@ -1007,8 +995,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__display_name
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__display_name
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_step_amount_spec__display_name
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__display_name
@@ -1238,8 +1224,6 @@ msgstr "Помогает управлять бюджетными проекта�
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_step_amount_spec__id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__id
@@ -1434,8 +1418,6 @@ msgstr "КАМ"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard____last_update
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project____last_update
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_step_amount_spec____last_update
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction____last_update
@@ -1478,8 +1460,6 @@ msgstr "Дата последней модификации"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__write_uid
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__write_uid
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_step_amount_spec__write_uid
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__write_uid
@@ -1522,8 +1502,6 @@ msgstr "Автор последнего изменения"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_type__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__write_date
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__write_date
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_scheduled_report__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_step_amount_spec__write_date
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_technological_direction__write_date
@@ -2467,11 +2445,6 @@ msgid "Revenue"
 msgstr "Выручка"
 
 #. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_res_users__rukovoditel_project_rule
-msgid "Rukovoditel Project Rule"
-msgstr "Правило для руководителя проекта"
-
-#. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 #: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_form
 msgid "Save"
@@ -3334,11 +3307,6 @@ msgid "each project budget have project_type"
 msgstr "Каждый бюджет имеет тип проекта"
 
 #. module: project_budget
-#: model_terms:ir.actions.act_window,help:project_budget.show_rukovoditel_project
-msgid "each project budget have rukovoditel_project"
-msgstr "Каждая сделка может иметь руководителя проекта"
-
-#. module: project_budget
 #: model_terms:ir.actions.act_window,help:project_budget.show_technological_direction
 msgid "each project budget have technological_direction"
 msgstr "Каждый бюджет имеет технологическое направление"
@@ -3806,11 +3774,6 @@ msgid "koefficient for reserve"
 msgstr "Коэффициент для Резерва"
 
 #. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__print_managers
-msgid "print managers"
-msgstr "Данные КАМов"
-
-#. module: project_budget
 #: model:ir.actions.act_window,name:project_budget.show_legal_entity_signing
 #: model:ir.ui.menu,name:project_budget.project_budget_catalogs_legal_entity_signing
 #: model_terms:ir.ui.view,arch_db:project_budget.show_legal_entity_signing_form
@@ -4220,6 +4183,11 @@ msgstr "Сумма позиции"
 #: model_terms:ir.ui.view,arch_db:project_budget.view_tender_search
 msgid "presale_number"
 msgstr "Номер пресейла ОЗ"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects_report_wizard__print_managers
+msgid "print managers"
+msgstr "Данные КАМов"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_amount_spec_form
@@ -4737,54 +4705,6 @@ msgid "rko_other_amount_spec_exist"
 msgstr "Есть расшифровка РКО прочие"
 
 #. module: project_budget
-#: model:ir.actions.act_window,name:project_budget.show_rukovoditel_project
-#: model:ir.model,name:project_budget.model_project_budget_rukovoditel_project
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__rukovoditel_project_id
-#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_rukovoditel_project
-#: model_terms:ir.ui.view,arch_db:project_budget.show_rukovoditel_project_form
-#: model_terms:ir.ui.view,arch_db:project_budget.show_rukovoditel_project_tree
-msgid "rukovoditel_project"
-msgstr "Руководитель проекта"
-
-#. module: project_budget
-#: model:ir.model,name:project_budget.model_project_budget_rukovoditel_project_access
-msgid "rukovoditel_project access"
-msgstr "Доступ пользователей по руководителям проекта"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__descr
-msgid "rukovoditel_project access description"
-msgstr "Описание"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__code
-msgid "rukovoditel_project code"
-msgstr "Код"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__descr
-msgid "rukovoditel_project description"
-msgstr "Описание"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__rukovoditel_project_id
-msgid "rukovoditel_project id"
-msgstr "ID"
-
-#. module: project_budget
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__name
-msgid "rukovoditel_project name"
-msgstr "Наименование"
-
-#. module: project_budget
-#: model:ir.actions.act_window,name:project_budget.show_comercial_budget_spec_rukovoditel_project_access
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__rukovoditel_project_access_ids
-#: model:ir.model.fields,field_description:project_budget.field_res_users__rukovoditel_project_access_ids
-#: model:ir.ui.menu,name:project_budget.project_budget_catalogs_rukovoditel_project_access
-msgid "rukovoditel_project_access"
-msgstr "Доступ пользователей по руководителям проекта"
-
-#. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_tender_sums__securing_the_application
 #: model_terms:ir.ui.view,arch_db:project_budget.show_projects_tenders_sums_form
 msgid "securing_the_application"
@@ -5197,8 +5117,6 @@ msgstr "Использовать коэффициенты"
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_supervisor__supervisor_user_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor__user_id
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_supervisor_access__user_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project__user_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_rukovoditel_project_access__user_id
 msgid "user id"
 msgstr "Пользователь"
 
