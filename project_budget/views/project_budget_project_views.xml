@@ -100,7 +100,6 @@
                 <field name="project_supervisor_id" optional="show" widget="many2one_avatar"/>
                 <field name="key_account_manager_id" optional="show" widget="many2one_avatar_employee"/>
                 <field name="project_manager_id" optional="show" widget="many2one_avatar_employee"/>
-<!--                <field name="rukovoditel_project_id" optional="show" widget="many2one_avatar"/>-->
                 <field name="industry_id" optional="hide"/>
                 <field name="partner_id" optional="show" widget="many2one_avatar"/>
                 <field name="company_partner_id" widget="many2one_avatar" optional="hide"/>
@@ -169,8 +168,6 @@
                        options="{'no_open': True}"/>
                 <field name="project_manager_id" optional="show" widget="many2one_avatar_employee" readonly="1"
                        options="{'no_open': True}"/>
-<!--                <field name="rukovoditel_project_id" optional="show" widget="many2one_avatar" readonly="1"-->
-<!--                       options="{'no_open': True}"/>-->
                 <field name="industry_id" optional="hide" readonly="1" options="{'no_open': True}"/>
                 <field name="partner_id" widget="many2one_avatar" optional="show" readonly="1"
                        options="{'no_open': True}"/>
@@ -371,9 +368,6 @@
                                                    placeholder="Project Manager"
                                                    options="{'no_create_edit': True, 'no_open': True}"
                                                    attrs="{'readonly': [('can_edit', '=', False)], 'required': [('isRukovoditel_required_in_project', '=', True)]}"/>
-<!--                                            <field name="rukovoditel_project_id" widget="many2one_avatar" force_save="1" placeholder="select rukovoditel_project" options="{'no_open': True,}"-->
-<!--                                                    attrs="{'readonly': ['|',('budget_state', '=', 'fixed'),('approve_state','!=','need_approve_manager')], 'required': [('isRukovoditel_required_in_project', '=', True)]}"-->
-<!--                                                    decoration-bf="1"/>-->
                                             <field name="project_type_id" placeholder="Project Type"
                                                    options="{'no_open': True}"
                                                    attrs="{'readonly': [('can_edit', '=', False)]}"/>
@@ -838,7 +832,6 @@
                 <field name="key_account_manager_id"/>
                 <field name="project_supervisor_id"/>
                 <field name="project_manager_id"/>
-<!--                <field name="rukovoditel_project_id"/>-->
                 <field name="project_office_id"/>
                 <field name="technological_direction_id"/>
                 <field name="project_type_id"/>
@@ -920,7 +913,7 @@
                                     </div>
                                     <div class="oe_kanban_bottom_right">
                                         <t t-if="record.key_account_manager_id.raw_value">
-                                            <field name="key_account_manager_id" widget="many2one_avatar"/>
+                                            <field name="key_account_manager_id" widget="many2one_avatar_employee"/>
                                         </t>
                                     </div>
                                 </div>
@@ -960,7 +953,6 @@
                 <field name="project_supervisor_id"/>
                 <field name="key_account_manager_id"/>
                 <field name="project_manager_id"/>
-<!--                <field name="rukovoditel_project_id"/>-->
                 <field name="industry_id"/>
                 <field name="partner_id"/>
                 <field name="essence_project"/>
