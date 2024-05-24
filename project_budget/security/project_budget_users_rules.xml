@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <!-- Project rules -->
 
         <record id="ir_rule_project_budget_access_supervisor_manager" model="ir.rule">
@@ -57,6 +56,8 @@
             <field name="groups" eval="[(4, ref('project_budget.project_budget_admin'))]"/>
         </record>
 
+        <!-- KAM plan rules -->
+
         <record id="ir_rule_project_budget_access_budget_plan_kam" model="ir.rule">
             <field name="name">Access to budget plan kam</field>
             <field name="model_id" ref="model_project_budget_budget_plan_kam"/>
@@ -71,6 +72,15 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
+        <record id="project_budget_budget_plan_kam_manager_rule" model="ir.rule">
+            <field name="name">Project budget manager: see all kam plan's</field>
+            <field name="model_id" ref="model_project_budget_budget_plan_kam"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('project_budget.project_budget_admin'))]"/>
+        </record>
+
+        <!-- Curator plan rules -->
+
         <record id="ir_rule_project_budget_access_budget_plan_supervisor" model="ir.rule">
             <field name="name">Access to budgeе plan supervisor</field>
             <field name="model_id" ref="model_project_budget_budget_plan_supervisor"/>
@@ -83,6 +93,14 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
         </record>
+
+        <record id="project_budget_budget_plan_curator_manager_rule" model="ir.rule">
+            <field name="name">Project budget manager: see all curator plan's</field>
+            <field name="model_id" ref="model_project_budget_budget_plan_supervisor"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('project_budget.project_budget_admin'))]"/>
+        </record>
+
         <record id="record_restricted_company_rule" model="ir.rule" >
             <field name="name">Budget projects Restricted Record: multi-company</field>
             <field name="model_id" ref="model_project_budget_projects"/>
@@ -123,6 +141,47 @@
                     '|', ('company_id', '=', False), ('company_id', 'in', company_ids)
                 ]
             </field>
+        </record>
+
+        <!-- Project overdue report rules -->
+
+        <record id="project_budget_project_overdue_report_company_rule" model="ir.rule">
+            <field name="name">Project overdue report multi-company</field>
+            <field name="model_id" ref="model_project_budget_project_overdue_report"/>
+            <field name="domain_force">
+                [
+                    '|', ('company_id', '=', False), ('company_id', 'in', company_ids)
+                ]
+            </field>
+        </record>
+
+        <record id="project_budget_project_overdue_report_user_rule" model="ir.rule">
+            <field name="name">Project budget user: see my overdue projects</field>
+            <field name="model_id" ref="model_project_budget_project_overdue_report"/>
+            <field name="domain_force">
+                [
+                    '|', '|', '|', '|', '|', '|', '|', '|', '|', '|',
+                    ('project_office_id.user_id.id', '=', user.id),
+                    ('project_id.key_account_manager_id.user_id', '=', user.id),
+                    ('project_id.parent_project_id.key_account_manager_id.user_id', '=', user.id),
+                    ('project_id.key_account_manager_id', 'in', user.with_context(kam_function=True).employee_id.replaceable_employee_ids.ids),
+                    ('project_id.parent_project_id.key_account_manager_id', 'in', user.with_context(kam_function=True).employee_id.replaceable_employee_ids.ids),
+                    ('project_id.project_manager_id.user_id', '=', user.id),
+                    ('project_id.parent_project_id.project_manager_id.user_id', '=', user.id),
+                    ('project_id.project_manager_id', 'in', user.with_context(project_manager_function=True).employee_id.replaceable_employee_ids.ids),
+                    ('project_id.parent_project_id.project_manager_id', 'in', user.with_context(project_manager_function=True).employee_id.replaceable_employee_ids.ids),
+                    ('project_id.project_supervisor_id.id','in', user.supervisor_rule.ids),
+                    ('project_id.parent_project_id.project_supervisor_id.id','in', user.supervisor_rule.ids)
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('project_budget.project_budget_users'))]"/>
+        </record>
+
+        <record id="project_budget_project_overdue_report_manager_rule" model="ir.rule">
+            <field name="name">Project budget manager: see all overdue projects</field>
+            <field name="model_id" ref="model_project_budget_project_overdue_report"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('project_budget.project_budget_admin'))]"/>
         </record>
     </data>
 </odoo>

@@ -48,17 +48,25 @@
               name="project_supervisor_access" action="show_comercial_budget_spec_supervisor_access"
               groups="project_budget.project_budget_admin"/>
 
-    <menuitem id="project_budget_reports" parent="project_budget_menu" name="Reports"/>
-    <menuitem id="project_budget_tenders_report" parent="project_budget_reports" name="Tenders"
-              groups="project_budget_tenders_user,project_budget_tenders_admin"/>
-    <menuitem id="project_budget_tender_print_report" parent="project_budget_tenders_report" name="Print tenders list"
-              action="action_tender_print_report" groups="project_budget_tenders_user,project_budget_tenders_admin"/>
+    <menuitem id="project_budget_reports" parent="project_budget_menu" name="Reports">
+        <menuitem id="project_budget_tenders_report" name="Tenders" sequence="1"
+                  groups="project_budget_tenders_user,project_budget_tenders_admin">
+            <menuitem id="project_budget_tender_print_report" name="Print tenders list" sequence="1"
+                      action="action_tender_print_report"
+                      groups="project_budget_tenders_user,project_budget_tenders_admin"/>
+        </menuitem>
 
-    <menuitem id="project_budget_projects_report" parent="project_budget_reports" name="Projects"
-              groups="project_budget_users,project_budget_admin,project_budget_users_readonly"/>
-    <menuitem id="project_budget_projects_print_report" parent="project_budget_projects_report" name="Print projects"
-              action="action_projects_print_report"
-              groups="project_budget_users,project_budget_admin,project_budget_users_readonly"/>
+        <menuitem id="project_budget_projects_report" name="Projects" sequence="2"
+                  groups="project_budget_users,project_budget_admin,project_budget_users_readonly">
+            <menuitem id="project_budget_projects_print_report" name="Print projects" sequence="1"
+                      action="action_projects_print_report"
+                      groups="project_budget_users,project_budget_admin,project_budget_users_readonly"/>
+            <menuitem id="menu_project_budget_overdue_projects" name="Overdue Projects" sequence="2"
+                      action="action_project_budget_overdue_projects"
+                      groups="base.group_no_one"/>
+<!--                      groups="project_budget_users,project_budget_admin"/>-->
+        </menuitem>
+    </menuitem>
 
     <menuitem id="menu_project_budget_configuration" parent="project_budget_menu" name="Configuration"
               sequence="100">
