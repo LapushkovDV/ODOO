@@ -379,8 +379,8 @@ class Project(models.Model):
 
     def _compute_can_edit(self):
         for record in self:
-            record.can_edit = self.env.user.has_group('project_budget.project_budget_admin') or (
-                record.active and record.budget_state != 'fixed' and record.approve_state == 'need_approve_manager')
+            record.can_edit = record.active and record.approve_state == 'need_approve_manager' and (
+                self.env.user.has_group('project_budget.project_budget_admin') or record.budget_state != 'fixed')
 
     def _check_project_is_child(self):
         for record in self:
