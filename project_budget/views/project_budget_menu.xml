@@ -63,8 +63,7 @@
                       groups="project_budget_users,project_budget_admin,project_budget_users_readonly"/>
             <menuitem id="menu_project_budget_overdue_projects" name="Overdue Projects" sequence="2"
                       action="action_project_budget_overdue_projects"
-                      groups="base.group_no_one"/>
-<!--                      groups="project_budget_users,project_budget_admin"/>-->
+                      groups="project_budget_users,project_budget_admin"/>
         </menuitem>
     </menuitem>
 

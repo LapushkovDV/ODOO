@@ -18,7 +18,6 @@
         <field name="model">project.budget.project.overdue.report</field>
         <field name="arch" type="xml">
             <tree string="Overdue Projects">
-                <field name="company_id" groups="base.group_multi_company"/>
                 <field name="project_office_id"/>
                 <field name="stage_id" string="Probability" context="{'code_only': True}"
                        options="{'always_reload': True}"/>
@@ -31,6 +30,7 @@
                 <field name="partner_id" widget="many2one_avatar"/>
                 <field name="name"/>
                 <field name="reason"/>
+                <field name="company_id" groups="base.group_multi_company"/>
             </tree>
         </field>
     </record>
@@ -57,7 +57,7 @@
                         <group>
                             <field name="step_id"/>
                             <field name="project_office_id"/>
-                            <field name="partner_id" widget="many2one_avatar"/>
+                            <field name="partner_id" string="Customer" widget="many2one_avatar"/>
                         </group>
                         <group>
                             <field name="key_account_manager_id" widget="many2one_avatar_employee"/>
@@ -67,7 +67,7 @@
                         </group>
                     </group>
                     <group>
-                        <field name="reason" string="Fields"/>
+                        <field name="reason"/>
                     </group>
                     <group>
                         <field name="company_id" groups="base.group_multi_company"/>
