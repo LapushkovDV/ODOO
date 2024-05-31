@@ -19,7 +19,7 @@ class ProjectOverdueReport(models.Model):
     # project_curator_id = fields.Many2one('hr.employee', string='Project Curator', readonly=True)
     project_office_id = fields.Many2one('project_budget.project_office', string='Project Office', readonly=True)
     step_id = fields.Many2one('project_budget.project_steps', string='Step', readonly=True)
-    partner_id = fields.Many2one('res.partner', string='Partner', readonly=True)
+    customer_id = fields.Many2one('res.partner', string='Customer', readonly=True)
     name = fields.Text(string='Name', readonly=True)
     reason = fields.Char(string='Reason', readonly=True)
 
@@ -36,7 +36,7 @@ SELECT
     --project_curator_id,
     project_supervisor_id,
     step_id,
-    partner_id,
+    partner_id AS customer_id,
     name,
     STRING_AGG(reason, ', ') AS reason
 FROM

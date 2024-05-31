@@ -27,7 +27,7 @@
                 <field name="project_manager_id" widget="many2one_avatar_employee"/>
                 <field name="project_id" string="Deal"/>
                 <field name="step_id"/>
-                <field name="partner_id" widget="many2one_avatar"/>
+                <field name="customer_id" widget="many2one_avatar"/>
                 <field name="name"/>
                 <field name="reason"/>
                 <field name="company_id" groups="base.group_multi_company"/>
@@ -42,33 +42,18 @@
             <form>
                 <sheet string="Overdue Project">
                     <group>
-                        <field name="name"/>
+                        <field name="project_office_id"/>
                     </group>
                     <group>
                         <group>
                             <field name="project_id"/>
                         </group>
                         <group>
-                            <field name="stage_id" string="Probability" context="{'code_only': True}"
-                                   options="{'always_reload': True}"/>
-                        </group>
-                    </group>
-                    <group>
-                        <group>
                             <field name="step_id"/>
-                            <field name="project_office_id"/>
-                            <field name="partner_id" string="Customer" widget="many2one_avatar"/>
-                        </group>
-                        <group>
-                            <field name="key_account_manager_id" widget="many2one_avatar_employee"/>
-                            <field name="project_manager_id" widget="many2one_avatar_employee"/>
-                            <field name="project_supervisor_id"/>
-                            <!--                        <field name="project_curator_id" widget="many2one_avatar_employee"/>-->
                         </group>
                     </group>
-                    <group>
-                        <field name="reason"/>
-                    </group>
+                    <separator string="Reason" style="background-color:#FF6971;"/>
+                    <field name="reason"/>
                     <group>
                         <field name="company_id" groups="base.group_multi_company"/>
                     </group>

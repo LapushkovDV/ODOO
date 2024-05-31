@@ -787,7 +787,7 @@
                     </group>
                     <notebook>
                         <page name="page_settings" string="Settings">
-                            <group name="project_settings">
+                            <group name="project_settings" groups="project_budget.project_budget_admin">
                                 <group>
                                     <field name="is_correction_project"/>
                                 </group>
@@ -845,7 +845,7 @@
                             <div class="ribbon ribbon-top-right" attrs="{'invisible': [('active', '=', True)]}">
                                 <span class="bg-danger">Archived</span>
                             </div>
-                            <div class="o_dropdown_kanban dropdown" groups="project_budget.project_budget_admin">
+                            <div class="o_dropdown_kanban dropdown" groups="project_budget.project_budget_users,project_budget.project_budget_admin">
                                 <a class="dropdown-toggle o-no-caret btn" href="#" role="button"
                                    data-toggle="dropdown" aria-label="Dropdown menu" title="Dropdown menu">
                                     <span class="fa fa-ellipsis-v"/>
