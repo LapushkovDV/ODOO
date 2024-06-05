@@ -100,14 +100,15 @@ FROM
         'Плановое актирование' AS reason
     FROM project_budget_planned_acceptance_flow pa
     INNER JOIN project_budget_projects p ON p.id = pa.projects_id AND p.budget_state = 'work'
-    INNER JOIN project_budget_project_stage st ON st.id = p.stage_id AND COALESCE(st.fold, false) = false	
+    INNER JOIN project_budget_project_stage st ON st.id = p.stage_id AND COALESCE(st.fold, false) = false
+    INNER JOIN res_currency c ON c.id = p.currency_id	
     LEFT JOIN
     (
         SELECT planned_acceptance_flow_id, SUM(sum_cash_without_vat) AS sum_distr_cash
         FROM project_budget_distribution_acceptance
         GROUP BY planned_acceptance_flow_id
     ) da ON da.planned_acceptance_flow_id = pa.id
-    WHERE pa.date_cash < CURRENT_DATE AND pa.sum_cash_without_vat - COALESCE(da.sum_distr_cash, 0) > 0
+    WHERE pa.date_cash < CURRENT_DATE AND ROUND(pa.sum_cash_without_vat, c.decimal_places) - ROUND(COALESCE(da.sum_distr_cash, 0), c.decimal_places) > 0
     UNION
     SELECT
         p.company_id,
@@ -125,13 +126,14 @@ FROM
     FROM project_budget_planned_cash_flow pc
     INNER JOIN project_budget_projects p ON p.id = pc.projects_id AND p.budget_state = 'work'
     INNER JOIN project_budget_project_stage st ON st.id = p.stage_id AND COALESCE(st.fold, false) = false
+    INNER JOIN res_currency c ON c.id = p.currency_id
     LEFT JOIN
     (
         SELECT planned_cash_flow_id, SUM(sum_cash) AS sum_distr_cash
         FROM project_budget_distribution_cash
         GROUP BY planned_cash_flow_id
     ) dc ON dc.planned_cash_flow_id = pc.id
-    WHERE pc.date_cash < CURRENT_DATE AND pc.sum_cash - COALESCE(dc.sum_distr_cash, 0) > 0
+    WHERE pc.date_cash < CURRENT_DATE AND ROUND(pc.sum_cash, c.decimal_places) - ROUND(COALESCE(dc.sum_distr_cash, 0), c.decimal_places) > 0
 ) p
 GROUP BY
     company_id,
