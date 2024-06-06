@@ -202,8 +202,9 @@ class Project(models.Model):
 
     # TODO: необходимо убрать домен и перейти на стандартное поле active
     project_office_id = fields.Many2one('project_budget.project_office', string='Project Office', check_company=True,
-                                        copy=True, domain="[('is_prohibit_selection','=', False)]", required=True,
-                                        tracking=True)
+                                        copy=True,
+                                        domain="[('is_prohibit_selection','=', False), '|', ('company_id', '=', False), ('company_id', '=', company_id)]",
+                                        required=True, tracking=True)
     project_supervisor_id = fields.Many2one('project_budget.project_supervisor', string='project_supervisor',
                                             required=True, copy=True, domain=_get_supervisor_list, tracking=True, check_company=True)
     key_account_manager_id = fields.Many2one('hr.employee', string='Key Account Manager', copy=True,
@@ -379,8 +380,9 @@ class Project(models.Model):
 
     def _compute_can_edit(self):
         for record in self:
-            record.can_edit = record.active and record.budget_state != 'fixed'\
-                and record.approve_state == 'need_approve_manager'
+            record.can_edit = record.active and (
+                (record.approve_state == 'need_approve_manager' and record.budget_state != 'fixed') or (
+                    self.env.user.has_group('project_budget.project_budget_admin') and record.budget_state == 'fixed'))
 
     def _check_project_is_child(self):
         for record in self:

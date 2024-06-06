@@ -19,7 +19,7 @@ class ProjectOverdueReport(models.Model):
     # project_curator_id = fields.Many2one('hr.employee', string='Project Curator', readonly=True)
     project_office_id = fields.Many2one('project_budget.project_office', string='Project Office', readonly=True)
     step_id = fields.Many2one('project_budget.project_steps', string='Step', readonly=True)
-    partner_id = fields.Many2one('res.partner', string='Partner', readonly=True)
+    customer_id = fields.Many2one('res.partner', string='Customer', readonly=True)
     name = fields.Text(string='Name', readonly=True)
     reason = fields.Char(string='Reason', readonly=True)
 
@@ -36,7 +36,7 @@ SELECT
     --project_curator_id,
     project_supervisor_id,
     step_id,
-    partner_id,
+    partner_id AS customer_id,
     name,
     STRING_AGG(reason, ', ') AS reason
 FROM
@@ -58,9 +58,11 @@ FROM
             WHEN end_sale_project_month < CURRENT_DATE THEN 'Дата последней отгрузки'
         END AS reason
     FROM project_budget_projects p
-    INNER JOIN project_budget_project_stage st ON st.id = p.stage_id AND COALESCE(st.fold, false) = false AND st.code <> '100'
+    INNER JOIN project_budget_project_stage st ON st.id = p.stage_id AND COALESCE(st.fold, false) = false
+    AND st.code <> '100'
     INNER JOIN project_budget_project_office po ON po.id = p.project_office_id
-    WHERE p.budget_state = 'work' AND (p.end_presale_project_month < CURRENT_DATE OR p.end_sale_project_month < CURRENT_DATE)
+    WHERE p.budget_state = 'work' AND p.active = true
+    AND (p.end_presale_project_month < CURRENT_DATE OR p.end_sale_project_month < CURRENT_DATE)
     UNION
     SELECT
         p.company_id,
@@ -79,10 +81,11 @@ FROM
             WHEN ps.end_sale_project_month < CURRENT_DATE THEN 'Дата последней отгрузки'
         END AS reason
     FROM project_budget_project_steps ps
-    INNER JOIN project_budget_projects p ON p.id = ps.projects_id AND p.budget_state = 'work'
+    INNER JOIN project_budget_projects p ON p.id = ps.projects_id AND p.budget_state = 'work' AND p.active = true
     AND p.end_presale_project_month > CURRENT_DATE AND p.end_sale_project_month > CURRENT_DATE
     AND p.project_have_steps = true
-    INNER JOIN project_budget_project_stage st ON st.id = ps.stage_id AND COALESCE(st.fold, false) = false AND st.code <> '100'
+    INNER JOIN project_budget_project_stage st ON st.id = ps.stage_id AND COALESCE(st.fold, false) = false
+    AND st.code <> '100'
     WHERE ps.end_presale_project_month < CURRENT_DATE OR ps.end_sale_project_month < CURRENT_DATE
     UNION
     SELECT
@@ -99,15 +102,17 @@ FROM
         p.essence_project AS name,
         'Плановое актирование' AS reason
     FROM project_budget_planned_acceptance_flow pa
-    INNER JOIN project_budget_projects p ON p.id = pa.projects_id AND p.budget_state = 'work'
-    INNER JOIN project_budget_project_stage st ON st.id = p.stage_id AND COALESCE(st.fold, false) = false	
+    INNER JOIN project_budget_projects p ON p.id = pa.projects_id AND p.budget_state = 'work' AND p.active = true
+    INNER JOIN project_budget_project_stage st ON st.id = p.stage_id AND COALESCE(st.fold, false) = false
+    INNER JOIN res_currency c ON c.id = p.currency_id	
     LEFT JOIN
     (
         SELECT planned_acceptance_flow_id, SUM(sum_cash_without_vat) AS sum_distr_cash
         FROM project_budget_distribution_acceptance
         GROUP BY planned_acceptance_flow_id
     ) da ON da.planned_acceptance_flow_id = pa.id
-    WHERE pa.date_cash < CURRENT_DATE AND pa.sum_cash_without_vat - COALESCE(da.sum_distr_cash, 0) > 0
+    WHERE pa.date_cash < CURRENT_DATE
+    AND ROUND(pa.sum_cash_without_vat, c.decimal_places) - ROUND(COALESCE(da.sum_distr_cash, 0), c.decimal_places) > 0
     UNION
     SELECT
         p.company_id,
@@ -123,15 +128,17 @@ FROM
         p.essence_project AS name,
         'ПДС' AS reason		
     FROM project_budget_planned_cash_flow pc
-    INNER JOIN project_budget_projects p ON p.id = pc.projects_id AND p.budget_state = 'work'
+    INNER JOIN project_budget_projects p ON p.id = pc.projects_id AND p.budget_state = 'work' AND p.active = true
     INNER JOIN project_budget_project_stage st ON st.id = p.stage_id AND COALESCE(st.fold, false) = false
+    INNER JOIN res_currency c ON c.id = p.currency_id
     LEFT JOIN
     (
         SELECT planned_cash_flow_id, SUM(sum_cash) AS sum_distr_cash
         FROM project_budget_distribution_cash
         GROUP BY planned_cash_flow_id
     ) dc ON dc.planned_cash_flow_id = pc.id
-    WHERE pc.date_cash < CURRENT_DATE AND pc.sum_cash - COALESCE(dc.sum_distr_cash, 0) > 0
+    WHERE pc.date_cash < CURRENT_DATE
+    AND ROUND(pc.sum_cash, c.decimal_places) - ROUND(COALESCE(dc.sum_distr_cash, 0), c.decimal_places) > 0
 ) p
 GROUP BY
     company_id,

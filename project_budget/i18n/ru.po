@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-24 06:57+0000\n"
-"PO-Revision-Date: 2024-05-24 06:57+0000\n"
+"POT-Creation-Date: 2024-05-31 11:05+0000\n"
+"PO-Revision-Date: 2024-05-31 11:05+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -173,6 +173,14 @@ msgstr "<span>Маржа:</span>"
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_kanban
 msgid "<span>Revenue:</span>"
 msgstr "<span>Выручка:</span>"
+
+#. module: project_budget
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_projects_report_print_form
+msgid ""
+"<strong>Выгрузка отчета по просроченным датам в EXCEL больше не поддерживается. Новый отчет можно\n"
+"                        посмотреть по пути: Коммерческая деятельность\\Отчеты\\Сделки\\Сделки с просроченными датами\n"
+"                    </strong>"
+msgstr ""
 
 #. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_projects_report_wizard__pds_accept__accept
@@ -878,6 +886,11 @@ msgid "Current Status"
 msgstr "Текущий статус"
 
 #. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_overdue_report__customer_id
+msgid "Customer"
+msgstr "Заказчик"
+
+#. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_spec_form
 msgid "Customer/Organization"
 msgstr "Заказчик/Исполнитель"
@@ -1068,9 +1081,46 @@ msgid "Fact"
 msgstr "Факт"
 
 #. module: project_budget
-#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_overdue_report_view_form
-msgid "Fields"
-msgstr "Поля"
+#. odoo-python
+#: code:addons/project_budget/controllers/main.py:0
+#, python-format
+msgid "Failed to find customer with Vat='%s'."
+msgstr "Не удалось найти заказчика с ИНН='%s'."
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/controllers/main.py:0
+#, python-format
+msgid "Failed to find industry with Name='%s'."
+msgstr "Не удалось найти отрасль с наименованием '%s'."
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/controllers/main.py:0
+#, python-format
+msgid "Failed to find project office '%s'."
+msgstr "Не удалось найти проектный офис '%s'."
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/controllers/main.py:0
+#, python-format
+msgid "Failed to find project type '%s'."
+msgstr "Не удалось найти тип проекта '%s'."
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/controllers/main.py:0
+#, python-format
+msgid "Failed to find signer with Vat='%s'."
+msgstr "Не удалось найти Юр лицо, подсписывающее договор с ИНН='%s'."
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/controllers/main.py:0
+#, python-format
+msgid "Failed to find vat '%s'."
+msgstr "Не удалось найти НДС '%s'."
 
 #. module: project_budget
 #. odoo-python
@@ -1977,7 +2027,6 @@ msgstr "Вышестоящий проектный офис"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_legal_entity_signing__partner_id
-#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_overdue_report__partner_id
 #: model:ir.model.fields,field_description:project_budget.field_res_company_partner__partner_id
 #: model_terms:ir.ui.view,arch_db:project_budget.res_company_partner_view_form
 #: model_terms:ir.ui.view,arch_db:project_budget.res_company_partner_view_search
@@ -2125,7 +2174,6 @@ msgstr "Реестр тендеров"
 
 #. module: project_budget
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_child_view_tree
-#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_overdue_report_view_form
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_overdue_report_view_tree
 #: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_view_tree
 #: model_terms:ir.ui.view,arch_db:project_budget.show_comercial_budget_project_steps_form
@@ -2294,6 +2342,13 @@ msgstr "Проект привязан к проекту '%s'"
 
 #. module: project_budget
 #. odoo-python
+#: code:addons/project_budget/controllers/main.py:0
+#, python-format
+msgid "Project with ProjectId='%s' not found."
+msgstr "Проект ProjectId='%s' не найден."
+
+#. module: project_budget
+#. odoo-python
 #: code:addons/project_budget/models/project_budget_project.py:0
 #, python-format
 msgid "Project with steps should be 'Complex' type"
@@ -2421,6 +2476,7 @@ msgstr ""
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_project_overdue_report__reason
+#: model_terms:ir.ui.view,arch_db:project_budget.project_budget_project_overdue_report_view_form
 msgid "Reason"
 msgstr "Причина"
 
@@ -4367,11 +4423,6 @@ msgid "project_budget.report_budget_fin_excel"
 msgstr ""
 
 #. module: project_budget
-#: model:ir.model,name:project_budget.model_report_project_budget_report_budget_forecast_excel
-msgid "project_budget.report_budget_forecast_excel"
-msgstr "Прогноз (EXCEL)"
-
-#. module: project_budget
 #: model:ir.model,name:project_budget.model_report_project_budget_report_budget_forecast_v2_excel
 msgid "project_budget.report_budget_forecast_v2_excel"
 msgstr ""
@@ -4399,11 +4450,6 @@ msgstr ""
 #. module: project_budget
 #: model:ir.model,name:project_budget.model_report_project_budget_report_pds_weekly_excel
 msgid "project_budget.report_pds_weekly_excel"
-msgstr ""
-
-#. module: project_budget
-#: model:ir.model,name:project_budget.model_report_project_budget_report_projects_overdue_excel
-msgid "project_budget.report_projects_overdue_excel"
 msgstr ""
 
 #. module: project_budget
