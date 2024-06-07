@@ -17,4 +17,16 @@
         <field name="implied_ids" eval="[(4, ref('group_license_user'))]"/>
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
+
+    <data>
+        <record id="license_company_rule" model="ir.rule">
+            <field name="name">License multi-company</field>
+            <field name="model_id" ref="model_license_license"/>
+            <field name="domain_force">
+                [
+                    '|', ('company_id', '=', False), ('company_id', 'in', company_ids)
+                ]
+            </field>
+        </record>
+    </data>
 </odoo>
