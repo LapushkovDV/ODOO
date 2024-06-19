@@ -7,18 +7,18 @@ class fact_cash_flow(models.Model):
     _name = 'project_budget.fact_cash_flow'
     _description = "fact cash flow"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    projects_id = fields.Many2one('project_budget.projects', string='projects_id',index=True,ondelete='cascade', auto_join=True,readonly=True)
-    project_have_steps = fields.Boolean(string="project have steps", related='projects_id.project_have_steps',
+    projects_id = fields.Many2one('project_budget.projects', string='projects_id', index=True, ondelete='cascade',
+                                  auto_join=True, readonly=True)
+    can_edit = fields.Boolean(related='projects_id.can_edit', readonly=True)
+    project_have_steps = fields.Boolean(related='projects_id.project_have_steps', string='project have steps',
                                         readonly=True)
-    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,ondelete='cascade'
-                                       )
-    date_cash = fields.Date(string="date_cash" , required=True, copy=True)
+    project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,
+                                       ondelete='cascade')
+    date_cash = fields.Date(string="date_cash", required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
     sum_cash_without_vat = fields.Monetary(string="fact sum_cash_without_vat", required=True, copy=True, compute='_compute_sum')
     sum_cash = fields.Monetary(string="fact sum_cash", required=True, copy=True)
     doc_cash = fields.Char(string="doc_cash",  copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
-    budget_state = fields.Selection(related='projects_id.budget_state', readonly=True, store=True)
-    approve_state = fields.Selection(related='projects_id.approve_state', readonly=True, store=True)
 
     distribution_cash_ids = fields.One2many(
         comodel_name='project_budget.distribution_cash',
