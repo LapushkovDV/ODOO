@@ -370,9 +370,6 @@
                                             <field name="project_supervisor_id" widget="many2one_avatar"
                                                    placeholder="Project Supervisor" options="{'no_open': True}"
                                                    attrs="{'readonly': [('can_edit', '=', False)]}"/>
-                                            <field name="project_administrator_id" widget="many2one_avatar"
-                                                   placeholder="Project Administrator" options="{'no_open': True}"
-                                                   attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                             <field name="technological_direction_id" options="{'no_open': True}"
                                                    placeholder="Technological Direction"
                                                    attrs="{'readonly': [('can_edit', '=', False)]}"/>
@@ -381,11 +378,10 @@
                                 </h5>
                                 <group string="Customer/Organization">
                                     <group>
-                                        <field name="partner_id" force_save="1" widget="many2one_avatar"
-                                               options="{'no_open': True,}" placeholder="select customer/organization"
+                                        <field name="partner_id" widget="many2one_avatar" options="{'no_open': True}"
                                                attrs="{'readonly': [('can_edit', '=', False)]}"
                                                context="{'show_vat': True, 'default_is_company': True}"/>
-                                        <field name="industry_id" force_save="1" options="{'no_open': True,}"
+                                        <field name="industry_id" force_save="1" options="{'no_open': True}"
                                                placeholder="select industry"
                                                attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                     </group>
@@ -620,15 +616,27 @@
                                 <group string="Costs FOT" col="3">
                                     <group>
                                         <field name="own_works_fot" style="text-align:right"
-                                               attrs="{'invisible': [('is_own_works_fot', '=', False), ('project_have_steps', '=', False)]}"/>
+                                               attrs="
+                                               {
+                                                    'invisible': [('is_own_works_fot', '=', False), ('project_have_steps', '=', False)],
+                                                    'readonly': [('can_edit', '=', False)]
+                                               }"/>
                                     </group>
                                     <group>
                                         <field name="awards_on_results_project" style="text-align:right"
-                                               attrs="{'invisible': [('is_awards_on_results_project', '=', False), ('project_have_steps', '=', False)]}"/>
+                                               attrs="
+                                               {
+                                                    'invisible': [('is_awards_on_results_project', '=', False), ('project_have_steps', '=', False)],
+                                                    'readonly': [('can_edit', '=', False)]
+                                               }"/>
                                     </group>
                                     <group>
                                         <field name="taxes_fot_premiums" style="text-align:right"
-                                               attrs="{'invisible': [('is_own_works_fot', '=', False), ('is_awards_on_results_project', '=', False),('project_have_steps', '=', False)]}"/>
+                                               attrs="
+                                               {
+                                                    'invisible': [('is_own_works_fot', '=', False), ('is_awards_on_results_project', '=', False),('project_have_steps', '=', False)],
+                                                    'readonly': [('can_edit', '=', False)]
+                                               }"/>
                                     </group>
                                 </group>
                             </page>
@@ -759,6 +767,47 @@
                                 </h4>
                                 <field name="fact_cash_flow_ids" widget="section_and_note_one2many"
                                        mode="tree" attrs="{'readonly': [('can_edit', '=', False)]}"/>
+                            </page>
+                            <page name="page_project_team" string="Project Team"
+                                  groups="project_budget.project_budget_users,project_budget.project_budget_admin">
+                                <field name="project_member_ids" mode="kanban"
+                                       attrs="{'readonly': [('can_edit', '=', False)]}"
+                                       context="{'default_project_id': active_id}">
+                                    <kanban>
+                                        <field name="id"/>
+                                        <field name="project_id"/>
+                                        <field name="role_id"/>
+                                        <field name="employee_id"/>
+                                        <field name="company_id"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="o_kanban_card_content d-flex">
+                                                        <div>
+                                                            <img t-att-src="kanban_image('hr.employee', 'image_1920', record.employee_id.raw_value)"
+                                                                 height="40" width="40"
+                                                                 class="oe_avatar oe_kanban_avatar_smallbox mb0"
+                                                                 alt="Avatar"/>
+                                                        </div>
+                                                        <div class="oe_kanban_details d-flex flex-column ms-3">
+                                                            <strong class="o_kanban_record_title oe_partner_heading">
+                                                                <t t-esc="record.employee_id.value"/>
+                                                            </strong>
+                                                            <div class="d-flex align-items-baseline text-break">
+                                                                <i class="fa fa-user me-1" role="img"
+                                                                   aria-label="Role" title="Role"/>
+                                                                <t t-esc="record.role_id.value"/>
+                                                            </div>
+                                                        </div>
+                                                        <a t-if="!read_only_mode" type="delete" class="text-danger">
+                                                            <i class="fa fa-times" title="Delete"/>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
