@@ -222,7 +222,7 @@ class Project(models.Model):
                                          store=True, tracking=True)
     # project_curator_id = fields.Many2one('hr.employee', string='Project Curator', copy=True,
     #                                      domain=_get_project_curator_id_domain, required=True, tracking=True)
-    project_member_ids = fields.One2many('project_budget.project.member', 'project_id', string='Members', copy=True,
+    project_member_ids = fields.One2many('project_budget.project.member', 'project_id', string='Members', copy=False,
                                          default=_get_default_member_ids)
     partner_id = fields.Many2one('res.partner', string='Customer', copy=True,
                                  domain="[('is_company', '=', True)]", ondelete='restrict', required=True,
@@ -691,7 +691,7 @@ class Project(models.Model):
                 'project_budget.project_role_key_account_manager'))[:1].employee_id or False
 
     def _inverse_key_account_manager_id(self):
-        for project in self.filtered(lambda pr: pr.key_account_manager_id):
+        for project in self.filtered(lambda pr: pr.budget_state == 'work' and pr.key_account_manager_id):
             member_team = self.project_member_ids.filtered(lambda t: t.role_id == self.env.ref(
                 'project_budget.project_role_key_account_manager'))[:1]
             if member_team:
@@ -709,7 +709,7 @@ class Project(models.Model):
                 'project_budget.project_role_project_manager'))[:1].employee_id or False
 
     def _inverse_project_manager_id(self):
-        for project in self.filtered(lambda pr: pr.project_manager_id):
+        for project in self.filtered(lambda pr: pr.budget_state == 'work' and pr.project_manager_id):
             member_team = self.project_member_ids.filtered(lambda t: t.role_id == self.env.ref(
                 'project_budget.project_role_project_manager'))[:1]
             if member_team:
@@ -731,7 +731,7 @@ class Project(models.Model):
             ])[:1] or False
 
     def _inverse_project_curator_id(self):
-        for project in self.filtered(lambda pr: pr.project_supervisor_id):
+        for project in self.filtered(lambda pr: pr.budget_state == 'work' and pr.project_supervisor_id):
             member_team = self.project_member_ids.filtered(lambda t: t.role_id == self.env.ref(
                 'project_budget.project_role_project_curator'))[:1]
             if member_team:
