@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-13 07:22+0000\n"
-"PO-Revision-Date: 2024-06-13 07:22+0000\n"
+"POT-Creation-Date: 2024-06-23 17:25+0000\n"
+"PO-Revision-Date: 2024-06-23 17:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,15 +19,15 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/workplace_employee_project_budget/static/src/components/workplace_employee_project_budget_dashboard/workplace_employee_project_budget_dashboard.xml:0
 #, python-format
-msgid "Key Account Manager"
-msgstr "КАМ"
+msgid "New Project"
+msgstr "Новая сделка"
 
 #. module: workplace_employee_project_budget
 #. odoo-javascript
 #: code:addons/workplace_employee_project_budget/static/src/components/workplace_employee_project_budget_dashboard/workplace_employee_project_budget_dashboard.xml:0
 #, python-format
-msgid "New Project"
-msgstr "Новая сделка"
+msgid "No overdue projects."
+msgstr "Сделки с просроченными датами отсутствуют."
 
 #. module: workplace_employee_project_budget
 #. odoo-javascript
