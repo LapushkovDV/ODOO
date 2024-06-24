@@ -39,8 +39,8 @@ patch(WorkplaceEmployeeDashboard.prototype, "workplace_employee_project_budget.W
             name: _t("Overdue Projects"),
             type: "ir.actions.act_window",
             res_model: "project.budget.project.overdue.report",
-            view_mode: "tree,form",
-            views: [[false, "tree"], [false, "form"]],
+            view_mode: "tree,form,graph",
+            views: [[false, "tree"], [false, "form"], [false, "graph"]],
             context: {
                 ...session.context
             },
@@ -78,7 +78,7 @@ patch(WorkplaceEmployeeDashboard.prototype, "workplace_employee_project_budget.W
     viewStep(stepId) {
         this.action.doAction({
             type: "ir.actions.act_window",
-            res_model: "project_budget.steps",
+            res_model: "project_budget.project_steps",
             res_id: parseInt(stepId),
             view_mode: "form",
             views: [[false, "form"]],
