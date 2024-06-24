@@ -98,8 +98,10 @@
                 <field name="currency_id" optional="show"/>
                 <field name="project_office_id" optional="show"/>
                 <field name="project_supervisor_id" optional="show" widget="many2one_avatar"/>
-                <field name="key_account_manager_id" optional="show" widget="many2one_avatar_employee"/>
-                <field name="project_manager_id" optional="show" widget="many2one_avatar_employee"/>
+                <field name="key_account_manager_id" optional="show" widget="many2one_avatar_employee"
+                       options="{'relation': 'hr.employee.public'}"/>
+                <field name="project_manager_id" optional="show" widget="many2one_avatar_employee"
+                       options="{'relation': 'hr.employee.public'}"/>
                 <field name="industry_id" optional="hide"/>
                 <field name="partner_id" optional="show" widget="many2one_avatar"/>
                 <field name="company_partner_id" widget="many2one_avatar" optional="hide"/>
@@ -356,11 +358,11 @@
                                             <field name="isRukovoditel_required_in_project" invisible="True"/>
                                             <field name="key_account_manager_id" widget="many2one_avatar_employee"
                                                    placeholder="Key Account Manager"
-                                                   options="{'no_create_edit': True, 'no_open': True}"
+                                                   options="{'no_create_edit': True, 'no_open': True, 'relation': 'hr.employee.public'}"
                                                    attrs="{'readonly': [('can_edit', '=', False)]}"/>
                                             <field name="project_manager_id" widget="many2one_avatar_employee"
                                                    placeholder="Project Manager"
-                                                   options="{'no_create_edit': True, 'no_open': True}"
+                                                   options="{'no_create_edit': True, 'no_open': True, 'relation': 'hr.employee.public'}"
                                                    attrs="{'readonly': [('can_edit', '=', False)], 'required': [('isRukovoditel_required_in_project', '=', True)]}"/>
                                             <field name="project_type_id" placeholder="Project Type"
                                                    options="{'no_open': True}"
@@ -784,7 +786,7 @@
                                                 <div class="oe_kanban_card oe_kanban_global_click">
                                                     <div class="o_kanban_card_content d-flex">
                                                         <div>
-                                                            <img t-att-src="kanban_image('hr.employee', 'image_1920', record.employee_id.raw_value)"
+                                                            <img t-att-src="kanban_image('hr.employee.public', 'image_1920', record.employee_id.raw_value)"
                                                                  height="40" width="40"
                                                                  class="oe_avatar oe_kanban_avatar_smallbox mb0"
                                                                  alt="Avatar"/>
@@ -959,7 +961,8 @@
                                     </div>
                                     <div class="oe_kanban_bottom_right">
                                         <t t-if="record.key_account_manager_id.raw_value">
-                                            <field name="key_account_manager_id" widget="many2one_avatar_employee"/>
+                                            <field name="key_account_manager_id" widget="many2one_avatar_employee"
+                                                   options="{'relation': 'hr.employee.public'}"/>
                                         </t>
                                     </div>
                                 </div>
