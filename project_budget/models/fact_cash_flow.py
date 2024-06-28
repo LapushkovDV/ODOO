@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError
 from odoo.tools import pytz
 from datetime import date
 
+
 class fact_cash_flow(models.Model):
     _name = 'project_budget.fact_cash_flow'
     _description = "fact cash flow"
@@ -13,12 +14,16 @@ class fact_cash_flow(models.Model):
     project_have_steps = fields.Boolean(related='projects_id.project_have_steps', string='project have steps',
                                         readonly=True)
     project_steps_id = fields.Many2one('project_budget.project_steps', string='project_steps_id', index=True,
-                                       ondelete='cascade')
+                                       ondelete='cascade')   # TODO убрать после миграции
+    step_project_child_id = fields.Many2one('project_budget.projects', string="step-project child id", index=True,
+                                            ondelete='cascade')
     date_cash = fields.Date(string="date_cash", required=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency', compute='_compute_reference')
     sum_cash_without_vat = fields.Monetary(string="fact sum_cash_without_vat", required=True, copy=True, compute='_compute_sum')
     sum_cash = fields.Monetary(string="fact sum_cash", required=True, copy=True)
     doc_cash = fields.Char(string="doc_cash",  copy=True) #20230403 Вавилова Ирина сказла убрать из формы...
+    budget_state = fields.Selection(related='projects_id.budget_state', readonly=True, store=True)
+    approve_state = fields.Selection(related='projects_id.approve_state', readonly=True, store=True)
 
     distribution_cash_ids = fields.One2many(
         comodel_name='project_budget.distribution_cash',
@@ -35,11 +40,11 @@ class fact_cash_flow(models.Model):
         for row in self:
             row.currency_id = row.projects_id.currency_id
 
-    @api.depends("sum_cash","project_steps_id.vat_attribute_id","projects_id.vat_attribute_id")
+    @api.depends("sum_cash","step_project_child_id.vat_attribute_id","projects_id.vat_attribute_id")
     def _compute_sum(self):
         for row in self:
-            if row.project_steps_id:
-                row.sum_cash_without_vat = row.sum_cash/(1+row.project_steps_id.vat_attribute_id.percent / 100)
+            if row.step_project_child_id:
+                row.sum_cash_without_vat = row.sum_cash/(1+row.step_project_child_id.vat_attribute_id.percent / 100)
             else:
                 row.sum_cash_without_vat = row.sum_cash / (1 + row.projects_id.vat_attribute_id.percent / 100)
 
