@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="show_fact_cash_flow_form" model="ir.ui.view">
         <field name="name">project_budget.fact_cash_flow.form</field>
@@ -6,18 +5,19 @@
         <field name="arch" type="xml">
             <form create="0" delete="0">
                 <sheet string="Project">
+                    <field name="budget_state" invisible="True"/>
+                    <field name="approve_state" invisible="True"/>
                     <field name="can_edit" invisible="True"/>
-                    <field name="project_have_steps" invisible="False"/>
+                    <field name="project_have_steps" invisible="True"/>
                     <field name="projects_id" invisible="False"/>
                     <group>
                         <group>
                             <field name="date_cash" placeholder="enter planned cash flow date"/>
                         </group>
                         <group>
-                            <field name="project_steps_id" options="{'no_open': True,}"
-                                   placeholder="select project steps"
-                                   attrs="{'invisible': [('project_have_steps', '=', False)], 'required': [('project_have_steps', '=', True)]}"
-                                   domain='[("projects_id", "=", parent.id),("stage_id.code", "!=", "0")]'
+                            <field name="step_project_child_id" options="{'no_open': True,}" placeholder="select project steps"
+                                   attrs="{'invisible': [('parent.project_have_steps', '=', False)], 'required': [('parent.project_have_steps', '=', True)]}"
+                                   domain="[('id', 'in', parent.step_project_child_ids),('stage_id.code', '!=', '0')]"
                             />
                         </group>
                     </group>
@@ -61,7 +61,6 @@
                                    decoration-warning="distribution_sum_with_vat_ostatok != 0"/>
                         </tree>
                     </field>
-
                 </sheet>
             </form>
         </field>
@@ -77,8 +76,8 @@
                 <field name="project_have_steps" invisible="True"/>
                 <field name="projects_id" optional="hide"/>
                 <field name="date_cash" placeholder="enter planned cash flow date"/>
-                <field name="project_steps_id" options="{'no_open': True,}" placeholder="select project steps"
-                       attrs="{'column_invisible': [('parent.project_have_steps', '=', False)], 'required': [('project_have_steps', '=', True)]}"
+                <field name="step_project_child_id" options="{'no_open': True,}" placeholder="select project steps"
+                       attrs="{'column_invisible': [('parent.project_have_steps', '=', False)], 'required': [('parent.project_have_steps', '=', True)]}"
                 />
                 <!--#20230403 Вавилова Ирина сказла убрать...                                        <field name="doc_cash" placeholder="type docs description"/>-->
                 <field name="sum_cash_without_vat" placeholder="enter planned cash flow sum " optional="hide"/>
