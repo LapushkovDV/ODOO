@@ -30,17 +30,6 @@ class Project(models.Model):
         ], limit=1)
         return employee.id
 
-    def _get_default_member_ids(self):
-        result = []
-        employee_id = self._get_default_employee_id()
-        if employee_id:
-            result.append((0, 0, {
-                'project_id': self.id,
-                'role_id': self.env.ref('project_budget.project_role_key_account_manager').id,
-                'employee_id': employee_id
-            }))
-        return result
-
     def _get_current_amount_spec_type(self):
         context = self.env.context
         print('_get_current_amount_spec_type context',context)
@@ -216,6 +205,7 @@ class Project(models.Model):
     key_account_manager_id = fields.Many2one('hr.employee', string='Key Account Manager',
                                              compute='_compute_key_account_manager_id',
                                              inverse='_inverse_key_account_manager_id', copy=True,
+                                             default=_get_default_employee_id,
                                              domain="[('company_id', 'in', (False, company_id))]", required=True,
                                              store=True, tracking=True)
     project_manager_id = fields.Many2one('hr.employee', string='Project Manager', compute='_compute_project_manager_id',
@@ -224,8 +214,7 @@ class Project(models.Model):
                                          store=True, tracking=True)
     # project_curator_id = fields.Many2one('hr.employee', string='Project Curator', copy=True,
     #                                      domain=_get_project_curator_id_domain, required=True, tracking=True)
-    project_member_ids = fields.One2many('project_budget.project.member', 'project_id', string='Members', copy=False,
-                                         default=_get_default_member_ids)
+    project_member_ids = fields.One2many('project_budget.project.member', 'project_id', string='Members', copy=False)
     partner_id = fields.Many2one('res.partner', string='Customer', copy=True,
                                  domain="[('is_company', '=', True)]", ondelete='restrict', required=True,
                                  tracking=True)
@@ -432,7 +421,7 @@ class Project(models.Model):
         required_members = self.env['project_budget.project.role'].search([
             ('is_required', '=', True)
         ])
-        for record in self:
+        for record in self.filtered(lambda pr: pr.step_status == 'project'):
             diff = set(required_members) - set(record.project_member_ids.mapped('role_id'))
             if self.env.ref(
                     'project_budget.project_role_key_account_manager') in diff and record.key_account_manager_id:
@@ -775,7 +764,8 @@ class Project(models.Model):
                 'project_budget.project_role_key_account_manager'))[:1].employee_id or False
 
     def _inverse_key_account_manager_id(self):
-        for project in self.filtered(lambda pr: pr.budget_state == 'work' and pr.key_account_manager_id):
+        for project in self.filtered(
+                lambda pr: pr.step_status == 'project' and pr.budget_state == 'work' and pr.key_account_manager_id):
             member_team = self.project_member_ids.filtered(lambda t: t.role_id == self.env.ref(
                 'project_budget.project_role_key_account_manager'))[:1]
             if member_team:
@@ -793,7 +783,8 @@ class Project(models.Model):
                 'project_budget.project_role_project_manager'))[:1].employee_id or False
 
     def _inverse_project_manager_id(self):
-        for project in self.filtered(lambda pr: pr.budget_state == 'work' and pr.project_manager_id):
+        for project in self.filtered(
+                lambda pr: pr.step_status == 'project' and pr.budget_state == 'work' and pr.project_manager_id):
             member_team = self.project_member_ids.filtered(lambda t: t.role_id == self.env.ref(
                 'project_budget.project_role_project_manager'))[:1]
             if member_team:
@@ -815,7 +806,8 @@ class Project(models.Model):
             ])[:1] or False
 
     def _inverse_project_curator_id(self):
-        for project in self.filtered(lambda pr: pr.budget_state == 'work' and pr.project_supervisor_id):
+        for project in self.filtered(
+                lambda pr: pr.step_status == 'project' and pr.budget_state == 'work' and pr.project_supervisor_id):
             member_team = self.project_member_ids.filtered(lambda t: t.role_id == self.env.ref(
                 'project_budget.project_role_project_curator'))[:1]
             if member_team:

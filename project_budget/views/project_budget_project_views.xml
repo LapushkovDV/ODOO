@@ -1297,7 +1297,7 @@
                                    data-toggle="dropdown" aria-label="Dropdown menu" title="Dropdown menu">
                                     <span class="fa fa-ellipsis-v"/>
                                 </a>
-                                <div class="o_kanban_card_manage_settings row">
+                                <div class="o_kanban_card_settings row">
                                     <div role="menuitem" class="col">
                                         <a t-if="widget.editable" class="dropdown-item" role="menuitem" type="object"
                                            name="action_open_settings">
@@ -1329,8 +1329,8 @@
                                     </div>
                                 </div>
                                 <div class="o_kanban_record_body">
-                                    <div t-if="record.essence_project.value" name="name_kanban"
-                                         class="text-truncate text-muted">
+                                    <div t-if="record.essence_project.value" t-att-title="record.essence_project.value"
+                                         name="name_kanban" class="text-truncate text-muted">
                                         <field name="essence_project"/>
                                     </div>
                                     <div t-if="record.project_have_steps.value">
