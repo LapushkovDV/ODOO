@@ -3088,7 +3088,6 @@ class report_management_committee_excel(models.AbstractModel):
 
         for company in companies:
             external_data = self.env['project_budget.report_external_data'].search([
-                ('report_date', '>=', current_week_start),
                 ('report_date', '<=', current_week_end),
                 ('company_id', '=', company.id),
             ], order='report_date', limit=1)
