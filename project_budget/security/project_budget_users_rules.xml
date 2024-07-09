@@ -64,6 +64,18 @@
             <field name="groups" eval="[(4, ref('project_budget.project_budget_admin'))]"/>
         </record>
 
+        <!-- Project stage rules -->
+
+        <record id="project_budget_project_stage_company_rule" model="ir.rule">
+            <field name="name">Project stage multi-company</field>
+            <field name="model_id" ref="model_project_budget_project_stage"/>
+            <field name="domain_force">
+                [
+                    '|', ('company_ids', '=', False), ('company_ids', 'in', company_ids)
+                ]
+            </field>
+        </record>
+
         <!-- KAM plan rules -->
 
         <record id="ir_rule_project_budget_access_budget_plan_kam" model="ir.rule">

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-03 13:17+0000\n"
-"PO-Revision-Date: 2024-07-03 13:17+0000\n"
+"POT-Creation-Date: 2024-07-09 14:38+0000\n"
+"PO-Revision-Date: 2024-07-09 14:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -609,6 +609,11 @@ msgstr "Коммерческие бюджеты"
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_planned_cash_flow__forecast__commitment
 msgid "Commitment"
 msgstr "Обязательство"
+
+#. module: project_budget
+#: model:ir.model.fields,field_description:project_budget.field_project_budget_project_stage__company_ids
+msgid "Companies"
+msgstr "Компании"
 
 #. module: project_budget
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_budget_plan_kam__company_id
@@ -2984,6 +2989,13 @@ msgstr "По указанным условиям тендеры не найде�
 #: model:ir.model.fields,field_description:project_budget.field_project_budget_projects__end_sale_project_month
 msgid "The period of shipment or provision of services to the Client(MONTH)"
 msgstr "Последняя отгрузка"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "The selected stage belongs to another company than the project."
+msgstr "Выбранный этап принадлежит компании отличной от указанной в сделке."
 
 #. module: project_budget
 #. odoo-python
