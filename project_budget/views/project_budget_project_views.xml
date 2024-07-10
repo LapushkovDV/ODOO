@@ -1254,7 +1254,7 @@
         <field name="model">project_budget.projects</field>
         <field name="arch" type="xml">
             <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_project_kanban"
-                    js_class="project_kanban" default_order="total_amount_of_revenue desc" default_group_by="stage_id"
+                    js_class="project_kanban" default_order="partner_id" default_group_by="stage_id"
                     quick_create="false" group_create="false" group_delete="false">
                 <field name="stage_id" options='{"group_by_tooltip": {"name": "Name"}}'/>
                 <field name="active"/>
@@ -1427,7 +1427,8 @@
         </field>
         <field name="domain">
             [
-                ('budget_state', '=', 'work'), ('step_status', '=', 'project')
+                ('budget_state', '=', 'work'),
+                ('step_status', '=', 'project')
             ]
         </field>
     </record>

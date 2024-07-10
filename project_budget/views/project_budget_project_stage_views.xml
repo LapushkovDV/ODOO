@@ -19,6 +19,7 @@
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="fold"/>
+                <field name="company_ids" widget="many2many_tags" groups="base.group_multi_company"/>
             </tree>
         </field>
     </record>
@@ -71,6 +72,9 @@
                         <group>
                             <field name="color" widget="color_picker"/>
                         </group>
+                    </group>
+                    <group>
+                        <field name="company_ids" widget="many2many_tags" groups="base.group_multi_company"/>
                     </group>
                 </sheet>
             </form>

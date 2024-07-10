@@ -27,6 +27,9 @@ class ProjectStage(models.Model):
                                           relation='project_budget_project_stage_required_fields_rel',
                                           column1='stage_id', column2='field_id', string='Required Fields', copy=False,
                                           domain="[('model', '=', 'project_budget.projects'), ('required', '=', False)]")
+    company_ids = fields.Many2many('res.company', relation='project_budget_project_stage_company_rel',
+                                   column1='stage_id', column2='company_id', string='Companies',
+                                   domain=lambda self: [('id', 'in', self.env.context.get('allowed_company_ids', []))])
 
     def name_get(self):
         name_array = []
