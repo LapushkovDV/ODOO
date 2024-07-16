@@ -2250,6 +2250,69 @@ msgstr ""
 "вероятность больше 30%"
 
 #. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "Project\step is '100' acceptance {0} should be 'commitment' or 'from_project'"
+msgstr "Вероятность проекта\этапа: '100'. Вероятность актирования {0} должна быть 'Обязательство' или 'На основе проекта\этапа'"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "Project\step is '75' acceptance {0} should be 'commitment', 'reserve' or 'from_project'"
+msgstr "Вероятность проекта\этапа: '75'. Вероятность актирования {0} должна быть 'Обязательство', 'Резерв' или 'На основе проекта\этапа'"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "Project\step is '50' acceptance {0} should be 'potential', 'reserve' or 'from_project'"
+msgstr "Вероятность проекта\этапа: '50'. Вероятность актирования {0} должна быть 'Резерв', 'Потенциал' или 'На основе проекта\этапа'"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "Project\step is '30' or '10' acceptance {0} should be 'potential' or 'from_project'"
+msgstr "Вероятность проекта\этапа: '30','10'. Вероятность актирования {0} должна быть 'Потенциал' или 'На основе проекта\этапа'"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "Project\step is '100' cash {0} should be 'commitment' or 'from_project'"
+msgstr "Вероятность проекта\этапа: '100'. Вероятность ПДС {0} должна быть 'Обязательство' или 'На основе проекта\этапа'"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "Project\step is '75' cash {0} should be 'commitment', 'reserve' or 'from_project'"
+msgstr "Вероятность проекта\этапа: '75'. Вероятность ПДС {0} должна быть 'Обязательство', 'Резерв' или 'На основе проекта\этапа'"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "Project\step is '50' cash {0} should be 'potential', 'reserve' or 'from_project'"
+msgstr "Вероятность проекта\этапа: '50'. Вероятность ПДС {0} должна быть 'Резерв', 'Потенциал' или 'На основе проекта\этапа'"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "Project\step is '30' or '10' cash {0} should be 'potential' or 'from_project'"
+msgstr "Вероятность проекта\этапа: '30','10'. Вероятность ПДС {0} должна быть 'Потенциал' или 'На основе проекта\этапа'"
+
+#. module: project_budget
+#. odoo-python
+#: code:addons/project_budget/models/project_budget_project.py:0
+#, python-format
+msgid "Project\step stage has changed, acceptance and cash forecasts set to 'from_project'"
+msgstr "Вероятность проекта\этапа изменилась - вероятности связанных Актирований и ПДС установлены в 'На основе проекта\этапа'"
+
+#. module: project_budget
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_planned_acceptance_flow__forecast__potential
 #: model:ir.model.fields.selection,name:project_budget.selection__project_budget_planned_cash_flow__forecast__potential
 msgid "Potential"
