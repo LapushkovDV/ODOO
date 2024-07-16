@@ -605,7 +605,7 @@ class Project(models.Model):
                  'active', 'approve_state')
     def _compute_step_project_details(self):
         for row in self:
-            if row.project_have_steps and row.step_project_child_ids:
+            if row.step_project_child_ids:
                 for step_project_child_id in row.step_project_child_ids:
                     step_project_child_id.company_id = row.company_id
                     step_project_child_id.currency_id = row.currency_id
@@ -1083,6 +1083,73 @@ class Project(models.Model):
                     raisetext = _("Please enter AXAPTA code to step {0}")
                 raisetext = raisetext.format(project.project_id)
                 raise ValidationError(raisetext)
+
+    @api.constrains(
+        'stage_id', 'planned_acceptance_flow_ids', 'planned_cash_flow_ids', 'planned_step_cash_flow_ids',
+        'planned_step_acceptance_flow_ids',
+        )
+    def _check_allowed_forecast_stages(self):  # проверяем чтобы вероятности прогнозов были связаны с вероятностью проектов
+        for project in self:
+            if project.budget_state == 'work' and not project.is_correction_project:
+                raisetext = ''
+                if project.step_status == 'step':
+                    accs_ids = project.planned_step_acceptance_flow_ids
+                    cash_ids = project.planned_step_cash_flow_ids
+                elif project.step_status == 'project':
+                    accs_ids = project.planned_acceptance_flow_ids
+                    cash_ids = project.planned_cash_flow_ids
+                for acceptance in accs_ids:
+                    if acceptance.forecast != 'from_project':
+                        if project.stage_id.code == '100' and acceptance.forecast != 'commitment':
+                            raisetext = _("Project\step is '100' acceptance {0} should be 'commitment' or 'from_project'")
+                        elif project.stage_id.code == '75' and acceptance.forecast not in ('commitment', 'reserve'):
+                            raisetext = _("Project\step is '75' acceptance {0} should be 'commitment', 'reserve' or 'from_project'")
+                        elif project.stage_id.code == '50' and acceptance.forecast not in ('potential', 'reserve'):
+                            raisetext = _("Project\step is '50' acceptance {0} should be 'potential', 'reserve' or 'from_project'")
+                        elif project.stage_id.code in ('30', '10') and acceptance.forecast != 'potential':
+                            raisetext = _("Project\step is '30' or '10' acceptance {0} should be 'potential' or 'from_project'")
+                    if raisetext:
+                        raisetext = raisetext.format(acceptance.acceptance_id)
+                        raise ValidationError(raisetext)
+                for cash in cash_ids:
+                    if cash.forecast != 'from_project':
+                        if project.stage_id.code == '100' and cash.forecast != 'commitment':
+                            raisetext = _("Project\step is '100' cash {0} should be 'commitment' or 'from_project'")
+                        elif project.stage_id.code == '75' and cash.forecast not in ('commitment', 'reserve'):
+                            raisetext = _("Project\step is '75' cash {0} should be 'commitment', 'reserve' or 'from_project'")
+                        elif project.stage_id.code == '50' and cash.forecast not in ('potential', 'reserve'):
+                            raisetext = _("Project\step is '50' cash {0} should be 'potential', 'reserve' or 'from_project'")
+                        elif project.stage_id.code in ('30', '10') and cash.forecast != 'potential':
+                            raisetext = _("Project\step is '30' or '10' cash {0} should be 'potential' or 'from_project'")
+                    if raisetext:
+                        raisetext = raisetext.format(cash.cash_id)
+                        raise ValidationError(raisetext)
+
+    @api.onchange('stage_id')
+    def _reset_forecasts_stages(self):  # сбрасываем вероятности прогнозов до вероятности проекта при изменении последнего
+        for project in self:
+            has_changed = False
+            if project.step_status == 'step':
+                accs_ids = project.planned_step_acceptance_flow_ids
+                cash_ids = project.planned_step_cash_flow_ids
+            elif project.step_status == 'project' and not project.project_have_steps:
+                accs_ids = project.planned_acceptance_flow_ids
+                cash_ids = project.planned_cash_flow_ids
+            else:
+                return
+            for acceptance in accs_ids:
+                if acceptance.forecast != 'from_project':
+                    acceptance.forecast = 'from_project'
+                    has_changed = True
+            for cash in cash_ids:
+                if cash.forecast != 'from_project':
+                    cash.forecast = 'from_project'
+                    has_changed = True
+        if has_changed:
+            message = _("Project\step stage has changed, acceptance and cash forecasts set to 'from_project'")
+            return {
+                'warning': {'title': "Warning", 'message': message},
+            }
 
     def check_overdue_date(self, vals_list):
         for project in self:
